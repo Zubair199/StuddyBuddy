@@ -12,6 +12,7 @@ import {Image} from 'react-native-elements/dist/image/Image';
 import CatalogScreen from '../screens/CatalogScreen';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ClassDetailScreen from '../screens/Teacher/ClassDetailScreen';
+import AssignmentDetailScreen from '../screens/AssignmentDetailScreen';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -183,12 +184,17 @@ const HomeStackScreen = ({navigation, route}: any) => {
       <HomeStack.Screen
         name="Classes"
         options={mainHeader}
-        component={ClassDetailScreen}
+        component={MyClassesScreen}
       />
       <HomeStack.Screen
         name="ClassDetails"
         options={mainHeader}
         component={ClassDetailScreen}
+      />
+      <HomeStack.Screen
+        name="AssignmentDetails"
+        options={mainHeader}
+        component={AssignmentDetailScreen}
       />
     </HomeStack.Navigator>
   );
