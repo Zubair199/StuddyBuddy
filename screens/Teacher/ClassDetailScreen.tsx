@@ -8,7 +8,7 @@ export default function ClassDetailScreen() {
 
   React.useEffect(() => { }, [isFocused]);
   return (
-    <ScrollView>
+    <ScrollView style={{marginBottom:'25%'}}>
       <View style={styles.container}>
         {/* header starts here */}
         <View style={{ marginTop: 10 }}>

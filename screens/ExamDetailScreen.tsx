@@ -8,170 +8,67 @@ export default function ExamDetailScreen() {
 
   React.useEffect(() => { }, [isFocused]);
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        {/* header starts here */}
-        <View style={{ marginTop: 10 }}>
+    <View style={styles.container}>
+      <ScrollView>
+        <View style={{ padding: 10 }}>
           <ImageBackground
             resizeMode='cover'
-            source={require("../assets/images/bg.jpg")}
-            style={styles.classBoxImage}
+            source={require('../assets/images/bg.jpg')}
+            style={styles.challengeBoxImage}
             imageStyle={{ borderRadius: 5 }}
           >
             <View style={styles.overlay}>
-              <View style={styles.levelBox}>
-                <View style={styles.levelIntermediate}></View>
-                <Text style={styles.classBoxText}>Intermediate</Text>
+              <View style={styles.challengeTypeOverLay}>
+                <Text style={styles.challengeBoxText}>
+                  Virtual
+                </Text>
               </View>
-              <Text style={styles.classBoxName}>Class Name</Text>
-              <Text style={styles.classBoxInstructor}>
-                Instructor Name
-              </Text>
-              <Text style={styles.classBoxDate}>
-                Tuesday 12:00 - 13:00
-              </Text>
-              <Text style={styles.classBoxInstructor}>
-                Class Type
-              </Text>
-              <Text style={styles.classBoxInstructor}>
-                Class Status
+              <Text style={styles.challengeBoxName}>Exam 1</Text>
+              <Text style={styles.challengeBoxDate}>
+                28-05-2022
               </Text>
             </View>
           </ImageBackground>
-          {/* header ends here */}
-
-          {/* price tags start here */}
-          {/* this will be render if student has not already joined the class */}
-          <View style={styles.joinBox}>
-            <Text style={styles.cost}>Cost: &#36;{12}</Text>
-          </View>
-
-          {/* price ends here */}
-
-
-          {/* Class Location Starts here */}
-          <View>
-            <Text style={styles.heading}>Class Location</Text>
-            <Text style={styles.text}>CR 4 EE Building</Text>
-          </View>
-          {/* Class Location ends here */}
-
-
-          {/* Language section starts here */}
-          <View style={styles.languageBoxLanguage}>
-            <View style={styles.languageWithIcon}>
-              <Text style={styles.languageAttributesHeading}>Languages</Text>
-            </View>
-            <View style={styles.language}>
-              <View
-                style={{ flexDirection: "row" }}
-              >
-                <Text style={styles.languageText}>English</Text>
-              </View>
-            </View>
-          </View>
-          {/* Language section ends here */}
-
-          {/* Announcements Starts here */}
-          <Text style={styles.heading}>Announcements</Text>
-          <Text style={styles.text}>class announcements</Text>
-          {/* Announcements ends here */}
-
-          {/* Topics & Instructions Starts here */}
-          <Text style={styles.heading}>Topics and Instructions</Text>
-          <Text style={styles.text}>class topics</Text>
-          {/* Topics & Instructions ends here */}
-
-          {/* connectivity link for enrolled students Starts here */}
-          {/* <Text style={styles.heading}>Pre Recorded Class Link</Text> */}
-          <Text style={styles.heading}>Class Link</Text>
-
-          <TouchableOpacity
-            onPress={() => Linking.openURL("https://www.google.com/")}
-          >
-            <Text style={styles.text}>connectivityLink</Text>
-          </TouchableOpacity>
-          {/* connectivity link for enrolled students ends here */}
-
-          {/* Schedule Starts here */}
-          <Text style={styles.heading}>Schedule</Text>
-          <Text style={styles.text}>
-            Day: Tuesday
-            Time: 12:00 - 13:00
-          </Text>
-          {/* Schedule ends here */}
-
-          {/* classes starts here */}
-          {
-        /*classData.documents.length === 0 ? null : (
-        //   <>
-        //     <Text style={styles.heading}>Instructor Uploads</Text>
-        //     <View style={{ height: 180 }}>
-        //       <ScrollView style={styles.scrollView} horizontal={true}>
-        //         {classData.documents.map((upload: any, index: number) => (
-        //           <TouchableOpacity
-        //             key={index}
-        //             style={styles.classBoxWrapper}
-        //             onPress={() => Linking.openURL(upload)}
-        //           >
-        //             <ImageBackground
-        //               source={
-        //                 upload
-        //                   .substring(upload.lastIndexOf(".") + 1)
-        //                   .toLowerCase() == "pdf"
-        //                   ? require("../assets/images/icons/document.png")
-        //                   : { uri: upload }
-        //               }
-        //               style={styles.uploadBoxImage}
-        //             >
-        //               <View style={styles.overlay}>
-        //                 <View style={styles.uploadBox}>
-        //                   <Text style={styles.uploadName}>{upload.name}</Text>
-        //                   <Text style={styles.uploadDate}>Uploaded Today</Text>
-        //                 </View>
-        //               </View>
-        //             </ImageBackground>
-        //           </TouchableOpacity>
-        //         ))}
-        //       </ScrollView>
-        //     </View>
-        //   </>
-        // )
-        */}
-
-          {/* classes ends here */}
-
-          {/* Enrolled Students Starts here */}
-          <Text style={styles.heading}>Students Enrolled</Text>
-          <Text style={styles.text}>{5}</Text>
-          {/* Enrolled Students ends here */}
-
+          <Text style={styles.heading}>Details</Text>
+          <Text style={styles.text}>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</Text>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   )
 }
-
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#ffffff",
-    padding: 10,
-  },
-  bannerImage: {
-    width: 129,
-    height: 92,
+    flex: 1
   },
 
-  promoDisplayView: {
-    width: "100%",
-    marginTop: 30,
-    borderRadius: 3,
-    height: 110,
-    borderColor: "#949599",
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    padding: 2,
+  challengeBoxImage: {
+    height: 266,
   },
+
+  challengeBoxDate: {
+    color: "#FFFFFF",
+    fontSize: 15,
+  },
+
+  challengeTypeBox: {
+    paddingLeft: 0,
+    flex: 1,
+  },
+
+  challengeTypeOverLay: {
+    backgroundColor: "rgba(0,0,0,0.3)",
+    height: 30,
+    justifyContent: "center"
+  },
+
+  challengeBoxText: {
+    color: "#FFFFFF",
+    fontSize: 13,
+    textTransform: "uppercase",
+    marginLeft: 5,
+  },
+
   title: {
     fontSize: 30,
     marginLeft: 15,
@@ -179,199 +76,20 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     fontFamily: "roboto-light",
   },
-  titleIconBox: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    marginTop: 20,
-  },
-  promoNameText: {
-    fontSize: 15,
-    fontFamily: "roboto-regular"
-  },
-  backIcon: {
-    marginTop: 35,
-    height: 17,
-    width: 10,
-  },
 
-  classBoxImage: {
-    // width: "100%",
-    height: 266,
-  },
   overlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.3)",
     borderRadius: 5,
     justifyContent: "flex-end",
     padding: 10,
-  },
-  classBoxText: {
-    marginLeft: 7,
-    color: "#FFFFFF",
-    fontSize: 13,
-    textTransform: "uppercase",
-  },
-  levelBox: {
-    flexDirection: "row",
-    // position: "absolute",
-    // bottom: 90,
-    // left: 14,
-    backgroundColor: "transparent",
+    overflow: "hidden"
   },
 
-  levelAdvance: {
-    width: 4,
-    height: 13,
-    backgroundColor: "#FF6565",
-    marginTop: 2,
-  },
-
-  levelBeginner: {
-    width: 4,
-    height: 13,
-    backgroundColor: "#01C75D",
-    marginTop: 2,
-  },
-
-  levelIntermediate: {
-    width: 4,
-    height: 13,
-    backgroundColor: "#FFEB00",
-    marginTop: 2,
-  },
-  classBoxName: {
-    // position: "absolute",
-    // bottom: 62,
-    // left: 14,
+  challengeBoxName: {
     color: "#FFFFFF",
     fontSize: 18,
     fontFamily: "roboto-regular",
-  },
-  classBoxInstructor: {
-    color: "#FFFFFF",
-    fontSize: 15,
-    textTransform: "capitalize"
-  },
-  classBoxDate: {
-    // position: "absolute",
-    // bottom: 23,
-    // left: 14,
-    color: "#FFFFFF",
-    fontSize: 15,
-  },
-  classBoxViews: {
-    // position: "absolute",
-    // bottom: 65,
-    // right: 14,
-    color: "#FFFFFF",
-    fontSize: 15,
-    fontFamily: "roboto-regular",
-  },
-  classBoxSubscribers: {
-    // position: "absolute",
-    // bottom: 25,
-    // right: 14,
-    color: "#FFFFFF",
-    fontSize: 18,
-  },
-  classBoxSubscribersIcon: {
-    // position: "absolute",
-    // bottom: 23,
-    // right: 40,
-    width: 35,
-    height: 38,
-  },
-  heartIcon: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    height: 20,
-    width: 23,
-  },
-
-  profileBox: {
-    marginTop: 20,
-    flexDirection: "row",
-  },
-  profilePic: {
-    width: 95,
-    height: 114,
-    borderRadius: 5,
-  },
-
-  info: {
-    marginLeft: 20,
-    position: "relative",
-  },
-
-  name: {
-    fontSize: 18,
-    color: "#4B5F79",
-    width: "100%",
-    textTransform: "uppercase",
-    fontFamily: "roboto-light",
-  },
-  languageBox: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    width: "95%",
-    marginTop: 7,
-  },
-
-  languageHeader: {
-    fontSize: 14,
-    fontFamily: "roboto-regular",
-  },
-
-  dot: {
-    height: 3,
-    width: 3,
-    backgroundColor: "black",
-    borderRadius: 50,
-    margin: 5,
-    marginTop: 10,
-  },
-
-  actionBox: {
-    width: "100%",
-    justifyContent: "space-around",
-    flexDirection: "row",
-    flex: 1,
-  },
-
-  envelopeIcon: {
-    width: 21,
-    height: 17,
-  },
-
-  joinBox: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 20,
-    alignItems: "center",
-  },
-
-  cost: {
-    fontFamily: "roboto-bold",
-    fontSize: 18,
-    color: "#4B5F79",
-  },
-
-  joinClassBtn: {
-    height: 34,
-    backgroundColor: "#4B5F79",
-    borderRadius: 3,
-    width: 113,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 0,
-  },
-
-  joinText: {
-    fontFamily: "roboto-light",
-    fontSize: 15,
-    color: "#FFFFFF",
-    textTransform: "uppercase",
   },
 
   heading: {
@@ -384,134 +102,5 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "roboto-light",
     marginTop: 5,
-  },
-
-  scrollView: {
-    marginTop: 10,
-    // marginHorizontal: -1,
-  },
-
-  classBoxWrapper: {
-    height: "100%",
-    width: 225,
-    overflow: "hidden",
-    // marginBottom: 22,
-    borderRadius: 5,
-    marginRight: 15,
-  },
-
-  uploadBoxImage: {
-    width: "100%",
-    height: "100%",
-    position: "relative",
-  },
-
-  uploadBox: {
-    position: "absolute",
-    backgroundColor: "transparent",
-    left: 15,
-    bottom: 10,
-  },
-
-  uploadName: {
-    color: "#ffffff",
-    fontFamily: "roboto-regular",
-    fontSize: 16,
-  },
-  uploadDate: {
-    color: "#FFFFFF",
-    fontFamily: "roboto-light",
-    fontSize: 14,
-  },
-
-  removeBtn: {
-    padding: 10,
-    borderColor: "#4B5F79",
-    borderRadius: 7,
-    borderWidth: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 20,
-    height: 44,
-    marginBottom: 20,
-  },
-
-  removeText: {
-    color: "#4B5F79",
-    fontFamily: "roboto-light",
-    fontSize: 16,
-    textTransform: "uppercase",
-  },
-
-  removeIcon: {
-    width: 19,
-    height: 5,
-    marginLeft: 5,
-  },
-  reportBtn: {
-    padding: 10,
-    // borderColor: "#4B5F79",
-    borderRadius: 7,
-    // borderWidth: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 20,
-    height: 44,
-    marginBottom: 20,
-    backgroundColor: "#FF6565",
-  },
-  reportText: {
-    color: "#ffffff",
-    fontFamily: "roboto-regular",
-    fontSize: 16,
-    textTransform: "uppercase",
-  },
-
-  reasonBox: {
-    // marginTop: 10,
-    // marginBottom: 10,
-    width: "100%",
-    borderRadius: 5,
-    borderColor: "#949599",
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    padding: 8,
-    fontFamily: "roboto-light",
-    fontSize: 16,
-    height: 100,
-  },
-  languageBoxLanguage: {
-    marginTop: 30,
-  },
-
-  languageWithIcon: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-
-  languageAttributesHeading: {
-    textTransform: "uppercase",
-    fontSize: 20,
-    fontWeight: "200",
-    fontFamily: "roboto-light",
-  },
-  language: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginTop: 10,
-  },
-  languageText: {
-    fontSize: 15,
-    fontFamily: "roboto-light",
-  },
-  dotLanguage: {
-    height: 3,
-    width: 3,
-    backgroundColor: "black",
-    borderRadius: 100,
-    margin: 5,
-    marginTop: 10,
   },
 });

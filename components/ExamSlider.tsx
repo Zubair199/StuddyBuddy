@@ -68,7 +68,7 @@ export default function AssignmentSlider(props: Iprops) {
                           {/* Tuesday 12:00 - 13:00 */}
                         </Text>
                         <Text style={styles.classBoxInstructor}>
-                          Assignment 1
+                          Exam 1
                         </Text>
                         <Text style={styles.classBoxInstructor}>
                           28-05-2022
