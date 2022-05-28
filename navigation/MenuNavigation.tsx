@@ -13,6 +13,10 @@ import CatalogScreen from '../screens/CatalogScreen';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ClassDetailScreen from '../screens/Teacher/ClassDetailScreen';
 import AssignmentDetailScreen from '../screens/AssignmentDetailScreen';
+import AssignmentScreen from '../screens/AssignmentScreen';
+import ExamDetailScreen from '../screens/ExamDetailScreen';
+import ExamScreen from '../screens/ExamScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -126,6 +130,31 @@ const MenuNavigation = () => {
         component={PaymentStackScreen}
       />
       <BottomTab.Screen
+        name="Profile"
+        options={{
+          headerShown: false,
+          tabBarIcon: ({focused}) => (
+            <View
+              style={{alignItems: 'center', justifyContent: 'center', top: 3}}>
+              <Image
+                style={[
+                  styles.tabIcon,
+                  {
+                    tintColor: focused ? '#ffbb74' : '#ffffff',
+                  },
+                ]}
+                source={require('../assets/images/profile.png')}
+              />
+              <Text
+                style={{color: focused ? '#ffbb74' : '#ffffff', fontSize: 12}}>
+                Profile
+              </Text>
+            </View>
+          ),
+        }}
+        component={ProfileStackScreen}
+      />
+      <BottomTab.Screen
         name="Settings"
         options={{
           headerShown: false,
@@ -158,6 +187,7 @@ const HomeStack = createNativeStackNavigator();
 const PaymentStack = createNativeStackNavigator();
 const MessagesStack = createNativeStackNavigator();
 const SettingsStack = createNativeStackNavigator();
+const ProfileStack = createNativeStackNavigator();
 
 const topTab = createMaterialTopTabNavigator();
 
@@ -196,6 +226,21 @@ const HomeStackScreen = ({navigation, route}: any) => {
         options={mainHeader}
         component={AssignmentDetailScreen}
       />
+      <HomeStack.Screen
+        name="Assignment"
+        options={mainHeader}
+        component={AssignmentScreen}
+      />
+      <HomeStack.Screen
+        name="ExamDetails"
+        options={mainHeader}
+        component={ExamDetailScreen}
+      />
+      <HomeStack.Screen
+        name="Exam"
+        options={mainHeader}
+        component={ExamScreen}
+      />
     </HomeStack.Navigator>
   );
 };
@@ -216,13 +261,22 @@ const MessagesStackScreen = () => (
       component={MessagesScreen}
     />
   </MessagesStack.Navigator>
-);
+)
 const SettingsStackScreen = () => (
   <SettingsStack.Navigator screenOptions={{}}>
     <SettingsStack.Screen
       name="Settings"
       options={mainHeader}
       component={SettingsScreen}
+    />
+  </SettingsStack.Navigator>
+);
+const ProfileStackScreen = () => (
+  <SettingsStack.Navigator screenOptions={{}}>
+    <SettingsStack.Screen
+      name="Profile"
+      options={mainHeader}
+      component={ProfileScreen}
     />
   </SettingsStack.Navigator>
 );

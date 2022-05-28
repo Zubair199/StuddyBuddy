@@ -1,25 +1,40 @@
 import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
-import { ImageBackground, SafeAreaView, ScrollView, StyleSheet, Touchable, TouchableOpacity, TouchableOpacityBase, View } from 'react-native';
-import { Text } from 'react-native-elements';
+import { ImageBackground, SafeAreaView, ScrollView, StyleSheet, Touchable, TouchableOpacity, TouchableOpacityBase, View, Modal } from 'react-native';
+import { ListItem, Button, BottomSheet, Text } from 'react-native-elements'
 import { useNavigation } from '@react-navigation/native';
 
 import ClassSlider from '../components/ClassSlider';
 
+import { FAB } from 'react-native-elements';
 export default function MyClassesScreen() {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
-
+  const [modalVisible, setModalVisible] = React.useState(false);
   return (
-    <View style={{ padding: 10, backgroundColor: 'white', flex:1 }}>
-      <ScrollView>
+    <View style={{ padding: 10, backgroundColor: 'white', flex: 1 }}>
+      <ScrollView style={{ marginBottom: '25%' }}>
         <View>
-          <ClassSlider data={[]} categoryText={"My Upcoming Classes"} screen={"ClassDetails"} />
+          <ClassSlider data={[0, 1, 2, 3, 4]} categoryText={"My Upcoming Classes"} screen={"ClassDetails"} />
         </View>
         <View>
-          <ClassSlider data={[]} categoryText={"My Assignments"} screen={"AssignmentDetails"} />
+          <ClassSlider data={[0, 1, 2, 3]} categoryText={"My Assignments"} screen={"AssignmentDetails"} />
+        </View>
+        <View>
+          <ClassSlider data={[0, 1, 2, 3, 4, 5]} categoryText={"My Exams"} screen={"ExamDetails"} />
         </View>
       </ScrollView>
+      <FAB title="+" color='#3878ee' placement='right' style={{ marginBottom: '25%' }} onPress={()=>{}}/>
+      
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
+  },
+})

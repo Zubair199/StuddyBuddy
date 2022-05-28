@@ -4,7 +4,7 @@ import { ImageBackground, SafeAreaView, ScrollView, StyleSheet, Touchable, Touch
 import { Text } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 interface Iprops {
-  data: any;
+  data: Array<any>;
   screen: string;
   categoryText: string;
 }
@@ -23,59 +23,63 @@ export default function ClassSlider(props: Iprops) {
           </View>
         ) : ( */}
         <ScrollView style={styles.scrollView} horizontal={true}>
-          <View style={styles.classBoxWrapper}>
-            <ImageBackground
-              resizeMode='cover'
-              source={require('../assets/images/bg.jpg')}
-              style={styles.classBoxImage}
-            >
-              <View style={styles.overlay}>
-                <View style={styles.classTakenBox}>
-                  <View style={styles.classTakenOverLay}>
-                    <Text style={styles.classTakenBoxText}>
-                      Virtual
-                    </Text>
-                  </View>
-                </View>
-                <View style={styles.classBox}>
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate(props.screen)}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      justifyContent: "flex-end",
-                    }}
-                  >
-                    <View style={styles.levelBox}>
-                      <View
-                        style={styles.levelIntermediate}
-                      >
+          {
+            props.data.map((classData: any, index: number) => (
+              <View key={index} style={styles.classBoxWrapper}>
+                <ImageBackground
+                  resizeMode='cover'
+                  source={require('../assets/images/bg.jpg')}
+                  style={styles.classBoxImage}
+                >
+                  <View style={styles.overlay}>
+                    <View style={styles.classTakenBox}>
+                      <View style={styles.classTakenOverLay}>
+                        <Text style={styles.classTakenBoxText}>
+                          Virtual
+                        </Text>
                       </View>
-                      <Text style={styles.classBoxText}>
-                        Intermediate
-                      </Text>
-
                     </View>
-                    <Text style={styles.classBoxName}>
-                      Class Name
-                    </Text>
-                    <Text style={styles.classBoxInstructor}>
-                      Instructor Name
-                    </Text>
-                    <Text style={styles.classBoxDate}>
-                      Tuesday 12:00 - 13:00
-                    </Text>
-                    <Text style={styles.classBoxInstructor}>
-                      Class Type
-                    </Text>
-                    <Text style={styles.classBoxInstructor}>
-                      Class Status
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                    <View style={styles.classBox}>
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate(props.screen)}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          justifyContent: "flex-end",
+                        }}
+                      >
+                        <View style={styles.levelBox}>
+                          <View
+                            style={styles.levelIntermediate}
+                          >
+                          </View>
+                          <Text style={styles.classBoxText}>
+                            Intermediate
+                          </Text>
+
+                        </View>
+                        <Text style={styles.classBoxName}>
+                          Class Name
+                        </Text>
+                        <Text style={styles.classBoxInstructor}>
+                          Instructor Name
+                        </Text>
+                        <Text style={styles.classBoxDate}>
+                          Tuesday 12:00 - 13:00
+                        </Text>
+                        <Text style={styles.classBoxInstructor}>
+                          Class Type
+                        </Text>
+                        <Text style={styles.classBoxInstructor}>
+                          Class Status
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </ImageBackground>
               </View>
-            </ImageBackground>
-          </View>
+            ))
+          }
         </ScrollView>
         {/* )} */}
       </View>

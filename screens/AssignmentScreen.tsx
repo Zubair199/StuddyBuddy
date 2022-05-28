@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Button, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { CheckBox } from 'react-native-elements';
 
-export default function AssignmentDetailScreen() {
+export default function AssignmentScreen() {
   const isFocused = useIsFocused();
 
   React.useEffect(() => { }, [isFocused]);
