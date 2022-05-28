@@ -9,6 +9,9 @@ import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs
 import MyClassesScreen from '../screens/MyClassesScreen';
 import {useNavigation} from '@react-navigation/native';
 import {Image} from 'react-native-elements/dist/image/Image';
+import CatalogScreen from '../screens/CatalogScreen';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import ClassDetailScreen from '../screens/Teacher/ClassDetailScreen';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -180,12 +183,16 @@ const HomeStackScreen = ({navigation, route}: any) => {
       <HomeStack.Screen
         name="Classes"
         options={mainHeader}
-        component={MyClassesScreen}
+        component={ClassDetailScreen}
+      />
+      <HomeStack.Screen
+        name="ClassDetails"
+        options={mainHeader}
+        component={ClassDetailScreen}
       />
     </HomeStack.Navigator>
   );
 };
-
 const PaymentStackScreen = () => (
   <PaymentStack.Navigator screenOptions={{}}>
     <PaymentStack.Screen

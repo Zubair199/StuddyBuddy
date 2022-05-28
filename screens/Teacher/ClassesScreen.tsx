@@ -2,10 +2,11 @@ import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
 import { ImageBackground, SafeAreaView, ScrollView, StyleSheet, Touchable, TouchableOpacity, TouchableOpacityBase, View } from 'react-native';
 import { Text } from 'react-native-elements';
+import {useNavigation} from '@react-navigation/native';
 
 export default function MyClassesScreen() {
   const isFocused = useIsFocused();
-
+  const navigation = useNavigation();
   React.useEffect(() => { }, [isFocused]);
   return (
     <View style={{padding:10}}>
@@ -33,6 +34,7 @@ export default function MyClassesScreen() {
                   </View>
                   <View style={styles.classBox}>
                     <TouchableOpacity
+                      onPress={navigation.navigate('ClassDetails')}
                       style={{
                         width: "100%",
                         height: "100%",
