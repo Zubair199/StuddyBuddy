@@ -26,6 +26,7 @@ export default function AddAssignmentScreen() {
       <TextInput
         label="Title"
       />
+      <Button title="startdate" onPress={() => setOpen(true)} />
        <DatePicker
         modal
         open={open}
