@@ -21,8 +21,8 @@ export default function MyClassesScreen() {
   };
   return (
     <View style={{ padding: 10, backgroundColor: 'white', flex: 1 }}>
-      <AddAssignmentScreen/>
-      {/* <Modal isVisible={isModalVisible}>
+      {/* <AddAssignmentScreen/> */}
+      <Modal isVisible={isModalVisible}>
         <View style={{ flex: 1 }}>
           <Text>Hello!</Text>
 
@@ -43,7 +43,7 @@ export default function MyClassesScreen() {
         <View>
           <ExamSlider data={[0, 1, 2, 3, 4, 5]} categoryText={"My Exams"} screen={"ExamDetails"} />
         </View>
-      </ScrollView> */}
+      </ScrollView>
       {/* <FAB title={<Icon name="plus" size={20} color={'white'} style={{fontWeight: 'bold'}}/>} color='#3878ee' placement='right' style={{ marginBottom: '25%' }} onPress={()=>{toggleModal()}}/> */}
       
     </View>

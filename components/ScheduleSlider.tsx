@@ -1,74 +1,78 @@
+import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
-import { ImageBackground, SafeAreaView, ScrollView, StyleSheet, Touchable, TouchableOpacity, TouchableOpacityBase, TextInput, View, FlatList, StatusBar } from 'react-native';
-import SchedulerSlider from '../components/ScheduleSlider';
+import { ImageBackground, SafeAreaView, ScrollView, StyleSheet, Touchable, TouchableOpacity, TouchableOpacityBase, View } from 'react-native';
 import { Text } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
-
-export default function ScheduleScreen() {
+interface Iprops {
+  data: Array<any>;
+  screen: string;
+}
+export default function SchedulerSlider(props: Iprops) {
+  const isFocused = useIsFocused();
   const navigation = useNavigation();
 
+  React.useEffect(() => { }, [isFocused]);
   return (
-    <View style={{ padding: 10, backgroundColor: 'white', flex: 1 }}>
-      <ScrollView style={{ marginBottom: '25%' }}>
-        {
-          [0,1,2,3].map((classData: any, index: number) => (
-            <View key={index} style={styles.classBoxWrapper}>
-              <ImageBackground
-                resizeMode='cover'
-                source={require('../assets/images/bg.jpg')}
-                style={styles.classBoxImage}
-              >
-                <View style={styles.overlay}>
-                  <View style={styles.classTakenBox}>
-                    <View style={styles.classTakenOverLay}>
-                      <Text style={styles.classTakenBoxText}>
-                        Virtual
-                      </Text>
-                    </View>
-                  </View>
-                  <View style={styles.classBox}>
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate(props.screen)}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        justifyContent: "flex-end",
-                      }}
-                    >
-                      <View style={styles.levelBox}>
-                        <View
-                          style={styles.levelIntermediate}
-                        >
-                        </View>
-                        <Text style={styles.classBoxText}>
-                          Intermediate
-                        </Text>
-  
-                      </View>
-                      <Text style={styles.classBoxName}>
-                        Class Name
-                      </Text>
-                      <Text style={styles.classBoxInstructor}>
-                        Instructor Name
-                      </Text>
-                      <Text style={styles.classBoxDate}>
-                        Tuesday 12:00 - 13:00
-                      </Text>
-                      <Text style={styles.classBoxInstructor}>
-                        Class Type
-                      </Text>
-                      <Text style={styles.classBoxInstructor}>
-                        Class Status
-                      </Text>
-                    </TouchableOpacity>
+    <View style={styles.classBoxWrapper}>
+      {
+        props.data.map((classData: any, index: number) => (
+          <View key={index} style={styles.classBoxWrapper}>
+            <ImageBackground
+              resizeMode='cover'
+              source={require('../assets/images/bg.jpg')}
+              style={styles.classBoxImage}
+            >
+              <View style={styles.overlay}>
+                <View style={styles.classTakenBox}>
+                  <View style={styles.classTakenOverLay}>
+                    <Text style={styles.classTakenBoxText}>
+                      Virtual
+                    </Text>
                   </View>
                 </View>
-              </ImageBackground>
-            </View>
-          ))  
-        }
-      </ScrollView>
+                <View style={styles.classBox}>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate(props.screen)}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      justifyContent: "flex-end",
+                    }}
+                  >
+                    <View style={styles.levelBox}>
+                      <View
+                        style={styles.levelIntermediate}
+                      >
+                      </View>
+                      <Text style={styles.classBoxText}>
+                        Intermediate
+                      </Text>
+
+                    </View>
+                    <Text style={styles.classBoxName}>
+                      Class Name
+                    </Text>
+                    <Text style={styles.classBoxInstructor}>
+                      Instructor Name
+                    </Text>
+                    <Text style={styles.classBoxDate}>
+                      Tuesday 12:00 - 13:00
+                    </Text>
+                    <Text style={styles.classBoxInstructor}>
+                      Class Type
+                    </Text>
+                    <Text style={styles.classBoxInstructor}>
+                      Class Status
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </ImageBackground>
+          </View>
+        ))
+      }
     </View>
+
   )
 }
 
@@ -109,13 +113,12 @@ const styles = StyleSheet.create({
   },
 
   classBoxWrapper: {
-    height: "25%",
-    width: '100%',
+    height: "100%",
+    width: 225,
     overflow: "hidden",
     // marginBottom: 22,
     borderRadius: 5,
     // marginHorizontal: 5,
-    padding: 5,
     marginRight: 15,
   },
   classBoxImage: {

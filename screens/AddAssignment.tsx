@@ -5,10 +5,13 @@ import { SafeAreaView, StyleSheet, Text, View, } from 'react-native';
 import { RadioButton, TextInput } from 'react-native-paper';
 import { Button } from 'react-native-elements';
 import DatePicker from 'react-native-date-picker'
+import SelectDropdown from 'react-native-select-dropdown'
+
 export default function AddAssignmentScreen() {
   const [value, setValue] = React.useState('first');
   const [date, setDate] = React.useState(new Date())
   const [open, setOpen] = React.useState(false)
+  
   return (
     <SafeAreaView>
 
@@ -21,13 +24,13 @@ export default function AddAssignmentScreen() {
       </RadioButton.Group>
 
       <TextInput
-        label="Title"        
+        label="Title"
       />
       <TextInput
         label="Title"
       />
       <Button title="startdate" onPress={() => setOpen(true)} />
-       <DatePicker
+      <DatePicker
         modal
         open={open}
         date={date}
