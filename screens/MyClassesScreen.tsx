@@ -10,6 +10,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import { FAB } from 'react-native-elements';
 import AssignmentSlider from '../components/AssignmentSlider';
 import ExamSlider from '../components/ExamSlider';
+import AddAssignmentScreen from './AddAssignment';
 export default function MyClassesScreen() {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
@@ -20,7 +21,8 @@ export default function MyClassesScreen() {
   };
   return (
     <View style={{ padding: 10, backgroundColor: 'white', flex: 1 }}>
-      <Modal isVisible={isModalVisible}>
+      <AddAssignmentScreen/>
+      {/* <Modal isVisible={isModalVisible}>
         <View style={{ flex: 1 }}>
           <Text>Hello!</Text>
 
@@ -41,8 +43,8 @@ export default function MyClassesScreen() {
         <View>
           <ExamSlider data={[0, 1, 2, 3, 4, 5]} categoryText={"My Exams"} screen={"ExamDetails"} />
         </View>
-      </ScrollView>
-      <FAB title={<Icon name="plus" size={20} color={'white'} style={{fontWeight: 'bold'}}/>} color='#3878ee' placement='right' style={{ marginBottom: '25%' }} onPress={()=>{toggleModal()}}/>
+      </ScrollView> */}
+      {/* <FAB title={<Icon name="plus" size={20} color={'white'} style={{fontWeight: 'bold'}}/>} color='#3878ee' placement='right' style={{ marginBottom: '25%' }} onPress={()=>{toggleModal()}}/> */}
       
     </View>
   )
