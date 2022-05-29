@@ -1,10 +1,11 @@
 import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
-import { ImageBackground, SafeAreaView, ScrollView, StyleSheet, Touchable, TouchableOpacity, TouchableOpacityBase, View, Modal } from 'react-native';
-import { ListItem, Button, BottomSheet, Text } from 'react-native-elements'
+import { ImageBackground, SafeAreaView, ScrollView, StyleSheet, Touchable, TouchableOpacity, TouchableOpacityBase, View, TextInput } from 'react-native';
+import { Button, Text } from 'react-native-elements'
 import { useNavigation } from '@react-navigation/native';
-
+import Modal from "react-native-modal";
 import ClassSlider from '../components/ClassSlider';
+import Icon from 'react-native-vector-icons/AntDesign';
 
 import { FAB } from 'react-native-elements';
 import AssignmentSlider from '../components/AssignmentSlider';
@@ -12,10 +13,25 @@ import ExamSlider from '../components/ExamSlider';
 export default function MyClassesScreen() {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
-  const [modalVisible, setModalVisible] = React.useState(false);
+  const [isModalVisible, setModalVisible] = React.useState(false);
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
   return (
     <View style={{ padding: 10, backgroundColor: 'white', flex: 1 }}>
+      <Modal isVisible={isModalVisible}>
+        <View style={{ flex: 1 }}>
+          <Text>Hello!</Text>
+
+          <Button title="Hide modal" onPress={toggleModal} />
+        </View>
+      </Modal>
       <ScrollView style={{ marginBottom: '25%' }}>
+        <View style={{flexDirection:'row', justifyContent: 'space-around' , alignItems:"center"}}>
+          <TextInput placeholder='Search...' style={{width: '70%', borderWidth: 1, borderColor: 'lightgray', borderRadius: 10, height:40}}/>
+          <Button title="Add New..."/>
+        </View>
         <View>
           <ClassSlider data={[0, 1, 2, 3, 4]} categoryText={"My Upcoming Classes"} screen={"ClassDetails"} />
         </View>
@@ -26,7 +42,7 @@ export default function MyClassesScreen() {
           <ExamSlider data={[0, 1, 2, 3, 4, 5]} categoryText={"My Exams"} screen={"ExamDetails"} />
         </View>
       </ScrollView>
-      <FAB title="+" color='#3878ee' placement='right' style={{ marginBottom: '25%' }} onPress={()=>{}}/>
+      <FAB title={<Icon name="plus" size={20} color={'white'} style={{fontWeight: 'bold'}}/>} color='#3878ee' placement='right' style={{ marginBottom: '25%' }} onPress={()=>{toggleModal()}}/>
       
     </View>
   )

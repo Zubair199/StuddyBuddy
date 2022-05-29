@@ -14,7 +14,7 @@ export default function ClassDetailScreen() {
         <View style={{ marginTop: 10 }}>
           <ImageBackground
             resizeMode='cover'
-            source={require("../../assets/images/bg.jpg")}
+            source={require("../assets/images/bg.jpg")}
             style={styles.classBoxImage}
             imageStyle={{ borderRadius: 5 }}
           >
