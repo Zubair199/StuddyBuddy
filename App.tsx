@@ -9,18 +9,37 @@
 import React from 'react';
 import Navigation from './navigation';
 import {Node} from 'react';
+import { NativeBaseProvider,extendTheme} from "native-base";
 import {StatusBar, useColorScheme} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 const App: () => Node = () => {
+  const theme = extendTheme({
+    components: {
+      Button: {
+        variants: {
+          rounded: ({
+            colorScheme
+          }) => {
+            return {
+              bg: `${colorScheme}.500`,
+              rounded: "full"
+            };
+          }
+        }
+      }
+    }
+  });
   // const isDarkMode = useColorScheme() === "dark";
   const colorScheme = useColorScheme();
 
   return (
+    <NativeBaseProvider theme={theme}>
     <SafeAreaProvider>
       <Navigation colorScheme={colorScheme} />
       <StatusBar />
     </SafeAreaProvider>
+    </NativeBaseProvider>
   );
 };
 
