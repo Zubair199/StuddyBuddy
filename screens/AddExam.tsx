@@ -9,6 +9,10 @@ import SelectDropdown from 'react-native-select-dropdown'
 import { ScrollView } from 'react-native-gesture-handler';
 import * as ImagePicker from 'react-native-image-picker';
 import RadioGroup from 'react-native-radio-buttons-group';
+import { Select, Input, TextArea, IconButton } from "native-base";
+import Icon from 'react-native-vector-icons/AntDesign';
+import { useNavigation } from '@react-navigation/native';
+
 const radioButtonsData = [{
   id: '1', // acts as primary key, should be unique and non-empty string
   label: 'Virtual',
@@ -19,6 +23,8 @@ const radioButtonsData = [{
   value: 'InClass'
 }]
 export default function AddExamScreen() {
+  const navigation = useNavigation();
+
   const [value, setValue] = React.useState('first');
   const [date, setDate] = React.useState(new Date())
   const [open, setOpen] = React.useState(false)
@@ -37,27 +43,45 @@ export default function AddExamScreen() {
     setOpen(true)
   }
   return (
-    <View style={{ backgroundColor: "white", padding: 10, flex: 1 }}>
-
-      <ScrollView style={{ marginBottom: '28%' }}>
+    <View style={{ backgroundColor: "white", flex: 1 }}>
+      <ScrollView style={{ padding: 15, marginBottom: '28%' }}>
 
         <Text style={styles.title}>Add Exam</Text>
 
         <View style={{ marginVertical: 10 }}>
-          <TextInput
-            placeholder="Enter Title"
-            mode="outlined"
-            style={styles.input}
-          />
+          <Select accessibilityLabel="Choose Service" placeholder="Choose Service">
+            <Select.Item label="UX Research" value="ux" />
+            <Select.Item label="Web Development" value="web" />
+            <Select.Item label="Cross Platform Development" value="cross" />
+            <Select.Item label="UI Designing" value="ui" />
+            <Select.Item label="Backend Development" value="backend" />
+          </Select>
+
+        </View>
+
+        <View style={{ marginVertical: 10 }}>
+          <Input variant="outline" placeholder="Title" />
         </View>
         <View style={{ marginVertical: 10 }}>
-          <TextInput
-            placeholder="Enter End Time"
-            onPressIn={openDatePicker}
-            value={_date}
-            mode="outlined"
-            style={styles.input}
-          />
+          <View style={{ flexDirection: 'row' }}>
+            <Input
+              w={'90%'}
+              editable={false}
+              variant="outline"
+              defaultValue={_date}
+              placeholder="Start Date"
+            />
+            <IconButton
+              icon={
+                <Icon
+                  name="calendar"
+                  style={{ marginRight: 15 }}
+                  size={25}
+                  onPress={() => openDatePicker()}
+                />
+              }
+            />
+          </View>
           <DatePicker
             modal
             open={open}
@@ -74,27 +98,54 @@ export default function AddExamScreen() {
         </View>
 
         <View style={{ marginVertical: 10 }}>
-          <TextInput
-            placeholder="Enter Details"
-            multiline
-            numberOfLines={5}
-            editable
-            mode="outlined"
-            style={styles.multilineInput}
-          />
-        </View>
-        <View style={{ marginVertical: 10 }}>
-          <Button title={'Upload Image'} onPress={() => { }} />
-        </View>
-        <View style={{ marginVertical: 10 }}>
-          <Text style={styles.label}>Class Type</Text>
-          <RadioGroup
-            containerStyle={{ justifyContent: 'space-around', flex: 1 }}
-            layout='row'
-            radioButtons={radioButtonsData}
+          <View style={{ flexDirection: 'row' }}>
+            <Input
+              w={'90%'}
+              editable={false}
+              variant="outline"
+              defaultValue={_date}
+              placeholder="End Date"
+            />
+            <IconButton
+              icon={
+                <Icon
+                  name="calendar"
+                  style={{ marginRight: 15 }}
+                  size={25}
+                  onPress={() => openDatePicker()}
+                />
+              }
+            />
+          </View>
+          <DatePicker
+            modal
+            open={open}
+            date={date}
+            onConfirm={(date) => {
+              setOpen(false)
+              setDate(date)
+              _setDate(date.toString())
+            }}
+            onCancel={() => {
+              setOpen(false)
+            }}
           />
         </View>
 
+        <View style={{ marginVertical: 10 }}>
+          <TextArea h={20} placeholder="Description" autoCompleteType={undefined} />
+        </View>
+
+        <View style={{ marginVertical: 10 }}>
+          <Input
+            type='text'
+            placeholder="How many questions you want to add? (e.g: 10, 20 , 30)"
+
+          />
+        </View>
+        <View style={{ marginVertical: 10 }}>
+          <Button title={"Next"} onPress={navigation.navigate('AddAssignmentQuestions')}/>
+        </View>
       </ScrollView>
     </View>
   )
@@ -117,7 +168,7 @@ const styles = StyleSheet.create({
     fontWeight: "300",
   },
   input: {
-    height: 50,
+    height: 45,
     backgroundColor: 'white'
   },
   multilineInput: {
