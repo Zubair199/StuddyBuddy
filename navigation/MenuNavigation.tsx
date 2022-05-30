@@ -20,6 +20,9 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import SearchScreen from '../screens/SearchScreen';
 import ScheduleScreen from '../screens/ScheduleScreen';
 import NotificationScreen from '../screens/NotificationScreen';
+import AddAssignmentScreen from '../screens/AddAssignment';
+import AddExamScreen from '../screens/AddExam';
+import AddClassScreen from '../screens/AddClass';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -252,6 +255,11 @@ const HomeStackScreen = ({ navigation, route }: any) => {
         component={ClassDetailScreen}
       />
       <HomeStack.Screen
+        name="AddClass"
+        options={mainHeader}
+        component={AddClassScreen}
+      />
+      <HomeStack.Screen
         name="AssignmentDetails"
         options={mainHeader}
         component={AssignmentDetailScreen}
@@ -262,6 +270,11 @@ const HomeStackScreen = ({ navigation, route }: any) => {
         component={AssignmentScreen}
       />
       <HomeStack.Screen
+        name="AddAssignment"
+        options={mainHeader}
+        component={AddAssignmentScreen}
+      />
+      <HomeStack.Screen
         name="ExamDetails"
         options={mainHeader}
         component={ExamDetailScreen}
@@ -270,6 +283,11 @@ const HomeStackScreen = ({ navigation, route }: any) => {
         name="Exam"
         options={mainHeader}
         component={ExamScreen}
+      />
+      <HomeStack.Screen
+        name="AddExam"
+        options={mainHeader}
+        component={AddExamScreen}
       />
       <HomeStack.Screen
         name="SearchScreen"

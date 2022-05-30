@@ -1,163 +1,153 @@
-import * as React from 'react';
-import { ImageBackground, SafeAreaView, ScrollView, StyleSheet, Touchable, TouchableOpacity, TouchableOpacityBase, TextInput, View, FlatList, StatusBar } from 'react-native';
-import SchedulerSlider from '../components/ScheduleSlider';
-import { Text } from 'react-native-elements';
-import { useNavigation } from '@react-navigation/native';
+/***
+ * SettingsScreen
+ * Author: Sarath Ambegoda
+ * Created on: 2020/07/17
+ */
+/*
+================
+Modified by: Abdul Zahir
+Changes: Schedule Screen ui added
+Modified on: 2020/07/20
+*/
+import { useIsFocused, useNavigation } from "@react-navigation/native";
+import * as React from "react";
+import {
+  Alert,
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 
-export default function ScheduleScreen() {
+export default function SchedulesScreen() {
+  const isFocused = useIsFocused();
   const navigation = useNavigation();
+  // const onClose = () => navigation.navigate("ClassesScreen");
+  const [loader, setLoader] = React.useState(false);
+  const [data, setData] = React.useState<any>();
+  // const [grouped, setGrouped] = React.useState<any>();
+  const [groupList, setGroupList] = React.useState<any>();
 
   return (
-    <View style={{ padding: 10, backgroundColor: 'white', flex: 1 }}>
-      <ScrollView style={{ marginBottom: '25%' }}>
-        {
-          [0,1,2,3].map((classData: any, index: number) => (
-            <View key={index} style={styles.classBoxWrapper}>
-              <ImageBackground
-                resizeMode='cover'
-                source={require('../assets/images/bg.jpg')}
-                style={styles.classBoxImage}
+    <SafeAreaView style={styles.container}>
+      {/* <View style={styles.closeIconBox}>
+        <TouchableOpacity onPress={onClose}>
+          <Image
+            style={styles.closeIcon}
+            source={require("../assets/images/icons/x.png")}
+          />
+        </TouchableOpacity>
+      </View> */}
+
+      <Text style={styles.title}>My Schedule</Text>
+      {/* {!groupList || groupList.length == 0 ? (
+        <View style={styles.contentBox}>
+          <Text style={styles.emptySearchText}>
+            No Class Has Been Added Yet
+          </Text>
+        </View>
+      ) : ( */}
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
+
+        {[0].map((item: any, index: number) => (
+          <View key={index}>
+            <Text style={styles.groupTitle}>
+              {/* {item.classes[0].schedule.day},{" "}
+                {moment(item.date).format("MMMM DD")} */}
+                Monday, May 30
+            </Text>
+            {[0,1,2,3].map((classItem: any) => (
+              <TouchableOpacity
+                style={styles.groupBox}
               >
-                <View style={styles.overlay}>
-                  <View style={styles.classTakenBox}>
-                    <View style={styles.classTakenOverLay}>
-                      <Text style={styles.classTakenBoxText}>
-                        Virtual
-                      </Text>
-                    </View>
+                <Image source={require("../assets/images/bg.jpg") }
+                  style={styles.classImg}
+                />
+                <View style={styles.classInfo}>
+                  <View style={styles.levelBox}>
+                    <View
+                      style={
+                        styles.levelIntermediate
+                      }
+                    ></View>
+                    <Text style={styles.levelText}>intermediate</Text>
                   </View>
-                  <View style={styles.classBox}>
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate(props.screen)}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        justifyContent: "flex-end",
-                      }}
-                    >
-                      <View style={styles.levelBox}>
-                        <View
-                          style={styles.levelIntermediate}
-                        >
-                        </View>
-                        <Text style={styles.classBoxText}>
-                          Intermediate
-                        </Text>
-  
-                      </View>
-                      <Text style={styles.classBoxName}>
-                        Class Name
-                      </Text>
-                      <Text style={styles.classBoxInstructor}>
-                        Instructor Name
-                      </Text>
-                      <Text style={styles.classBoxDate}>
-                        Tuesday 12:00 - 13:00
-                      </Text>
-                      <Text style={styles.classBoxInstructor}>
-                        Class Type
-                      </Text>
-                      <Text style={styles.classBoxInstructor}>
-                        Class Status
-                      </Text>
-                    </TouchableOpacity>
+                  <View
+                    style={{
+                      flexWrap: "wrap",
+                      flexDirection: "row",
+                      width: "80%",
+                    }}
+                  >
+                    <Text style={styles.className}>Class Name</Text>
                   </View>
+                  <View style={{ flexDirection: "row" }}>
+                    <Text style={styles.studio}>John Doe</Text>
+                    {/* <View style={styles.dot}></View>
+                    <Text style={styles.studio}>{classItem.studio}</Text> */}
+                  </View>
+                  <Text style={styles.dayTime}>
+                    Monday &nbsp;
+                    12:00 &nbsp;-&nbsp; 14:00
+                  </Text>
+                  {/* {classItem.myJoinStatus &&
+                    classItem.myJoinStatus === "pending" && ( */}
+                      <Text style={styles.statusMsg}>
+                        Waiting For Approval
+                      </Text>
+                    {/* )}
+                  {classItem.status &&
+                    !classItem.myJoinStatus &&
+                    classItem.status === "pending" && (
+                      <Text style={styles.statusMsg}>
+                        Waiting For Admin Approval
+                      </Text>
+                    )} */}
                 </View>
-              </ImageBackground>
-            </View>
-          ))  
-        }
+              </TouchableOpacity>
+            ))}
+          </View>
+        ))}
       </ScrollView>
-    </View>
-  )
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
-  categoryText: {
-    textTransform: "uppercase",
-    fontSize: 20,
-    fontFamily: "roboto-light",
-    color: 'gray'
-    //marginTop: 10,
-  },
-  classTakenOverLay: {
-    // flex: 1,
-    marginLeft: 15,
-    backgroundColor: "rgba(0,0,0,0.3)",
-    height: 30,
-    justifyContent: "center"
-  },
-  classTakenBoxText: {
-    color: "#FFFFFF",
-    // alignSelf: "center",
-    fontSize: 13,
-    textTransform: "uppercase",
-    marginLeft: 5,
-  },
-
-  classTakenBox: {
-    paddingLeft: 0,
-    // paddingBottom: 10,
-    paddingTop: 0,
-    // width: 200,
+  container: {
     flex: 1,
-    // backgroundColor: "rgba(0,0,0,0.8)",
+    backgroundColor: "#ffffff",
+    paddingHorizontal: 15,
+    paddingBottom: 10,
   },
   scrollView: {
-    marginTop: 10,
-    // marginHorizontal: -1,
+    // marginTop: 10,
+    marginBottom: '28%',
   },
 
-  classBoxWrapper: {
-    height: "25%",
-    width: '100%',
-    overflow: "hidden",
-    // marginBottom: 22,
-    borderRadius: 5,
-    // marginHorizontal: 5,
-    padding: 5,
-    marginRight: 15,
-  },
-  classBoxImage: {
-    width: "100%",
-    height: "100%",
-    // position: "relative",
-  },
-
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.3)",
-  },
-  classBoxText: {
-    // marginLeft: 7,
-    color: "#FFFFFF",
-    fontSize: 13,
-    textTransform: "uppercase",
-    marginLeft: 5,
-  },
-  classBox: {
-    paddingLeft: 15,
-    paddingBottom: 10,
-    flex: 1,
-  },
-  levelBox: {
+  closeIconBox: {
     flexDirection: "row",
-
-    backgroundColor: "transparent",
+    justifyContent: "flex-end",
+  },
+  closeIcon: {
+    width: 14,
+    height: 14,
+    marginTop: 10,
   },
 
-  levelAdvance: {
-    width: 4,
-    height: 13,
-    backgroundColor: "#FF6565",
-    marginTop: 2,
-  },
-
-  levelBeginner: {
-    width: 4,
-    height: 13,
-    backgroundColor: "#01C75D",
-    marginTop: 2,
+  title: {
+    fontSize: 30,
+    textTransform: "uppercase",
+    textAlign: "center",
+    fontFamily: "roboto-light",
+    marginTop: 20,
+    fontWeight: "300",
   },
 
   levelIntermediate: {
@@ -167,66 +157,92 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
 
-  classBoxName: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontFamily: "roboto-regular",
+  groupTitle: {
+    fontSize: 20,
+    textTransform: "uppercase",
+    marginTop: 25,
+    fontWeight: "300",
   },
-  classBoxInstructor: {
-    color: "#FFFFFF",
-    fontSize: 15,
-    textTransform: "capitalize"
-  },
-  classBoxDate: {
-    color: "#FFFFFF",
-    fontSize: 15,
-  },
-  classBoxViews: {
-    color: "#FFFFFF",
-    fontSize: 15,
-    fontFamily: "roboto-regular",
-  },
-  classBoxSubscribers: {
-    color: "#FFFFFF",
-    fontSize: 18,
-  },
-  classBoxSubscribersIcon: {
-    width: 35,
-    height: 38,
-  },
-  heartBox: {
-    flexWrap: "wrap",
+
+  groupBox: {
     flexDirection: "row",
-    justifyContent: "flex-end",
+    marginTop: 20,
+    alignItems: "center",
   },
-  heartIcon: {
+
+  classImg: {
+    width: 120,
+    height: 120,
+    borderRadius: 5,
+  },
+
+  classInfo: {
+    // marginLeft: 20,
+    paddingHorizontal: 20,
+  },
+
+  levelBox: {
+    flexDirection: "row",
+  },
+
+  levelAdvance: {
+    width: 4,
+    height: 14,
+    backgroundColor: "#FF6565",
+    marginTop: 4,
+  },
+
+  levelBeginner: {
+    width: 4,
+    height: 14,
+    backgroundColor: "#01C75D",
+    marginTop: 4,
+  },
+
+  levelText: {
+    fontSize: 14,
+    marginLeft: 5,
+    textTransform: "uppercase",
+  },
+
+  className: {
+    fontSize: 16,
+    fontFamily: "roboto-regular",
+    marginTop: 5,
+  },
+  dot: {
+    height: 3,
+    width: 3,
+    backgroundColor: "black",
+    borderRadius: 100,
+    margin: 5,
     marginTop: 10,
-    marginRight: 10,
-    height: 20,
-    width: 22,
   },
 
-  pagination: {
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
+  studio: {
+    fontSize: 14,
+    fontWeight: "300",
   },
 
-  paginationIcon: {
-    color: "#4B5F79",
+  dayTime: {
+    fontSize: 14,
+    fontWeight: "200",
   },
-
-  noResultView: {
-    justifyContent: "center",
+  statusMsg: {
+    fontSize: 14,
+    fontWeight: "200",
+  },
+  contentBox: {
     flex: 1,
-    flexDirection: "row",
+    justifyContent: "center",
     alignItems: "center",
-    width: "100%",
   },
-  noResultText: {
+
+  emptySearchText: {
+    fontSize: 24,
+    fontFamily: "roboto-regular",
+    color: "#949599",
+    textTransform: "uppercase",
     textAlign: "center",
-    fontFamily: "roboto-light",
-    color: "#4b5f79",
   },
 });
