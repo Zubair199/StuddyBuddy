@@ -126,7 +126,7 @@ export default function AddAssignmentScreen() {
           onChange={onChangeEnd}
         />
       )} 
-      <Text>{"End Date" +date.toString()}</Text>
+      <Text>{"End Date" +dateEnd.toString()}</Text>
      
         
         </View>
