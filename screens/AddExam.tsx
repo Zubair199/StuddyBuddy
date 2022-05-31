@@ -144,13 +144,7 @@ export default function AddExamScreen() {
           />
         </View>
         <View style={{ marginVertical: 10 }}>
-          <Button title={"Next"}
-            onPress={() => navigation.reset({
-              index: 0,
-              routes: [{ name: 'AddExamQuestions' }],
-            })
-            }
-          />
+          <Button title={"Next"} onPress={()=>navigation.navigate('AddExamQuestions')}/>
         </View>
       </ScrollView>
     </View>
