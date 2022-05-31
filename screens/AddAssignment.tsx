@@ -1,7 +1,7 @@
 import { useIsFocused } from '@react-navigation/native';
 import moment from 'moment';
 import * as React from 'react';
-import { SafeAreaView, StyleSheet, Text, View, } from 'react-native';
+import { Alert, SafeAreaView, StyleSheet, Text, View, } from 'react-native';
 import { RadioButton, TextInput } from 'react-native-paper';
 import { Button } from 'react-native-elements';
 import DatePicker from 'react-native-date-picker'
@@ -12,6 +12,7 @@ import RadioGroup from 'react-native-radio-buttons-group';
 import { Select, Input, TextArea, IconButton } from "native-base";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
+import { ASSIGNMENT, AUTHENTICATIONS } from '../services/api.constants';
 
 const radioButtonsData = [{
   id: '1', // acts as primary key, should be unique and non-empty string
@@ -23,25 +24,88 @@ const radioButtonsData = [{
   value: 'InClass'
 }]
 export default function AddAssignmentScreen() {
-  const navigation = useNavigation();
 
   const [value, setValue] = React.useState('first');
   const [date, setDate] = React.useState(new Date())
   const [open, setOpen] = React.useState(false)
+  const [open1, setOpen1] = React.useState(false)
   const [_date, _setDate] = React.useState('')
   const [selectedLanguage, setSelectedLanguage] = React.useState();
   const [response, setResponse] = React.useState<any>(null);
+  const navigation = useNavigation();
 
-  const onButtonPress = React.useCallback((type, options) => {
-    if (type === 'capture') {
-      ImagePicker.launchCamera(options, setResponse);
-    } else {
-      ImagePicker.launchImageLibrary(options, setResponse);
-    }
-  }, []);
   function openDatePicker() {
     setOpen(true)
   }
+  function openDatePicker1() {
+    setOpen1(true)
+  }
+
+  // teacher:6295cc2b7d505307388d58fd
+  //   title:test assignment
+  // description:test 12
+  // questioncount:5
+  // subject:english
+  // startdate:31/5/2022
+  // enddate:31/5/2022
+
+  let [_startdate, _setStartdate] = React.useState(new Date())
+  let [_enddate, _setEnddate] = React.useState(new Date())
+
+
+  let [user, setUser] = React.useState("")
+  let [title, setTitle] = React.useState('')
+  let [description, setDescription] = React.useState('')
+  let [startdate, setStartdate] = React.useState('')
+  let [enddate, setEnddate] = React.useState('')
+  let [subject, setSubject] = React.useState('')
+  let [questionCount, setQuestionCount] = React.useState('')
+
+  function AddAssignment() {
+    if (title === '' && startdate === '' && enddate === '' && subject === '' && questionCount === '' && description === '') {
+      Alert.alert(
+        "All Fields are required",
+      );
+    }
+    else {
+      const body = {
+        teacher: user,
+        title: title,
+        startdate: startdate,
+        enddate: enddate,
+        subject: subject,
+        questioncount: questionCount,
+        description: description
+      }
+      console.log(body)
+      try {
+        let requestObj = {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        }
+        fetch(AUTHENTICATIONS.API_URL + ASSIGNMENT.CREATE, requestObj)
+          .then((response: any) => {
+            console.log(response)
+            navigation.navigate('AddAssignmentQuestions', { questionCount: questionCount })
+          })
+          .catch((err: any) => {
+            console.log(err)
+            console.log(err.response)
+          })
+      }
+      catch (exception) {
+        console.log('exception ', exception)
+      }
+    }
+  }
+  React.useEffect(() => {
+    setUser('6295cc2b7d505307388d58fd')
+  }, [])
+
   return (
     <View style={{ backgroundColor: "white", flex: 1 }}>
       <ScrollView style={{ padding: 15, marginBottom: '28%' }}>
@@ -49,7 +113,12 @@ export default function AddAssignmentScreen() {
         <Text style={styles.title}>Add Assignment</Text>
 
         <View style={{ marginVertical: 10 }}>
-          <Select accessibilityLabel="Choose Service" placeholder="Choose Service">
+          <Input variant="outline" placeholder="Enter Title"
+            onChangeText={(text) => { setTitle(text) }} />
+        </View>
+
+        <View style={{ marginVertical: 10 }}>
+          <Select accessibilityLabel="Choose Subject" placeholder="Choose Subject" onValueChange={itemValue => setSubject(itemValue)}>
             <Select.Item label="UX Research" value="ux" />
             <Select.Item label="Web Development" value="web" />
             <Select.Item label="Cross Platform Development" value="cross" />
@@ -60,15 +129,12 @@ export default function AddAssignmentScreen() {
         </View>
 
         <View style={{ marginVertical: 10 }}>
-          <Input variant="outline" placeholder="Title" />
-        </View>
-        <View style={{ marginVertical: 10 }}>
           <View style={{ flexDirection: 'row' }}>
             <Input
-              w={'90%'}
+              w={'88%'}
               editable={false}
               variant="outline"
-              defaultValue={_date}
+              defaultValue={startdate}
               placeholder="Start Date"
             />
             <IconButton
@@ -77,19 +143,29 @@ export default function AddAssignmentScreen() {
                   name="calendar"
                   style={{ marginRight: 15 }}
                   size={25}
-                  onPress={() => openDatePicker()}
+                  onPress={() => { console.log("preess"); openDatePicker() }}
                 />
               }
             />
+            {/* <TouchableOpacity
+              style={{ marginTop: 10, marginLeft: 8 }}
+              onPress={() =>{ console.log("preess"); openDatePicker()}}
+            >
+              <Icon
+                name="calendar"
+                style={{ marginRight: 15 }}
+                size={25}
+              />
+            </TouchableOpacity> */}
           </View>
           <DatePicker
             modal
             open={open}
-            date={date}
-            onConfirm={(date) => {
+            date={_startdate}
+            onConfirm={(text) => {
+              _setStartdate(text)
+              setStartdate(text.toString())
               setOpen(false)
-              setDate(date)
-              _setDate(date.toString())
             }}
             onCancel={() => {
               setOpen(false)
@@ -100,10 +176,10 @@ export default function AddAssignmentScreen() {
         <View style={{ marginVertical: 10 }}>
           <View style={{ flexDirection: 'row' }}>
             <Input
-              w={'90%'}
+              w={'88%'}
               editable={false}
               variant="outline"
-              defaultValue={_date}
+              defaultValue={enddate}
               placeholder="End Date"
             />
             <IconButton
@@ -112,39 +188,49 @@ export default function AddAssignmentScreen() {
                   name="calendar"
                   style={{ marginRight: 15 }}
                   size={25}
-                  onPress={() => openDatePicker()}
+                  onPress={() => { console.log("preess1"); openDatePicker1() }}
                 />
               }
             />
+            {/* <TouchableOpacity
+              style={{ marginTop: 10, marginLeft: 8 }}
+              onPress={() => { console.log("preess1"); openDatePicker1()} }
+            >
+              <Icon
+                name="calendar"
+                style={{ marginRight: 15 }}
+                size={25}
+              />
+            </TouchableOpacity> */}
           </View>
           <DatePicker
             modal
-            open={open}
-            date={date}
-            onConfirm={(date) => {
-              setOpen(false)
-              setDate(date)
-              _setDate(date.toString())
+            open={open1}
+            date={_enddate}
+            onConfirm={(text) => {
+              setOpen1(false)
+              setEnddate(text.toString())
+              _setEnddate(text)
             }}
             onCancel={() => {
-              setOpen(false)
+              setOpen1(false)
             }}
           />
         </View>
 
         <View style={{ marginVertical: 10 }}>
-          <TextArea h={20} placeholder="Description" autoCompleteType={undefined} />
+          <TextArea h={20} placeholder="Description" autoCompleteType={undefined} onChangeText={(text) => setDescription(text)} />
         </View>
 
         <View style={{ marginVertical: 10 }}>
           <Input
             type='text'
             placeholder="How many questions you want to add? (e.g: 10, 20 , 30)"
-
+            onChangeText={(text) => setQuestionCount(text)}
           />
         </View>
-        <View style={{ marginVertical: 10 }}>
-          <Button title={"Next"} onPress={()=>navigation.navigate('AddAssignmentQuestions')}/>
+        <View style={{ marginVertical: 10, marginBottom: 40 }}>
+          <Button title={"Next"} onPress={() => AddAssignment()} />
         </View>
       </ScrollView>
     </View>

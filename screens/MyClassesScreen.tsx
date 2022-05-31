@@ -11,10 +11,49 @@ import AssignmentSlider from '../components/AssignmentSlider';
 import ExamSlider from '../components/ExamSlider';
 import AddAssignmentScreen from './AddAssignment';
 import { FormControl, Modal, Button, Divider } from 'native-base';
+import { ASSIGNMENT, AUTHENTICATIONS, CLASS, EXAM } from '../services/api.constants';
 export default function MyClassesScreen() {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
   const [showModal, setShowModal] = React.useState(false);
+
+  const [classes, setClasses] = React.useState([])
+  const [exams, setExams] = React.useState([])
+  const [assignments, setAssignments] = React.useState([])
+  let [user, setUser] = React.useState("")
+
+  React.useEffect(() => {
+    setUser('6295cc2b7d505307388d58fd')
+    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES_BY_TEACHER_ID + '6295cc2b7d505307388d58fd')
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log('classes ' , responseJson.data)
+        setClasses(responseJson.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    fetch(AUTHENTICATIONS.API_URL + EXAM.GET_ALL_ACTIVE_EXAMS_BY_TEACHER_ID + '6295cc2b7d505307388d58fd')
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log('exams ' , responseJson.data)
+        setExams(responseJson.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    fetch(AUTHENTICATIONS.API_URL + ASSIGNMENT.GET_ALL_ACTIVE_ASSIGNMENTS_BY_TEACHER_ID + '6295cc2b7d505307388d58fd')
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log('assignments ' , responseJson.data)
+        setAssignments(responseJson.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+
+  }, [])
+
   return (
     <View style={{ padding: 10, backgroundColor: 'white', flex: 1 }}>
       {/* <AddAssignmentScreen/> */}
@@ -96,13 +135,13 @@ export default function MyClassesScreen() {
           </Button>
         </View>
         <View style={{ marginVertical: 10 }}>
-          <ClassSlider data={[0, 1, 2, 3, 4]} categoryText={"My Upcoming Classes"} screen={"ClassDetails"} />
+          <ClassSlider data={classes} categoryText={"My Upcoming Classes"} screen={"ClassDetails"} />
         </View>
         <View style={{ marginVertical: 10 }}>
-          <AssignmentSlider data={[0, 1, 2, 3]} categoryText={"My Assignments"} screen={"AssignmentDetails"} />
+          <AssignmentSlider data={assignments} categoryText={"My Assignments"} screen={"AssignmentDetails"} />
         </View>
         <View style={{ marginVertical: 10 }}>
-          <ExamSlider data={[0, 1, 2, 3, 4, 5]} categoryText={"My Exams"} screen={"ExamDetails"} />
+          <ExamSlider data={exams} categoryText={"My Exams"} screen={"ExamDetails"} />
         </View>
       </ScrollView>
       {/* <FAB title={<Icon name="plus" size={20} color={'white'} style={{fontWeight: 'bold'}}/>} color='#3878ee' placement='right' style={{ marginBottom: '25%' }} onPress={()=>{toggleModal()}}/> */}

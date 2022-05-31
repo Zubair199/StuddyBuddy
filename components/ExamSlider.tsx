@@ -8,7 +8,7 @@ interface Iprops {
   screen: string;
   categoryText: string;
 }
-export default function AssignmentSlider(props: Iprops) {
+export default function ExamSlider(props: Iprops) {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
 
@@ -17,44 +17,44 @@ export default function AssignmentSlider(props: Iprops) {
     <View style={{ padding: 10 }}>
       <Text style={styles.categoryText}>{props.categoryText}</Text>
       <View style={{ height: 180 }}>
-        {/* {props.searchEmpty || !classList || classList.length == 0 ? (
+        {!props.data || props.data.length == 0 ? (
           <View style={styles.noResultView}>
-            <Text style={styles.noResultText}>NO CLASSES AVAILABLE !</Text>
+            <Text style={styles.noResultText}>NO EXAM AVAILABLE !</Text>
           </View>
-        ) : ( */}
-        <ScrollView style={styles.scrollView} horizontal={true}>
-          {
-            props.data.map((classData: any, index: number) => (
-              <View key={index} style={styles.classBoxWrapper}>
-                <ImageBackground
-                  resizeMode='cover'
-                  source={require('../assets/images/bg.jpg')}
-                  style={styles.classBoxImage}
-                >
-                  <View style={styles.overlay}>
-                    <View style={styles.classTakenBox}>
-                      <View style={styles.classTakenOverLay}>
-                        <Text style={styles.classTakenBoxText}>
-                          Virtual
-                        </Text>
+        ) : (
+          <ScrollView style={styles.scrollView} horizontal={true}>
+            {
+              props.data.map((classData: any, index: number) => (
+                <View key={index} style={styles.classBoxWrapper}>
+                  <ImageBackground
+                    resizeMode='cover'
+                    source={require('../assets/images/bg.jpg')}
+                    style={styles.classBoxImage}
+                  >
+                    <View style={styles.overlay}>
+                      <View style={styles.classTakenBox}>
+                        <View style={styles.classTakenOverLay}>
+                          <Text style={styles.classTakenBoxText}>
+                            Virtual
+                          </Text>
+                        </View>
                       </View>
-                    </View>
-                    <View style={styles.classBox}>
-                      <TouchableOpacity
-                        onPress={
-                          () => navigation.reset({
-                            index: 0,
-                            routes: [{ name: props.screen }],
-                          })
-                        }
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          justifyContent: "flex-end",
-                        }}
-                      >
-                        <View style={styles.levelBox}>
-                          {/* <View
+                      <View style={styles.classBox}>
+                        <TouchableOpacity
+                          onPress={
+                            () => navigation.reset({
+                              index: 0,
+                              routes: [{ name: props.screen }],
+                            })
+                          }
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            justifyContent: "flex-end",
+                          }}
+                        >
+                          <View style={styles.levelBox}>
+                            {/* <View
                             style={styles.levelIntermediate}
                           >
                           </View>
@@ -62,31 +62,31 @@ export default function AssignmentSlider(props: Iprops) {
                             Intermediate
                           </Text> */}
 
-                        </View>
-                        <Text style={styles.classBoxName}>
-                          {/* Class Name */}
-                        </Text>
-                        <Text style={styles.classBoxInstructor}>
-                          {/* Instructor Name */}
-                        </Text>
-                        <Text style={styles.classBoxDate}>
-                          {/* Tuesday 12:00 - 13:00 */}
-                        </Text>
-                        <Text style={styles.classBoxInstructor}>
-                          Exam 1
-                        </Text>
-                        <Text style={styles.classBoxInstructor}>
-                          28-05-2022
-                        </Text>
-                      </TouchableOpacity>
+                          </View>
+                          <Text style={styles.classBoxName}>
+                            {/* Class Name */}
+                          </Text>
+                          <Text style={styles.classBoxInstructor}>
+                            {/* Instructor Name */}
+                          </Text>
+                          <Text style={styles.classBoxDate}>
+                            {/* Tuesday 12:00 - 13:00 */}
+                          </Text>
+                          <Text style={styles.classBoxInstructor}>
+                            Exam 1
+                          </Text>
+                          <Text style={styles.classBoxInstructor}>
+                            28-05-2022
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
                     </View>
-                  </View>
-                </ImageBackground>
-              </View>
-            ))
-          }
-        </ScrollView>
-        {/* )} */}
+                  </ImageBackground>
+                </View>
+              ))
+            }
+          </ScrollView>
+        )}
       </View>
     </View>
 

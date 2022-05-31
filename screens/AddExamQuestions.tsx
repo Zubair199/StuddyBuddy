@@ -4,14 +4,24 @@ import { ScrollView } from 'react-native-gesture-handler'
 import { Divider, Input, TextArea } from 'native-base';
 import { Button } from 'react-native-elements';
 
-export default function AddExamQuestions() {
+export default function AddExamQuestions({ route }) {
+    const { questionCount } = route.params;
+
+    let [data, setData] = React.useState([])
+    React.useEffect(() => {
+        console.log(questionCount)
+        let arr = Array.from({length: questionCount}, (_, i) => i + 1)
+        console.log(arr)
+        setData(arr)
+    }, [])
+
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
             <ScrollView style={{ padding: 15, marginBottom: '28%' }}>
 
                 <Text style={styles.title}>Add Questions</Text>
                 {
-                    [0, 1, 2, 3].map((item, index) => (
+                    data.map((item, index) => (
                         <View key={index} style={{ marginBottom: 20 }}>
                             <View style={{ marginVertical: 10 }}>
                                 <Text style={{ fontWeight: '400' }}>Enter Question {index + 1}</Text>
@@ -34,7 +44,7 @@ export default function AddExamQuestions() {
                             </View>
                             <View style={{ marginVertical: 10 }}>
                                 <Input variant="outline" placeholder="Enter Answer" />
-                            </View>                            
+                            </View>
                             <Divider my="2" _light={{
                                 bg: "muted.300"
                             }} />
@@ -42,7 +52,7 @@ export default function AddExamQuestions() {
                     ))
                 }
 
-                <View style={{marginBottom: 40}}>
+                <View style={{ marginBottom: 40 }}>
                     <Button title={"Submit"} />
                 </View>
             </ScrollView>

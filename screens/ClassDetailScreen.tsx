@@ -4,12 +4,26 @@ import { ImageBackground, Linking, SafeAreaView, ScrollView, StyleSheet, Touchab
 import { Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
+import { AUTHENTICATIONS, CLASS } from '../services/api.constants';
 
 export default function ClassDetailScreen() {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
 
-  React.useEffect(() => { }, [isFocused]);
+  const [class, setClass] = React.useState(null)
+  React.useEffect(() => { 
+
+    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_CLASS_BY_CLASS_ID)
+    .then((response) => response.json())
+    .then((responseJson) => {
+      console.log('classes ' , responseJson.data)
+      setClass(responseJson.data)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+
+  }, []);
   return (
     <View style={styles.container}>
       <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15 }}>
