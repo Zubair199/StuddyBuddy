@@ -21,6 +21,7 @@ import {
   View,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { AUTHENTICATIONS, CLASS } from "../services/api.constants";
 
 export default function SchedulesScreen() {
   const isFocused = useIsFocused();
@@ -30,6 +31,25 @@ export default function SchedulesScreen() {
   const [data, setData] = React.useState<any>();
   // const [grouped, setGrouped] = React.useState<any>();
   const [groupList, setGroupList] = React.useState<any>();
+  const [classes, setClasses] = React.useState([])
+  const [search, setSearch] = React.useState([])
+
+  let [user, setUser] = React.useState("")
+
+  React.useEffect(() => {
+    setUser('6295cc2b7d505307388d58fd')
+    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES_BY_TEACHER_ID + '6295cc2b7d505307388d58fd')
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log('classes ', responseJson.data)
+        setClasses(responseJson.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+
+  }, [])
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -50,24 +70,24 @@ export default function SchedulesScreen() {
           </Text>
         </View>
       ) : ( */}
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-      >
-
-        {[0].map((item: any, index: number) => (
-          <View key={index}>
-            <Text style={styles.groupTitle}>
-              {/* {item.classes[0].schedule.day},{" "}
-                {moment(item.date).format("MMMM DD")} */}
-                Monday, May 30
-            </Text>
-            {[0,1,2,3].map((classItem: any) => (
+      {!classes || classes.length == 0 ? (
+        <View style={styles.contentBox}>
+          <Text style={styles.emptySearchText}>
+            No Class Has Been Found
+          </Text>
+        </View>
+      ) : (
+        <ScrollView
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+        >
+          <View >
+            {classes.map((classItem) => (
               <TouchableOpacity
                 style={styles.groupBox}
                 key={classItem}
               >
-                <Image source={require("../assets/images/bg.jpg") }
+                <Image source={require("../assets/images/bg.jpg")}
                   style={styles.classImg}
                 />
                 <View style={styles.classInfo}>
@@ -77,7 +97,7 @@ export default function SchedulesScreen() {
                         styles.levelIntermediate
                       }
                     ></View>
-                    <Text style={styles.levelText}>intermediate</Text>
+                    <Text style={styles.levelText}>{classItem.level}</Text>
                   </View>
                   <View
                     style={{
@@ -86,10 +106,10 @@ export default function SchedulesScreen() {
                       width: "80%",
                     }}
                   >
-                    <Text style={styles.className}>Class Name</Text>
+                    <Text style={styles.className}>{classItem.name}</Text>
                   </View>
                   <View style={{ flexDirection: "row" }}>
-                    <Text style={styles.studio}>John Doe</Text>
+                    <Text style={styles.studio}>{classItem.teacher.username}</Text>
                     {/* <View style={styles.dot}></View>
                     <Text style={styles.studio}>{classItem.studio}</Text> */}
                   </View>
@@ -99,10 +119,10 @@ export default function SchedulesScreen() {
                   </Text>
                   {/* {classItem.myJoinStatus &&
                     classItem.myJoinStatus === "pending" && ( */}
-                      <Text style={styles.statusMsg}>
-                        Waiting For Approval
-                      </Text>
-                    {/* )}
+                  <Text style={styles.statusMsg}>
+                    {classItem.status}
+                  </Text>
+                  {/* )}
                   {classItem.status &&
                     !classItem.myJoinStatus &&
                     classItem.status === "pending" && (
@@ -114,8 +134,8 @@ export default function SchedulesScreen() {
               </TouchableOpacity>
             ))}
           </View>
-        ))}
-      </ScrollView>
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }
