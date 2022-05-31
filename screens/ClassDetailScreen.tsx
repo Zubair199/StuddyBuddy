@@ -6,131 +6,138 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 import { AUTHENTICATIONS, CLASS } from '../services/api.constants';
 
-export default function ClassDetailScreen() {
+export default function ClassDetailScreen({route}) {
+  const { classID } = route.params
   const navigation = useNavigation();
   const isFocused = useIsFocused();
 
-  const [class, setClass] = React.useState(null)
-  React.useEffect(() => { 
+  const [_class, setClass] = React.useState(null)
+  React.useEffect(() => {
 
-    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_CLASS_BY_CLASS_ID)
-    .then((response) => response.json())
-    .then((responseJson) => {
-      console.log('classes ' , responseJson.data)
-      setClass(responseJson.data)
-    })
-    .catch(err => {
-      console.log(err)
-    })
+    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_CLASS_BY_CLASS_ID + classID)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log('classes ', responseJson.data)
+        setClass(responseJson.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
 
   }, []);
   return (
     <View style={styles.container}>
       <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15 }}>
-        <TouchableOpacity style={{ marginTop: 5 }} 
-        onPress={() => navigation.reset({
-          index: 0,
-          routes: [{ name: 'Classes' }],
-        })}>
+        <TouchableOpacity style={{ marginTop: 5 }}
+          onPress={() => navigation.reset({
+            index: 0,
+            routes: [{ name: 'Classes' }],
+          })}>
           <Icon color={'black'} name="leftcircleo" size={25} />
         </TouchableOpacity>
         <Text style={styles.title}>Class Details</Text>
       </View>
-      <ScrollView style={{ marginBottom: '25%', padding: 15 }}>
-        <View >
-          {/* header starts here */}
-          <View style={{ marginTop: 10 }}>
-            <ImageBackground
-              resizeMode='cover'
-              source={require("../assets/images/bg.jpg")}
-              style={styles.classBoxImage}
-              imageStyle={{ borderRadius: 5 }}
-            >
-              <View style={styles.overlay}>
-                <View style={styles.levelBox}>
-                  <View style={styles.levelIntermediate}></View>
-                  <Text style={styles.classBoxText}>Intermediate</Text>
+      {
+        _class !== null
+        &&
+        <ScrollView style={{ marginBottom: '25%', padding: 15 }}>
+          <View >
+            {/* header starts here */}
+            <View style={{ marginTop: 10 }}>
+              <ImageBackground
+                resizeMode='cover'
+                source={require("../assets/images/bg.jpg")}
+                style={styles.classBoxImage}
+                imageStyle={{ borderRadius: 5 }}
+              >
+                <View style={styles.overlay}>
+                  <View style={styles.levelBox}>
+                    <View style={styles.levelIntermediate}></View>
+                    <Text style={styles.classBoxText}>{_class.level}</Text>
+                  </View>
+                  <Text style={styles.classBoxName}>{_class.name}</Text>
+                  <Text style={styles.classBoxInstructor}>
+                    {_class.teacher.username}
+                  </Text>
+                  <Text style={styles.classBoxDate}>
+                    Tuesday 12:00 - 13:00
+                  </Text>
+                  <Text style={styles.classBoxInstructor}>
+                    {_class.subject}
+                  </Text>
+                  <Text style={styles.classBoxInstructor}>
+                    {_class.status}
+                  </Text>
                 </View>
-                <Text style={styles.classBoxName}>Class Name</Text>
-                <Text style={styles.classBoxInstructor}>
-                  Instructor Name
-                </Text>
-                <Text style={styles.classBoxDate}>
-                  Tuesday 12:00 - 13:00
-                </Text>
-                <Text style={styles.classBoxInstructor}>
-                  Class Type
-                </Text>
-                <Text style={styles.classBoxInstructor}>
-                  Class Status
+              </ImageBackground>
+              {/* header ends here */}
+
+              {/* price tags start here */}
+              {/* this will be render if student has not already joined the class */}
+              <View style={styles.joinBox}>
+                <Text style={styles.cost}>
+                  {/* Cost: &#36;{12} */}
+                  Max. Students : {_class.maxStudents}
                 </Text>
               </View>
-            </ImageBackground>
-            {/* header ends here */}
 
-            {/* price tags start here */}
-            {/* this will be render if student has not already joined the class */}
-            <View style={styles.joinBox}>
-              <Text style={styles.cost}>Cost: &#36;{12}</Text>
-            </View>
-
-            {/* price ends here */}
+              {/* price ends here */}
 
 
-            {/* Class Location Starts here */}
-            <View>
-              <Text style={styles.heading}>Class Location</Text>
-              <Text style={styles.text}>CR 4 EE Building</Text>
-            </View>
-            {/* Class Location ends here */}
+              {/* Class Location Starts here */}
+              {/* <View>
+                <Text style={styles.heading}>Class Location</Text>
+                <Text style={styles.text}>CR 4 EE Building</Text>
+              </View> */}
+              {/* Class Location ends here */}
 
 
-            {/* Language section starts here */}
-            <View style={styles.languageBoxLanguage}>
-              <View style={styles.languageWithIcon}>
-                <Text style={styles.languageAttributesHeading}>Languages</Text>
-              </View>
-              <View style={styles.language}>
-                <View
-                  style={{ flexDirection: "row" }}
-                >
-                  <Text style={styles.languageText}>English</Text>
+              {/* Language section starts here */}
+              <View style={styles.languageBoxLanguage}>
+                <View style={styles.languageWithIcon}>
+                  <Text style={styles.languageAttributesHeading}>Languages</Text>
+                </View>
+                <View style={styles.language}>
+                  <View
+                    style={{ flexDirection: "row" }}
+                  >
+                    <Text style={styles.languageText}>{_class.language}</Text>
+                  </View>
                 </View>
               </View>
-            </View>
-            {/* Language section ends here */}
+              {/* Language section ends here */}
 
-            {/* Announcements Starts here */}
-            <Text style={styles.heading}>Announcements</Text>
-            <Text style={styles.text}>class announcements</Text>
-            {/* Announcements ends here */}
+              {/* Announcements Starts here */}
+              {/* <Text style={styles.heading}>Announcements</Text>
+              <Text style={styles.text}>class announcements</Text> */}
+              {/* Announcements ends here */}
 
-            {/* Topics & Instructions Starts here */}
-            <Text style={styles.heading}>Topics and Instructions</Text>
-            <Text style={styles.text}>class topics</Text>
-            {/* Topics & Instructions ends here */}
+              {/* Topics & Instructions Starts here */}
+              {/* <Text style={styles.heading}>Topics and Instructions</Text>
+              <Text style={styles.text}>class topics</Text> */}
+              {/* Topics & Instructions ends here */}
 
-            {/* connectivity link for enrolled students Starts here */}
-            {/* <Text style={styles.heading}>Pre Recorded Class Link</Text> */}
-            <Text style={styles.heading}>Class Link</Text>
+              {/* connectivity link for enrolled students Starts here */}
+              {/* <Text style={styles.heading}>Pre Recorded Class Link</Text> */}
+              {/* <Text style={styles.heading}>Class Link</Text>
 
-            <TouchableOpacity
-              onPress={() => Linking.openURL("https://www.google.com/")}
-            >
-              <Text style={styles.text}>connectivityLink</Text>
-            </TouchableOpacity>
-            {/* connectivity link for enrolled students ends here */}
+              <TouchableOpacity
+                onPress={() => Linking.openURL("https://www.google.com/")}
+              >
+                <Text style={styles.text}>connectivityLink</Text>
+              </TouchableOpacity> */}
+              {/* connectivity link for enrolled students ends here */}
 
-            {/* Schedule Starts here */}
-            <Text style={styles.heading}>Schedule</Text>
-            <Text style={styles.text}>
-              Day: Tuesday
-              Time: 12:00 - 13:00
-            </Text>
-            {/* Schedule ends here */}
+              {/* Schedule Starts here */}
+              {/* <Text style={styles.heading}>Schedule</Text>
+              <Text style={styles.text}>
+                Day: Tuesday
+                Time: 12:00 - 13:00
+              </Text> */}
+              {/* Schedule ends here */}
 
-            {/* classes starts here */}
-            {
+              {/* classes starts here */}
+              {
         /*classData.documents.length === 0 ? null : (
         //   <>
         //     <Text style={styles.heading}>Instructor Uploads</Text>
@@ -167,16 +174,19 @@ export default function ClassDetailScreen() {
         // )
         */}
 
-            {/* classes ends here */}
+              {/* classes ends here */}
 
-            {/* Enrolled Students Starts here */}
-            <Text style={styles.heading}>Students Enrolled</Text>
-            <Text style={styles.text}>{5}</Text>
-            {/* Enrolled Students ends here */}
+              {/* Enrolled Students Starts here */}
+              {/* <Text style={styles.heading}>Students Enrolled</Text>
+              <Text style={styles.text}>{5}</Text> */}
+              {/* Enrolled Students ends here */}
 
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+
+      }
+
     </View>
 
   )

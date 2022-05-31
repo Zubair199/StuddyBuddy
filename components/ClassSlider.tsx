@@ -44,7 +44,7 @@ export default function ClassSlider(props: Iprops) {
                           onPress={
                             () => navigation.reset({
                               index: 0,
-                              routes: [{ name: props.screen }],
+                              routes: [{ name: props.screen, params: { classID: classData._id }, }],
                             })
                           }
                           style={{

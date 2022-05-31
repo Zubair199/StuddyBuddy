@@ -24,6 +24,7 @@ import {
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import Icon from 'react-native-vector-icons/AntDesign';
+import { AUTHENTICATIONS, CLASS } from "../services/api.constants";
 
 export default function SearchScreen() {
   const isFocused = useIsFocused();
@@ -33,6 +34,40 @@ export default function SearchScreen() {
   const [data, setData] = React.useState<any>();
   // const [grouped, setGrouped] = React.useState<any>();
   const [groupList, setGroupList] = React.useState<any>();
+
+  const [classes, setClasses] = React.useState([])
+  const [search, setSearch] = React.useState([])
+
+  let [user, setUser] = React.useState("")
+
+  React.useEffect(() => {
+    setUser('6295cc2b7d505307388d58fd')
+    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES_BY_TEACHER_ID + '6295cc2b7d505307388d58fd')
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log('classes ', responseJson.data)
+        setClasses(responseJson.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+
+  }, [])
+
+  function searchClasses(text) {
+    let backup = classes;
+    let backup1 = classes;
+    backup = backup.filter(val => {
+      return val.name.toString().toLowerCase().includes(text.toLowerCase())
+    })
+    console.log(backup.length)
+    if (backup.length !== 0) {
+      setClasses(backup)
+    }
+    else {
+      setClasses(backup1)
+    }
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -44,67 +79,72 @@ export default function SearchScreen() {
           />
         </TouchableOpacity>
       </View> */}
+      <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: "center", marginTop: 15 }}>
+        <TextInput
+          placeholder='Search...' style={{
+            width: '100%', borderWidth: 1,
+            borderColor: 'lightgray', borderRadius: 10, height: 40
+          }}
+          onChangeText={(text) => { searchClasses(text) }}
+        />
+        <TouchableOpacity>
+          <Icon name="search1" size={20} style={{ marginLeft: -35 }} />
+        </TouchableOpacity>
+      </View>
 
-      {/* {!groupList || groupList.length == 0 ? (
+      {!classes || classes.length == 0 ? (
         <View style={styles.contentBox}>
           <Text style={styles.emptySearchText}>
-            No Class Has Been Added Yet
+            No Class Has Been Found
           </Text>
         </View>
-      ) : ( */}
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: "center", marginTop: 15 }}>
-          <TextInput placeholder='Search...' style={{ width: '100%', borderWidth: 1, borderColor: 'lightgray', borderRadius: 10, height: 40 }} />
-          <TouchableOpacity>
-            <Icon name="search1" size={20} style={{ marginLeft: -35 }} />
-          </TouchableOpacity>
-        </View>
-
-        <View >
-          {[0, 1, 2, 3].map((classItem: any) => (
-            <TouchableOpacity
-              style={styles.groupBox}
-              key={classItem}
-            >
-              <Image source={require("../assets/images/bg.jpg")}
-                style={styles.classImg}
-              />
-              <View style={styles.classInfo}>
-                <View style={styles.levelBox}>
+      ) : (
+        <ScrollView
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+        >
+          <View >
+            {classes.map((classItem) => (
+              <TouchableOpacity
+                style={styles.groupBox}
+                key={classItem}
+              >
+                <Image source={require("../assets/images/bg.jpg")}
+                  style={styles.classImg}
+                />
+                <View style={styles.classInfo}>
+                  <View style={styles.levelBox}>
+                    <View
+                      style={
+                        styles.levelIntermediate
+                      }
+                    ></View>
+                    <Text style={styles.levelText}>{classItem.level}</Text>
+                  </View>
                   <View
-                    style={
-                      styles.levelIntermediate
-                    }
-                  ></View>
-                  <Text style={styles.levelText}>intermediate</Text>
-                </View>
-                <View
-                  style={{
-                    flexWrap: "wrap",
-                    flexDirection: "row",
-                    width: "80%",
-                  }}
-                >
-                  <Text style={styles.className}>Class Name</Text>
-                </View>
-                <View style={{ flexDirection: "row" }}>
-                  <Text style={styles.studio}>John Doe</Text>
-                  {/* <View style={styles.dot}></View>
+                    style={{
+                      flexWrap: "wrap",
+                      flexDirection: "row",
+                      width: "80%",
+                    }}
+                  >
+                    <Text style={styles.className}>{classItem.name}</Text>
+                  </View>
+                  <View style={{ flexDirection: "row" }}>
+                    <Text style={styles.studio}>{classItem.teacher.username}</Text>
+                    {/* <View style={styles.dot}></View>
                     <Text style={styles.studio}>{classItem.studio}</Text> */}
-                </View>
-                <Text style={styles.dayTime}>
-                  Monday &nbsp;
-                  12:00 &nbsp;-&nbsp; 14:00
-                </Text>
-                {/* {classItem.myJoinStatus &&
+                  </View>
+                  <Text style={styles.dayTime}>
+                    Monday &nbsp;
+                    12:00 &nbsp;-&nbsp; 14:00
+                  </Text>
+                  {/* {classItem.myJoinStatus &&
                     classItem.myJoinStatus === "pending" && ( */}
-                <Text style={styles.statusMsg}>
-                  Waiting For Approval
-                </Text>
-                {/* )}
+                  <Text style={styles.statusMsg}>
+                    {classItem.status}
+                  </Text>
+                  {/* )}
                   {classItem.status &&
                     !classItem.myJoinStatus &&
                     classItem.status === "pending" && (
@@ -112,11 +152,12 @@ export default function SearchScreen() {
                         Waiting For Admin Approval
                       </Text>
                     )} */}
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </ScrollView>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }
