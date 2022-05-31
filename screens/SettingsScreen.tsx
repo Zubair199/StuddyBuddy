@@ -299,7 +299,7 @@ export default function SettingsScreen() {
           </View>
 
 
-          <View style={styles.groupBox}>
+          {/* <View style={styles.groupBox}>
             <Text style={styles.label}>Profile Privacy</Text>
             <Switch
               trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -307,7 +307,7 @@ export default function SettingsScreen() {
               ios_backgroundColor="#3e3e3e"
               onValueChange={toggleSwitch}
               value={isEnabled}
-            />
+            /> */}
             {/* toggle button for faceId options starts here */}
             {/* <Switch /> */}
             {/* <TouchableOpacity onPress={() => {
@@ -330,8 +330,8 @@ export default function SettingsScreen() {
               />
             )}
           </TouchableOpacity> */}
-          </View>
-
+          {/* </View> */}
+{/* 
           <View style={styles.groupBox}>
           <Text style={styles.label}>Enable Chat</Text>
           <Switch
@@ -340,7 +340,7 @@ export default function SettingsScreen() {
               ios_backgroundColor="#3e3e3e"
               onValueChange={toggleSwitch}
               value={isEnabled}
-            />
+            /> */}
           {/* <TouchableOpacity onPress={() => {
             {
               toggleChat ?
@@ -361,9 +361,9 @@ export default function SettingsScreen() {
               />
             )}
           </TouchableOpacity> */}
-        </View>
+        {/* </View> */}
 
-          <View style={styles.groupBox}>
+          {/* <View style={styles.groupBox}>
           <Text style={styles.label}>Automatic Time Zone</Text>
           <Switch
               trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -371,7 +371,7 @@ export default function SettingsScreen() {
               ios_backgroundColor="#3e3e3e"
               onValueChange={toggleSwitch}
               value={isEnabled}
-            />
+            /> */}
           {/* toggle button here */}
           {/* <Switch /> */}
           {/* <TouchableOpacity onPress={setAutomaticNetworkProvidedTimeZone}>
@@ -387,7 +387,7 @@ export default function SettingsScreen() {
               />
             )}
           </TouchableOpacity> */}
-        </View>
+        {/* </View> */}
           {/* Time zone dropdown starts here */}
           {/* <View style={styles.dropdownBoxWrapper}>
           {timeZoneToggle ?
@@ -421,7 +421,7 @@ export default function SettingsScreen() {
               {/* You can read DeepMove's &nbsp; */}
               <Text style={{ textAlign: "center" }}>
                 <Text
-                  onPress={() => Linking.openURL('https://deepmove.com/terms-and-conditions/')}
+                  onPress={() => Linking.openURL('https://www.google.com/')}
                   style={{
 
                     textDecorationLine: "underline",
@@ -432,7 +432,7 @@ export default function SettingsScreen() {
                 </Text>
                 &nbsp;and&nbsp;
                 <Text
-                  onPress={() => Linking.openURL('https://deepmove.com/privacy-policy/')}
+                  onPress={() => Linking.openURL('https://www.google.com/')}
                   style={{
 
                     textDecorationLine: "underline",

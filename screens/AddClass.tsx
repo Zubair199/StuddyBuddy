@@ -9,6 +9,10 @@ import SelectDropdown from 'react-native-select-dropdown'
 import { ScrollView } from 'react-native-gesture-handler';
 import * as ImagePicker from 'react-native-image-picker';
 import RadioGroup from 'react-native-radio-buttons-group';
+import { Select, Input, TextArea, IconButton } from "native-base";
+import Icon from 'react-native-vector-icons/AntDesign';
+import { useNavigation } from '@react-navigation/native';
+
 const radioButtonsData = [{
   id: '1', // acts as primary key, should be unique and non-empty string
   label: 'Virtual',
@@ -25,6 +29,7 @@ export default function AddClassScreen() {
   const [_date, _setDate] = React.useState('')
   const [selectedLanguage, setSelectedLanguage] = React.useState();
   const [response, setResponse] = React.useState<any>(null);
+  const navigation = useNavigation();
 
   const onButtonPress = React.useCallback((type, options) => {
     if (type === 'capture') {
@@ -37,27 +42,54 @@ export default function AddClassScreen() {
     setOpen(true)
   }
   return (
-    <View style={{ backgroundColor: "white", padding: 10, flex: 1 }}>
+    <View style={{ backgroundColor: "white", flex: 1 }}>
 
-      <ScrollView style={{ marginBottom: '28%' }}>
+      <ScrollView style={{ padding: 15, marginBottom: '28%' }}>
 
         <Text style={styles.title}>Add Class</Text>
 
         <View style={{ marginVertical: 10 }}>
-          <TextInput
-            placeholder="Enter Title"
-            mode="outlined"
-            style={styles.input}
-          />
+          <Select accessibilityLabel="Choose Subject" placeholder="Choose Subject">
+            <Select.Item label="UX Research" value="ux" />
+            <Select.Item label="Web Development" value="web" />
+            <Select.Item label="Cross Platform Development" value="cross" />
+            <Select.Item label="UI Designing" value="ui" />
+            <Select.Item label="Backend Development" value="backend" />
+          </Select>
+
         </View>
+
         <View style={{ marginVertical: 10 }}>
-          <TextInput
-            placeholder="Enter End Time"
-            onPressIn={openDatePicker}
-            value={_date}
-            mode="outlined"
-            style={styles.input}
-          />
+          <Select accessibilityLabel="Choose Level" placeholder="Choose Level">
+            <Select.Item label="UX Research" value="ux" />
+            <Select.Item label="Web Development" value="web" />
+            <Select.Item label="Cross Platform Development" value="cross" />
+            <Select.Item label="UI Designing" value="ui" />
+            <Select.Item label="Backend Development" value="backend" />
+          </Select>
+
+        </View>
+
+        <View style={{ marginVertical: 10 }}>
+          <View style={{ flexDirection: 'row' }}>
+            <Input
+              w={'90%'}
+              editable={false}
+              variant="outline"
+              defaultValue={_date}
+              placeholder="Start Date"
+            />
+            <IconButton
+              icon={
+                <Icon
+                  name="calendar"
+                  style={{ marginRight: 15 }}
+                  size={25}
+                  onPress={() => openDatePicker()}
+                />
+              }
+            />
+          </View>
           <DatePicker
             modal
             open={open}
@@ -74,25 +106,65 @@ export default function AddClassScreen() {
         </View>
 
         <View style={{ marginVertical: 10 }}>
-          <TextInput
-            placeholder="Enter Details"
-            multiline
-            numberOfLines={5}
-            editable
-            mode="outlined"
-            style={styles.multilineInput}
+          <View style={{ flexDirection: 'row' }}>
+            <Input
+              w={'90%'}
+              editable={false}
+              variant="outline"
+              defaultValue={_date}
+              placeholder="End Date"
+            />
+            <IconButton
+              icon={
+                <Icon
+                  name="calendar"
+                  style={{ marginRight: 15 }}
+                  size={25}
+                  onPress={() => openDatePicker()}
+                />
+              }
+            />
+          </View>
+          <DatePicker
+            modal
+            open={open}
+            date={date}
+            onConfirm={(date) => {
+              setOpen(false)
+              setDate(date)
+              _setDate(date.toString())
+            }}
+            onCancel={() => {
+              setOpen(false)
+            }}
           />
         </View>
+
         <View style={{ marginVertical: 10 }}>
-          <Button title={'Upload Image'} onPress={() => { }} />
+          <Input variant="outline" placeholder="Max. Students" />
         </View>
         <View style={{ marginVertical: 10 }}>
-          <Text style={styles.label}>Class Type</Text>
-          <RadioGroup
-            containerStyle={{ justifyContent: 'space-around', flex: 1 }}
-            layout='row'
-            radioButtons={radioButtonsData}
-          />
+          <Select accessibilityLabel="Choose Class Type" placeholder="Choose Class Type">
+            <Select.Item label="UX Research" value="ux" />
+            <Select.Item label="Web Development" value="web" />
+            <Select.Item label="Cross Platform Development" value="cross" />
+            <Select.Item label="UI Designing" value="ui" />
+            <Select.Item label="Backend Development" value="backend" />
+          </Select>
+        </View>
+
+        <View style={{ marginVertical: 10 }}>
+          <Select accessibilityLabel="Choose Delivery Language" placeholder="Choose Delivery Language">
+            <Select.Item label="UX Research" value="ux" />
+            <Select.Item label="Web Development" value="web" />
+            <Select.Item label="Cross Platform Development" value="cross" />
+            <Select.Item label="UI Designing" value="ui" />
+            <Select.Item label="Backend Development" value="backend" />
+          </Select>
+        </View>
+
+        <View style={{ marginVertical: 10, marginBottom: '10%' }}>
+          <Button title={"Submit"} onPress={()=>navigation.goBack()}/>
         </View>
 
       </ScrollView>

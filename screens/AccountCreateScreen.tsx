@@ -10,8 +10,8 @@ import {
   Text,
 } from 'react-native';
 
-import {useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
+import { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
   isValidEmail,
   isValidPassword,
@@ -19,6 +19,7 @@ import {
 } from '../utils/HelperFunctions';
 import api from '../constants/api';
 import genericStyle from '../assets/styles/styleSheet';
+import { RadioGroup } from 'react-native-radio-buttons-group';
 
 /**
  * Accounts create
@@ -34,10 +35,27 @@ export default function AccountCreateScreen() {
   const [showSpinner, setShowSpinner] = useState(false);
   const [secure, setSecure] = useState(true);
   const [confirmSecure, setConfirmSecure] = useState(true);
+  const radioButtonsData = [{
+    id: '1', // acts as primary key, should be unique and non-empty string
+    label: 'Teacher',
+    value: 'Teacher'
+  }, {
+    id: '2',
+    label: 'Student',
+    value: 'Student'
+  }]
+
+  const [radioButtons, setRadioButtons] = React.useState(radioButtonsData)
+
+  function onPressRadioButton(radioButtonsArray) {
+    setRadioButtons(radioButtonsArray);
+  }
+
 
   function handleBack() {
     navigation.navigate('Login');
   }
+
 
   const onPressNextBtn = () => {
     if (fullName.trim().length == 0) {
@@ -112,6 +130,19 @@ export default function AccountCreateScreen() {
               marginTop: 8,
               height: 50,
             }}>
+            <RadioGroup
+              radioButtons={radioButtons}
+              onPress={onPressRadioButton}
+              layout="row"
+              containerStyle={{justifyContent:"space-around"}}
+            />
+          </View>
+          <View
+            style={{
+              marginTop: 8,
+              height: 50,
+            }}>
+
             <TextInput
               style={genericStyle.textBox}
               autoCapitalize="words"
@@ -161,7 +192,7 @@ export default function AccountCreateScreen() {
 
           <TouchableOpacity
             onPress={onPressNextBtn}
-            style={[genericStyle.loginBtn, {marginTop: 55}]}>
+            style={[genericStyle.loginBtn, { marginTop: 55 }]}>
             <Text style={genericStyle.loginBtnText}>Register</Text>
           </TouchableOpacity>
           <View style={styles.goBackView}>

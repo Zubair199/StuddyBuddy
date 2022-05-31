@@ -41,7 +41,12 @@ export default function AssignmentSlider(props: Iprops) {
                     </View>
                     <View style={styles.classBox}>
                       <TouchableOpacity
-                        onPress={() => navigation.navigate(props.screen)}
+                        onPress={
+                          () => navigation.reset({
+                            index: 0,
+                            routes: [{ name: props.screen }],
+                          })
+                        }
                         style={{
                           width: "100%",
                           height: "100%",

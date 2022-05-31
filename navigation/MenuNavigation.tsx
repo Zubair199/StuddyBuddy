@@ -223,17 +223,45 @@ const mainHeader = ({ navigation }: any): any => {
           width: "100%",
           marginLeft: -10
         }}>
-          <TouchableOpacity>
-            <Icon name='home' size={30} color="white" onPress={() => navigation.navigate("Classes")} />
+          <TouchableOpacity
+            onPress={() => {
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Classes' }],
+              });
+            }}
+          >
+            <Icon name='home' size={30} color="white" />
           </TouchableOpacity>
-          <TouchableOpacity>
-            <Icon name='calendar' size={30} color="white" onPress={() => navigation.navigate("ScheduleScreen")} />
+          <TouchableOpacity
+            onPress={() => {
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'ScheduleScreen' }],
+              });
+            }}
+          >
+            <Icon name='calendar' size={30} color="white" />
           </TouchableOpacity>
-          <TouchableOpacity>
-            <Icon name='bells' size={30} color="white" onPress={() => navigation.navigate("NotificationScreen")} />
+          <TouchableOpacity
+            onPress={() => {
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'NotificationScreen' }],
+              });
+            }}
+          >
+            <Icon name='bells' size={30} color="white" />
           </TouchableOpacity>
-          <TouchableOpacity>
-            <Icon name='search1' size={30} color="white" onPress={() => navigation.navigate("SearchScreen")} />
+          <TouchableOpacity
+            onPress={() => {
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'SearchScreen' }],
+              });
+            }}
+          >
+            <Icon name='search1' size={30} color="white" />
           </TouchableOpacity>
         </View>
       )

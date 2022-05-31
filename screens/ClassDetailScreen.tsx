@@ -2,107 +2,115 @@ import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
 import { ImageBackground, Linking, SafeAreaView, ScrollView, StyleSheet, Touchable, TouchableOpacity, TouchableOpacityBase, View } from 'react-native';
 import { Text } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/AntDesign';
 
 export default function ClassDetailScreen() {
   const isFocused = useIsFocused();
 
   React.useEffect(() => { }, [isFocused]);
   return (
-    <ScrollView style={{marginBottom:'25%'}}>
-      <View style={styles.container}>
-        {/* header starts here */}
-        <View style={{ marginTop: 10 }}>
-          <ImageBackground
-            resizeMode='cover'
-            source={require("../assets/images/bg.jpg")}
-            style={styles.classBoxImage}
-            imageStyle={{ borderRadius: 5 }}
-          >
-            <View style={styles.overlay}>
-              <View style={styles.levelBox}>
-                <View style={styles.levelIntermediate}></View>
-                <Text style={styles.classBoxText}>Intermediate</Text>
+    <View style={styles.container}>
+      <View style={{ flexDirection: 'row', paddingLeft: 15 }}>
+        <TouchableOpacity style={{marginTop: 5}}>
+          <Icon color={'black'} name="leftcircleo" size={30} />
+        </TouchableOpacity>
+        <Text style={styles.title}>Class Details</Text>
+      </View>
+      <ScrollView style={{ marginBottom: '25%', padding: 15 }}>
+        <View >
+          {/* header starts here */}
+          <View style={{ marginTop: 10 }}>
+            <ImageBackground
+              resizeMode='cover'
+              source={require("../assets/images/bg.jpg")}
+              style={styles.classBoxImage}
+              imageStyle={{ borderRadius: 5 }}
+            >
+              <View style={styles.overlay}>
+                <View style={styles.levelBox}>
+                  <View style={styles.levelIntermediate}></View>
+                  <Text style={styles.classBoxText}>Intermediate</Text>
+                </View>
+                <Text style={styles.classBoxName}>Class Name</Text>
+                <Text style={styles.classBoxInstructor}>
+                  Instructor Name
+                </Text>
+                <Text style={styles.classBoxDate}>
+                  Tuesday 12:00 - 13:00
+                </Text>
+                <Text style={styles.classBoxInstructor}>
+                  Class Type
+                </Text>
+                <Text style={styles.classBoxInstructor}>
+                  Class Status
+                </Text>
               </View>
-              <Text style={styles.classBoxName}>Class Name</Text>
-              <Text style={styles.classBoxInstructor}>
-                Instructor Name
-              </Text>
-              <Text style={styles.classBoxDate}>
-                Tuesday 12:00 - 13:00
-              </Text>
-              <Text style={styles.classBoxInstructor}>
-                Class Type
-              </Text>
-              <Text style={styles.classBoxInstructor}>
-                Class Status
-              </Text>
+            </ImageBackground>
+            {/* header ends here */}
+
+            {/* price tags start here */}
+            {/* this will be render if student has not already joined the class */}
+            <View style={styles.joinBox}>
+              <Text style={styles.cost}>Cost: &#36;{12}</Text>
             </View>
-          </ImageBackground>
-          {/* header ends here */}
 
-          {/* price tags start here */}
-          {/* this will be render if student has not already joined the class */}
-          <View style={styles.joinBox}>
-            <Text style={styles.cost}>Cost: &#36;{12}</Text>
-          </View>
-
-          {/* price ends here */}
+            {/* price ends here */}
 
 
-          {/* Class Location Starts here */}
-          <View>
-            <Text style={styles.heading}>Class Location</Text>
-            <Text style={styles.text}>CR 4 EE Building</Text>
-          </View>
-          {/* Class Location ends here */}
-
-
-          {/* Language section starts here */}
-          <View style={styles.languageBoxLanguage}>
-            <View style={styles.languageWithIcon}>
-              <Text style={styles.languageAttributesHeading}>Languages</Text>
+            {/* Class Location Starts here */}
+            <View>
+              <Text style={styles.heading}>Class Location</Text>
+              <Text style={styles.text}>CR 4 EE Building</Text>
             </View>
-            <View style={styles.language}>
-              <View
-                style={{ flexDirection: "row" }}
-              >
-                <Text style={styles.languageText}>English</Text>
+            {/* Class Location ends here */}
+
+
+            {/* Language section starts here */}
+            <View style={styles.languageBoxLanguage}>
+              <View style={styles.languageWithIcon}>
+                <Text style={styles.languageAttributesHeading}>Languages</Text>
+              </View>
+              <View style={styles.language}>
+                <View
+                  style={{ flexDirection: "row" }}
+                >
+                  <Text style={styles.languageText}>English</Text>
+                </View>
               </View>
             </View>
-          </View>
-          {/* Language section ends here */}
+            {/* Language section ends here */}
 
-          {/* Announcements Starts here */}
-          <Text style={styles.heading}>Announcements</Text>
-          <Text style={styles.text}>class announcements</Text>
-          {/* Announcements ends here */}
+            {/* Announcements Starts here */}
+            <Text style={styles.heading}>Announcements</Text>
+            <Text style={styles.text}>class announcements</Text>
+            {/* Announcements ends here */}
 
-          {/* Topics & Instructions Starts here */}
-          <Text style={styles.heading}>Topics and Instructions</Text>
-          <Text style={styles.text}>class topics</Text>
-          {/* Topics & Instructions ends here */}
+            {/* Topics & Instructions Starts here */}
+            <Text style={styles.heading}>Topics and Instructions</Text>
+            <Text style={styles.text}>class topics</Text>
+            {/* Topics & Instructions ends here */}
 
-          {/* connectivity link for enrolled students Starts here */}
-          {/* <Text style={styles.heading}>Pre Recorded Class Link</Text> */}
-          <Text style={styles.heading}>Class Link</Text>
+            {/* connectivity link for enrolled students Starts here */}
+            {/* <Text style={styles.heading}>Pre Recorded Class Link</Text> */}
+            <Text style={styles.heading}>Class Link</Text>
 
-          <TouchableOpacity
-            onPress={() => Linking.openURL("https://www.google.com/")}
-          >
-            <Text style={styles.text}>connectivityLink</Text>
-          </TouchableOpacity>
-          {/* connectivity link for enrolled students ends here */}
+            <TouchableOpacity
+              onPress={() => Linking.openURL("https://www.google.com/")}
+            >
+              <Text style={styles.text}>connectivityLink</Text>
+            </TouchableOpacity>
+            {/* connectivity link for enrolled students ends here */}
 
-          {/* Schedule Starts here */}
-          <Text style={styles.heading}>Schedule</Text>
-          <Text style={styles.text}>
-            Day: Tuesday
-            Time: 12:00 - 13:00
-          </Text>
-          {/* Schedule ends here */}
+            {/* Schedule Starts here */}
+            <Text style={styles.heading}>Schedule</Text>
+            <Text style={styles.text}>
+              Day: Tuesday
+              Time: 12:00 - 13:00
+            </Text>
+            {/* Schedule ends here */}
 
-          {/* classes starts here */}
-          {
+            {/* classes starts here */}
+            {
         /*classData.documents.length === 0 ? null : (
         //   <>
         //     <Text style={styles.heading}>Instructor Uploads</Text>
@@ -139,23 +147,25 @@ export default function ClassDetailScreen() {
         // )
         */}
 
-          {/* classes ends here */}
+            {/* classes ends here */}
 
-          {/* Enrolled Students Starts here */}
-          <Text style={styles.heading}>Students Enrolled</Text>
-          <Text style={styles.text}>{5}</Text>
-          {/* Enrolled Students ends here */}
+            {/* Enrolled Students Starts here */}
+            <Text style={styles.heading}>Students Enrolled</Text>
+            <Text style={styles.text}>{5}</Text>
+            {/* Enrolled Students ends here */}
 
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
+
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#ffffff",
-    padding: 10,
+    flex: 1
   },
   bannerImage: {
     width: 129,
@@ -175,7 +185,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 30,
     marginLeft: 15,
-    marginTop: 20,
     textTransform: "uppercase",
     fontFamily: "roboto-light",
   },

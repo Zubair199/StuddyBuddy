@@ -42,8 +42,8 @@ export default function ProfileScreen(dataType: dataTypes) {
     const navigation = useNavigation();
     // const onClose = () => navigation.navigate("ClassesScreen");
     const { userType } = useUserAuth()!;
-    let isStudent = userType == "Student";
-    let isTeacher = userType == "Teacher";
+    let isStudent = userType == "student";
+    let isTeacher = userType == "teacher";
     const isFocused = useIsFocused();
 
     // const onPressProfile = (id: string) =>
