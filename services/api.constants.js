@@ -19,11 +19,13 @@ module.exports = {
         CREATE: "/api/exam",                
         GET_ALL_ACTIVE_EXAMS_BY_TEACHER_ID: "/api/exam/teacher/active/",                
         GET_ALL_EXAMS_BY_TEACHER_ID : '/api/exam/teacher/',
+        GET_EXAM_BY_EXAM_ID : '/api/exam/',
     }, 
     ASSIGNMENT: {
         CREATE: "/api/assignment",                
         GET_ALL_ACTIVE_ASSIGNMENTS_BY_TEACHER_ID: "/api/assignment/teacher/active/",                
         GET_ALL_ASSIGNMENTS_BY_TEACHER_ID : '/api/assignment/teacher/',
+        GET_ASSIGNMENT_BY_ASSIGNMENT_ID : '/api/assignment/',
         
     },
 };

@@ -44,7 +44,7 @@ export default function AssignmentSlider(props: Iprops) {
                           onPress={
                             () => navigation.reset({
                               index: 0,
-                              routes: [{ name: props.screen }],
+                              routes: [{ name: props.screen , params:{ assignmentID : classData._id } }],
                             })
                           }
                           style={{
@@ -73,7 +73,7 @@ export default function AssignmentSlider(props: Iprops) {
                             {/* Tuesday 12:00 - 13:00 */}
                           </Text>
                           <Text style={styles.classBoxInstructor}>
-                            Assignment 1
+                            {classData.title}
                           </Text>
                           <Text style={styles.classBoxInstructor}>
                             28-05-2022

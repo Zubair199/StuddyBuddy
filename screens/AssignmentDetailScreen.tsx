@@ -5,12 +5,34 @@ import { CheckBox, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 import { Divider } from 'native-base';
+import { ASSIGNMENT, AUTHENTICATIONS } from '../services/api.constants';
 
-export default function AssignmentDetailScreen() {
-  const isFocused = useIsFocused();
+export default function AssignmentDetailScreen({ route }) {
+  const { assignmentID } = route.params
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
 
-  React.useEffect(() => { }, [isFocused]);
+  const [_class, setClass] = React.useState(null)
+  let [data, setData] = React.useState([])
+
+  React.useEffect(() => {
+
+    fetch(AUTHENTICATIONS.API_URL + ASSIGNMENT.GET_ASSIGNMENT_BY_ASSIGNMENT_ID + assignmentID)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log('classes ', responseJson.data)
+        setClass(responseJson.data)
+        let arr = Array.from({ length: responseJson.data.questioncount }, (_, i) => i + 1)
+        console.log(arr)
+        setData(arr)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+
+  }, []);
+
+
   return (
     <View style={styles.container}>
       <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15, }}>
@@ -23,69 +45,73 @@ export default function AssignmentDetailScreen() {
         </TouchableOpacity>
         <Text style={styles.title}>Assignment Details</Text>
       </View>
-      <ScrollView style={{ marginBottom: '25%', padding: 15 }}>
-        <View>
-          <ImageBackground
-            resizeMode='cover'
-            source={require('../assets/images/bg.jpg')}
-            style={styles.challengeBoxImage}
-            imageStyle={{ borderRadius: 5 }}
-          >
-            <View style={styles.overlay}>
-              <View style={styles.challengeTypeOverLay}>
-                <Text style={styles.challengeBoxText}>
-                  Virtual
+      {
+        _class !== null &&
+        <ScrollView style={{ marginBottom: '25%', padding: 15 }}>
+          <View>
+            <ImageBackground
+              resizeMode='cover'
+              source={require('../assets/images/bg.jpg')}
+              style={styles.challengeBoxImage}
+              imageStyle={{ borderRadius: 5 }}
+            >
+              <View style={styles.overlay}>
+                <View style={styles.challengeTypeOverLay}>
+                  <Text style={styles.challengeBoxText}>
+                    Virtual
+                  </Text>
+                </View>
+                <Text style={styles.challengeBoxName}>{_class.title}</Text>
+                <Text style={styles.challengeBoxDate}>
+                  28-05-2022
                 </Text>
               </View>
-              <Text style={styles.challengeBoxName}>Assignment 1</Text>
-              <Text style={styles.challengeBoxDate}>
-                28-05-2022
-              </Text>
-            </View>
-          </ImageBackground>
-          <Text style={styles.heading}>Details</Text>
-          <Text style={styles.text}>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</Text>
-        </View>
+            </ImageBackground>
+            <Text style={styles.heading}>Details</Text>
+            <Text style={styles.text}>{_class.description}</Text>
+          </View>
 
 
-        <View style={{ marginVertical: 15 }}>
-          <Divider />
-        </View>
-
-        <View style={{ marginVertical: 10 }}>
-          <Text style={styles.title}>Assignment Questions</Text>
-        </View>
-        {[0, 1, 2, 3, 4].map((item, index) => (
-          <View key={index} style={{ marginVertical: 10 }}>
-            <View>
-              <Text style={{ fontSize: 20, marginLeft: 15 }}>Q{index + 1}: What's pencil made of?</Text>
-            </View>
-            <View style={{ marginVertical: 15 }}>
-              <CheckBox
-                title='Option 1'
-                checkedIcon='dot-circle-o'
-                uncheckedIcon='circle-o'
-              />
-              <CheckBox
-                title='Option 2'
-                checkedIcon='dot-circle-o'
-                uncheckedIcon='circle-o'
-              />
-              <CheckBox
-                title='Option 3'
-                checkedIcon='dot-circle-o'
-                uncheckedIcon='circle-o'
-              />
-              <CheckBox
-                title='Option 4'
-                checkedIcon='dot-circle-o'
-                uncheckedIcon='circle-o'
-              />
-            </View>
+          <View style={{ marginVertical: 15 }}>
             <Divider />
           </View>
-        ))}
-      </ScrollView>
+
+          <View style={{ marginVertical: 10 }}>
+            <Text style={styles.title}>Assignment Questions</Text>
+          </View>
+          {data.map((item, index) => (
+            <View key={index} style={{ marginVertical: 10 }}>
+              <View>
+                <Text style={{ fontSize: 20, marginLeft: 15 }}>Q{index + 1}: What's pencil made of?</Text>
+              </View>
+              <View style={{ marginVertical: 15 }}>
+                <CheckBox
+                  title='Option 1'
+                  checkedIcon='dot-circle-o'
+                  uncheckedIcon='circle-o'
+                />
+                <CheckBox
+                  title='Option 2'
+                  checkedIcon='dot-circle-o'
+                  uncheckedIcon='circle-o'
+                />
+                <CheckBox
+                  title='Option 3'
+                  checkedIcon='dot-circle-o'
+                  uncheckedIcon='circle-o'
+                />
+                <CheckBox
+                  title='Option 4'
+                  checkedIcon='dot-circle-o'
+                  uncheckedIcon='circle-o'
+                />
+              </View>
+              <Divider />
+            </View>
+          ))}
+        </ScrollView>
+      }
+
     </View>
   )
 }
