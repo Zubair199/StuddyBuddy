@@ -3,16 +3,22 @@ import * as React from 'react';
 import { ImageBackground, Linking, SafeAreaView, ScrollView, StyleSheet, Touchable, TouchableOpacity, TouchableOpacityBase, View } from 'react-native';
 import { Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/AntDesign';
+import { useNavigation } from '@react-navigation/native';
 
 export default function ClassDetailScreen() {
+  const navigation = useNavigation();
   const isFocused = useIsFocused();
 
   React.useEffect(() => { }, [isFocused]);
   return (
     <View style={styles.container}>
-      <View style={{ flexDirection: 'row', paddingLeft: 15 }}>
-        <TouchableOpacity style={{marginTop: 5}}>
-          <Icon color={'black'} name="leftcircleo" size={30} />
+      <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15 }}>
+        <TouchableOpacity style={{ marginTop: 5 }} 
+        onPress={() => navigation.reset({
+          index: 0,
+          routes: [{ name: 'Classes' }],
+        })}>
+          <Icon color={'black'} name="leftcircleo" size={25} />
         </TouchableOpacity>
         <Text style={styles.title}>Class Details</Text>
       </View>
@@ -183,7 +189,7 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   title: {
-    fontSize: 30,
+    fontSize: 25,
     marginLeft: 15,
     textTransform: "uppercase",
     fontFamily: "roboto-light",

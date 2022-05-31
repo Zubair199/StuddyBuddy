@@ -67,6 +67,7 @@ export default function SearchScreen() {
           {[0, 1, 2, 3].map((classItem: any) => (
             <TouchableOpacity
               style={styles.groupBox}
+              key={classItem}
             >
               <Image source={require("../assets/images/bg.jpg")}
                 style={styles.classImg}

@@ -24,7 +24,14 @@ export default function MyClassesScreen() {
           <Modal.Header>What do you want to add?</Modal.Header>
           <Modal.Body>
             <View style={{ marginVertical: 10 }}>
-              <TouchableOpacity style={{ flexDirection: 'row', justifyContent: "space-between" }} onPress={() => navigation.navigate('AddClass')}>
+              <TouchableOpacity style={{ flexDirection: 'row', justifyContent: "space-between" }}
+                onPress={() =>
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'AddClass' }],
+                  })
+                }
+              >
                 <Text style={styles.title}>
                   Class
                 </Text>
@@ -35,7 +42,14 @@ export default function MyClassesScreen() {
               bg: "muted.300"
             }} />
             <View style={{ marginVertical: 10 }}>
-              <TouchableOpacity style={{ flexDirection: 'row', justifyContent: "space-between" }} onPress={() => navigation.navigate('AddAssignment')}>
+              <TouchableOpacity style={{ flexDirection: 'row', justifyContent: "space-between" }}
+                onPress={() =>
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'AddAssignment' }],
+                  })
+                }
+              >
                 <Text style={styles.title}>
                   Assignment
                 </Text>
@@ -46,7 +60,14 @@ export default function MyClassesScreen() {
               bg: "muted.300"
             }} />
             <View style={{ marginVertical: 10 }}>
-              <TouchableOpacity style={{ flexDirection: 'row', justifyContent: "space-between" }} onPress={() => navigation.navigate('AddExam')}>
+              <TouchableOpacity style={{ flexDirection: 'row', justifyContent: "space-between" }}
+                onPress={() =>
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'AddExam' }],
+                  })
+                }
+              >
                 <Text style={styles.title}>
                   Exam
                 </Text>
@@ -65,7 +86,7 @@ export default function MyClassesScreen() {
         </Modal.Content>
       </Modal>
       <ScrollView style={{ marginBottom: '25%' }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: "center" , marginVertical:10 }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: "center", marginVertical: 10 }}>
           <TextInput placeholder='Search...' style={{ width: '70%', borderWidth: 1, borderColor: 'lightgray', borderRadius: 10, height: 45 }} />
           <TouchableOpacity>
             <Icon name="search1" size={20} style={{ marginLeft: -35 }} />
@@ -74,13 +95,13 @@ export default function MyClassesScreen() {
             Add New...
           </Button>
         </View>
-        <View style={{marginVertical:10}}>
+        <View style={{ marginVertical: 10 }}>
           <ClassSlider data={[0, 1, 2, 3, 4]} categoryText={"My Upcoming Classes"} screen={"ClassDetails"} />
         </View>
-        <View style={{marginVertical:10}}>
+        <View style={{ marginVertical: 10 }}>
           <AssignmentSlider data={[0, 1, 2, 3]} categoryText={"My Assignments"} screen={"AssignmentDetails"} />
         </View>
-        <View style={{marginVertical:10}}>
+        <View style={{ marginVertical: 10 }}>
           <ExamSlider data={[0, 1, 2, 3, 4, 5]} categoryText={"My Exams"} screen={"ExamDetails"} />
         </View>
       </ScrollView>

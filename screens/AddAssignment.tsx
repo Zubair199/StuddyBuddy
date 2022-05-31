@@ -144,7 +144,13 @@ export default function AddAssignmentScreen() {
           />
         </View>
         <View style={{ marginVertical: 10 }}>
-          <Button title={"Next"} onPress={()=>navigation.navigate('AddAssignmentQuestions')}/>
+          <Button title={"Next"}
+            onPress={() => navigation.reset({
+              index: 0,
+              routes: [{ name: 'AddAssignmentQuestions' }],
+            })
+            }
+          />
         </View>
       </ScrollView>
     </View>
