@@ -55,8 +55,6 @@
         "react-native-tab-view": "^3.1.1",
         "react-native-vector-icons": "^9.0.0",
         "react-native-webview": "^11.17.2",
-        "react-redux": "^8.0.2",
-        "redux": "^4.2.0",
         "socket.io-client": "^4.4.1",
         "toggle-switch-react-native": "^3.3.0"
     },

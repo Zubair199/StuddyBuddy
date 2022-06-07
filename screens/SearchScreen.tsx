@@ -79,7 +79,7 @@ export default function SearchScreen() {
           />
         </TouchableOpacity>
       </View> */}
-      <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: "center", marginVertical: 15 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: "center", marginTop: 15 }}>
         <TextInput
           placeholder='Search...' style={{
             width: '100%', borderWidth: 1,
@@ -107,7 +107,7 @@ export default function SearchScreen() {
             {classes.map((classItem) => (
               <TouchableOpacity
                 style={styles.groupBox}
-                key={classItem._id}
+                key={classItem}
               >
                 <Image source={require("../assets/images/bg.jpg")}
                   style={styles.classImg}

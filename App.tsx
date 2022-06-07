@@ -8,12 +8,10 @@
 
 import React from 'react';
 import Navigation from './navigation';
-import { Node } from 'react';
-import { NativeBaseProvider, extendTheme } from "native-base";
-import { StatusBar, useColorScheme } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Provider } from 'react-redux'
-import store from './store/store'
+import {Node} from 'react';
+import { NativeBaseProvider,extendTheme} from "native-base";
+import {StatusBar, useColorScheme} from 'react-native';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 const App: () => Node = () => {
   const theme = extendTheme({
@@ -36,14 +34,12 @@ const App: () => Node = () => {
   const colorScheme = useColorScheme();
 
   return (
-    <Provider store={store}>
-      <NativeBaseProvider theme={theme}>
-        <SafeAreaProvider>
-          <Navigation colorScheme={colorScheme} />
-          <StatusBar />
-        </SafeAreaProvider>
-      </NativeBaseProvider>
-    </Provider>
+    <NativeBaseProvider theme={theme}>
+    <SafeAreaProvider>
+      <Navigation colorScheme={colorScheme} />
+      <StatusBar />
+    </SafeAreaProvider>
+    </NativeBaseProvider>
   );
 };
 

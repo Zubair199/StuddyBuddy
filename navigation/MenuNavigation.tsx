@@ -25,7 +25,6 @@ import AddExamScreen from '../screens/AddExam';
 import AddClassScreen from '../screens/AddClass';
 import AddAssignmentQuestions from '../screens/AddAssignmentQuestions';
 import AddExamQuestions from '../screens/AddExamQuestions';
-import HomeScreen from '../screens/HomeScreen';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -45,6 +44,7 @@ const MenuNavigation = () => {
 
   return (
     <BottomTab.Navigator
+      initialRouteName="Home"
       screenOptions={{
         headerStyle: {
           backgroundColor: '#3878ee',
@@ -81,7 +81,7 @@ const MenuNavigation = () => {
               />
               <Text
                 style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
-                Classes , {focused}
+                Classes
               </Text>
             </View>
           ),
@@ -105,7 +105,7 @@ const MenuNavigation = () => {
               />
               <Text
                 style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
-                Message, {focused}
+                Message
               </Text>
             </View>
           ),
@@ -130,7 +130,7 @@ const MenuNavigation = () => {
               />
               <Text
                 style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
-                Payment, {focused}
+                Payment
               </Text>
             </View>
           ),
@@ -155,7 +155,7 @@ const MenuNavigation = () => {
               />
               <Text
                 style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
-                Profile, {focused}
+                Profile
               </Text>
             </View>
           ),
@@ -180,7 +180,7 @@ const MenuNavigation = () => {
               />
               <Text
                 style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
-                Settings, {focused}
+                Settings
               </Text>
             </View>
           ),
@@ -227,7 +227,7 @@ const mainHeader = ({ navigation }: any): any => {
             onPress={() => {
               navigation.reset({
                 index: 0,
-                routes: [{ name: 'HomeScreen' }],
+                routes: [{ name: 'Classes' }],
               });
             }}
           >
@@ -273,13 +273,7 @@ const HomeStackScreen = ({ navigation, route }: any) => {
     <HomeStack.Navigator
       screenOptions={{
         headerShown: true,
-      }}
-    >
-      <HomeStack.Screen
-        name="HomeScreen"
-        options={mainHeader}
-        component={HomeScreen}
-      />
+      }}>
       <HomeStack.Screen
         name="Classes"
         options={mainHeader}
