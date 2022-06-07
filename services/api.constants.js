@@ -1,7 +1,7 @@
 module.exports = {
 
     AUTHENTICATIONS: {
-        API_URL: "http://192.168.10.6:5000"
+        API_URL: "http://192.168.10.4:5000"
     },
     AUTH: {
         SIGNUP: "/api/auth/signup",
