@@ -1,14 +1,4 @@
-/***
- * SettingsScreen
- * Author: Sarath Ambegoda
- * Created on: 2020/07/17
- */
-/*
-================
-Modified by: Abdul Zahir
-Changes: Schedule Screen ui added
-Modified on: 2020/07/20
-*/
+
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import * as React from "react";
 import {
@@ -37,22 +27,32 @@ export default function SearchScreen() {
 
   const [classes, setClasses] = React.useState([])
   const [search, setSearch] = React.useState([])
+  const [status, setStatus] = React.useState("approved")
 
-  let [user, setUser] = React.useState("")
+  let [user, setUser] = React.useState("6295cc2b7d505307388d58fd")
 
   React.useEffect(() => {
     setUser('6295cc2b7d505307388d58fd')
-    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES_BY_TEACHER_ID + '6295cc2b7d505307388d58fd')
-      .then((response) => response.json())
-      .then((responseJson) => {
-        console.log('classes ', responseJson.data)
-        setClasses(responseJson.data)
-      })
-      .catch(err => {
-        console.log(err)
-      })
-
+    getApiCall()
   }, [])
+
+  function getApiCall() {
+    try {
+      fetch(AUTHENTICATIONS.API_URL + CLASS.GET_TEACHER_SEARCH + user + '/' + status)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          console.log('classes ', responseJson.data)
+          setClasses(responseJson.data)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    }
+    catch (err) {
+      console.log(err)
+    }
+
+  }
 
   function searchClasses(text) {
     let backup = classes;

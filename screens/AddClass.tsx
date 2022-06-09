@@ -86,6 +86,7 @@ export default function AddClassScreen() {
         fetch(AUTHENTICATIONS.API_URL + CLASS.CREATE, requestObj)
           .then((response: any) => {
             console.log(response)
+            Alert.alert(response.data.message)
           })
           .catch((err: any) => {
             console.log(err)

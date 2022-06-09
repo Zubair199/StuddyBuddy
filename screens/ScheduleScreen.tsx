@@ -22,6 +22,9 @@ import {
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { AUTHENTICATIONS, CLASS } from "../services/api.constants";
+import Icon from 'react-native-vector-icons/AntDesign';
+import DatePicker from 'react-native-date-picker'
+import { Select, Input, TextArea, IconButton } from "native-base";
 
 export default function SchedulesScreen() {
   const isFocused = useIsFocused();
@@ -34,21 +37,70 @@ export default function SchedulesScreen() {
   const [classes, setClasses] = React.useState([])
   const [search, setSearch] = React.useState([])
 
-  let [user, setUser] = React.useState("")
+  let [user, setUser] = React.useState("6295cc2b7d505307388d58fd")
 
+  let [prevDate, setPrevDate] = React.useState(new Date())
+  let [nextDate, setNextDate] = React.useState(new Date())
+
+  let [date, setDate] = React.useState(new Date())
+  let [stringDate, setStringDate] = React.useState("")
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const monthNames = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
   React.useEffect(() => {
     setUser('6295cc2b7d505307388d58fd')
-    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES_BY_TEACHER_ID + '6295cc2b7d505307388d58fd')
-      .then((response) => response.json())
-      .then((responseJson) => {
-        console.log('classes ', responseJson.data)
-        setClasses(responseJson.data)
-      })
-      .catch(err => {
-        console.log(err)
-      })
-
+    getApiCall(date);
   }, [])
+  const [open, setOpen] = React.useState(false)
+  let [_startdate, _setStartdate] = React.useState(new Date())
+  let [datePicketDate, setDatePicketDate] = React.useState(new Date())
+
+  function openDatePicker() {
+    setOpen(true)
+  }
+  // function makeDate(text) {
+  //   let _date = new Date(text)
+  //   const _dateString = days[_date.getDay()] + ', ' + monthNames[_date.getMonth()] + " " + _date.getDate();
+  //   setStringDate(_dateString);
+  // }
+
+  const getApiCall = (text) => {
+    let _Date = new Date(text)
+    const month = (_Date.getMonth() + 1)
+    const year = _Date.getFullYear()
+    const day = _Date.getDate()
+    const _date = month + '/' + day + '/' + year
+    const _dateString = days[_Date.getDay()] + ', ' + monthNames[_Date.getMonth()] + " " + day;
+    setStringDate(_dateString)
+
+    try {
+      let body = {
+        teacher : user,
+        date : text,
+      }
+      let requestObj = {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      }
+      fetch(AUTHENTICATIONS.API_URL + CLASS.GET_TEACHER_SCHEDULE , requestObj)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          console.log('classes ', responseJson.data)
+          setClasses(responseJson.data)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
 
   return (
@@ -62,7 +114,39 @@ export default function SchedulesScreen() {
         </TouchableOpacity>
       </View> */}
 
-      <Text style={styles.title}>My Schedule</Text>
+      <View>
+        <Text style={styles.title}>My Schedule</Text>
+      </View>
+      <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 20 }}>
+        <View style={{ marginTop: 10 }}>
+          <Text style={{ fontWeight: '400', fontSize: 20 }}>{stringDate}</Text>
+        </View>
+        <View>
+          <IconButton
+            icon={
+              <Icon
+                name="calendar"
+                style={{ marginRight: 15 }}
+                size={25}
+                onPress={() => { console.log("preess"); openDatePicker() }}
+              />
+            }
+          />
+          <DatePicker
+            modal
+            open={open}
+            date={_startdate}
+            onConfirm={(text) => {
+              _setStartdate(text);
+              setOpen(false);
+              getApiCall(text);
+            }}
+            onCancel={() => {
+              setOpen(false)
+            }}
+          />
+        </View>
+      </View>
       {/* {!groupList || groupList.length == 0 ? (
         <View style={styles.contentBox}>
           <Text style={styles.emptySearchText}>
@@ -82,10 +166,11 @@ export default function SchedulesScreen() {
           showsVerticalScrollIndicator={false}
         >
           <View >
-            {classes.map((classItem) => (
+            {classes.map((classItem, index) => (
               <TouchableOpacity
                 style={styles.groupBox}
-                key={classItem}
+                key={index}
+                // onPress={()=>{navigation.navigate()}}
               >
                 <Image source={require("../assets/images/bg.jpg")}
                   style={styles.classImg}

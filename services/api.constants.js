@@ -1,7 +1,7 @@
 module.exports = {
 
     AUTHENTICATIONS: {
-        API_URL: "http://192.168.10.6:5000"
+        API_URL: "http://192.168.8.102:5000"
     },
     AUTH: {
         SIGNUP: "/api/auth/signup",
@@ -13,6 +13,9 @@ module.exports = {
         GET_ALL_ACTIVE_CLASSES_BY_TEACHER_ID: "/api/class/teacher/active/",        
         GET_ALL_CLASSES_BY_TEACHER_ID : '/api/class/teacher/',
         GET_CLASS_BY_CLASS_ID : '/api/class/',
+        GET_TEACHER_SCHEDULE : '/api/class/teacher/scehdule',
+
+        GET_TEACHER_SEARCH : '/api/class/teacher/search/',
 
     },
     EXAM: {
