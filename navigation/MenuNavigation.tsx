@@ -25,6 +25,7 @@ import AddExamScreen from '../screens/AddExam';
 import AddClassScreen from '../screens/AddClass';
 import AddAssignmentQuestions from '../screens/AddAssignmentQuestions';
 import AddExamQuestions from '../screens/AddExamQuestions';
+import HomeScreen from '../screens/HomeScreen';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -227,7 +228,7 @@ const mainHeader = ({ navigation }: any): any => {
             onPress={() => {
               navigation.reset({
                 index: 0,
-                routes: [{ name: 'Classes' }],
+                routes: [{ name: 'HomeScreen' }],
               });
             }}
           >
@@ -274,6 +275,11 @@ const HomeStackScreen = ({ navigation, route }: any) => {
       screenOptions={{
         headerShown: true,
       }}>
+      <HomeStack.Screen
+        name="HomeScreen"
+        options={mainHeader}
+        component={HomeScreen}
+      />
       <HomeStack.Screen
         name="Classes"
         options={mainHeader}

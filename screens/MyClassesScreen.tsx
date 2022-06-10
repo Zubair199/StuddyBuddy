@@ -24,10 +24,15 @@ export default function MyClassesScreen() {
 
   React.useEffect(() => {
     setUser('6295cc2b7d505307388d58fd')
+
+    studentApiCall()
+  }, [])
+
+  function teacherApiCall() {
     fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES_BY_TEACHER_ID + '6295cc2b7d505307388d58fd')
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log('classes ' , responseJson.data)
+        console.log('classes ', responseJson.data)
         setClasses(responseJson.data)
       })
       .catch(err => {
@@ -36,7 +41,7 @@ export default function MyClassesScreen() {
     fetch(AUTHENTICATIONS.API_URL + EXAM.GET_ALL_ACTIVE_EXAMS_BY_TEACHER_ID + '6295cc2b7d505307388d58fd')
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log('exams ' , responseJson.data)
+        console.log('exams ', responseJson.data)
         setExams(responseJson.data)
       })
       .catch(err => {
@@ -45,15 +50,42 @@ export default function MyClassesScreen() {
     fetch(AUTHENTICATIONS.API_URL + ASSIGNMENT.GET_ALL_ACTIVE_ASSIGNMENTS_BY_TEACHER_ID + '6295cc2b7d505307388d58fd')
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log('assignments ' , responseJson.data)
+        console.log('assignments ', responseJson.data)
         setAssignments(responseJson.data)
       })
       .catch(err => {
         console.log(err)
       })
-
-  }, [])
-
+  }
+  function studentApiCall() {
+    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log('classes ', responseJson.data)
+        setClasses(responseJson.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    // fetch(AUTHENTICATIONS.API_URL + EXAM.GET_ALL_ACTIVE_EXAMS_BY_TEACHER_ID + '6295cc2b7d505307388d58fd')
+    //   .then((response) => response.json())
+    //   .then((responseJson) => {
+    //     console.log('exams ', responseJson.data)
+    //     setExams(responseJson.data)
+    //   })
+    //   .catch(err => {
+    //     console.log(err)
+    //   })
+    // fetch(AUTHENTICATIONS.API_URL + ASSIGNMENT.GET_ALL_ACTIVE_ASSIGNMENTS_BY_TEACHER_ID + '6295cc2b7d505307388d58fd')
+    //   .then((response) => response.json())
+    //   .then((responseJson) => {
+    //     console.log('assignments ', responseJson.data)
+    //     setAssignments(responseJson.data)
+    //   })
+    //   .catch(err => {
+    //     console.log(err)
+    //   })
+  }
   return (
     <View style={{ padding: 10, backgroundColor: 'white', flex: 1 }}>
       {/* <AddAssignmentScreen/> */}

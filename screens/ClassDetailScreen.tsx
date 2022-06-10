@@ -1,12 +1,12 @@
 import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
-import { ImageBackground, Linking, SafeAreaView, ScrollView, StyleSheet, Touchable, TouchableOpacity, TouchableOpacityBase, View } from 'react-native';
-import { Text } from 'react-native-elements';
+import { Alert, ImageBackground, Linking, SafeAreaView, ScrollView, StyleSheet, Touchable, TouchableOpacity, TouchableOpacityBase, View } from 'react-native';
+import { Button, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 import { AUTHENTICATIONS, CLASS } from '../services/api.constants';
 
-export default function ClassDetailScreen({route}) {
+export default function ClassDetailScreen({ route }) {
   const { classID } = route.params
   const navigation = useNavigation();
   const isFocused = useIsFocused();
@@ -25,6 +25,38 @@ export default function ClassDetailScreen({route}) {
       })
 
   }, []);
+
+  function joinClass(props) {
+    const body = {
+      teacher: props.teacher._id,
+      student: '62a1af738c535a276ca3c3ef',
+      class: props._id 
+    }
+    console.log(body)
+    try {
+      let requestObj = {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      }
+      fetch(AUTHENTICATIONS.API_URL + CLASS.JOIN_CLASS, requestObj)
+        .then((response: any) => {
+          console.log(response)
+          Alert.alert(response.data.message)
+        })
+        .catch((err: any) => {
+          console.log(err)
+          console.log(err.response)
+        })
+    }
+    catch (exception) {
+      console.log('exception ', exception)
+    }
+  }
+
   return (
     <View style={styles.container}>
       <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15 }}>
@@ -74,6 +106,11 @@ export default function ClassDetailScreen({route}) {
 
               {/* price tags start here */}
               {/* this will be render if student has not already joined the class */}
+              <View style={styles.joinBox}>
+                <TouchableOpacity onPress={() => { joinClass(_class) }} style={{ backgroundColor: '#4B5F79', padding: 10, borderRadius: 5, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                  <Text style={{ fontSize: 18, fontWeight: '300', color: "white" }}>Join Class</Text>
+                </TouchableOpacity>
+              </View>
               <View style={styles.joinBox}>
                 <Text style={styles.cost}>
                   {/* Cost: &#36;{12} */}
