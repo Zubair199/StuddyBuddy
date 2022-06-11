@@ -51,6 +51,7 @@ function RootNavigator() {
   const [userType, setUserType] = React.useState('');
   const [guestView, setGuestView] = React.useState(false);
 
+
   const navigation = useNavigation();
 
   // Implementation of authorizing users based on token-->

@@ -4,79 +4,50 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 import { Text } from 'react-native-elements';
 import { AuthContext } from '../utils/AuthContext';
+import { ThemeContext } from "../context/ThemeContext";
 
-const routes = [
-    {
-        screen: 'HomeScreen',
-        icon: 'home'
-    },
-    {
-        screen: 'ScheduleScreen',
-        icon: 'calendar'
-    },
-    {
-        screen: 'NotificationScreen',
-        icon: 'bells'
-    },
-    {
-        screen: 'SearchScreen',
-        icon: 'search1'
-    }
-]
 export default function Header(props) {
     const navigation = useNavigation();
-    const { currentScreen } = React.useContext(AuthContext)
-
+    const { currentScreen, setCurrentScreen } = React.useContext(ThemeContext);
     return (
-        <View style={{ backgroundColor: '#3878ee', height: 50 }}>
+        <View style={{ backgroundColor: '#3878ee', height: 50,justifyContent:'center'}}>
             <View style={{
-                paddingTop: 10,
+                // paddingTop: 10,
                 flexDirection: 'row',
                 justifyContent: 'space-around',
                 width: "100%",
             }}>
-                {
-                    routes.map((item, index) => (
-                        <TouchableOpacity
-                            key={index}
-                            onPress={() => {
-                                navigation.navigate('Root', { screen: item.screen });
-                            }}
-                        >
-                            {/* props.screenName === "HomeScreen" ? '#ffbb74' :  */}
-                            <Icon
-                                name={item.icon} size={30}
-                                color={props.screenName === currentScreen ? '#ffbb74' : "white"}
-                            />
-                        </TouchableOpacity>
-
-                    ))
-                }
-
-                {/* <TouchableOpacity
+                <TouchableOpacity
                     onPress={() => {
-                        navigation.navigate('ScheduleScreen');
+                        setCurrentScreen('HomeScreen');
                     }}
                 >
-                    <Icon name='calendar' size={30} color="white" />
+                    <Icon name='home' size={30} color={currentScreen === 'HomeScreen' ? '#ffbb74' : "white"} />
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => {
-                        navigation.navigate('NotificationScreen');                        
+                        // navigation.navigate('ScheduleScreen');
+                        setCurrentScreen('ScheduleScreen');
                     }}
                 >
-                    <Icon name='bells' size={30} color="white" />
+                    <Icon name='calendar' size={30} color={currentScreen === 'ScheduleScreen' ? '#ffbb74' : "white"} />
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => {
-                        navigation.navigate('SearchScreen');
+                        // navigation.navigate('NotificationScreen');
+                        setCurrentScreen('NotificationScreen');
                     }}
                 >
-                    <Icon name='search1' size={30} color="white" />
-                </TouchableOpacity> */}
-            </View>
-            <View>
-                <Text style={{ fontSize: 30 }}>{currentScreen} </Text>
+                    <Icon name='bells' size={30} color={currentScreen === 'NotificationScreen' ? '#ffbb74' : "white"} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => {
+                        setCurrentScreen('SearchScreen');
+                        // navigation.navigate('SearchScreen');
+                    }}
+                >
+                    <Icon name='search1' size={30} color={currentScreen === 'SearchScreen' ? '#ffbb74' : "white"}  />
+                </TouchableOpacity>
             </View>
         </View >
     )

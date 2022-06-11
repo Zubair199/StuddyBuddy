@@ -12,6 +12,7 @@ import { Node } from 'react';
 import { NativeBaseProvider, extendTheme } from "native-base";
 import { StatusBar, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { ThemeProvider } from './context/ThemeContext';
 
 const App: () => Node = () => {
   const theme = extendTheme({
@@ -34,12 +35,14 @@ const App: () => Node = () => {
   const colorScheme = useColorScheme();
 
   return (
-    <NativeBaseProvider theme={theme}>
-      <SafeAreaProvider>
-        <Navigation colorScheme={colorScheme} />
-        <StatusBar />
-      </SafeAreaProvider>
-    </NativeBaseProvider>
+    <ThemeProvider>
+      <NativeBaseProvider theme={theme}>
+        <SafeAreaProvider>
+          <Navigation colorScheme={colorScheme} />
+          <StatusBar />
+        </SafeAreaProvider>
+      </NativeBaseProvider>
+    </ThemeProvider>
   );
 };
 

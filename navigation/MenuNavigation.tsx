@@ -30,6 +30,9 @@ import StudentAssignmentScreen from '../screens/StudentAssignmentScreen';
 
 const BottomTab = createBottomTabNavigator();
 
+const RootStack = createNativeStackNavigator();
+
+
 const MenuNavigation = () => {
   const navigation = useNavigation();
 
@@ -45,151 +48,152 @@ const MenuNavigation = () => {
   };
 
   return (
-    <BottomTab.Navigator
-      initialRouteName="Home"
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: '#3878ee',
-        },
-        tabBarStyle: {
-          backgroundColor: '#3878ee',
-          height: Platform.OS === 'ios' ? 83 : 85,
-          position: 'absolute',
-          bottom: 15,
-          left: 20,
-          right: 20,
-          elevation: 0,
-          borderRadius: 15,
-        },
-        tabBarShowLabel: false,
-        tabBarLabelStyle: { fontSize: 15 },
-        headerShown: false,
-      }}>
-      <BottomTab.Screen
-        name="classes"
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ focused }) => (
-            <View
-              style={{ alignItems: 'center', justifyContent: 'center', top: 3 }}>
-              <Image
-                style={[
-                  styles.tabIcon,
-                  {
-                    tintColor: focused ? '#ffbb74' : '#ffffff',
-                  },
-                ]}
-                source={require('../assets/images/icons/briefcase.png')}
-              />
-              <Text
-                style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
-                Classes
-              </Text>
-            </View>
-          ),
-        }}
-        component={HomeStackScreen}
-      />
-      <BottomTab.Screen
-        name="Message"
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <View
-              style={{ alignItems: 'center', justifyContent: 'center', top: 3 }}>
-              <Image
-                style={[
-                  styles.tabIcon,
-                  {
-                    tintColor: focused ? '#ffbb74' : '#ffffff',
-                  },
-                ]}
-                source={require('../assets/images/icons/comment.png')}
-              />
-              <Text
-                style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
-                Message
-              </Text>
-            </View>
-          ),
-        }}
-        component={MessagesStackScreen}
-      />
-      <BottomTab.Screen
-        name="Payment"
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ focused }) => (
-            <View
-              style={{ alignItems: 'center', justifyContent: 'center', top: 3 }}>
-              <Image
-                style={[
-                  styles.tabIcon,
-                  {
-                    tintColor: focused ? '#ffbb74' : '#ffffff',
-                  },
-                ]}
-                source={require('../assets/images//icons/credit-card.png')}
-              />
-              <Text
-                style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
-                Payment
-              </Text>
-            </View>
-          ),
-        }}
-        component={PaymentStackScreen}
-      />
-      <BottomTab.Screen
-        name="Profile"
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ focused }) => (
-            <View
-              style={{ alignItems: 'center', justifyContent: 'center', top: 3 }}>
-              <Image
-                style={[
-                  styles.tabIcon,
-                  {
-                    tintColor: focused ? '#ffbb74' : '#ffffff',
-                  },
-                ]}
-                source={require('../assets/images/profile.png')}
-              />
-              <Text
-                style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
-                Profile
-              </Text>
-            </View>
-          ),
-        }}
-        component={ProfileStackScreen}
-      />
-      <BottomTab.Screen
-        name="Settings"
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ focused }) => (
-            <View
-              style={{ alignItems: 'center', justifyContent: 'center', top: 3 }}>
-              <Image
-                style={[
-                  styles.tabIcon,
-                  {
-                    tintColor: focused ? '#ffbb74' : '#ffffff',
-                  },
-                ]}
-                source={require('../assets/images/setting.png')}
-              />
-              <Text
-                style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
-                Settings
-              </Text>
-            </View>
-          ),
-        }}
-        component={SettingsStackScreen}
-      />
-    </BottomTab.Navigator>
+    <HomeStackScreen />
+    // <BottomTab.Navigator
+    //   initialRouteName="Home"
+    //   screenOptions={{
+    //     headerStyle: {
+    //       backgroundColor: '#3878ee',
+    //     },
+    //     tabBarStyle: {
+    //       backgroundColor: '#3878ee',
+    //       height: Platform.OS === 'ios' ? 83 : 85,
+    //       position: 'absolute',
+    //       bottom: 15,
+    //       left: 20,
+    //       right: 20,
+    //       elevation: 0,
+    //       borderRadius: 15,
+    //     },
+    //     tabBarShowLabel: false,
+    //     tabBarLabelStyle: { fontSize: 15 },
+    //     headerShown: false,
+    //   }}>
+    //   <BottomTab.Screen
+    //     name="classes"
+    //     options={{
+    //       headerShown: false,
+    //       tabBarIcon: ({ focused }) => (
+    //         <View
+    //           style={{ alignItems: 'center', justifyContent: 'center', top: 3 }}>
+    //           <Image
+    //             style={[
+    //               styles.tabIcon,
+    //               {
+    //                 tintColor: focused ? '#ffbb74' : '#ffffff',
+    //               },
+    //             ]}
+    //             source={require('../assets/images/icons/briefcase.png')}
+    //           />
+    //           <Text
+    //             style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
+    //             Classes
+    //           </Text>
+    //         </View>
+    //       ),
+    //     }}
+    //     component={HomeStackScreen}
+    //   />
+    //   <BottomTab.Screen
+    //     name="Message"
+    //     options={{
+    //       tabBarIcon: ({ focused }) => (
+    //         <View
+    //           style={{ alignItems: 'center', justifyContent: 'center', top: 3 }}>
+    //           <Image
+    //             style={[
+    //               styles.tabIcon,
+    //               {
+    //                 tintColor: focused ? '#ffbb74' : '#ffffff',
+    //               },
+    //             ]}
+    //             source={require('../assets/images/icons/comment.png')}
+    //           />
+    //           <Text
+    //             style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
+    //             Message
+    //           </Text>
+    //         </View>
+    //       ),
+    //     }}
+    //     component={MessagesStackScreen}
+    //   />
+    //   <BottomTab.Screen
+    //     name="Payment"
+    //     options={{
+    //       headerShown: false,
+    //       tabBarIcon: ({ focused }) => (
+    //         <View
+    //           style={{ alignItems: 'center', justifyContent: 'center', top: 3 }}>
+    //           <Image
+    //             style={[
+    //               styles.tabIcon,
+    //               {
+    //                 tintColor: focused ? '#ffbb74' : '#ffffff',
+    //               },
+    //             ]}
+    //             source={require('../assets/images//icons/credit-card.png')}
+    //           />
+    //           <Text
+    //             style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
+    //             Payment
+    //           </Text>
+    //         </View>
+    //       ),
+    //     }}
+    //     component={PaymentStackScreen}
+    //   />
+    //   <BottomTab.Screen
+    //     name="Profile"
+    //     options={{
+    //       headerShown: false,
+    //       tabBarIcon: ({ focused }) => (
+    //         <View
+    //           style={{ alignItems: 'center', justifyContent: 'center', top: 3 }}>
+    //           <Image
+    //             style={[
+    //               styles.tabIcon,
+    //               {
+    //                 tintColor: focused ? '#ffbb74' : '#ffffff',
+    //               },
+    //             ]}
+    //             source={require('../assets/images/profile.png')}
+    //           />
+    //           <Text
+    //             style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
+    //             Profile
+    //           </Text>
+    //         </View>
+    //       ),
+    //     }}
+    //     component={ProfileStackScreen}
+    //   />
+    //   <BottomTab.Screen
+    //     name="Settings"
+    //     options={{
+    //       headerShown: false,
+    //       tabBarIcon: ({ focused }) => (
+    //         <View
+    //           style={{ alignItems: 'center', justifyContent: 'center', top: 3 }}>
+    //           <Image
+    //             style={[
+    //               styles.tabIcon,
+    //               {
+    //                 tintColor: focused ? '#ffbb74' : '#ffffff',
+    //               },
+    //             ]}
+    //             source={require('../assets/images/setting.png')}
+    //           />
+    //           <Text
+    //             style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
+    //             Settings
+    //           </Text>
+    //         </View>
+    //       ),
+    //     }}
+    //     component={SettingsStackScreen}
+    //   />
+    // </BottomTab.Navigator>
   );
 };
 
@@ -276,11 +280,11 @@ const HomeStackScreen = ({ navigation, route }: any) => {
       screenOptions={{
         headerShown: true,
       }}>
-      {/* <HomeStack.Screen
+      <HomeStack.Screen
         name="HomeScreen"
-        options={mainHeader}
+        options={{ headerShown: false }}
         component={HomeScreen}
-      /> */}
+      />
       <HomeStack.Screen
         name="Classes"
         options={mainHeader}
@@ -355,6 +359,26 @@ const HomeStackScreen = ({ navigation, route }: any) => {
         name="NotificationScreen"
         component={NotificationScreen}
         options={mainHeader}
+      />
+      <HomeStack.Screen
+        name="Payments"
+        options={mainHeader}
+        component={PaymentsScreen}
+      />
+      <HomeStack.Screen
+        name="Messages"
+        options={mainHeader}
+        component={MessagesScreen}
+      />
+      <HomeStack.Screen
+        name="Settings"
+        options={mainHeader}
+        component={SettingsScreen}
+      />
+      <HomeStack.Screen
+        name="Profile"
+        options={mainHeader}
+        component={ProfileScreen}
       />
     </HomeStack.Navigator>
   );

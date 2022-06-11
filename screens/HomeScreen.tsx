@@ -25,12 +25,16 @@ import { AUTHENTICATIONS, CLASS } from "../services/api.constants";
 import Icon from 'react-native-vector-icons/AntDesign';
 import DatePicker from 'react-native-date-picker'
 import { Select, Input, TextArea, IconButton } from "native-base";
+import Header from "../components/Header";
+import { ThemeContext } from "../context/ThemeContext";
+import Footer from "../components/Footer";
 
 export default function HomeScreen() {
     const isFocused = useIsFocused();
     const navigation = useNavigation();
     const [classes, setClasses] = React.useState([])
     let [user, setUser] = React.useState("6295cc2b7d505307388d58fd")
+    const { currentScreen, height, containerHeight } = React.useContext(ThemeContext);
 
     React.useEffect(() => {
         setUser('6295cc2b7d505307388d58fd')
@@ -68,78 +72,77 @@ export default function HomeScreen() {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }} >
 
-            {!classes || classes.length == 0 ? (
-                <View style={styles.contentBox}>
-                    <Text style={styles.emptySearchText}>
-                        No Class Has Been Found
-                    </Text>
-                </View>
-            ) : (
-                <ScrollView
-                    style={styles.scrollView}
-                    showsVerticalScrollIndicator={false}
-                >
-                    <View >
-                        {classes.map((classItem, index) => (
-                            <TouchableOpacity
-                                style={styles.groupBox}
-                                key={index}
-                            onPress={()=>{navigation.reset({
-                                index: 0,
-                                routes: [{ name: 'ClassDetails', params: { classID: classItem._id }, }],
-                              }) }}
-                            >
-                                <Image source={require("../assets/images/bg.jpg")}
-                                    style={styles.classImg}
-                                />
-                                <View style={styles.classInfo}>
-                                    <View style={styles.levelBox}>
-                                        <View
-                                            style={
-                                                styles.levelIntermediate
-                                            }
-                                        ></View>
-                                        <Text style={styles.levelText}>{classItem.level}</Text>
-                                    </View>
-                                    <View
-                                        style={{
-                                            flexWrap: "wrap",
-                                            flexDirection: "row",
-                                            width: "80%",
+            <Header />
+            <View style={styles.container}>
+                <View style={{ height: containerHeight }}>
+
+                    {!classes || classes.length == 0 ? (
+                        <View style={styles.contentBox}>
+                            <Text style={styles.emptySearchText}>
+                                No Class Has Been Found
+                            </Text>
+                        </View>
+                    ) : (
+                        <ScrollView
+                            style={styles.scrollView}
+                            showsVerticalScrollIndicator={false}
+                        >
+                            <View >
+                                {classes.map((classItem, index) => (
+                                    <TouchableOpacity
+                                        style={styles.groupBox}
+                                        key={index}
+                                        onPress={() => {
+                                            navigation.reset({
+                                                index: 0,
+                                                routes: [{ name: 'ClassDetails', params: { classID: classItem._id }, }],
+                                            })
                                         }}
                                     >
-                                        <Text style={styles.className}>{classItem.name}</Text>
-                                    </View>
-                                    <View style={{ flexDirection: "row" }}>
-                                        <Text style={styles.studio}>{classItem.teacher.username}</Text>
-                                        {/* <View style={styles.dot}></View>
-                    <Text style={styles.studio}>{classItem.studio}</Text> */}
-                                    </View>
-                                    <Text style={styles.dayTime}>
-                                        Monday &nbsp;
-                                        12:00 &nbsp;-&nbsp; 14:00
-                                    </Text>
-                                    {/* {classItem.myJoinStatus &&
-                    classItem.myJoinStatus === "pending" && ( */}
-                                    <Text style={styles.statusMsg}>
-                                        {classItem.status}
-                                    </Text>
-                                    {/* )}
-                  {classItem.status &&
-                    !classItem.myJoinStatus &&
-                    classItem.status === "pending" && (
-                      <Text style={styles.statusMsg}>
-                        Waiting For Admin Approval
-                      </Text>
-                    )} */}
-                                </View>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                </ScrollView>
-            )}
+                                        <Image source={require("../assets/images/bg.jpg")}
+                                            style={styles.classImg}
+                                        />
+                                        <View style={styles.classInfo}>
+                                            <View style={styles.levelBox}>
+                                                <View
+                                                    style={
+                                                        styles.levelIntermediate
+                                                    }
+                                                ></View>
+                                                <Text style={styles.levelText}>{classItem.level}</Text>
+                                            </View>
+                                            <View
+                                                style={{
+                                                    flexWrap: "wrap",
+                                                    flexDirection: "row",
+                                                    width: "80%",
+                                                }}
+                                            >
+                                                <Text style={styles.className}>{classItem.name}</Text>
+                                            </View>
+                                            <View style={{ flexDirection: "row" }}>
+                                                <Text style={styles.studio}>{classItem.teacher.username}</Text>
+                                            </View>
+                                            <Text style={styles.dayTime}>
+                                                Monday &nbsp;
+                                                12:00 &nbsp;-&nbsp; 14:00
+                                            </Text>
+                                            <Text style={styles.statusMsg}>
+                                                {classItem.status}
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        </ScrollView>
+                    )}
+                </View>
+
+
+            </View>
+            <Footer />
         </SafeAreaView>
     );
 }
@@ -148,12 +151,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#ffffff",
-        paddingHorizontal: 15,
-        paddingBottom: 10,
+        // paddingHorizontal: 15,
+        // paddingBottom: 10,
     },
     scrollView: {
         // marginTop: 10,
         marginBottom: '28%',
+        paddingHorizontal: 15,
+
     },
 
     closeIconBox: {
@@ -266,7 +271,7 @@ const styles = StyleSheet.create({
     emptySearchText: {
         fontSize: 24,
         fontFamily: "roboto-regular",
-        color: "#949599",
+        color: "black",
         textTransform: "uppercase",
         textAlign: "center",
     },

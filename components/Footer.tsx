@@ -1,60 +1,65 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
+import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
+import IconMaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
+
 import { useNavigation } from '@react-navigation/native';
 import { Text } from 'react-native-elements';
+import { AuthContext } from '../utils/AuthContext';
+import { ThemeContext } from "../context/ThemeContext";
 
 export default function Footer(props) {
     const navigation = useNavigation();
+    const { currentScreen, setCurrentScreen, width } = React.useContext(ThemeContext);
     return (
-        <View style={{ backgroundColor: '#3878ee', height: 50 }}>
+        <View style={{ backgroundColor: '#3878ee', height: 60, width: width - 40, marginLeft: 20, marginBottom: 10, borderRadius: 15, justifyContent: 'center' }}>
             <View style={{
-                paddingTop: 10,
                 flexDirection: 'row',
-                justifyContent: 'space-around',
+                justifyContent: 'space-evenly',
                 width: "100%",
             }}>
                 <TouchableOpacity
                     onPress={() => {
-                        navigation.reset({
-                            index: 0,
-                            routes: [{ name: 'HomeScreen' }],
-                        });
+                        setCurrentScreen('Classes');
                     }}
                 >
-                    <Icon name='home' size={30} color="white" />
+                    <IconFontAwesome name='briefcase' size={30} color={currentScreen === 'Classes' ? '#ffbb74' : "white"} />
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => {
-                        navigation.reset({
-                            index: 0,
-                            routes: [{ name: 'ScheduleScreen' }],
-                        });
+                        // navigation.navigate('ScheduleScreen');
+                        setCurrentScreen('Messages');
                     }}
                 >
-                    <Icon name='calendar' size={30} color="white" />
+                    <Icon name='message1' size={30} color={currentScreen === 'Messages' ? '#ffbb74' : "white"} />
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => {
-                        navigation.reset({
-                            index: 0,
-                            routes: [{ name: 'NotificationScreen' }],
-                        });
+                        // navigation.navigate('NotificationScreen');
+                        setCurrentScreen('Payments');
                     }}
                 >
-                    <Icon name='bells' size={30} color="white" />
+                    <IconFontAwesome name='diamond' size={30} color={currentScreen === 'Payments' ? '#ffbb74' : "white"} />
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => {
-                        navigation.reset({
-                            index: 0,
-                            routes: [{ name: 'SearchScreen' }],
-                        });
+                        setCurrentScreen('Profile');
+                        // navigation.navigate('SearchScreen');
                     }}
                 >
-                    <Icon name='search1' size={30} color="white" />
+                    <IconFontAwesome name='user-circle-o' size={30} color={currentScreen === 'Profile' ? '#ffbb74' : "white"} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => {
+                        setCurrentScreen('Settings');
+                        // navigation.navigate('SearchScreen');
+                    }}
+                >
+                    <IconFontAwesome name='gear' size={30} color={currentScreen === 'Settings' ? '#ffbb74' : "white"} />
                 </TouchableOpacity>
             </View>
-        </View>
+        </View >
     )
 }
