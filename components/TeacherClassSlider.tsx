@@ -8,7 +8,7 @@ interface Iprops {
   screen: string;
   categoryText: string;
 }
-export default function ClassSlider(props: Iprops) {
+export default function TeacherClassSlider(props: Iprops) {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
 
@@ -24,7 +24,7 @@ export default function ClassSlider(props: Iprops) {
         ) : (
           <ScrollView style={styles.scrollView} horizontal={true}>
             {
-              props.data.map((item, index: number) => (
+              props.data.map((classData, index: number) => (
                 <View key={index} style={styles.classBoxWrapper}>
                   <ImageBackground
                     resizeMode='cover'
@@ -35,7 +35,7 @@ export default function ClassSlider(props: Iprops) {
                       <View style={styles.classTakenBox}>
                         <View style={styles.classTakenOverLay}>
                           <Text style={styles.classTakenBoxText}>
-                            {item.classType}
+                            {classData.classType}
                           </Text>
                         </View>
                       </View>
@@ -44,7 +44,7 @@ export default function ClassSlider(props: Iprops) {
                           onPress={
                             () => navigation.reset({
                               index: 0,
-                              routes: [{ name: props.screen, params: { classID: item.class._id }, }],
+                              routes: [{ name: props.screen, params: { classID: classData._id }, }],
                             })
                           }
                           style={{
@@ -59,24 +59,24 @@ export default function ClassSlider(props: Iprops) {
                             >
                             </View>
                             <Text style={styles.classBoxText}>
-                              {item.class.level}
+                              {classData.level}
                             </Text>
 
                           </View>
                           <Text style={styles.classBoxName}>
-                            {item.class.name}
+                            {classData.name}
                           </Text>
                           <Text style={styles.classBoxInstructor}>
-                            {item.teacher.username}
+                            {classData.teacher.username}
                           </Text>
                           <Text style={styles.classBoxDate}>
                             Tuesday 12:00 - 13:00
                           </Text>
                           <Text style={styles.classBoxInstructor}>
-                            {item.class.subject}
+                            {classData.subject}
                           </Text>
                           <Text style={styles.classBoxInstructor}>
-                            {item.class.status}
+                            {classData.status}
                           </Text>
                         </TouchableOpacity>
                       </View>

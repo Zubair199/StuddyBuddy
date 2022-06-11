@@ -12,6 +12,7 @@ import ExamSlider from '../components/ExamSlider';
 import AddAssignmentScreen from './AddAssignment';
 import { FormControl, Modal, Button, Divider } from 'native-base';
 import { ASSIGNMENT, AUTHENTICATIONS, CLASS, EXAM } from '../services/api.constants';
+import TeacherClassSlider from '../components/teacherClassSlider';
 export default function MyClassesScreen() {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
@@ -26,6 +27,7 @@ export default function MyClassesScreen() {
     setUser('6295cc2b7d505307388d58fd')
 
     studentApiCall()
+    // teacherApiCall()
   }, [])
 
   function teacherApiCall() {
@@ -58,7 +60,7 @@ export default function MyClassesScreen() {
       })
   }
   function studentApiCall() {
-    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES)
+    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_UPCOMING_CLASSES)
       .then((response) => response.json())
       .then((responseJson) => {
         console.log('classes ', responseJson.data)
@@ -157,7 +159,7 @@ export default function MyClassesScreen() {
         </Modal.Content>
       </Modal>
       <ScrollView style={{ marginBottom: '25%' }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: "center", marginVertical: 10 }}>
+        {/* <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: "center", marginVertical: 10 }}>
           <TextInput placeholder='Search...' style={{ width: '70%', borderWidth: 1, borderColor: 'lightgray', borderRadius: 10, height: 45 }} />
           <TouchableOpacity>
             <Icon name="search1" size={20} style={{ marginLeft: -35 }} />
@@ -165,7 +167,7 @@ export default function MyClassesScreen() {
           <Button style={{ backgroundColor: '#3878ee' }} onPress={() => setShowModal(true)} >
             Add New...
           </Button>
-        </View>
+        </View> */}
         <View style={{ marginVertical: 10 }}>
           <ClassSlider data={classes} categoryText={"My Upcoming Classes"} screen={"ClassDetails"} />
         </View>

@@ -12,25 +12,45 @@ export default function ClassDetailScreen({ route }) {
   const isFocused = useIsFocused();
 
   const [_class, setClass] = React.useState(null)
+  const [teacher, setTeacher] = React.useState(null)
+  const [isJoined, setIsJoined] = React.useState(false)
+
   React.useEffect(() => {
 
+    teacherApiCall()
+
+  }, []);
+
+  function teacherApiCall() {
     fetch(AUTHENTICATIONS.API_URL + CLASS.GET_CLASS_BY_CLASS_ID + classID)
       .then((response) => response.json())
       .then((responseJson) => {
         console.log('classes ', responseJson.data)
         setClass(responseJson.data)
+        setTeacher(responseJson.data.teacher)
       })
       .catch(err => {
         console.log(err)
       })
-
-  }, []);
-
+  }
+  function studentApiCall() {
+    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_JOINED_CLASS_BY_ID + classID)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log('classes ', responseJson.data)
+        setClass(responseJson.data.class)
+        setIsJoined(responseJson.data.isJoined)
+        setTeacher(responseJson.data.teacher)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
   function joinClass(props) {
     const body = {
       teacher: props.teacher._id,
       student: '62a1af738c535a276ca3c3ef',
-      class: props._id 
+      class: props._id
     }
     console.log(body)
     try {
@@ -70,7 +90,7 @@ export default function ClassDetailScreen({ route }) {
         <Text style={styles.title}>Class Details</Text>
       </View>
       {
-        _class !== null
+        (_class !== null && teacher !== null)
         &&
         <ScrollView style={{ marginBottom: '25%', padding: 15 }}>
           <View >
@@ -89,7 +109,7 @@ export default function ClassDetailScreen({ route }) {
                   </View>
                   <Text style={styles.classBoxName}>{_class.name}</Text>
                   <Text style={styles.classBoxInstructor}>
-                    {_class.teacher.username}
+                    {teacher.username}
                   </Text>
                   <Text style={styles.classBoxDate}>
                     Tuesday 12:00 - 13:00
@@ -106,11 +126,14 @@ export default function ClassDetailScreen({ route }) {
 
               {/* price tags start here */}
               {/* this will be render if student has not already joined the class */}
-              <View style={styles.joinBox}>
-                <TouchableOpacity onPress={() => { joinClass(_class) }} style={{ backgroundColor: '#4B5F79', padding: 10, borderRadius: 5, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                  <Text style={{ fontSize: 18, fontWeight: '300', color: "white" }}>Join Class</Text>
-                </TouchableOpacity>
-              </View>
+              {/* {
+                !isJoined &&
+                <View style={styles.joinBox}>
+                  <TouchableOpacity onPress={() => { joinClass(_class) }} style={{ backgroundColor: '#4B5F79', padding: 10, borderRadius: 5, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: '300', color: "white" }}>Join Class</Text>
+                  </TouchableOpacity>
+                </View>
+              } */}
               <View style={styles.joinBox}>
                 <Text style={styles.cost}>
                   {/* Cost: &#36;{12} */}

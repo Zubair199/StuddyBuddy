@@ -11,6 +11,8 @@ type AuthContextType = {
   setUserType: (value: string) => void;
   guestView: boolean;
   setGuestView: (value: boolean) => void;
+  currentScreen: string;
+  setCurrentScreen: (value: string) => void;
 };
 
 export const AuthContext = createContext<AuthContextType | undefined>(
