@@ -49,11 +49,13 @@ export default function AssignmentDetailScreen({ route }) {
           Accept: 'application/json',
           'Content-Type': 'application/json'
         },
-        // body: JSON.stringify(body)
+        body: JSON.stringify({ status: "Started" })
       }
       fetch(AUTHENTICATIONS.API_URL + CLASS.START_ASSIGNMENT + id, requestObj)
         .then((response: any) => {
           console.log(response)
+          navigation.navigate('AssignmentStartScreen',
+            { assignmentID: assignmentID, studentAssignmentID: id })
         })
         .catch((err: any) => {
           console.log(err)

@@ -44,6 +44,7 @@ module.exports = {
         GET_ALL_ACTIVE_ASSIGNMENTS_BY_TEACHER_ID: "/api/assignment/teacher/active/",
         GET_ALL_ASSIGNMENTS_BY_TEACHER_ID: '/api/assignment/teacher/',
         GET_ASSIGNMENT_BY_ASSIGNMENT_ID: '/api/assignment/',
+        GET_ASSIGNMENT_QUESTIONS_BY_ASSIGNEMNT_ID : '/api/assignment/question/'
 
     },
 };

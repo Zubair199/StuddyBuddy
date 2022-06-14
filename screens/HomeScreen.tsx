@@ -162,15 +162,15 @@ export default function HomeScreen() {
           </Modal.Content>
         </Modal>
         <ScrollView style={{ padding: 10 }}>
-          {/* <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: "center", marginVertical: 10 }}>
-          <TextInput placeholder='Search...' style={{ width: '70%', borderWidth: 1, borderColor: 'lightgray', borderRadius: 10, height: 45 }} />
-          <TouchableOpacity>
-            <Icon name="search1" size={20} style={{ marginLeft: -35 }} />
-          </TouchableOpacity>
-          <Button style={{ backgroundColor: '#3878ee' }} onPress={() => setShowModal(true)} >
-            Add New...
-          </Button>
-        </View> */}
+          <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: "center", marginVertical: 10 }}>
+            <TextInput placeholder='Search...' style={{ width: '70%', borderWidth: 1, borderColor: 'lightgray', borderRadius: 10, height: 45 }} />
+            <TouchableOpacity>
+              <Icon name="search1" size={20} style={{ marginLeft: -35 }} />
+            </TouchableOpacity>
+            <Button style={{ backgroundColor: '#3878ee' }} onPress={() => setShowModal(true)} >
+              Add New...
+            </Button>
+          </View>
           <View style={{ marginVertical: 10 }}>
             <ClassSlider data={classes} categoryText={"My Upcoming Classes"} screen={"ClassDetails"} />
           </View>

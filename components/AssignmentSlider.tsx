@@ -49,7 +49,7 @@ export default function AssignmentSlider(props: Iprops) {
                           // }
                           onPress={() => {
                             item.status.toLowerCase() === "started" ?
-                              navigation.navigate('AssignmentStartScreen', { assignmentID: item.assignment._id })
+                              navigation.navigate('AssignmentStartScreen', { assignmentID: item.assignment._id, studentAssignmentID: item._id })
                               :
                               navigation.navigate(props.screen, { assignmentID: item.assignment._id })
                           }}
