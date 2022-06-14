@@ -5,23 +5,31 @@ import { CheckBox, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 import { Divider } from 'native-base';
-import { ASSIGNMENT, AUTHENTICATIONS } from '../services/api.constants';
+import { ASSIGNMENT, AUTHENTICATIONS, CLASS } from '../services/api.constants';
+import MainLayout from './MainLayout';
 
 export default function AssignmentDetailScreen({ route }) {
   const { assignmentID } = route.params
   const navigation = useNavigation();
   const isFocused = useIsFocused();
 
-  const [_class, setClass] = React.useState(null)
+  const [assignment, setAssignment] = React.useState(null)
+  const [studentAssignment, setStudentAssignment] = React.useState(null)
+
   let [data, setData] = React.useState([])
+  let [start, setStart] = React.useState(false)
 
   React.useEffect(() => {
 
-    fetch(AUTHENTICATIONS.API_URL + ASSIGNMENT.GET_ASSIGNMENT_BY_ASSIGNMENT_ID + assignmentID)
+    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_JOINED_CLASS_ASSIGNMENT_BY_STUDENT_ASSINGMENT_ID + assignmentID)
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log('classes ', responseJson.data)
-        setClass(responseJson.data)
+        if (responseJson.data.status.toLowerCase() === 'started') {
+          navigation.navigate('AssignmentStartScreen', { assignmentID: assignmentID })
+        }
+        console.log('assignment ', responseJson.data)
+        setAssignment(responseJson.data.assignment)
+        setStudentAssignment(responseJson.data)
         let arr = Array.from({ length: responseJson.data.questioncount }, (_, i) => i + 1)
         console.log(arr)
         setData(arr)
@@ -32,87 +40,141 @@ export default function AssignmentDetailScreen({ route }) {
 
   }, []);
 
-
-  return (
-    <View style={styles.container}>
-      <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15, }}>
-        <TouchableOpacity style={{ marginTop: 5 }}
-          onPress={() => navigation.reset({
-            index: 0,
-            routes: [{ name: 'Classes' }],
-          })}>
-          <Icon color={'black'} name="leftcircleo" size={25} />
-        </TouchableOpacity>
-        <Text style={styles.title}>Assignment Details</Text>
-      </View>
-      {
-        _class !== null &&
-        <ScrollView style={{ marginBottom: '25%', padding: 15 }}>
-          <View>
-            <ImageBackground
-              resizeMode='cover'
-              source={require('../assets/images/bg.jpg')}
-              style={styles.challengeBoxImage}
-              imageStyle={{ borderRadius: 5 }}
-            >
-              <View style={styles.overlay}>
-                <View style={styles.challengeTypeOverLay}>
-                  <Text style={styles.challengeBoxText}>
-                    Virtual
-                  </Text>
-                </View>
-                <Text style={styles.challengeBoxName}>{_class.title}</Text>
-                <Text style={styles.challengeBoxDate}>
-                  28-05-2022
-                </Text>
-              </View>
-            </ImageBackground>
-            <Text style={styles.heading}>Details</Text>
-            <Text style={styles.text}>{_class.description}</Text>
-          </View>
-
-
-          <View style={{ marginVertical: 15 }}>
-            <Divider />
-          </View>
-
-          <View style={{ marginVertical: 10 }}>
-            <Text style={styles.title}>Assignment Questions</Text>
-          </View>
-          {data.map((item, index) => (
-            <View key={index} style={{ marginVertical: 10 }}>
-              <View>
-                <Text style={{ fontSize: 20, marginLeft: 15 }}>Q{index + 1}: What's pencil made of?</Text>
-              </View>
-              <View style={{ marginVertical: 15 }}>
-                <CheckBox
-                  title='Option 1'
-                  checkedIcon='dot-circle-o'
-                  uncheckedIcon='circle-o'
-                />
-                <CheckBox
-                  title='Option 2'
-                  checkedIcon='dot-circle-o'
-                  uncheckedIcon='circle-o'
-                />
-                <CheckBox
-                  title='Option 3'
-                  checkedIcon='dot-circle-o'
-                  uncheckedIcon='circle-o'
-                />
-                <CheckBox
-                  title='Option 4'
-                  checkedIcon='dot-circle-o'
-                  uncheckedIcon='circle-o'
-                />
-              </View>
-              <Divider />
-            </View>
-          ))}
-        </ScrollView>
+  const startAssginment = (id) => {
+    try {
+      console.log(id)
+      let requestObj = {
+        method: 'PUT',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        // body: JSON.stringify(body)
       }
+      fetch(AUTHENTICATIONS.API_URL + CLASS.START_ASSIGNMENT + id, requestObj)
+        .then((response: any) => {
+          console.log(response)
+        })
+        .catch((err: any) => {
+          console.log(err)
+          console.log(err.response)
+        })
+    }
+    catch (exception) {
+      console.log('exception ', exception)
+    }
+  }
 
-    </View>
+  function component() {
+    return (
+      <View style={styles.container}>
+
+        {
+          start ?
+            <View>
+              <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15, }}>
+                {/* <TouchableOpacity style={{ marginTop: 5 }}
+                  onPress={() => setStart(false)}>
+                  <Icon color={'black'} name="leftcircleo" size={25} />
+                </TouchableOpacity> */}
+                <Text style={styles.title}>Assignment Questions</Text>
+              </View>
+              {
+                assignment !== null &&
+                <ScrollView style={{ padding: 15, marginBottom: '20%' }}>
+                  {
+                    data.map((item, index) => (
+                      <View key={index} style={{ marginVertical: 10 }}>
+                        <View>
+                          <Text style={{ fontSize: 20, marginLeft: 15 }}>Q{index + 1}: What's pencil made of?</Text>
+                        </View>
+                        <View style={{ marginVertical: 15 }}>
+                          <CheckBox
+                            title='Option 1'
+                            checkedIcon='dot-circle-o'
+                            uncheckedIcon='circle-o'
+                          />
+                          <CheckBox
+                            title='Option 2'
+                            checkedIcon='dot-circle-o'
+                            uncheckedIcon='circle-o'
+                          />
+                          <CheckBox
+                            title='Option 3'
+                            checkedIcon='dot-circle-o'
+                            uncheckedIcon='circle-o'
+                          />
+                          <CheckBox
+                            title='Option 4'
+                            checkedIcon='dot-circle-o'
+                            uncheckedIcon='circle-o'
+                          />
+                        </View>
+                        <Divider />
+                      </View>
+                    ))
+                  }
+                </ScrollView>
+              }
+            </View>
+
+            :
+            <View>
+              <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15, }}>
+                <TouchableOpacity style={{ marginTop: 5 }}
+                  onPress={() => navigation.goBack()}>
+                  <Icon color={'black'} name="leftcircleo" size={25} />
+                </TouchableOpacity>
+                <Text style={styles.title}>Assignment Details</Text>
+              </View>
+              {
+                assignment !== null &&
+                <ScrollView style={{ padding: 15 }}>
+                  <View>
+                    <ImageBackground
+                      resizeMode='cover'
+                      source={require('../assets/images/bg.jpg')}
+                      style={styles.challengeBoxImage}
+                      imageStyle={{ borderRadius: 5 }}
+                    >
+                      <View style={styles.overlay}>
+                        <View style={styles.challengeTypeOverLay}>
+                          <Text style={styles.challengeBoxText}>
+                            Virtual
+                          </Text>
+                        </View>
+                        <Text style={styles.challengeBoxName}>{assignment.title}</Text>
+                        <Text style={styles.challengeBoxDate}>
+                          28-05-2022
+                        </Text>
+                      </View>
+                    </ImageBackground>
+                    <Text style={styles.heading}>Details</Text>
+                    <Text style={styles.text}>{assignment.description}</Text>
+                    <View style={{ marginVertical: 15 }}>
+                      <Button title={start ? 'Return to Assignment' : 'Start Assignment'}
+                        onPress={
+                          () => {
+                            // setStart(!start); 
+                            startAssginment(studentAssignment._id);
+                          }
+                        }
+                      />
+                    </View>
+
+                  </View>
+
+                </ScrollView>
+              }
+            </View>
+        }
+
+
+      </View >
+    )
+  }
+  return (
+    <MainLayout Component={component()} />
   )
 }
 const styles = StyleSheet.create({

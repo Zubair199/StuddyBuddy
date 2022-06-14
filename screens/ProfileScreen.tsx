@@ -20,6 +20,7 @@ import { AuthContext } from "../utils/AuthContext";
 // import EditProfileModal from "../components/editProfileModal";
 import ImagePicker from 'react-native-image-crop-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import MainLayout from "./MainLayout";
 
 // import ChallengeSlider from "../components/ChallengeSlider";
 // import UserListComponent from "../components/UserListComponent";
@@ -85,113 +86,114 @@ export default function ProfileScreen(dataType: dataTypes) {
         editable: false,
         bio: "Lorem Ipsum salt dolor set amet sha.",
     });
-    return (
-        <SafeAreaView style={styles.container}>
-            <View style={{ marginBottom: '40%' }}>
-                <View style={styles.sticky}>
-                    <Text style={styles.title}>My Profile</Text>
-                    <TouchableOpacity onPress={() => { }} style={styles.closeIconBox}>
-                        <Image
-                            style={styles.pencilIcon}
-                            source={require("../assets/images/icons/Edit-Icon.png")}
-                        />
-                    </TouchableOpacity>
-                </View>
-                <ScrollView
-                    style={styles.scrollView}
-                    keyboardShouldPersistTaps={"handled"}
-                >
-                    {/* <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" /> */}
-                    <View style={styles.basicInfo}>
-                        {/* instructor name and image will be replaced by api's data on integration of apis */}
-                        <View style={styles.profileImageBox}>
-                            {/* {imageLoader && <Image
+    function component() {
+        return (
+            <SafeAreaView style={styles.container}>
+                <View style={{ marginBottom: '18%' }}>
+                    <View style={styles.sticky}>
+                        <Text style={styles.title}>My Profile</Text>
+                        <TouchableOpacity onPress={() => { }} style={styles.closeIconBox}>
+                            <Image
+                                style={styles.pencilIcon}
+                                source={require("../assets/images/icons/Edit-Icon.png")}
+                            />
+                        </TouchableOpacity>
+                    </View>
+                    <ScrollView
+                        style={styles.scrollView}
+                        keyboardShouldPersistTaps={"handled"}
+                    >
+                        {/* <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" /> */}
+                        <View style={styles.basicInfo}>
+                            {/* instructor name and image will be replaced by api's data on integration of apis */}
+                            <View style={styles.profileImageBox}>
+                                {/* {imageLoader && <Image
                   style={{width:100, height:54}}
                   source={require('../assets/images/Deep-Move-Spinner-v3.gif')}
                 />} */}
-                            <TouchableOpacity onPress={() => setImageModal(true)}>
-                                <Image
-                                    style={styles.profileImage}
-                                    // onLoadStart={()=>setImageLoader(true)}
-                                    // onLoadEnd={()=>setImageLoader(false)}
-                                    source={
-                                        image === ""
-                                            ? require("../assets/images/user.png")
-                                            : { uri: image }
-                                    }
-                                />
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.nameBox}>
-                            <Text style={styles.name}>{userName}</Text>
-                        </View>
-                        <View style={styles.instructorBox}>
-                            <Text style={styles.instructor}>
-                                {isStudent ? "Student" : "Instructor"}
-                            </Text>
-                        </View>
-                    </View>
-
-                    {isStudent ? null :
-                        <View>
-                            {/* Divider */}
-                            <View style={styles.lineStyle} />
-
-                            <View style={styles.actionBox}>
-                                <Text style={[styles.noShowTitle, { marginRight: 20 }]}>Late Cancellation:{" " + lateCancellation}</Text>
-                                <Text style={[styles.noShowTitle, { marginLeft: 20 }]}>No Show:{" " + noShowCount}</Text>
+                                <TouchableOpacity onPress={() => setImageModal(true)}>
+                                    <Image
+                                        style={styles.profileImage}
+                                        // onLoadStart={()=>setImageLoader(true)}
+                                        // onLoadEnd={()=>setImageLoader(false)}
+                                        source={
+                                            image === ""
+                                                ? require("../assets/images/user.png")
+                                                : { uri: image }
+                                        }
+                                    />
+                                </TouchableOpacity>
                             </View>
+                            <View style={styles.nameBox}>
+                                <Text style={styles.name}>{userName}</Text>
+                            </View>
+                            <View style={styles.instructorBox}>
+                                <Text style={styles.instructor}>
+                                    {isStudent ? "Student" : "Instructor"}
+                                </Text>
+                            </View>
+                        </View>
 
-                            {/* Divider */}
-                            <View style={styles.lineStyle} />
-                        </View>
-                    }
-                    <View style={styles.skillBox}>
-                        <View style={styles.skillsWithIcon}>
-                            <Text style={styles.skillsAttributesHeading}>
-                                {isStudent ? "Class Preferences" : "Skills"}
-                            </Text>
-                        </View>
-                        <View style={styles.skills}>
-                            {skills.map((skill, index, arr) => (
-                                <View
-                                    key={index + "_skill_view"}
-                                    style={{ flexDirection: "row" }}
-                                >
-                                    <Text style={styles.skillsText}>{skill}</Text>
-                                    {arr.length - 1 !== index ? (
-                                        <View style={styles.dot}></View>
-                                    ) : null}
+                        {isStudent ? null :
+                            <View>
+                                {/* Divider */}
+                                <View style={styles.lineStyle} />
+
+                                <View style={styles.actionBox}>
+                                    <Text style={[styles.noShowTitle, { marginRight: 20 }]}>Late Cancellation:{" " + lateCancellation}</Text>
+                                    <Text style={[styles.noShowTitle, { marginLeft: 20 }]}>No Show:{" " + noShowCount}</Text>
                                 </View>
-                            ))}
+
+                                {/* Divider */}
+                                <View style={styles.lineStyle} />
+                            </View>
+                        }
+                        <View style={styles.skillBox}>
+                            <View style={styles.skillsWithIcon}>
+                                <Text style={styles.skillsAttributesHeading}>
+                                    {isStudent ? "Class Preferences" : "Skills"}
+                                </Text>
+                            </View>
+                            <View style={styles.skills}>
+                                {skills.map((skill, index, arr) => (
+                                    <View
+                                        key={index + "_skill_view"}
+                                        style={{ flexDirection: "row" }}
+                                    >
+                                        <Text style={styles.skillsText}>{skill}</Text>
+                                        {arr.length - 1 !== index ? (
+                                            <View style={styles.dot}></View>
+                                        ) : null}
+                                    </View>
+                                ))}
+                            </View>
                         </View>
-                    </View>
-                    {!isStudent && (
+                        {!isStudent && (
+                            <View style={styles.textContent}>
+                                <Text style={styles.contentTitle}>Certifications</Text>
+                                {certifications ? <Text style={styles.actualText}>{certifications}</Text> : <Text style={styles.placeholder}>Your Certifications Here</Text>}
+                            </View>
+                        )}
                         <View style={styles.textContent}>
-                            <Text style={styles.contentTitle}>Certifications</Text>
-                            {certifications ? <Text style={styles.actualText}>{certifications}</Text> : <Text style={styles.placeholder}>Your Certifications Here</Text>}
+                            <Text style={styles.contentTitle}>Bio</Text>
+                            {inputBio.bio ? <Text style={styles.actualText}>{inputBio.bio}</Text> : <Text style={styles.placeholder}>Your Short Bio Here</Text>}
                         </View>
-                    )}
-                    <View style={styles.textContent}>
-                        <Text style={styles.contentTitle}>Bio</Text>
-                        {inputBio.bio ? <Text style={styles.actualText}>{inputBio.bio}</Text> : <Text style={styles.placeholder}>Your Short Bio Here</Text>}
-                    </View>
 
-                    {/* Divider */}
-                    <View style={styles.lineStyle} />
-                    {/* Following loads friends slider */}
-                    {/* <UserListComponent userId={undefined} headerText="Friends" listType="friends" /> */}
+                        {/* Divider */}
+                        <View style={styles.lineStyle} />
+                        {/* Following loads friends slider */}
+                        {/* <UserListComponent userId={undefined} headerText="Friends" listType="friends" /> */}
 
-                    {/* {isTeacher && (
+                        {/* {isTeacher && (
                     <>
                         <View style={styles.lineStyle} /> */}
-                    {/* Following loads mentor list */}
-                    {/* <UserListComponent userId={undefined} headerText="Mentors" listType="mentor" /> */}
-                    {/* </>
+                        {/* Following loads mentor list */}
+                        {/* <UserListComponent userId={undefined} headerText="Mentors" listType="mentor" /> */}
+                        {/* </>
                 )} */}
 
-                    <View style={styles.lineStyle} />
-                    {/* <View style={{ marginTop: 20 }}>
+                        <View style={styles.lineStyle} />
+                        {/* <View style={{ marginTop: 20 }}>
                     <ChallengeSlider
                         categoryText="Shared Challenges"
                         searchEmpty={emptySearch}
@@ -201,30 +203,30 @@ export default function ProfileScreen(dataType: dataTypes) {
                     />
                 </View> */}
 
-                    {/* Toggle button for available options starts here */}
-                    {isStudent ? null :
-                        <View style={styles.switchBoxWarpper}>
-                            <Text style={styles.switchBoxLebel}>
-                                Mark as available to hire.
-                            </Text>
-                            <TouchableOpacity >
-                                {toggle ? (
-                                    <Image
-                                        style={styles.toggleOn}
-                                        source={require("../assets/images/icons/toggle.png")}
-                                    />
-                                ) : (
-                                    <Image
-                                        style={styles.toggleOn}
-                                        source={require("../assets/images/icons/Toggle-off.png")}
-                                    />
-                                )}
-                            </TouchableOpacity>
-                        </View>
-                    }
-                    {/* Toggle button for available options ends here */}
+                        {/* Toggle button for available options starts here */}
+                        {isStudent ? null :
+                            <View style={styles.switchBoxWarpper}>
+                                <Text style={styles.switchBoxLebel}>
+                                    Mark as available to hire.
+                                </Text>
+                                <TouchableOpacity >
+                                    {toggle ? (
+                                        <Image
+                                            style={styles.toggleOn}
+                                            source={require("../assets/images/icons/toggle.png")}
+                                        />
+                                    ) : (
+                                        <Image
+                                            style={styles.toggleOn}
+                                            source={require("../assets/images/icons/Toggle-off.png")}
+                                        />
+                                    )}
+                                </TouchableOpacity>
+                            </View>
+                        }
+                        {/* Toggle button for available options ends here */}
 
-                    {/* <StudentContactComponent
+                        {/* <StudentContactComponent
                     parentEditing={editing}
                     editEnable={() => setEditing(true)}
                     editDisable={() => setEditing(false)}
@@ -234,40 +236,40 @@ export default function ProfileScreen(dataType: dataTypes) {
                     reRun={() => setReRun(!reRun)}
                 /> */}
 
-                    {/* Divider */}
-                    <View style={styles.lineStyle} />
+                        {/* Divider */}
+                        <View style={styles.lineStyle} />
 
-                    {/* {!isStudent && (
+                        {/* {!isStudent && (
                     <SubscribersListComponent subscribersList={fakeSubscribers} />
                 )} */}
 
-                    {/* image modal starts here */}
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={imageModal}
-                        onRequestClose={() => setImageModal(false)}
-                    >
-                        <View style={styles.centeredView}>
-                            <TouchableOpacity
-                                style={{ position: "absolute", width: "100%", height: "100%" }}
-                                onPress={() => setImageModal(false)}
-                            ></TouchableOpacity>
-                            <View style={styles.modalView}>
-                                <TouchableOpacity style={styles.imageModal}>
-                                    <Icon name="camera" size={30} />
-                                    <Text>Take Picture</Text>
-                                </TouchableOpacity>
+                        {/* image modal starts here */}
+                        <Modal
+                            animationType="slide"
+                            transparent={true}
+                            visible={imageModal}
+                            onRequestClose={() => setImageModal(false)}
+                        >
+                            <View style={styles.centeredView}>
+                                <TouchableOpacity
+                                    style={{ position: "absolute", width: "100%", height: "100%" }}
+                                    onPress={() => setImageModal(false)}
+                                ></TouchableOpacity>
+                                <View style={styles.modalView}>
+                                    <TouchableOpacity style={styles.imageModal}>
+                                        <Icon name="camera" size={30} />
+                                        <Text>Take Picture</Text>
+                                    </TouchableOpacity>
 
-                                <TouchableOpacity style={styles.imageModal}>
-                                    <Icon name="upload" size={30} />
-                                    <Text>Upload Picture</Text>
-                                </TouchableOpacity>
+                                    <TouchableOpacity style={styles.imageModal}>
+                                        <Icon name="upload" size={30} />
+                                        <Text>Upload Picture</Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
-                        </View>
-                    </Modal>
+                        </Modal>
 
-                    {/* {editProfile && <EditProfileModal
+                        {/* {editProfile && <EditProfileModal
                     editProfileModal={editProfile}
                     closeEditModal={() => setEditProfile(false)}
                     isStudent={isStudent}
@@ -280,9 +282,14 @@ export default function ProfileScreen(dataType: dataTypes) {
                     loadingFalse={() => setLoader(false)}
                     reRun={() => setReRun(!reRun)}
                 />} */}
-                </ScrollView>
-            </View>
-        </SafeAreaView>
+                    </ScrollView>
+                </View>
+            </SafeAreaView>
+        )
+    }
+
+    return (
+        <MainLayout Component={component()} />
     )
 }
 

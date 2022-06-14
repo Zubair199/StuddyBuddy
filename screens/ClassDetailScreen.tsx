@@ -5,6 +5,7 @@ import { Button, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 import { AUTHENTICATIONS, CLASS } from '../services/api.constants';
+import MainLayout from './MainLayout';
 
 export default function ClassDetailScreen({ route }) {
   const { classID } = route.params
@@ -17,7 +18,7 @@ export default function ClassDetailScreen({ route }) {
 
   React.useEffect(() => {
 
-    teacherApiCall()
+    studentApiCall()
 
   }, []);
 
@@ -76,128 +77,125 @@ export default function ClassDetailScreen({ route }) {
       console.log('exception ', exception)
     }
   }
-
-  return (
-    <View style={styles.container}>
-      <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15 }}>
-        <TouchableOpacity style={{ marginTop: 5 }}
-          onPress={() => navigation.reset({
-            index: 0,
-            routes: [{ name: 'Classes' }],
-          })}>
-          <Icon color={'black'} name="leftcircleo" size={25} />
-        </TouchableOpacity>
-        <Text style={styles.title}>Class Details</Text>
-      </View>
-      {
-        (_class !== null && teacher !== null)
-        &&
-        <ScrollView style={{ marginBottom: '25%', padding: 15 }}>
-          <View >
-            {/* header starts here */}
-            <View style={{ marginTop: 10 }}>
-              <ImageBackground
-                resizeMode='cover'
-                source={require("../assets/images/bg.jpg")}
-                style={styles.classBoxImage}
-                imageStyle={{ borderRadius: 5 }}
-              >
-                <View style={styles.overlay}>
-                  <View style={styles.levelBox}>
-                    <View style={styles.levelIntermediate}></View>
-                    <Text style={styles.classBoxText}>{_class.level}</Text>
+  function component() {
+    return (
+      <View style={styles.container}>
+        <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15 }}>
+          <TouchableOpacity style={{ marginTop: 5 }}
+            onPress={() => navigation.goBack()}>
+            <Icon color={'black'} name="leftcircleo" size={25} />
+          </TouchableOpacity>
+          <Text style={styles.title}>Class Details</Text>
+        </View>
+        {
+          (_class !== null && teacher !== null)
+          &&
+          <ScrollView style={{ marginBottom: '25%', padding: 15 }}>
+            <View >
+              {/* header starts here */}
+              <View style={{ marginTop: 10 }}>
+                <ImageBackground
+                  resizeMode='cover'
+                  source={require("../assets/images/bg.jpg")}
+                  style={styles.classBoxImage}
+                  imageStyle={{ borderRadius: 5 }}
+                >
+                  <View style={styles.overlay}>
+                    <View style={styles.levelBox}>
+                      <View style={styles.levelIntermediate}></View>
+                      <Text style={styles.classBoxText}>{_class.level}</Text>
+                    </View>
+                    <Text style={styles.classBoxName}>{_class.name}</Text>
+                    <Text style={styles.classBoxInstructor}>
+                      {teacher.username}
+                    </Text>
+                    <Text style={styles.classBoxDate}>
+                      Tuesday 12:00 - 13:00
+                    </Text>
+                    <Text style={styles.classBoxInstructor}>
+                      {_class.subject}
+                    </Text>
+                    <Text style={styles.classBoxInstructor}>
+                      {_class.status}
+                    </Text>
                   </View>
-                  <Text style={styles.classBoxName}>{_class.name}</Text>
-                  <Text style={styles.classBoxInstructor}>
-                    {teacher.username}
-                  </Text>
-                  <Text style={styles.classBoxDate}>
-                    Tuesday 12:00 - 13:00
-                  </Text>
-                  <Text style={styles.classBoxInstructor}>
-                    {_class.subject}
-                  </Text>
-                  <Text style={styles.classBoxInstructor}>
-                    {_class.status}
-                  </Text>
-                </View>
-              </ImageBackground>
-              {/* header ends here */}
+                </ImageBackground>
+                {/* header ends here */}
 
-              {/* price tags start here */}
-              {/* this will be render if student has not already joined the class */}
-              {/* {
+                {/* price tags start here */}
+                {/* this will be render if student has not already joined the class */}
+                {
                 !isJoined &&
                 <View style={styles.joinBox}>
                   <TouchableOpacity onPress={() => { joinClass(_class) }} style={{ backgroundColor: '#4B5F79', padding: 10, borderRadius: 5, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
                     <Text style={{ fontSize: 18, fontWeight: '300', color: "white" }}>Join Class</Text>
                   </TouchableOpacity>
                 </View>
-              } */}
-              <View style={styles.joinBox}>
-                <Text style={styles.cost}>
-                  {/* Cost: &#36;{12} */}
-                  Max. Students : {_class.maxStudents}
-                </Text>
-              </View>
+              }
+                <View style={styles.joinBox}>
+                  <Text style={styles.cost}>
+                    {/* Cost: &#36;{12} */}
+                    Max. Students : {_class.maxStudents}
+                  </Text>
+                </View>
 
-              {/* price ends here */}
+                {/* price ends here */}
 
 
-              {/* Class Location Starts here */}
-              {/* <View>
+                {/* Class Location Starts here */}
+                {/* <View>
                 <Text style={styles.heading}>Class Location</Text>
                 <Text style={styles.text}>CR 4 EE Building</Text>
               </View> */}
-              {/* Class Location ends here */}
+                {/* Class Location ends here */}
 
 
-              {/* Language section starts here */}
-              <View style={styles.languageBoxLanguage}>
-                <View style={styles.languageWithIcon}>
-                  <Text style={styles.languageAttributesHeading}>Languages</Text>
-                </View>
-                <View style={styles.language}>
-                  <View
-                    style={{ flexDirection: "row" }}
-                  >
-                    <Text style={styles.languageText}>{_class.language}</Text>
+                {/* Language section starts here */}
+                <View style={styles.languageBoxLanguage}>
+                  <View style={styles.languageWithIcon}>
+                    <Text style={styles.languageAttributesHeading}>Languages</Text>
+                  </View>
+                  <View style={styles.language}>
+                    <View
+                      style={{ flexDirection: "row" }}
+                    >
+                      <Text style={styles.languageText}>{_class.language}</Text>
+                    </View>
                   </View>
                 </View>
-              </View>
-              {/* Language section ends here */}
+                {/* Language section ends here */}
 
-              {/* Announcements Starts here */}
-              {/* <Text style={styles.heading}>Announcements</Text>
+                {/* Announcements Starts here */}
+                {/* <Text style={styles.heading}>Announcements</Text>
               <Text style={styles.text}>class announcements</Text> */}
-              {/* Announcements ends here */}
+                {/* Announcements ends here */}
 
-              {/* Topics & Instructions Starts here */}
-              {/* <Text style={styles.heading}>Topics and Instructions</Text>
+                {/* Topics & Instructions Starts here */}
+                {/* <Text style={styles.heading}>Topics and Instructions</Text>
               <Text style={styles.text}>class topics</Text> */}
-              {/* Topics & Instructions ends here */}
+                {/* Topics & Instructions ends here */}
 
-              {/* connectivity link for enrolled students Starts here */}
-              {/* <Text style={styles.heading}>Pre Recorded Class Link</Text> */}
-              {/* <Text style={styles.heading}>Class Link</Text>
+                {/* connectivity link for enrolled students Starts here */}
+                {/* <Text style={styles.heading}>Pre Recorded Class Link</Text> */}
+                {/* <Text style={styles.heading}>Class Link</Text>
 
               <TouchableOpacity
                 onPress={() => Linking.openURL("https://www.google.com/")}
               >
                 <Text style={styles.text}>connectivityLink</Text>
               </TouchableOpacity> */}
-              {/* connectivity link for enrolled students ends here */}
+                {/* connectivity link for enrolled students ends here */}
 
-              {/* Schedule Starts here */}
-              {/* <Text style={styles.heading}>Schedule</Text>
+                {/* Schedule Starts here */}
+                {/* <Text style={styles.heading}>Schedule</Text>
               <Text style={styles.text}>
                 Day: Tuesday
                 Time: 12:00 - 13:00
               </Text> */}
-              {/* Schedule ends here */}
+                {/* Schedule ends here */}
 
-              {/* classes starts here */}
-              {
+                {/* classes starts here */}
+                {
         /*classData.documents.length === 0 ? null : (
         //   <>
         //     <Text style={styles.heading}>Instructor Uploads</Text>
@@ -234,21 +232,25 @@ export default function ClassDetailScreen({ route }) {
         // )
         */}
 
-              {/* classes ends here */}
+                {/* classes ends here */}
 
-              {/* Enrolled Students Starts here */}
-              {/* <Text style={styles.heading}>Students Enrolled</Text>
+                {/* Enrolled Students Starts here */}
+                {/* <Text style={styles.heading}>Students Enrolled</Text>
               <Text style={styles.text}>{5}</Text> */}
-              {/* Enrolled Students ends here */}
+                {/* Enrolled Students ends here */}
 
+              </View>
             </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
 
-      }
+        }
 
-    </View>
+      </View>
 
+    )
+  }
+  return (
+    <MainLayout Component={component()} />
   )
 }
 

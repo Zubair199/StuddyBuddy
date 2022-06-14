@@ -23,41 +23,42 @@ export default function Footer(props) {
                 <TouchableOpacity
                     onPress={() => {
                         setCurrentScreen('Classes');
+                        navigation.navigate('Classes')
                     }}
                 >
-                    <IconFontAwesome name='briefcase' size={30} color={currentScreen === 'Classes' ? '#ffbb74' : "white"} />
+                    <IconFontAwesome name='briefcase' size={25} color={currentScreen === 'Classes' ? '#ffbb74' : "white"} />
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => {
-                        // navigation.navigate('ScheduleScreen');
                         setCurrentScreen('Messages');
+                        navigation.navigate('Messages')
                     }}
                 >
-                    <Icon name='message1' size={30} color={currentScreen === 'Messages' ? '#ffbb74' : "white"} />
+                    <Icon name='message1' size={25} color={currentScreen === 'Messages' ? '#ffbb74' : "white"} />
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => {
-                        // navigation.navigate('NotificationScreen');
                         setCurrentScreen('Payments');
+                        navigation.navigate('Payments')
                     }}
                 >
-                    <IconFontAwesome name='diamond' size={30} color={currentScreen === 'Payments' ? '#ffbb74' : "white"} />
+                    <IconFontAwesome name='diamond' size={25} color={currentScreen === 'Payments' ? '#ffbb74' : "white"} />
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => {
                         setCurrentScreen('Profile');
-                        // navigation.navigate('SearchScreen');
+                        navigation.navigate('Profile')
                     }}
                 >
-                    <IconFontAwesome name='user-circle-o' size={30} color={currentScreen === 'Profile' ? '#ffbb74' : "white"} />
+                    <IconFontAwesome name='user-circle-o' size={25} color={currentScreen === 'Profile' ? '#ffbb74' : "white"} />
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => {
                         setCurrentScreen('Settings');
-                        // navigation.navigate('SearchScreen');
+                        navigation.navigate('Settings')
                     }}
                 >
-                    <IconFontAwesome name='gear' size={30} color={currentScreen === 'Settings' ? '#ffbb74' : "white"} />
+                    <IconFontAwesome name='gear' size={25} color={currentScreen === 'Settings' ? '#ffbb74' : "white"} />
                 </TouchableOpacity>
             </View>
         </View >

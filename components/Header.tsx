@@ -10,7 +10,7 @@ export default function Header(props) {
     const navigation = useNavigation();
     const { currentScreen, setCurrentScreen } = React.useContext(ThemeContext);
     return (
-        <View style={{ backgroundColor: '#3878ee', height: 50,justifyContent:'center'}}>
+        <View style={{ backgroundColor: '#3878ee', height: 50, justifyContent: 'center' }}>
             <View style={{
                 // paddingTop: 10,
                 flexDirection: 'row',
@@ -20,22 +20,23 @@ export default function Header(props) {
                 <TouchableOpacity
                     onPress={() => {
                         setCurrentScreen('HomeScreen');
+                        navigation.navigate('HomeScreen');
                     }}
                 >
                     <Icon name='home' size={30} color={currentScreen === 'HomeScreen' ? '#ffbb74' : "white"} />
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => {
-                        // navigation.navigate('ScheduleScreen');
                         setCurrentScreen('ScheduleScreen');
+                        navigation.navigate('ScheduleScreen');
                     }}
                 >
                     <Icon name='calendar' size={30} color={currentScreen === 'ScheduleScreen' ? '#ffbb74' : "white"} />
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => {
-                        // navigation.navigate('NotificationScreen');
                         setCurrentScreen('NotificationScreen');
+                        navigation.navigate('NotificationScreen');
                     }}
                 >
                     <Icon name='bells' size={30} color={currentScreen === 'NotificationScreen' ? '#ffbb74' : "white"} />
@@ -43,10 +44,10 @@ export default function Header(props) {
                 <TouchableOpacity
                     onPress={() => {
                         setCurrentScreen('SearchScreen');
-                        // navigation.navigate('SearchScreen');
+                        navigation.navigate('SearchScreen');
                     }}
                 >
-                    <Icon name='search1' size={30} color={currentScreen === 'SearchScreen' ? '#ffbb74' : "white"}  />
+                    <Icon name='search1' size={30} color={currentScreen === 'SearchScreen' ? '#ffbb74' : "white"} />
                 </TouchableOpacity>
             </View>
         </View >

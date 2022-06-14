@@ -24,7 +24,7 @@ export default function AssignmentSlider(props: Iprops) {
         ) : (
           <ScrollView style={styles.scrollView} horizontal={true}>
             {
-              props.data.map((classData: any, index: number) => (
+              props.data.map((item: any, index: number) => (
                 <View key={index} style={styles.classBoxWrapper}>
                   <ImageBackground
                     resizeMode='cover'
@@ -41,12 +41,18 @@ export default function AssignmentSlider(props: Iprops) {
                       </View>
                       <View style={styles.classBox}>
                         <TouchableOpacity
-                          onPress={
-                            () => navigation.reset({
-                              index: 0,
-                              routes: [{ name: props.screen , params:{ assignmentID : classData._id } }],
-                            })
-                          }
+                          // onPress={
+                          //   () => navigation.reset({
+                          //     index: 0,
+                          //     routes: [{ name: props.screen, params: { assignmentID: item._id } }],
+                          //   })
+                          // }
+                          onPress={() => {
+                            item.status.toLowerCase() === "started" ?
+                              navigation.navigate('AssignmentStartScreen', { assignmentID: item.assignment._id })
+                              :
+                              navigation.navigate(props.screen, { assignmentID: item.assignment._id })
+                          }}
                           style={{
                             width: "100%",
                             height: "100%",
@@ -73,10 +79,13 @@ export default function AssignmentSlider(props: Iprops) {
                             {/* Tuesday 12:00 - 13:00 */}
                           </Text>
                           <Text style={styles.classBoxInstructor}>
-                            {classData.title}
+                            {item.assignment.title}
                           </Text>
                           <Text style={styles.classBoxInstructor}>
-                            28-05-2022
+                            {item.status}
+                          </Text>
+                          <Text style={styles.classBoxInstructor}>
+                            {item.assignment.startdate}
                           </Text>
                         </TouchableOpacity>
                       </View>

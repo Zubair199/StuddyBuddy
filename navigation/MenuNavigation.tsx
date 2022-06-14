@@ -6,7 +6,7 @@ import SettingsScreen from '../screens/SettingsScreen';
 import PaymentsScreen from '../screens/PaymentsScreen';
 import MessagesScreen from '../screens/MessagesScreen';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import MyClassesScreen from '../screens/MyClassesScreen';
+import HomeScreen from '../screens/HomeScreen';
 import { useNavigation } from '@react-navigation/native';
 import { Image } from 'react-native-elements/dist/image/Image';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -25,8 +25,9 @@ import AddExamScreen from '../screens/AddExam';
 import AddClassScreen from '../screens/AddClass';
 import AddAssignmentQuestions from '../screens/AddAssignmentQuestions';
 import AddExamQuestions from '../screens/AddExamQuestions';
-import HomeScreen from '../screens/HomeScreen';
+import MyClassesScreen from '../screens/MyClassesScreen';
 import StudentAssignmentScreen from '../screens/StudentAssignmentScreen';
+import AssignmentStartScreen from '../screens/AssignmentStartScreen';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -209,80 +210,83 @@ const ProfileStack = createNativeStackNavigator();
 
 const topTab = createMaterialTopTabNavigator();
 
-const mainHeader = ({ navigation }: any): any => {
-  return {
-    headerStyle: {
-      backgroundColor: '#3878ee',
-    },
-    headerShown: true,
-    // title: "",
-    //headerTitleAlign: 'center',
-    headerTitleStyle: {
-      color: '#ffffff',
-      fontSize: 22,
-    },
-    headerTitle: (props: any) => {
-      return (
-        <View style={{
-          flexDirection: 'row',
-          justifyContent: 'space-around',
-          width: "100%",
-          marginLeft: -10
-        }}>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'HomeScreen' }],
-              });
-            }}
-          >
-            <Icon name='home' size={30} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'ScheduleScreen' }],
-              });
-            }}
-          >
-            <Icon name='calendar' size={30} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'NotificationScreen' }],
-              });
-            }}
-          >
-            <Icon name='bells' size={30} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'SearchScreen' }],
-              });
-            }}
-          >
-            <Icon name='search1' size={30} color="white" />
-          </TouchableOpacity>
-        </View>
-      )
-    }
-  };
-};
+// const mainHeader = ({ navigation }: any): any => {
+//   return {
+//     headerStyle: {
+//       backgroundColor: '#3878ee',
+//     },
+//     headerShown: true,
+//     // title: "",
+//     //headerTitleAlign: 'center',
+//     headerTitleStyle: {
+//       color: '#ffffff',
+//       fontSize: 22,
+//     },
+//     headerTitle: (props: any) => {
+//       return (
+//         <View style={{
+//           flexDirection: 'row',
+//           justifyContent: 'space-around',
+//           width: "100%",
+//           marginLeft: -10
+//         }}>
+//           <TouchableOpacity
+//             onPress={() => {
+//               navigation.reset({
+//                 index: 0,
+//                 routes: [{ name: 'HomeScreen' }],
+//               });
+//             }}
+//           >
+//             <Icon name='home' size={30} color="white" />
+//           </TouchableOpacity>
+//           <TouchableOpacity
+//             onPress={() => {
+//               navigation.reset({
+//                 index: 0,
+//                 routes: [{ name: 'ScheduleScreen' }],
+//               });
+//             }}
+//           >
+//             <Icon name='calendar' size={30} color="white" />
+//           </TouchableOpacity>
+//           <TouchableOpacity
+//             onPress={() => {
+//               navigation.reset({
+//                 index: 0,
+//                 routes: [{ name: 'NotificationScreen' }],
+//               });
+//             }}
+//           >
+//             <Icon name='bells' size={30} color="white" />
+//           </TouchableOpacity>
+//           <TouchableOpacity
+//             onPress={() => {
+//               navigation.reset({
+//                 index: 0,
+//                 routes: [{ name: 'SearchScreen' }],
+//               });
+//             }}
+//           >
+//             <Icon name='search1' size={30} color="white" />
+//           </TouchableOpacity>
+//         </View>
+//       )
+//     }
+//   };
+// };
+
 const HomeStackScreen = ({ navigation, route }: any) => {
+  const mainHeader = { headerShown: false }
   return (
     <HomeStack.Navigator
+      initialRouteName="HomeScreen"
       screenOptions={{
         headerShown: true,
       }}>
       <HomeStack.Screen
         name="HomeScreen"
-        options={{ headerShown: false }}
+        options={mainHeader}
         component={HomeScreen}
       />
       <HomeStack.Screen
@@ -304,6 +308,11 @@ const HomeStackScreen = ({ navigation, route }: any) => {
         name="AssignmentDetails"
         options={mainHeader}
         component={AssignmentDetailScreen}
+      />
+      <HomeStack.Screen
+        name="AssignmentStartScreen"
+        options={mainHeader}
+        component={AssignmentStartScreen}
       />
       <HomeStack.Screen
         name="Assignment"

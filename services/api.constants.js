@@ -21,7 +21,16 @@ module.exports = {
 
         JOIN_CLASS: '/api/joinClass',
         GET_UPCOMING_CLASSES: '/api/student/getAllActiveJoinedClasses',
-        GET_JOINED_CLASS_BY_ID: '/api/student/getJoinedClassByID/'
+        GET_JOINED_CLASS_BY_ID: '/api/student/getJoinedClassByID/',
+
+        GET_JOINED_CLASS_ASSIGNMENTS_BY_STUDENT_ID : '/api/student/getAllActiveJoinedClassesAssignments/',
+        GET_JOINED_CLASS_EXAMS_BY_STUDENT_ID : '/api/student/getAllActiveJoinedClassesExams/',
+
+        GET_JOINED_CLASS_ASSIGNMENT_BY_STUDENT_ASSINGMENT_ID : '/api/student/getJoinedClassAssignmentById/',
+        // GET_JOINED_CLASS_EXAMS_BY_STUDENT_ID : '/api/student/getAllActiveJoinedClassesExams/',
+
+        START_ASSIGNMENT : '/api/student/startAssignment/',
+
         
     },
     EXAM: {

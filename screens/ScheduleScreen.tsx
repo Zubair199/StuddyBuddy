@@ -25,6 +25,7 @@ import { AUTHENTICATIONS, CLASS } from "../services/api.constants";
 import Icon from 'react-native-vector-icons/AntDesign';
 import DatePicker from 'react-native-date-picker'
 import { Select, Input, TextArea, IconButton } from "native-base";
+import MainLayout from "./MainLayout";
 
 export default function SchedulesScreen() {
   const isFocused = useIsFocused();
@@ -76,8 +77,8 @@ export default function SchedulesScreen() {
 
     try {
       let body = {
-        teacher : user,
-        date : text,
+        teacher: user,
+        date: text,
       }
       let requestObj = {
         method: 'POST',
@@ -87,7 +88,7 @@ export default function SchedulesScreen() {
         },
         body: JSON.stringify(body)
       }
-      fetch(AUTHENTICATIONS.API_URL + CLASS.GET_TEACHER_SCHEDULE , requestObj)
+      fetch(AUTHENTICATIONS.API_URL + CLASS.GET_TEACHER_SCHEDULE, requestObj)
         .then((response) => response.json())
         .then((responseJson) => {
           console.log('classes ', responseJson.data)
@@ -102,10 +103,10 @@ export default function SchedulesScreen() {
     }
   }
 
-
-  return (
-    <SafeAreaView style={styles.container}>
-      {/* <View style={styles.closeIconBox}>
+  function component() {
+    return (
+      <SafeAreaView style={styles.container}>
+        {/* <View style={styles.closeIconBox}>
         <TouchableOpacity onPress={onClose}>
           <Image
             style={styles.closeIcon}
@@ -114,100 +115,100 @@ export default function SchedulesScreen() {
         </TouchableOpacity>
       </View> */}
 
-      <View>
-        <Text style={styles.title}>My Schedule</Text>
-      </View>
-      <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 20 }}>
-        <View style={{ marginTop: 10 }}>
-          <Text style={{ fontWeight: '400', fontSize: 20 }}>{stringDate}</Text>
-        </View>
         <View>
-          <IconButton
-            icon={
-              <Icon
-                name="calendar"
-                style={{ marginRight: 15 }}
-                size={25}
-                onPress={() => { console.log("preess"); openDatePicker() }}
-              />
-            }
-          />
-          <DatePicker
-            modal
-            open={open}
-            date={_startdate}
-            onConfirm={(text) => {
-              _setStartdate(text);
-              setOpen(false);
-              getApiCall(text);
-            }}
-            onCancel={() => {
-              setOpen(false)
-            }}
-          />
+          <Text style={styles.title}>My Schedule</Text>
         </View>
-      </View>
-      {/* {!groupList || groupList.length == 0 ? (
+        <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 20 }}>
+          <View style={{ marginTop: 10 }}>
+            <Text style={{ fontWeight: '400', fontSize: 20 }}>{stringDate}</Text>
+          </View>
+          <View>
+            <IconButton
+              icon={
+                <Icon
+                  name="calendar"
+                  style={{ marginRight: 15 }}
+                  size={25}
+                  onPress={() => { console.log("preess"); openDatePicker() }}
+                />
+              }
+            />
+            <DatePicker
+              modal
+              open={open}
+              date={_startdate}
+              onConfirm={(text) => {
+                _setStartdate(text);
+                setOpen(false);
+                getApiCall(text);
+              }}
+              onCancel={() => {
+                setOpen(false)
+              }}
+            />
+          </View>
+        </View>
+        {/* {!groupList || groupList.length == 0 ? (
         <View style={styles.contentBox}>
           <Text style={styles.emptySearchText}>
             No Class Has Been Added Yet
           </Text>
         </View>
       ) : ( */}
-      {!classes || classes.length == 0 ? (
-        <View style={styles.contentBox}>
-          <Text style={styles.emptySearchText}>
-            No Class Has Been Found
-          </Text>
-        </View>
-      ) : (
-        <ScrollView
-          style={styles.scrollView}
-          showsVerticalScrollIndicator={false}
-        >
-          <View >
-            {classes.map((classItem, index) => (
-              <TouchableOpacity
-                style={styles.groupBox}
-                key={index}
+        {!classes || classes.length == 0 ? (
+          <View style={styles.contentBox}>
+            <Text style={styles.emptySearchText}>
+              No Class Has Been Found
+            </Text>
+          </View>
+        ) : (
+          <ScrollView
+            style={styles.scrollView}
+            showsVerticalScrollIndicator={false}
+          >
+            <View >
+              {classes.map((classItem, index) => (
+                <TouchableOpacity
+                  style={styles.groupBox}
+                  key={index}
                 // onPress={()=>{navigation.navigate()}}
-              >
-                <Image source={require("../assets/images/bg.jpg")}
-                  style={styles.classImg}
-                />
-                <View style={styles.classInfo}>
-                  <View style={styles.levelBox}>
+                >
+                  <Image source={require("../assets/images/bg.jpg")}
+                    style={styles.classImg}
+                  />
+                  <View style={styles.classInfo}>
+                    <View style={styles.levelBox}>
+                      <View
+                        style={
+                          styles.levelIntermediate
+                        }
+                      ></View>
+                      <Text style={styles.levelText}>{classItem.level}</Text>
+                    </View>
                     <View
-                      style={
-                        styles.levelIntermediate
-                      }
-                    ></View>
-                    <Text style={styles.levelText}>{classItem.level}</Text>
-                  </View>
-                  <View
-                    style={{
-                      flexWrap: "wrap",
-                      flexDirection: "row",
-                      width: "80%",
-                    }}
-                  >
-                    <Text style={styles.className}>{classItem.name}</Text>
-                  </View>
-                  <View style={{ flexDirection: "row" }}>
-                    <Text style={styles.studio}>{classItem.teacher.username}</Text>
-                    {/* <View style={styles.dot}></View>
+                      style={{
+                        flexWrap: "wrap",
+                        flexDirection: "row",
+                        width: "80%",
+                      }}
+                    >
+                      <Text style={styles.className}>{classItem.name}</Text>
+                    </View>
+                    <View style={{ flexDirection: "row" }}>
+                      <Text style={styles.studio}>{classItem.teacher.username}</Text>
+                      {/* <View style={styles.dot}></View>
                     <Text style={styles.studio}>{classItem.studio}</Text> */}
-                  </View>
-                  <Text style={styles.dayTime}>
-                    Monday &nbsp;
-                    12:00 &nbsp;-&nbsp; 14:00
-                  </Text>
-                  {/* {classItem.myJoinStatus &&
+                    </View>
+                    <Text style={styles.dayTime}>
+                      Monday &nbsp;
+                      12:00 &nbsp;-&nbsp; 14:00
+                    </Text>
+                    {/* {classItem.myJoinStatus &&
                     classItem.myJoinStatus === "pending" && ( */}
-                  <Text style={styles.statusMsg}>
-                    {classItem.status}
-                  </Text>
-                  {/* )}
+                    <Text style={styles.statusMsg}>
+                      {classItem.status}
+                    </Text>
+                    {/* )}
                   {classItem.status &&
                     !classItem.myJoinStatus &&
                     classItem.status === "pending" && (
@@ -215,15 +216,20 @@ export default function SchedulesScreen() {
                         Waiting For Admin Approval
                       </Text>
                     )} */}
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </ScrollView>
-      )}
-    </SafeAreaView>
-  );
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </ScrollView>
+        )}
+      </SafeAreaView>
+    );
+  }
+  return(
+    <MainLayout Component={component()} />
+  )
 }
+
 
 const styles = StyleSheet.create({
   container: {

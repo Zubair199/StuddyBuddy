@@ -24,7 +24,7 @@ export default function ExamSlider(props: Iprops) {
         ) : (
           <ScrollView style={styles.scrollView} horizontal={true}>
             {
-              props.data.map((classData: any, index: number) => (
+              props.data.map((item: any, index: number) => (
                 <View key={index} style={styles.classBoxWrapper}>
                   <ImageBackground
                     resizeMode='cover'
@@ -41,12 +41,15 @@ export default function ExamSlider(props: Iprops) {
                       </View>
                       <View style={styles.classBox}>
                         <TouchableOpacity
-                          onPress={
-                            () => navigation.reset({
-                              index: 0,
-                              routes: [{ name: props.screen, params: { examID: classData._id } }],
-                            })
-                          }
+                          // onPress={
+                          //   () => navigation.reset({
+                          //     index: 0,
+                          //     routes: [{ name: props.screen, params: { assignmentID: item._id } }],
+                          //   })
+                          // }
+                          onPress={() => {
+                            navigation.navigate(props.screen, { examID: item.exam._id })
+                          }}
                           style={{
                             width: "100%",
                             height: "100%",
@@ -55,12 +58,12 @@ export default function ExamSlider(props: Iprops) {
                         >
                           <View style={styles.levelBox}>
                             {/* <View
-                            style={styles.levelIntermediate}
-                          >
-                          </View>
-                          <Text style={styles.classBoxText}>
-                            Intermediate
-                          </Text> */}
+                          style={styles.levelIntermediate}
+                        >
+                        </View>
+                        <Text style={styles.classBoxText}>
+                          Intermediate
+                        </Text> */}
 
                           </View>
                           <Text style={styles.classBoxName}>
@@ -73,10 +76,13 @@ export default function ExamSlider(props: Iprops) {
                             {/* Tuesday 12:00 - 13:00 */}
                           </Text>
                           <Text style={styles.classBoxInstructor}>
-                            {classData.title}
+                            {item.exam.title}
                           </Text>
                           <Text style={styles.classBoxInstructor}>
-                            28-05-2022
+                            {item.exam.status}
+                          </Text>
+                          <Text style={styles.classBoxInstructor}>
+                            {item.exam.startdate}
                           </Text>
                         </TouchableOpacity>
                       </View>

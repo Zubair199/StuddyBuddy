@@ -6,7 +6,7 @@ import SettingsScreen from '../screens/SettingsScreen';
 import PaymentsScreen from '../screens/PaymentsScreen';
 import MessagesScreen from '../screens/MessagesScreen';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import MyClassesScreen from '../screens/MyClassesScreen';
+import MyClassesScreen from '../screens/HomeScreen';
 import { useNavigation } from '@react-navigation/native';
 import { Image } from 'react-native-elements/dist/image/Image';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -25,7 +25,7 @@ import AddExamScreen from '../screens/AddExam';
 import AddClassScreen from '../screens/AddClass';
 import AddAssignmentQuestions from '../screens/AddAssignmentQuestions';
 import AddExamQuestions from '../screens/AddExamQuestions';
-import HomeScreen from '../screens/HomeScreen';
+import HomeScreen from '../screens/MyClassesScreen';
 
 
 const HomeStack = createNativeStackNavigator();

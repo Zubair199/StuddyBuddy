@@ -15,6 +15,7 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { AUTHENTICATIONS, CLASS } from "../services/api.constants";
+import MainLayout from "./MainLayout";
 
 export default function SearchScreen() {
   const isFocused = useIsFocused();
@@ -33,10 +34,10 @@ export default function SearchScreen() {
 
   React.useEffect(() => {
     setUser('6295cc2b7d505307388d58fd')
-    getApiCall()
+    studentApiCall()
   }, [])
 
-  function getApiCall() {
+  function teacherApiCall() {
     try {
       fetch(AUTHENTICATIONS.API_URL + CLASS.GET_TEACHER_SEARCH + user + '/' + status)
         .then((response) => response.json())
@@ -53,7 +54,23 @@ export default function SearchScreen() {
     }
 
   }
+  function studentApiCall() {
+    try {
+      fetch(AUTHENTICATIONS.API_URL + CLASS.GET_TEACHER_SEARCH + user + '/' + status)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          console.log('classes ', responseJson.data)
+          setClasses(responseJson.data)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    }
+    catch (err) {
+      console.log(err)
+    }
 
+  }
   function searchClasses(text) {
     let backup = classes;
     let backup1 = classes;
@@ -69,9 +86,10 @@ export default function SearchScreen() {
     }
   }
 
-  return (
-    <SafeAreaView style={styles.container}>
-      {/* <View style={styles.closeIconBox}>
+  function component() {
+    return (
+      <SafeAreaView style={styles.container}>
+        {/* <View style={styles.closeIconBox}>
         <TouchableOpacity onPress={onClose}>
           <Image
             style={styles.closeIcon}
@@ -79,72 +97,75 @@ export default function SearchScreen() {
           />
         </TouchableOpacity>
       </View> */}
-      <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: "center", marginTop: 15 }}>
-        <TextInput
-          placeholder='Search...' style={{
-            width: '100%', borderWidth: 1,
-            borderColor: 'lightgray', borderRadius: 10, height: 40
-          }}
-          onChangeText={(text) => { searchClasses(text) }}
-        />
-        <TouchableOpacity>
-          <Icon name="search1" size={20} style={{ marginLeft: -35 }} />
-        </TouchableOpacity>
-      </View>
-
-      {!classes || classes.length == 0 ? (
-        <View style={styles.contentBox}>
-          <Text style={styles.emptySearchText}>
-            No Class Has Been Found
-          </Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: "center", marginTop: 15 }}>
+          <TextInput
+            placeholder='Search...' style={{
+              width: '100%', borderWidth: 1,
+              borderColor: 'lightgray', borderRadius: 10, height: 40
+            }}
+            onChangeText={(text) => { searchClasses(text) }}
+          />
+          <TouchableOpacity>
+            <Icon name="search1" size={20} style={{ marginLeft: -35 }} />
+          </TouchableOpacity>
         </View>
-      ) : (
-        <ScrollView
-          style={styles.scrollView}
-          showsVerticalScrollIndicator={false}
-        >
-          <View >
-            {classes.map((classItem) => (
-              <TouchableOpacity
-                style={styles.groupBox}
-                key={classItem}
-              >
-                <Image source={require("../assets/images/bg.jpg")}
-                  style={styles.classImg}
-                />
-                <View style={styles.classInfo}>
-                  <View style={styles.levelBox}>
+
+        {!classes || classes.length == 0 ? (
+          <View style={styles.contentBox}>
+            <Text style={styles.emptySearchText}>
+              No Class Has Been Found
+            </Text>
+          </View>
+        ) : (
+          <ScrollView
+            style={styles.scrollView}
+            showsVerticalScrollIndicator={false}
+          >
+            <View >
+              {classes.map((classItem) => (
+                <TouchableOpacity
+                  style={styles.groupBox}
+                  key={classItem}
+                  onPress={() => {
+                    navigation.navigate('ClassDetails', { classID: classItem._id })
+                  }}
+                >
+                  <Image source={require("../assets/images/bg.jpg")}
+                    style={styles.classImg}
+                  />
+                  <View style={styles.classInfo}>
+                    <View style={styles.levelBox}>
+                      <View
+                        style={
+                          styles.levelIntermediate
+                        }
+                      ></View>
+                      <Text style={styles.levelText}>{classItem.level}</Text>
+                    </View>
                     <View
-                      style={
-                        styles.levelIntermediate
-                      }
-                    ></View>
-                    <Text style={styles.levelText}>{classItem.level}</Text>
-                  </View>
-                  <View
-                    style={{
-                      flexWrap: "wrap",
-                      flexDirection: "row",
-                      width: "80%",
-                    }}
-                  >
-                    <Text style={styles.className}>{classItem.name}</Text>
-                  </View>
-                  <View style={{ flexDirection: "row" }}>
-                    <Text style={styles.studio}>{classItem.teacher.username}</Text>
-                    {/* <View style={styles.dot}></View>
+                      style={{
+                        flexWrap: "wrap",
+                        flexDirection: "row",
+                        width: "80%",
+                      }}
+                    >
+                      <Text style={styles.className}>{classItem.name}</Text>
+                    </View>
+                    <View style={{ flexDirection: "row" }}>
+                      <Text style={styles.studio}>{classItem.teacher.username}</Text>
+                      {/* <View style={styles.dot}></View>
                     <Text style={styles.studio}>{classItem.studio}</Text> */}
-                  </View>
-                  <Text style={styles.dayTime}>
-                    Monday &nbsp;
-                    12:00 &nbsp;-&nbsp; 14:00
-                  </Text>
-                  {/* {classItem.myJoinStatus &&
+                    </View>
+                    <Text style={styles.dayTime}>
+                      Monday &nbsp;
+                      12:00 &nbsp;-&nbsp; 14:00
+                    </Text>
+                    {/* {classItem.myJoinStatus &&
                     classItem.myJoinStatus === "pending" && ( */}
-                  <Text style={styles.statusMsg}>
-                    {classItem.status}
-                  </Text>
-                  {/* )}
+                    <Text style={styles.statusMsg}>
+                      {classItem.status}
+                    </Text>
+                    {/* )}
                   {classItem.status &&
                     !classItem.myJoinStatus &&
                     classItem.status === "pending" && (
@@ -152,14 +173,18 @@ export default function SearchScreen() {
                         Waiting For Admin Approval
                       </Text>
                     )} */}
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </ScrollView>
-      )}
-    </SafeAreaView>
-  );
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </ScrollView>
+        )}
+      </SafeAreaView>
+    );
+  }
+  return (
+    <MainLayout Component={component()} />
+  )
 }
 
 const styles = StyleSheet.create({

@@ -41,12 +41,9 @@ export default function ClassSlider(props: Iprops) {
                       </View>
                       <View style={styles.classBox}>
                         <TouchableOpacity
-                          onPress={
-                            () => navigation.reset({
-                              index: 0,
-                              routes: [{ name: props.screen, params: { classID: item.class._id }, }],
-                            })
-                          }
+                          onPress={() => {
+                            navigation.navigate(props.screen, { classID: item.class._id })
+                          }}
                           style={{
                             width: "100%",
                             height: "100%",
