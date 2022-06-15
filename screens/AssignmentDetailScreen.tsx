@@ -20,7 +20,8 @@ export default function AssignmentDetailScreen({ route }) {
   let [start, setStart] = React.useState(false)
 
   React.useEffect(() => {
-
+    console.log(assignmentID);
+    
     fetch(AUTHENTICATIONS.API_URL + CLASS.GET_JOINED_CLASS_ASSIGNMENT_BY_STUDENT_ASSINGMENT_ID + assignmentID)
       .then((response) => response.json())
       .then((responseJson) => {
@@ -30,9 +31,7 @@ export default function AssignmentDetailScreen({ route }) {
         console.log('assignment ', responseJson.data)
         setAssignment(responseJson.data.assignment)
         setStudentAssignment(responseJson.data)
-        let arr = Array.from({ length: responseJson.data.questioncount }, (_, i) => i + 1)
-        console.log(arr)
-        setData(arr)
+       
       })
       .catch(err => {
         console.log(err)
@@ -72,89 +71,45 @@ export default function AssignmentDetailScreen({ route }) {
       <View style={styles.container}>
 
         {
-          start ?
-            <View>
-              <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15, }}>
-                {/* <TouchableOpacity style={{ marginTop: 5 }}
-                  onPress={() => setStart(false)}>
-                  <Icon color={'black'} name="leftcircleo" size={25} />
-                </TouchableOpacity> */}
-                <Text style={styles.title}>Assignment Questions</Text>
-              </View>
-              {
-                assignment !== null &&
-                <ScrollView style={{ padding: 15, marginBottom: '20%' }}>
-                  {
-                    data.map((item, index) => (
-                      <View key={index} style={{ marginVertical: 10 }}>
-                        <View>
-                          <Text style={{ fontSize: 20, marginLeft: 15 }}>Q{index + 1}: What's pencil made of?</Text>
-                        </View>
-                        <View style={{ marginVertical: 15 }}>
-                          <CheckBox
-                            title='Option 1'
-                            checkedIcon='dot-circle-o'
-                            uncheckedIcon='circle-o'
-                          />
-                          <CheckBox
-                            title='Option 2'
-                            checkedIcon='dot-circle-o'
-                            uncheckedIcon='circle-o'
-                          />
-                          <CheckBox
-                            title='Option 3'
-                            checkedIcon='dot-circle-o'
-                            uncheckedIcon='circle-o'
-                          />
-                          <CheckBox
-                            title='Option 4'
-                            checkedIcon='dot-circle-o'
-                            uncheckedIcon='circle-o'
-                          />
-                        </View>
-                        <Divider />
-                      </View>
-                    ))
-                  }
-                </ScrollView>
-              }
+          <View>
+            <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15, }}>
+              <TouchableOpacity style={{ marginTop: 5 }}
+                onPress={() => navigation.goBack()}>
+                <Icon color={'black'} name="leftcircleo" size={25} />
+              </TouchableOpacity>
+              <Text style={styles.title}>Assignment Details</Text>
             </View>
-
-            :
-            <View>
-              <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15, }}>
-                <TouchableOpacity style={{ marginTop: 5 }}
-                  onPress={() => navigation.goBack()}>
-                  <Icon color={'black'} name="leftcircleo" size={25} />
-                </TouchableOpacity>
-                <Text style={styles.title}>Assignment Details</Text>
-              </View>
-              {
-                assignment !== null &&
-                <ScrollView style={{ padding: 15 }}>
-                  <View>
-                    <ImageBackground
-                      resizeMode='cover'
-                      source={require('../assets/images/bg.jpg')}
-                      style={styles.challengeBoxImage}
-                      imageStyle={{ borderRadius: 5 }}
-                    >
-                      <View style={styles.overlay}>
-                        <View style={styles.challengeTypeOverLay}>
-                          <Text style={styles.challengeBoxText}>
-                            Virtual
-                          </Text>
-                        </View>
-                        <Text style={styles.challengeBoxName}>{assignment.title}</Text>
-                        <Text style={styles.challengeBoxDate}>
-                          28-05-2022
+            {
+              (assignment !== null && studentAssignment !== null)
+              &&
+              <ScrollView style={{ padding: 15 }}>
+                <View>
+                  <ImageBackground
+                    resizeMode='cover'
+                    source={require('../assets/images/bg.jpg')}
+                    style={styles.challengeBoxImage}
+                    imageStyle={{ borderRadius: 5 }}
+                  >
+                    <View style={styles.overlay}>
+                      <View style={styles.challengeTypeOverLay}>
+                        <Text style={styles.challengeBoxText}>
+                          Virtual
                         </Text>
                       </View>
-                    </ImageBackground>
-                    <Text style={styles.heading}>Details</Text>
-                    <Text style={styles.text}>{assignment.description}</Text>
+                      <Text style={styles.challengeBoxName}>{assignment.title}</Text>
+                      <Text style={styles.challengeBoxDate}>
+                        28-05-2022
+                      </Text>
+                    </View>
+                  </ImageBackground>
+                  <Text style={styles.text}>Score: {studentAssignment.score}</Text>
+
+                  <Text style={styles.heading}>Details</Text>
+                  <Text style={styles.text}>{assignment.description}</Text>
+                  {
+                    studentAssignment.status.toLowerCase() !== "completed" &&
                     <View style={{ marginVertical: 15 }}>
-                      <Button title={start ? 'Return to Assignment' : 'Start Assignment'}
+                      <Button title={'Start Assignment'}
                         onPress={
                           () => {
                             // setStart(!start); 
@@ -163,12 +118,13 @@ export default function AssignmentDetailScreen({ route }) {
                         }
                       />
                     </View>
+                  }
 
-                  </View>
+                </View>
 
-                </ScrollView>
-              }
-            </View>
+              </ScrollView>
+            }
+          </View>
         }
 
 

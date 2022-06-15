@@ -28,6 +28,7 @@ import AddExamQuestions from '../screens/AddExamQuestions';
 import MyClassesScreen from '../screens/MyClassesScreen';
 import StudentAssignmentScreen from '../screens/StudentAssignmentScreen';
 import AssignmentStartScreen from '../screens/AssignmentStartScreen';
+import ExamStartScreen from '../screens/ExamStartScreen';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -333,6 +334,11 @@ const HomeStackScreen = ({ navigation, route }: any) => {
         name="ExamDetails"
         options={mainHeader}
         component={ExamDetailScreen}
+      />
+      <HomeStack.Screen
+        name="ExamStartScreen"
+        options={mainHeader}
+        component={ExamStartScreen}
       />
       <HomeStack.Screen
         name="Exam"

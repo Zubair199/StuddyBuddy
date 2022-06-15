@@ -14,7 +14,10 @@ export default function Footer(props) {
     const navigation = useNavigation();
     const { currentScreen, setCurrentScreen, width } = React.useContext(ThemeContext);
     return (
-        <View style={{ backgroundColor: '#3878ee', height: 60, width: width - 40, marginLeft: 20, marginBottom: 10, borderRadius: 15, justifyContent: 'center' }}>
+        <View style={{
+            backgroundColor: '#3878ee', height: 60, width: width - 40,
+            marginLeft: 20, marginBottom: 10, borderRadius: 15, justifyContent: 'center'
+        }}>
             <View style={{
                 flexDirection: 'row',
                 justifyContent: 'space-evenly',
@@ -25,40 +28,50 @@ export default function Footer(props) {
                         setCurrentScreen('Classes');
                         navigation.navigate('Classes')
                     }}
+                    style={{ alignItems: "center" }}
                 >
                     <IconFontAwesome name='briefcase' size={25} color={currentScreen === 'Classes' ? '#ffbb74' : "white"} />
+                    <Text style={{ color: "white", fontSize: 13, fontWeight: '400' }}>Classes</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => {
                         setCurrentScreen('Messages');
                         navigation.navigate('Messages')
                     }}
+                    style={{ alignItems: "center" }}
                 >
                     <Icon name='message1' size={25} color={currentScreen === 'Messages' ? '#ffbb74' : "white"} />
+                    <Text style={{ color: "white", fontSize: 13, fontWeight: '400' }}>Messages</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => {
                         setCurrentScreen('Payments');
                         navigation.navigate('Payments')
                     }}
+                    style={{ alignItems: "center" }}
                 >
                     <IconFontAwesome name='diamond' size={25} color={currentScreen === 'Payments' ? '#ffbb74' : "white"} />
+                    <Text style={{ color: "white", fontSize: 13, fontWeight: '400' }}>Payments</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => {
                         setCurrentScreen('Profile');
                         navigation.navigate('Profile')
                     }}
+                    style={{ alignItems: "center" }}
                 >
                     <IconFontAwesome name='user-circle-o' size={25} color={currentScreen === 'Profile' ? '#ffbb74' : "white"} />
+                    <Text style={{ color: "white", fontSize: 13, fontWeight: '400' }}>Profile</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => {
                         setCurrentScreen('Settings');
                         navigation.navigate('Settings')
                     }}
+                    style={{ alignItems: "center" }}
                 >
                     <IconFontAwesome name='gear' size={25} color={currentScreen === 'Settings' ? '#ffbb74' : "white"} />
+                    <Text style={{ color: "white", fontSize: 13, fontWeight: '400' }}>Settings</Text>
                 </TouchableOpacity>
             </View>
         </View >

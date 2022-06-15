@@ -1,0 +1,237 @@
+import { useIsFocused, useNavigation } from "@react-navigation/native";
+import * as React from "react";
+import {
+    Alert,
+    Image,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import { ASSIGNMENT, AUTHENTICATIONS, CLASS, EXAM } from "../services/api.constants";
+import { ThemeContext } from "../context/ThemeContext";
+
+export default function AssignmentsTab() {
+    const isFocused = useIsFocused();
+    const navigation = useNavigation();
+    const [assignments, setAssignments] = React.useState([])
+    let [user, setUser] = React.useState("62a1af738c535a276ca3c3ef")
+    const { currentScreen, height, containerHeight } = React.useContext(ThemeContext);
+
+    React.useEffect(() => {
+        setUser('62a1af738c535a276ca3c3ef')
+        studentApiCall()
+    }, [])
+
+    function studentApiCall() {
+        fetch(AUTHENTICATIONS.API_URL + ASSIGNMENT.GET_ALL_COMPLETED_ASSIGNMENTS + '62a1af738c535a276ca3c3ef')
+            .then((response) => response.json())
+            .then((responseJson) => {
+                console.log('assignments ', responseJson.data)
+                setAssignments(responseJson.data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+
+    return (
+        <View style={styles.container}>
+            <View style={{ height: containerHeight }}>
+
+                {!assignments || assignments.length == 0 ? (
+                    <View style={styles.contentBox}>
+                        <Text style={styles.emptySearchText}>
+                            No Assignments Has Been Found
+                        </Text>
+                    </View>
+                ) : (
+                    <ScrollView
+                        style={styles.scrollView}
+                        showsVerticalScrollIndicator={false}
+                    >
+                        <View >
+                            {assignments.map((assignmentItem, index) => (
+                                <TouchableOpacity
+                                    style={styles.groupBox}
+                                    key={index}
+                                    onPress={() => {
+                                        navigation.navigate('AssignmentDetails', { assignmentID: assignmentItem.assignment._id })
+                                    }}
+                                >
+                                    <Image source={require("../assets/images/bg.jpg")}
+                                        style={styles.classImg}
+                                    />
+                                    <View style={styles.classInfo}>
+                                        {/* <View style={styles.levelBox}>
+                                            <View
+                                                style={
+                                                    styles.levelIntermediate
+                                                }
+                                            ></View>
+                                            <Text style={styles.levelText}>{assignmentItem.level}</Text>
+                                        </View> */}
+                                        <View
+                                            style={{
+                                                flexWrap: "wrap",
+                                                flexDirection: "row",
+                                                width: "80%",
+                                            }}
+                                        >
+                                            <Text style={styles.className}>{assignmentItem.assignment.title}</Text>
+                                        </View>
+                                        <View style={{ flexDirection: "row" }}>
+                                            <Text style={styles.studio}>{assignmentItem.teacher.username}</Text>
+                                        </View>
+                                        <Text style={styles.dayTime}>
+                                            Monday &nbsp;
+                                            12:00 &nbsp;-&nbsp; 14:00
+                                        </Text>
+                                        <Text style={styles.statusMsg}>
+                                            {assignmentItem.status}
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    </ScrollView>
+                )}
+            </View>
+
+
+        </View >
+    );
+
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#ffffff",
+        // paddingHorizontal: 15,
+        // paddingBottom: 10,
+    },
+    scrollView: {
+        // marginTop: 10,
+        marginBottom: '28%',
+        paddingHorizontal: 15,
+
+    },
+
+    closeIconBox: {
+        flexDirection: "row",
+        justifyContent: "flex-end",
+    },
+    closeIcon: {
+        width: 14,
+        height: 14,
+        marginTop: 10,
+    },
+
+    title: {
+        fontSize: 30,
+        textTransform: "uppercase",
+        textAlign: "center",
+        fontFamily: "roboto-light",
+        marginTop: 20,
+        fontWeight: "300",
+    },
+
+    levelIntermediate: {
+        width: 4,
+        height: 13,
+        backgroundColor: "#FFEB00",
+        marginTop: 2,
+    },
+
+    groupTitle: {
+        fontSize: 20,
+        textTransform: "uppercase",
+        marginTop: 25,
+        fontWeight: "300",
+    },
+
+    groupBox: {
+        flexDirection: "row",
+        marginTop: 20,
+        alignItems: "center",
+    },
+
+    classImg: {
+        width: 120,
+        height: 120,
+        borderRadius: 5,
+    },
+
+    classInfo: {
+        // marginLeft: 20,
+        paddingHorizontal: 20,
+    },
+
+    levelBox: {
+        flexDirection: "row",
+    },
+
+    levelAdvance: {
+        width: 4,
+        height: 14,
+        backgroundColor: "#FF6565",
+        marginTop: 4,
+    },
+
+    levelBeginner: {
+        width: 4,
+        height: 14,
+        backgroundColor: "#01C75D",
+        marginTop: 4,
+    },
+
+    levelText: {
+        fontSize: 14,
+        marginLeft: 5,
+        textTransform: "uppercase",
+    },
+
+    className: {
+        fontSize: 16,
+        fontFamily: "roboto-regular",
+        marginTop: 5,
+    },
+    dot: {
+        height: 3,
+        width: 3,
+        backgroundColor: "black",
+        borderRadius: 100,
+        margin: 5,
+        marginTop: 10,
+    },
+
+    studio: {
+        fontSize: 14,
+        fontWeight: "300",
+    },
+
+    dayTime: {
+        fontSize: 14,
+        fontWeight: "200",
+    },
+    statusMsg: {
+        fontSize: 14,
+        fontWeight: "200",
+    },
+    contentBox: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+    emptySearchText: {
+        fontSize: 24,
+        fontFamily: "roboto-regular",
+        color: "black",
+        textTransform: "uppercase",
+        textAlign: "center",
+    },
+});

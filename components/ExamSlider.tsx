@@ -48,7 +48,10 @@ export default function ExamSlider(props: Iprops) {
                           //   })
                           // }
                           onPress={() => {
-                            navigation.navigate(props.screen, { examID: item.exam._id })
+                            item.status.toLowerCase() === "started" ?
+                              navigation.navigate('ExamStartScreen', { examID: item.exam._id, studentExamID: item._id })
+                              :
+                              navigation.navigate(props.screen, { examID: item.exam._id })
                           }}
                           style={{
                             width: "100%",
@@ -79,7 +82,7 @@ export default function ExamSlider(props: Iprops) {
                             {item.exam.title}
                           </Text>
                           <Text style={styles.classBoxInstructor}>
-                            {item.exam.status}
+                            {item.status}
                           </Text>
                           <Text style={styles.classBoxInstructor}>
                             {item.exam.startdate}

@@ -20,16 +20,19 @@ module.exports = {
         GET_ALL_ACTIVE_CLASSES: '/api/classes/active',
 
         JOIN_CLASS: '/api/joinClass',
-        GET_UPCOMING_CLASSES: '/api/student/getAllActiveJoinedClasses',
+        GET_UPCOMING_CLASSES: '/api/student/getAllTodaysActiveJoinedClasses',
         GET_JOINED_CLASS_BY_ID: '/api/student/getJoinedClassByID/',
 
         GET_JOINED_CLASS_ASSIGNMENTS_BY_STUDENT_ID : '/api/student/getAllActiveJoinedClassesAssignments/',
         GET_JOINED_CLASS_EXAMS_BY_STUDENT_ID : '/api/student/getAllActiveJoinedClassesExams/',
 
         GET_JOINED_CLASS_ASSIGNMENT_BY_STUDENT_ASSINGMENT_ID : '/api/student/getJoinedClassAssignmentById/',
+        GET_JOINED_CLASS_EXAM_BY_STUDENT_EXAM_ID : '/api/student/getJoinedClassExamById/',
+
         // GET_JOINED_CLASS_EXAMS_BY_STUDENT_ID : '/api/student/getAllActiveJoinedClassesExams/',
 
         START_ASSIGNMENT : '/api/student/startAssignment/',
+        START_EXAM : '/api/student/startExam/',
 
         
     },
@@ -38,13 +41,21 @@ module.exports = {
         GET_ALL_ACTIVE_EXAMS_BY_TEACHER_ID: "/api/exam/teacher/active/",
         GET_ALL_EXAMS_BY_TEACHER_ID: '/api/exam/teacher/',
         GET_EXAM_BY_EXAM_ID: '/api/exam/',
+        GET_EXAM_QUESTIONS_BY_EXAM_ID : '/api/exam/question/',
+        GET_ALL_COMPLETED_EXAMS: '/api/exams/completed/',
+
+
     },
     ASSIGNMENT: {
         CREATE: "/api/assignment",
         GET_ALL_ACTIVE_ASSIGNMENTS_BY_TEACHER_ID: "/api/assignment/teacher/active/",
         GET_ALL_ASSIGNMENTS_BY_TEACHER_ID: '/api/assignment/teacher/',
         GET_ASSIGNMENT_BY_ASSIGNMENT_ID: '/api/assignment/',
-        GET_ASSIGNMENT_QUESTIONS_BY_ASSIGNEMNT_ID : '/api/assignment/question/'
+        GET_ASSIGNMENT_QUESTIONS_BY_ASSIGNEMNT_ID : '/api/assignment/question/',
+        GET_ALL_ACTIVE_ASSIGNMENTS: '/api/assignment/active',
+        GET_ALL_COMPLETED_ASSIGNMENTS: '/api/assignments/completed/',
+
+
 
     },
 };

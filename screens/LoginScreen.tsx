@@ -13,14 +13,15 @@ import {
   Image,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useNavigation} from '@react-navigation/native';
-import {useState} from 'react';
-import {isValidEmail, logError} from '../utils/HelperFunctions';
-import {AuthContext} from '../utils/AuthContext';
+import { useNavigation } from '@react-navigation/native';
+import { useState } from 'react';
+import { isValidEmail, logError } from '../utils/HelperFunctions';
+import { AuthContext } from '../utils/AuthContext';
 import api from '../constants/api';
 import Spinner from 'react-native-loading-spinner-overlay';
 import CONSTANTS from '../constants/common';
 import genericStyle from '../assets/styles/styleSheet';
+import { AUTH, AUTHENTICATIONS } from '../services/api.constants';
 const useUserAuth = () => React.useContext(AuthContext);
 
 export default function LoginScreen() {
@@ -31,7 +32,7 @@ export default function LoginScreen() {
   const [showSpinner, setShowSpinner] = useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const {setUserToken, setUserName, setUserEmail, setGuestView, userToken} =
+  const { setUserToken, setUserName, setUserEmail, setGuestView, userToken } =
     useUserAuth()!;
 
   let notificationToken: any = '';
@@ -58,104 +59,130 @@ export default function LoginScreen() {
     });
 
     setIsLoading(true);
-
-    api.userLogin(loginRequest).then((loginResponse: any) => {
-      if (loginResponse) {
-        if (loginResponse.success) {
-          if (
-            loginResponse.profile.emailVerified &&
-            loginResponse.profile.profileCreated
-          ) {
-            if (
-              !loginResponse.profile.isBanned &&
-              !loginResponse.profile.isAdmin
-            ) {
-              setIsLoading(false);
-
-              (async () => {
-                await AsyncStorage.setItem('userId', loginResponse.profile._id);
-                await AsyncStorage.setItem('password', password);
-                await AsyncStorage.setItem(
-                  'email',
-                  loginResponse.profile.email,
-                );
-              })();
-              setUserName(loginResponse.profile.fullName);
-              setUserEmail(loginResponse.profile.email);
-              setUserToken(loginResponse.profile._id);
-              setGuestView(false);
-            } else {
-              Alert.alert('Alert', 'Sorry, You not allowed to access system!');
-              setIsLoading(false);
-            }
-          } else {
-            Alert.alert('Alert', 'Email not verified!');
-            setIsLoading(false);
-            navigation.navigate('AccountVerify', {
-              email: email,
-              password: password,
-            });
-          }
-        } else {
-          if (loginResponse.isVerifyPending) {
-            setIsLoading(false);
-            navigation.navigate('AccountVerify', {
-              email: email,
-              password: password,
-            });
-          } else if (loginResponse.isProfileSetupPending) {
-            let allSkill: any = [];
-            let allGenres: any = [];
-            let allLocations: any = [];
-
-            api
-              .getSiteContents('skills,genre,location')
-              .then(response => {
-                if (response && response.success) {
-                  allSkill = response['meta'].result.filter(
-                    (item: any) => item.contentType === 'skills',
-                  );
-                  allGenres = response['meta'].result.filter(
-                    (item: any) => item.contentType === 'genre',
-                  );
-                  allLocations = response['meta'].result.filter(
-                    (item: any) => item.contentType === 'location',
-                  );
-
-                  navigation.navigate('ProfileSetup', {
-                    email: email,
-                    password: password,
-                    allSkills: allSkill,
-                    allGenres: allGenres,
-                    allLocations: allLocations,
-                    skills: [],
-                    genres: [],
-                    locations: [],
-                  });
-                } else {
-                  let description = 'error occurred while fetching skills';
-                  let error = response.message
-                    ? Error(response.message)
-                    : Error("Couldn't fetch skills");
-                  logError(description, error, 'ProfileScreen');
-                }
-              })
-              .then(() => setIsLoading(false));
-          } else {
-            let messagetext = '';
-            if (loginResponse.message) {
-              messagetext = loginResponse.message;
-            } else if (loginResponse.errors && loginResponse.errors.message) {
-              messagetext = loginResponse.errors.message;
-            }
-            Alert.alert('Alert', messagetext);
-            setIsLoading(false);
-          }
-        }
-      } else {
-        setIsLoading(false);
+    try {
+      let requestObj = {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username: email,
+          password: password,
+          notificationToken: notificationToken,
+          os: Platform.OS,
+        })
       }
-    });
+      fetch(AUTHENTICATIONS.API_URL + AUTH.SIGNIN, requestObj)
+        .then((response: any) => {
+          console.log(response)
+          navigation.navigate('Root');
+        })
+        .catch((err: any) => {
+          console.log(err)
+          console.log(err.response)
+        })
+    }
+    catch (exception) {
+      console.log('exception ', exception)
+    }
+    // api.userLogin(loginRequest).then((loginResponse: any) => {
+    //   if (loginResponse) {
+    //     if (loginResponse.success) {
+    //       if (
+    //         loginResponse.profile.emailVerified &&
+    //         loginResponse.profile.profileCreated
+    //       ) {
+    //         if (
+    //           !loginResponse.profile.isBanned &&
+    //           !loginResponse.profile.isAdmin
+    //         ) {
+    //           setIsLoading(false);
+
+    //           (async () => {
+    //             await AsyncStorage.setItem('userId', loginResponse.profile._id);
+    //             await AsyncStorage.setItem('password', password);
+    //             await AsyncStorage.setItem(
+    //               'email',
+    //               loginResponse.profile.email,
+    //             );
+    //           })();
+    //           setUserName(loginResponse.profile.fullName);
+    //           setUserEmail(loginResponse.profile.email);
+    //           setUserToken(loginResponse.profile._id);
+    //           setGuestView(false);
+    //         } else {
+    //           Alert.alert('Alert', 'Sorry, You not allowed to access system!');
+    //           setIsLoading(false);
+    //         }
+    //       } else {
+    //         Alert.alert('Alert', 'Email not verified!');
+    //         setIsLoading(false);
+    //         navigation.navigate('AccountVerify', {
+    //           email: email,
+    //           password: password,
+    //         });
+    //       }
+    //     } else {
+    //       if (loginResponse.isVerifyPending) {
+    //         setIsLoading(false);
+    //         navigation.navigate('AccountVerify', {
+    //           email: email,
+    //           password: password,
+    //         });
+    //       } else if (loginResponse.isProfileSetupPending) {
+    //         let allSkill: any = [];
+    //         let allGenres: any = [];
+    //         let allLocations: any = [];
+
+    //         api
+    //           .getSiteContents('skills,genre,location')
+    //           .then(response => {
+    //             if (response && response.success) {
+    //               allSkill = response['meta'].result.filter(
+    //                 (item: any) => item.contentType === 'skills',
+    //               );
+    //               allGenres = response['meta'].result.filter(
+    //                 (item: any) => item.contentType === 'genre',
+    //               );
+    //               allLocations = response['meta'].result.filter(
+    //                 (item: any) => item.contentType === 'location',
+    //               );
+
+    //               navigation.navigate('ProfileSetup', {
+    //                 email: email,
+    //                 password: password,
+    //                 allSkills: allSkill,
+    //                 allGenres: allGenres,
+    //                 allLocations: allLocations,
+    //                 skills: [],
+    //                 genres: [],
+    //                 locations: [],
+    //               });
+    //             } else {
+    //               let description = 'error occurred while fetching skills';
+    //               let error = response.message
+    //                 ? Error(response.message)
+    //                 : Error("Couldn't fetch skills");
+    //               logError(description, error, 'ProfileScreen');
+    //             }
+    //           })
+    //           .then(() => setIsLoading(false));
+    //       } else {
+    //         let messagetext = '';
+    //         if (loginResponse.message) {
+    //           messagetext = loginResponse.message;
+    //         } else if (loginResponse.errors && loginResponse.errors.message) {
+    //           messagetext = loginResponse.errors.message;
+    //         }
+    //         Alert.alert('Alert', messagetext);
+    //         setIsLoading(false);
+    //       }
+    //     }
+    //   } else {
+    //     setIsLoading(false);
+    //   }
+    // });
   };
 
   const onPressForgotPwdBtn = () => {
@@ -214,15 +241,15 @@ export default function LoginScreen() {
         textContent={'Loading...'}
         textStyle={styles.spinnerTextStyle}
       />
-      <View style={{flexDirection: 'column'}}>
+      <View style={{ flexDirection: 'column' }}>
         <View style={styles.header}>
           <Image
             source={require('../assets/images/login_log.png')}
-            style={{width: 164.62, height: 165.69}}
+            style={{ width: 164.62, height: 165.69 }}
           />
         </View>
 
-        <View style={{padding: 15}}>
+        <View style={{ padding: 15 }}>
           <View style={styles.inputTextContainer}>
             <TextInput
               testID="inputEmail"
@@ -272,7 +299,7 @@ export default function LoginScreen() {
             <TouchableOpacity onPress={onPressCreateAccountBtn}>
               <Text style={styles.createBtnText}>
                 Create an{' '}
-                <Text style={[styles.createBtnText, {fontWeight: 'bold'}]}>
+                <Text style={[styles.createBtnText, { fontWeight: 'bold' }]}>
                   account
                 </Text>
               </Text>
@@ -290,7 +317,7 @@ export default function LoginScreen() {
                 marginTop: 40,
               },
             ]}>
-            <Text style={[genericStyle.loginBtnText, {color: '#3878ee'}]}>
+            <Text style={[genericStyle.loginBtnText, { color: '#3878ee' }]}>
               Continue As Guest{' '}
             </Text>
           </TouchableOpacity>

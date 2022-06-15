@@ -14,7 +14,11 @@ import { FormControl, Modal, Button, Divider } from 'native-base';
 import { ASSIGNMENT, AUTHENTICATIONS, CLASS, EXAM } from '../services/api.constants';
 import TeacherClassSlider from '../components/teacherClassSlider';
 import MainLayout from './MainLayout';
+import { AuthContext } from '../utils/AuthContext';
+
 export default function HomeScreen() {
+  // const { currentScreen, setCurrentScreen } = React.useContext(AuthContext);
+
   const isFocused = useIsFocused();
   const navigation = useNavigation();
   const [showModal, setShowModal] = React.useState(false);
@@ -25,6 +29,7 @@ export default function HomeScreen() {
   let [user, setUser] = React.useState("")
 
   React.useEffect(() => {
+    console.log()
     setUser('6295cc2b7d505307388d58fd')
 
     studentApiCall()
@@ -162,7 +167,7 @@ export default function HomeScreen() {
           </Modal.Content>
         </Modal>
         <ScrollView style={{ padding: 10 }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: "center", marginVertical: 10 }}>
+          {/* <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: "center", marginVertical: 10 }}>
             <TextInput placeholder='Search...' style={{ width: '70%', borderWidth: 1, borderColor: 'lightgray', borderRadius: 10, height: 45 }} />
             <TouchableOpacity>
               <Icon name="search1" size={20} style={{ marginLeft: -35 }} />
@@ -170,7 +175,7 @@ export default function HomeScreen() {
             <Button style={{ backgroundColor: '#3878ee' }} onPress={() => setShowModal(true)} >
               Add New...
             </Button>
-          </View>
+          </View> */}
           <View style={{ marginVertical: 10 }}>
             <ClassSlider data={classes} categoryText={"My Upcoming Classes"} screen={"ClassDetails"} />
           </View>

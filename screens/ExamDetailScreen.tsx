@@ -5,7 +5,7 @@ import { CheckBox, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 import { Divider } from 'native-base';
-import { ASSIGNMENT, AUTHENTICATIONS, EXAM } from '../services/api.constants';
+import { ASSIGNMENT, AUTHENTICATIONS, CLASS } from '../services/api.constants';
 import MainLayout from './MainLayout';
 
 export default function ExamDetailScreen({ route }) {
@@ -13,16 +13,23 @@ export default function ExamDetailScreen({ route }) {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
 
-  const [_class, setClass] = React.useState(null)
+  const [exam, setAssignment] = React.useState(null)
+  const [startExam, setStudentExam] = React.useState(null)
+
   let [data, setData] = React.useState([])
+  let [start, setStart] = React.useState(false)
 
   React.useEffect(() => {
 
-    fetch(AUTHENTICATIONS.API_URL + EXAM.GET_EXAM_BY_EXAM_ID + examID)
+    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_JOINED_CLASS_EXAM_BY_STUDENT_EXAM_ID + examID)
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log('classes ', responseJson.data)
-        setClass(responseJson.data)
+        if (responseJson.data.status.toLowerCase() === 'started') {
+          navigation.navigate('ExamStartScreen', { examID: examID })
+        }
+        console.log('exam ', responseJson.data)
+        setAssignment(responseJson.data.exam)
+        setStudentExam(responseJson.data)
         let arr = Array.from({ length: responseJson.data.questioncount }, (_, i) => i + 1)
         console.log(arr)
         setData(arr)
@@ -33,85 +40,96 @@ export default function ExamDetailScreen({ route }) {
 
   }, []);
 
+  const startAssginment = (id) => {
+    try {
+      console.log(id)
+      let requestObj = {
+        method: 'PUT',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: "Started" })
+      }
+      fetch(AUTHENTICATIONS.API_URL + CLASS.START_EXAM + id, requestObj)
+        .then((response: any) => {
+          console.log(response)
+          navigation.navigate('ExamStartScreen',
+            { examID: examID, studentExamID: id })
+        })
+        .catch((err: any) => {
+          console.log(err)
+          console.log(err.response)
+        })
+    }
+    catch (exception) {
+      console.log('exception ', exception)
+    }
+  }
 
   function component() {
     return (
       <View style={styles.container}>
-        <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15, }}>
-          <TouchableOpacity style={{ marginTop: 5 }}
-            onPress={() => navigation.goBack()}>
-            <Icon color={'black'} name="leftcircleo" size={25} />
-          </TouchableOpacity>
-          <Text style={styles.title}>Exam Details</Text>
-        </View>
+
         {
-          _class !== null &&
-          <ScrollView style={{  padding: 15 }}>
-            <View>
-              <ImageBackground
-                resizeMode='cover'
-                source={require('../assets/images/bg.jpg')}
-                style={styles.challengeBoxImage}
-                imageStyle={{ borderRadius: 5 }}
-              >
-                <View style={styles.overlay}>
-                  <View style={styles.challengeTypeOverLay}>
-                    <Text style={styles.challengeBoxText}>
-                      Virtual
-                    </Text>
-                  </View>
-                  <Text style={styles.challengeBoxName}>{_class.title}</Text>
-                  <Text style={styles.challengeBoxDate}>
-                    28-05-2022
-                  </Text>
-                </View>
-              </ImageBackground>
-              <Text style={styles.heading}>Details</Text>
-              <Text style={styles.text}>{_class.description}</Text>
+          <View>
+            <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15, }}>
+              <TouchableOpacity style={{ marginTop: 5 }}
+                onPress={() => navigation.goBack()}>
+                <Icon color={'black'} name="leftcircleo" size={25} />
+              </TouchableOpacity>
+              <Text style={styles.title}>Exam Details</Text>
             </View>
-
-
-            <View style={{ marginVertical: 15 }}>
-              <Divider />
-            </View>
-
-            <View style={{ marginVertical: 10 }}>
-              <Text style={styles.title}>Exam Questions</Text>
-            </View>
-            {data.map((item, index) => (
-              <View key={index} style={{ marginVertical: 10 }}>
+            {
+              (exam !== null && startExam !== null)
+              &&
+              <ScrollView style={{ padding: 15 }}>
                 <View>
-                  <Text style={{ fontSize: 20, marginLeft: 15 }}>Q{index + 1}: What's pencil made of?</Text>
+                  <ImageBackground
+                    resizeMode='cover'
+                    source={require('../assets/images/bg.jpg')}
+                    style={styles.challengeBoxImage}
+                    imageStyle={{ borderRadius: 5 }}
+                  >
+                    <View style={styles.overlay}>
+                      <View style={styles.challengeTypeOverLay}>
+                        <Text style={styles.challengeBoxText}>
+                          Virtual
+                        </Text>
+                      </View>
+                      <Text style={styles.challengeBoxName}>{exam.title}</Text>
+                      <Text style={styles.challengeBoxDate}>
+                        28-05-2022
+                      </Text>
+                    </View>
+                  </ImageBackground>
+                  <Text style={styles.text}>Score: {startExam.score}</Text>
+
+                  <Text style={styles.heading}>Details</Text>
+                  <Text style={styles.text}>{exam.description}</Text>
+                  {
+                    startExam.status.toLowerCase() !== "completed" &&
+                    <View style={{ marginVertical: 15 }}>
+                      <Button title={'Start Exam'}
+                        onPress={
+                          () => {
+                            // setStart(!start); 
+                            startAssginment(startExam._id);
+                          }
+                        }
+                      />
+                    </View>
+                  }
+
                 </View>
-                <View style={{ marginVertical: 15 }}>
-                  <CheckBox
-                    title='Option 1'
-                    checkedIcon='dot-circle-o'
-                    uncheckedIcon='circle-o'
-                  />
-                  <CheckBox
-                    title='Option 2'
-                    checkedIcon='dot-circle-o'
-                    uncheckedIcon='circle-o'
-                  />
-                  <CheckBox
-                    title='Option 3'
-                    checkedIcon='dot-circle-o'
-                    uncheckedIcon='circle-o'
-                  />
-                  <CheckBox
-                    title='Option 4'
-                    checkedIcon='dot-circle-o'
-                    uncheckedIcon='circle-o'
-                  />
-                </View>
-                <Divider />
-              </View>
-            ))}
-          </ScrollView>
+
+              </ScrollView>
+            }
+          </View>
         }
 
-      </View>
+
+      </View >
     )
   }
   return (
