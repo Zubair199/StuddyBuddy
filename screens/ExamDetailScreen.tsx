@@ -7,12 +7,14 @@ import { useNavigation } from '@react-navigation/native';
 import { Divider } from 'native-base';
 import { ASSIGNMENT, AUTHENTICATIONS, CLASS } from '../services/api.constants';
 import MainLayout from './MainLayout';
+import { AuthContext } from '../utils/AuthContext';
 
 export default function ExamDetailScreen({ route }) {
   const { examID } = route.params
   const navigation = useNavigation();
   const isFocused = useIsFocused();
-
+  const { userToken } = React.useContext(AuthContext);
+  let [user, setUser] = React.useState(userToken)
   const [exam, setAssignment] = React.useState(null)
   const [startExam, setStudentExam] = React.useState(null)
 
@@ -20,7 +22,7 @@ export default function ExamDetailScreen({ route }) {
   let [start, setStart] = React.useState(false)
 
   React.useEffect(() => {
-
+    console.log(user)
     fetch(AUTHENTICATIONS.API_URL + CLASS.GET_JOINED_CLASS_EXAM_BY_STUDENT_EXAM_ID + examID)
       .then((response) => response.json())
       .then((responseJson) => {

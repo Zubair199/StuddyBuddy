@@ -12,16 +12,19 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 import { AUTHENTICATIONS, CLASS } from "../services/api.constants";
 import { ThemeContext } from "../context/ThemeContext";
+import { AuthContext } from "../utils/AuthContext";
 
 export default function ClassesTab() {
     const isFocused = useIsFocused();
     const navigation = useNavigation();
     const [classes, setClasses] = React.useState([])
-    let [user, setUser] = React.useState("62a1af738c535a276ca3c3ef")
+    const { userToken } = React.useContext(AuthContext);
+
+    let [user, setUser] = React.useState(userToken)
     const { currentScreen, height, containerHeight } = React.useContext(ThemeContext);
 
     React.useEffect(() => {
-        setUser('62a1af738c535a276ca3c3ef')
+        console.log(user)
         studentApiCall()
     }, [])
 

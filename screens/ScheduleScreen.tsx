@@ -26,6 +26,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import DatePicker from 'react-native-date-picker'
 import { Select, Input, TextArea, IconButton } from "native-base";
 import MainLayout from "./MainLayout";
+import { AuthContext } from "../utils/AuthContext";
 
 export default function SchedulesScreen() {
   const isFocused = useIsFocused();
@@ -37,8 +38,9 @@ export default function SchedulesScreen() {
   const [groupList, setGroupList] = React.useState<any>();
   const [classes, setClasses] = React.useState([])
   const [search, setSearch] = React.useState([])
+  const { userToken } = React.useContext(AuthContext);
 
-  let [user, setUser] = React.useState("6295cc2b7d505307388d58fd")
+  let [user, setUser] = React.useState(userToken)
 
   let [prevDate, setPrevDate] = React.useState(new Date())
   let [nextDate, setNextDate] = React.useState(new Date())
@@ -50,7 +52,7 @@ export default function SchedulesScreen() {
     "July", "August", "September", "October", "November", "December"
   ];
   React.useEffect(() => {
-    setUser('62a1af738c535a276ca3c3ef')
+    console.log(user)
     studentApiCall(date);
   }, [])
   const [open, setOpen] = React.useState(false)
@@ -113,7 +115,7 @@ export default function SchedulesScreen() {
 
     try {
       let body = {
-        student: '62a1af738c535a276ca3c3ef',
+        student: user,
         date: text,
       }
       let requestObj = {

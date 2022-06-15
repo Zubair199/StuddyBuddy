@@ -12,21 +12,24 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 import { ASSIGNMENT, AUTHENTICATIONS, CLASS, EXAM } from "../services/api.constants";
 import { ThemeContext } from "../context/ThemeContext";
+import { AuthContext } from "../utils/AuthContext";
 
 export default function AssignmentsTab() {
     const isFocused = useIsFocused();
     const navigation = useNavigation();
     const [assignments, setAssignments] = React.useState([])
-    let [user, setUser] = React.useState("62a1af738c535a276ca3c3ef")
+    const { userToken } = React.useContext(AuthContext);
+
+    let [user, setUser] = React.useState(userToken)
     const { currentScreen, height, containerHeight } = React.useContext(ThemeContext);
 
     React.useEffect(() => {
-        setUser('62a1af738c535a276ca3c3ef')
+        console.log(user)
         studentApiCall()
     }, [])
 
     function studentApiCall() {
-        fetch(AUTHENTICATIONS.API_URL + ASSIGNMENT.GET_ALL_COMPLETED_ASSIGNMENTS + '62a1af738c535a276ca3c3ef')
+        fetch(AUTHENTICATIONS.API_URL + ASSIGNMENT.GET_ALL_COMPLETED_ASSIGNMENTS + user)
             .then((response) => response.json())
             .then((responseJson) => {
                 console.log('assignments ', responseJson.data)

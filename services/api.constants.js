@@ -35,6 +35,7 @@ module.exports = {
         START_EXAM : '/api/student/startExam/',
         GET_STUDENT_SCHEDULE: '/api/class/student/scehdule',
 
+        GET_STUDENT_SEARCH: '/api/class/student/search/',
         
     },
     EXAM: {

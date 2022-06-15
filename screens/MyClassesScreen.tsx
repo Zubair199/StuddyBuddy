@@ -30,115 +30,30 @@ import { ThemeContext } from "../context/ThemeContext";
 import Footer from "../components/Footer";
 import MainLayout from "./MainLayout";
 import Tab from "../components/Tab";
+import { AuthContext } from "../utils/AuthContext";
 
 export default function MyClassesScreen() {
     const isFocused = useIsFocused();
     const navigation = useNavigation();
     const [classes, setClasses] = React.useState([])
-    let [user, setUser] = React.useState("6295cc2b7d505307388d58fd")
+    const { userToken } = React.useContext(AuthContext);
+    let [user, setUser] = React.useState(userToken)
     const { currentScreen, height, containerHeight } = React.useContext(ThemeContext);
 
+
     React.useEffect(() => {
-        setUser('6295cc2b7d505307388d58fd')
-        studentApiCall()
+        console.log(user)
+
     }, [])
 
-    function studentApiCall() {
-        fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES)
-            .then((response) => response.json())
-            .then((responseJson) => {
-                console.log('classes ', responseJson.data)
-                setClasses(responseJson.data)
-            })
-            .catch(err => {
-                console.log(err)
-            })
-        // fetch(AUTHENTICATIONS.API_URL + EXAM.GET_ALL_ACTIVE_EXAMS_BY_TEACHER_ID + '6295cc2b7d505307388d58fd')
-        //   .then((response) => response.json())
-        //   .then((responseJson) => {
-        //     console.log('exams ', responseJson.data)
-        //     setExams(responseJson.data)
-        //   })
-        //   .catch(err => {
-        //     console.log(err)
-        //   })
-        // fetch(AUTHENTICATIONS.API_URL + CLASS.GET_JOINED_CLASS_ASSIGNMENTS_BY_STUDENT_ID  + '62a1af738c535a276ca3c3ef')
-        //   .then((response) => response.json())
-        //   .then((responseJson) => {
-        //     console.log('assignments ', responseJson.data)
-        //     setAssignments(responseJson.data)
-        //   })
-        //   .catch(err => {
-        //     console.log(err)
-        //   })
-    }
+
     function component() {
 
         return (
             <View style={styles.container}>
                 <View style={{ height: containerHeight }}>
-
-                    {!classes || classes.length == 0 ? (
-                        <View style={styles.contentBox}>
-                            <Text style={styles.emptySearchText}>
-                                No Class Has Been Found
-                            </Text>
-                        </View>
-                    ) : (
-                        <Tab />
-                        // <ScrollView
-                        //     style={styles.scrollView}
-                        //     showsVerticalScrollIndicator={false}
-                        // >
-                        //     <View >
-                        //         {classes.map((classItem, index) => (
-                        //             <TouchableOpacity
-                        //                 style={styles.groupBox}
-                        //                 key={index}
-                        //                 onPress={() => {
-                        //                     navigation.navigate('ClassDetails', { classID: classItem._id })
-                        //                 }}
-                        //             >
-                        //                 <Image source={require("../assets/images/bg.jpg")}
-                        //                     style={styles.classImg}
-                        //                 />
-                        //                 <View style={styles.classInfo}>
-                        //                     <View style={styles.levelBox}>
-                        //                         <View
-                        //                             style={
-                        //                                 styles.levelIntermediate
-                        //                             }
-                        //                         ></View>
-                        //                         <Text style={styles.levelText}>{classItem.level}</Text>
-                        //                     </View>
-                        //                     <View
-                        //                         style={{
-                        //                             flexWrap: "wrap",
-                        //                             flexDirection: "row",
-                        //                             width: "80%",
-                        //                         }}
-                        //                     >
-                        //                         <Text style={styles.className}>{classItem.name}</Text>
-                        //                     </View>
-                        //                     <View style={{ flexDirection: "row" }}>
-                        //                         <Text style={styles.studio}>{classItem.teacher.username}</Text>
-                        //                     </View>
-                        //                     <Text style={styles.dayTime}>
-                        //                         Monday &nbsp;
-                        //                         12:00 &nbsp;-&nbsp; 14:00
-                        //                     </Text>
-                        //                     <Text style={styles.statusMsg}>
-                        //                         {classItem.status}
-                        //                     </Text>
-                        //                 </View>
-                        //             </TouchableOpacity>
-                        //         ))}
-                        //     </View>
-                        // </ScrollView>
-                    )}
+                    <Tab />
                 </View>
-
-
             </View >
         );
     }

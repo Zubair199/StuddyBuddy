@@ -17,7 +17,7 @@ import MainLayout from './MainLayout';
 import { AuthContext } from '../utils/AuthContext';
 
 export default function HomeScreen() {
-  // const { currentScreen, setCurrentScreen } = React.useContext(AuthContext);
+  const { userToken, userType } = React.useContext(AuthContext);
 
   const isFocused = useIsFocused();
   const navigation = useNavigation();
@@ -26,14 +26,16 @@ export default function HomeScreen() {
   const [classes, setClasses] = React.useState([])
   const [exams, setExams] = React.useState([])
   const [assignments, setAssignments] = React.useState([])
-  let [user, setUser] = React.useState("")
+  let [user, setUser] = React.useState(userToken)
 
   React.useEffect(() => {
-    console.log()
-    setUser('6295cc2b7d505307388d58fd')
-
-    studentApiCall()
-    // teacherApiCall()
+    console.log(userToken)
+    if (userType === "user") {
+      studentApiCall()
+    }
+    else {
+      teacherApiCall()
+    }
   }, [])
 
   function teacherApiCall() {
@@ -66,6 +68,7 @@ export default function HomeScreen() {
       })
   }
   function studentApiCall() {
+    console.log("call", userType)
     fetch(AUTHENTICATIONS.API_URL + CLASS.GET_UPCOMING_CLASSES)
       .then((response) => response.json())
       .then((responseJson) => {
@@ -75,7 +78,7 @@ export default function HomeScreen() {
       .catch(err => {
         console.log(err)
       })
-    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_JOINED_CLASS_EXAMS_BY_STUDENT_ID + '62a1af738c535a276ca3c3ef')
+    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_JOINED_CLASS_EXAMS_BY_STUDENT_ID + user)
       .then((response) => response.json())
       .then((responseJson) => {
         console.log('exams ', responseJson.data)
@@ -84,7 +87,7 @@ export default function HomeScreen() {
       .catch(err => {
         console.log(err)
       })
-    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_JOINED_CLASS_ASSIGNMENTS_BY_STUDENT_ID + '62a1af738c535a276ca3c3ef')
+    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_JOINED_CLASS_ASSIGNMENTS_BY_STUDENT_ID + user)
       .then((response) => response.json())
       .then((responseJson) => {
         console.log('assignments ', responseJson.data)

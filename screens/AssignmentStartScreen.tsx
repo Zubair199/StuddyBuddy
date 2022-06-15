@@ -8,16 +8,18 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 
 import { ASSIGNMENT, AUTHENTICATIONS, CLASS } from '../services/api.constants'
+import { AuthContext } from '../utils/AuthContext';
 
 export default function AssignmentStartScreen({ route }) {
     const { assignmentID, studentAssignmentID } = route.params
     const navigation = useNavigation();
-
+    const { userToken } = React.useContext(AuthContext);
+    let [user, setUser] = React.useState(userToken)
     const [assignmentQuestions, setAssignmentQuestions] = useState([])
     const [assignmentQuestionsAnswers, setAssignmentQuestionsAnswers] = useState([])
     const [report, setReport] = useState([])
     useEffect(() => {
-        console.log(route.params)
+        console.log(route.params, user)
         fetch(AUTHENTICATIONS.API_URL + ASSIGNMENT.GET_ASSIGNMENT_QUESTIONS_BY_ASSIGNEMNT_ID + assignmentID)
             .then((response) => response.json())
             .then((responseJson) => {

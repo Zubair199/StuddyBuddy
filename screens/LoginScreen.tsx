@@ -32,7 +32,7 @@ export default function LoginScreen() {
   const [showSpinner, setShowSpinner] = useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const { setUserToken, setUserName, setUserEmail, setGuestView, userToken } =
+  const { setUserToken, setUserName, setUserEmail, setGuestView, userToken, setUserType } =
     useUserAuth()!;
 
   let notificationToken: any = '';
@@ -52,7 +52,7 @@ export default function LoginScreen() {
     }
 
     let loginRequest: any = JSON.stringify({
-      email: email,
+      username: email,
       password: password,
       notificationToken: notificationToken,
       os: Platform.OS,
@@ -66,17 +66,29 @@ export default function LoginScreen() {
           Accept: 'application/json',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          username: email,
-          password: password,
-          notificationToken: notificationToken,
-          os: Platform.OS,
-        })
+        body: loginRequest
       }
       fetch(AUTHENTICATIONS.API_URL + AUTH.SIGNIN, requestObj)
-        .then((response: any) => {
-          console.log(response)
-          navigation.navigate('Root');
+        .then((response) => response.json())
+        .then((responseJson) => {
+          console.log(responseJson)
+          if (responseJson) {
+            if (responseJson.user.isActive) {
+              if (responseJson.user.emailVerified && responseJson.user.profileCreated) {
+                setUserName(responseJson.user.username);
+                setUserEmail(responseJson.user.email);
+                setUserToken(responseJson.user._id);
+                setUserType(responseJson.user.roles.name.toLowerCase())
+                setGuestView(false);
+              } else {
+                Alert.alert('Alert', 'Email not verified! Kindly check you email to verify your account.');
+              }
+            }
+            else {
+              Alert.alert('Alert', 'User is inactive.');
+            }
+          }
+
         })
         .catch((err: any) => {
           console.log(err)

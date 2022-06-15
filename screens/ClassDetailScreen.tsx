@@ -6,18 +6,22 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 import { AUTHENTICATIONS, CLASS } from '../services/api.constants';
 import MainLayout from './MainLayout';
+import { AuthContext } from '../utils/AuthContext';
 
 export default function ClassDetailScreen({ route }) {
   const { classID } = route.params
   const navigation = useNavigation();
   const isFocused = useIsFocused();
+  const { userToken } = React.useContext(AuthContext);
+  let [user, setUser] = React.useState(userToken)
+
 
   const [_class, setClass] = React.useState(null)
   const [teacher, setTeacher] = React.useState(null)
   const [isJoined, setIsJoined] = React.useState(false)
 
   React.useEffect(() => {
-
+    console.log(user)
     studentApiCall()
 
   }, []);
@@ -67,7 +71,7 @@ export default function ClassDetailScreen({ route }) {
   function joinClass(props) {
     const body = {
       teacher: props.teacher._id,
-      student: '62a1af738c535a276ca3c3ef',
+      student: user,
       class: props._id
     }
     console.log(body)

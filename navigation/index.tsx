@@ -124,7 +124,7 @@ function RootNavigator() {
               <>
                 <Stack.Screen
                   name="Login"
-                  component={MenuNavigator}
+                  component={LoginScreen}
                   options={{headerShown: false}}
                 />
                 <Stack.Screen

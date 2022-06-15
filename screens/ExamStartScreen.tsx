@@ -8,17 +8,19 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 
 import { ASSIGNMENT, AUTHENTICATIONS, CLASS, EXAM } from '../services/api.constants'
+import { AuthContext } from '../utils/AuthContext';
 
 export default function ExamStartScreen({ route }) {
     const { examID, studentExamID } = route.params
     const navigation = useNavigation();
-
+    const { userToken } = React.useContext(AuthContext);
+    let [user, setUser] = React.useState(userToken)
     const [examQuestions, setExamQuestions] = useState([])
     const [examQuestionsAnswers, setExamQuestionsAnswers] = useState([])
     const [report, setReport] = useState([])
     useEffect(() => {
         console.log("exam start screen")
-        console.log(route.params)
+        console.log(route.params, user)
         fetch(AUTHENTICATIONS.API_URL + EXAM.GET_EXAM_QUESTIONS_BY_EXAM_ID + examID)
             .then((response) => response.json())
             .then((responseJson) => {

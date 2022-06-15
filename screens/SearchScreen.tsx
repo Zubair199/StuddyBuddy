@@ -15,12 +15,15 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { AUTHENTICATIONS, CLASS } from "../services/api.constants";
+import { AuthContext } from "../utils/AuthContext";
 import MainLayout from "./MainLayout";
 
 export default function SearchScreen() {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
   // const onClose = () => navigation.navigate("ClassesScreen");
+  const { userToken } = React.useContext(AuthContext);
+
   const [loader, setLoader] = React.useState(false);
   const [data, setData] = React.useState<any>();
   // const [grouped, setGrouped] = React.useState<any>();
@@ -30,10 +33,10 @@ export default function SearchScreen() {
   const [search, setSearch] = React.useState([])
   const [status, setStatus] = React.useState("approved")
 
-  let [user, setUser] = React.useState("6295cc2b7d505307388d58fd")
+  let [user, setUser] = React.useState(userToken)
 
   React.useEffect(() => {
-    setUser('6295cc2b7d505307388d58fd')
+    console.log(user)
     studentApiCall()
   }, [])
 
