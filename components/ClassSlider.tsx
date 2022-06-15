@@ -35,7 +35,7 @@ export default function ClassSlider(props: Iprops) {
                       <View style={styles.classTakenBox}>
                         <View style={styles.classTakenOverLay}>
                           <Text style={styles.classTakenBoxText}>
-                            {item.classType}
+                            Virtual
                           </Text>
                         </View>
                       </View>
