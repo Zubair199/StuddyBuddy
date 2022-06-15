@@ -34,14 +34,31 @@ export default function ClassDetailScreen({ route }) {
         console.log(err)
       })
   }
+  function apiCall() {
+    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_CLASS_BY_CLASS_ID + classID)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log('classes ', responseJson.data)
+        setClass(responseJson.data)
+        setTeacher(responseJson.data.teacher)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
   function studentApiCall() {
     fetch(AUTHENTICATIONS.API_URL + CLASS.GET_JOINED_CLASS_BY_ID + classID)
       .then((response) => response.json())
       .then((responseJson) => {
         console.log('classes ', responseJson.data)
-        setClass(responseJson.data.class)
-        setIsJoined(responseJson.data.isJoined)
-        setTeacher(responseJson.data.teacher)
+        if (responseJson.data === null) {
+          apiCall()
+        }
+        else {
+          setClass(responseJson.data.class)
+          setIsJoined(responseJson.data.isJoined)
+          setTeacher(responseJson.data.teacher)
+        }
       })
       .catch(err => {
         console.log(err)
@@ -67,6 +84,7 @@ export default function ClassDetailScreen({ route }) {
         .then((response: any) => {
           console.log(response)
           Alert.alert(response.data.message)
+          studentApiCall()
         })
         .catch((err: any) => {
           console.log(err)
@@ -125,13 +143,13 @@ export default function ClassDetailScreen({ route }) {
                 {/* price tags start here */}
                 {/* this will be render if student has not already joined the class */}
                 {
-                !isJoined &&
-                <View style={styles.joinBox}>
-                  <TouchableOpacity onPress={() => { joinClass(_class) }} style={{ backgroundColor: '#4B5F79', padding: 10, borderRadius: 5, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ fontSize: 18, fontWeight: '300', color: "white" }}>Join Class</Text>
-                  </TouchableOpacity>
-                </View>
-              }
+                  !isJoined &&
+                  <View style={styles.joinBox}>
+                    <TouchableOpacity onPress={() => { joinClass(_class) }} style={{ backgroundColor: '#4B5F79', padding: 10, borderRadius: 5, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                      <Text style={{ fontSize: 18, fontWeight: '300', color: "white" }}>Join Class</Text>
+                    </TouchableOpacity>
+                  </View>
+                }
                 <View style={styles.joinBox}>
                   <Text style={styles.cost}>
                     {/* Cost: &#36;{12} */}

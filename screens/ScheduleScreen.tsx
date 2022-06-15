@@ -50,8 +50,8 @@ export default function SchedulesScreen() {
     "July", "August", "September", "October", "November", "December"
   ];
   React.useEffect(() => {
-    setUser('6295cc2b7d505307388d58fd')
-    getApiCall(date);
+    setUser('62a1af738c535a276ca3c3ef')
+    studentApiCall(date);
   }, [])
   const [open, setOpen] = React.useState(false)
   let [_startdate, _setStartdate] = React.useState(new Date())
@@ -66,7 +66,7 @@ export default function SchedulesScreen() {
   //   setStringDate(_dateString);
   // }
 
-  const getApiCall = (text) => {
+  const teacherApiCall = (text) => {
     let _Date = new Date(text)
     const month = (_Date.getMonth() + 1)
     const year = _Date.getFullYear()
@@ -89,6 +89,42 @@ export default function SchedulesScreen() {
         body: JSON.stringify(body)
       }
       fetch(AUTHENTICATIONS.API_URL + CLASS.GET_TEACHER_SCHEDULE, requestObj)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          console.log('classes ', responseJson.data)
+          setClasses(responseJson.data)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  const studentApiCall = (text) => {
+    let _Date = new Date(text)
+    const month = (_Date.getMonth() + 1)
+    const year = _Date.getFullYear()
+    const day = _Date.getDate()
+    const _date = month + '/' + day + '/' + year
+    const _dateString = days[_Date.getDay()] + ', ' + monthNames[_Date.getMonth()] + " " + day;
+    setStringDate(_dateString)
+
+    try {
+      let body = {
+        student: '62a1af738c535a276ca3c3ef',
+        date: text,
+      }
+      let requestObj = {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      }
+      fetch(AUTHENTICATIONS.API_URL + CLASS.GET_STUDENT_SCHEDULE, requestObj)
         .then((response) => response.json())
         .then((responseJson) => {
           console.log('classes ', responseJson.data)
@@ -140,7 +176,7 @@ export default function SchedulesScreen() {
               onConfirm={(text) => {
                 _setStartdate(text);
                 setOpen(false);
-                getApiCall(text);
+                studentApiCall(text);
               }}
               onCancel={() => {
                 setOpen(false)
@@ -171,7 +207,9 @@ export default function SchedulesScreen() {
                 <TouchableOpacity
                   style={styles.groupBox}
                   key={index}
-                // onPress={()=>{navigation.navigate()}}
+                  onPress={() => {
+                    navigation.navigate('ClassDetails', { classID: classItem.class._id })
+                  }}
                 >
                   <Image source={require("../assets/images/bg.jpg")}
                     style={styles.classImg}
@@ -183,7 +221,7 @@ export default function SchedulesScreen() {
                           styles.levelIntermediate
                         }
                       ></View>
-                      <Text style={styles.levelText}>{classItem.level}</Text>
+                      <Text style={styles.levelText}>{classItem.class.level}</Text>
                     </View>
                     <View
                       style={{
@@ -192,7 +230,7 @@ export default function SchedulesScreen() {
                         width: "80%",
                       }}
                     >
-                      <Text style={styles.className}>{classItem.name}</Text>
+                      <Text style={styles.className}>{classItem.class.name}</Text>
                     </View>
                     <View style={{ flexDirection: "row" }}>
                       <Text style={styles.studio}>{classItem.teacher.username}</Text>
@@ -206,7 +244,7 @@ export default function SchedulesScreen() {
                     {/* {classItem.myJoinStatus &&
                     classItem.myJoinStatus === "pending" && ( */}
                     <Text style={styles.statusMsg}>
-                      {classItem.status}
+                      {classItem.class.status}
                     </Text>
                     {/* )}
                   {classItem.status &&
@@ -225,7 +263,7 @@ export default function SchedulesScreen() {
       </SafeAreaView>
     );
   }
-  return(
+  return (
     <MainLayout Component={component()} />
   )
 }
