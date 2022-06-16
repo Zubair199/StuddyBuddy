@@ -18,16 +18,32 @@ export default function ClassesTab() {
     const isFocused = useIsFocused();
     const navigation = useNavigation();
     const [classes, setClasses] = React.useState([])
-    const { userToken } = React.useContext(AuthContext);
+    const { userToken, userType } = React.useContext(AuthContext);
+
 
     let [user, setUser] = React.useState(userToken)
     const { currentScreen, height, containerHeight } = React.useContext(ThemeContext);
 
     React.useEffect(() => {
         console.log(user)
-        studentApiCall()
+        if (userType.toLowerCase() === "user") {
+            studentApiCall();
+        }
+        else {
+            teacherApiCall()
+        }
     }, [])
-
+    function teacherApiCall() {
+        fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES)
+            .then((response) => response.json())
+            .then((responseJson) => {
+                console.log('classes ', responseJson.data)
+                setClasses(responseJson.data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
     function studentApiCall() {
         fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES)
             .then((response) => response.json())

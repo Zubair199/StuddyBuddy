@@ -18,18 +18,34 @@ export default function AssignmentsTab() {
     const isFocused = useIsFocused();
     const navigation = useNavigation();
     const [assignments, setAssignments] = React.useState([])
-    const { userToken } = React.useContext(AuthContext);
+    const { userToken, userType } = React.useContext(AuthContext);
 
     let [user, setUser] = React.useState(userToken)
     const { currentScreen, height, containerHeight } = React.useContext(ThemeContext);
 
     React.useEffect(() => {
         console.log(user)
-        studentApiCall()
+        if (userType.toLowerCase() === "user") {
+            studentApiCall();
+          }
+          else {
+            teacherApiCall()
+          }
     }, [])
+    function teacherApiCall() {
+        fetch(AUTHENTICATIONS.API_URL + ASSIGNMENT.GET_ALL_ASSIGNMENTS_BY_TEACHER_ID + user)
+            .then((response) => response.json())
+            .then((responseJson) => {
+                console.log('assignments ', responseJson.data)
+                setAssignments(responseJson.data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
 
     function studentApiCall() {
-        fetch(AUTHENTICATIONS.API_URL + ASSIGNMENT.GET_ALL_COMPLETED_ASSIGNMENTS + user)
+        fetch(AUTHENTICATIONS.API_URL + ASSIGNMENT.GET_ALL_COMPLETED_STUDENT_ASSIGNMENTS + user)
             .then((response) => response.json())
             .then((responseJson) => {
                 console.log('assignments ', responseJson.data)

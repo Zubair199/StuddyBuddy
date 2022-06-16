@@ -38,7 +38,8 @@ export default function SchedulesScreen() {
   const [groupList, setGroupList] = React.useState<any>();
   const [classes, setClasses] = React.useState([])
   const [search, setSearch] = React.useState([])
-  const { userToken } = React.useContext(AuthContext);
+  const { userToken, userType } = React.useContext(AuthContext);
+
 
   let [user, setUser] = React.useState(userToken)
 
@@ -53,7 +54,12 @@ export default function SchedulesScreen() {
   ];
   React.useEffect(() => {
     console.log(user)
-    studentApiCall(date);
+    if (userType.toLowerCase() === "user") {
+      studentApiCall(date);
+    }
+    else {
+      teacherApiCall(date)
+    }
   }, [])
   const [open, setOpen] = React.useState(false)
   let [_startdate, _setStartdate] = React.useState(new Date())

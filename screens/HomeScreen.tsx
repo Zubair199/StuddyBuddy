@@ -29,37 +29,9 @@ export default function HomeScreen() {
   let [user, setUser] = React.useState(userToken)
 
   React.useEffect(() => {
-    console.log(userToken)
+    console.log("HomeScreen", userType)
     if (userType === "user") {
-      console.log("call", userType)
-      fetch(AUTHENTICATIONS.API_URL + CLASS.GET_UPCOMING_CLASSES)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          console.log('classes ', responseJson.data)
-          setClasses(responseJson.data)
-        })
-        .catch(err => {
-          console.log(err)
-        })
-      fetch(AUTHENTICATIONS.API_URL + CLASS.GET_JOINED_CLASS_EXAMS_BY_STUDENT_ID + user)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          console.log('exams ', responseJson.data)
-          setExams(responseJson.data)
-        })
-        .catch(err => {
-          console.log(err)
-        })
-      fetch(AUTHENTICATIONS.API_URL + CLASS.GET_JOINED_CLASS_ASSIGNMENTS_BY_STUDENT_ID + user)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          console.log('assignments ', responseJson.data)
-          setAssignments(responseJson.data)
-        })
-        .catch(err => {
-          console.log(err)
-        })
-
+      studentApiCall()
     }
     else {
       teacherApiCall()

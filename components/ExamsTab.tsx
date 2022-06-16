@@ -18,16 +18,32 @@ export default function ExamsTab() {
     const isFocused = useIsFocused();
     const navigation = useNavigation();
     const [exams, setExams] = React.useState([])
-    const { userToken } = React.useContext(AuthContext);
+    const { userToken, userType } = React.useContext(AuthContext);
+
 
     let [user, setUser] = React.useState(userToken)
     const { currentScreen, height, containerHeight } = React.useContext(ThemeContext);
 
     React.useEffect(() => {
         console.log(user)
-        studentApiCall()
+        if (userType.toLowerCase() === "user") {
+            studentApiCall();
+        }
+        else {
+            teacherApiCall()
+        }
     }, [])
-
+    function teacherApiCall() {
+        fetch(AUTHENTICATIONS.API_URL + EXAM.GET_ALL_EXAMS_BY_TEACHER_ID + user)
+            .then((response) => response.json())
+            .then((responseJson) => {
+                console.log('exams ', responseJson.data)
+                setExams(responseJson.data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
     function studentApiCall() {
         fetch(AUTHENTICATIONS.API_URL + EXAM.GET_ALL_COMPLETED_EXAMS + user)
             .then((response) => response.json())

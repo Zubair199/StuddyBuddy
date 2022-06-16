@@ -50,12 +50,19 @@ module.exports = {
     },
     ASSIGNMENT: {
         CREATE: "/api/assignment",
+
         GET_ALL_ACTIVE_ASSIGNMENTS_BY_TEACHER_ID: "/api/assignment/teacher/active/",
+
         GET_ALL_ASSIGNMENTS_BY_TEACHER_ID: '/api/assignment/teacher/',
+
         GET_ASSIGNMENT_BY_ASSIGNMENT_ID: '/api/assignment/',
+
         GET_ASSIGNMENT_QUESTIONS_BY_ASSIGNEMNT_ID : '/api/assignment/question/',
+
         GET_ALL_ACTIVE_ASSIGNMENTS: '/api/assignment/active',
-        GET_ALL_COMPLETED_ASSIGNMENTS: '/api/assignments/completed/',
+
+        GET_ALL_COMPLETED_STUDENT_ASSIGNMENTS: '/api/student/assignments/completed/',
+        GET_ALL_COMPLETED_TEACHER_ASSIGNMENTS: '/api/teacher/assignments/completed/',
 
 
 

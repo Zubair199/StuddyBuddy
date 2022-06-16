@@ -14,6 +14,14 @@ export default function MainLayout(props) {
     const isFocused = useIsFocused();
     const navigation = useNavigation();
     const { currentScreen, height, containerHeight } = React.useContext(ThemeContext);
+    const controller = new AbortController();
+    const signal = controller.signal;
+    React.useEffect(() => {
+        return () => {
+            // cancel the request before component unmounts
+            controller.abort();
+        };
+    }, [])
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }} >

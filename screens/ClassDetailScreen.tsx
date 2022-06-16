@@ -12,7 +12,7 @@ export default function ClassDetailScreen({ route }) {
   const { classID } = route.params
   const navigation = useNavigation();
   const isFocused = useIsFocused();
-  const { userToken } = React.useContext(AuthContext);
+  const { userToken, userType } = React.useContext(AuthContext);
   let [user, setUser] = React.useState(userToken)
 
 
@@ -22,9 +22,13 @@ export default function ClassDetailScreen({ route }) {
 
   React.useEffect(() => {
     console.log(user)
-    studentApiCall()
-
-  }, []);
+    if (userType.toLowerCase() === "user") {
+      studentApiCall();
+    }
+    else {
+      teacherApiCall()
+    }
+  }, [])
 
   function teacherApiCall() {
     fetch(AUTHENTICATIONS.API_URL + CLASS.GET_CLASS_BY_CLASS_ID + classID)
@@ -147,7 +151,12 @@ export default function ClassDetailScreen({ route }) {
                 {/* price tags start here */}
                 {/* this will be render if student has not already joined the class */}
                 {
-                  !isJoined &&
+                  (
+                    userType.toLowerCase() === "user"
+                    &&
+                    !isJoined
+                  )
+                  &&
                   <View style={styles.joinBox}>
                     <TouchableOpacity onPress={() => { joinClass(_class) }} style={{ backgroundColor: '#4B5F79', padding: 10, borderRadius: 5, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
                       <Text style={{ fontSize: 18, fontWeight: '300', color: "white" }}>Join Class</Text>

@@ -72,11 +72,11 @@ export default function SettingsScreen() {
             <Text style={styles.title}>Settings</Text>
 
             <TouchableOpacity
-            // onPress={() =>
-            //   confirmationBox("Logout", "Do you want to logout?", () =>
-            //     handleLogout()
-            //   )
-            // }
+            onPress={() =>
+              confirmationBox("Logout", "Do you want to logout?", () =>
+                handleLogout()
+              )
+            }
             >
               <Text style={styles.logout}>Logout</Text>
             </TouchableOpacity>
