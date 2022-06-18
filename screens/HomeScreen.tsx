@@ -12,9 +12,10 @@ import ExamSlider from '../components/ExamSlider';
 import AddAssignmentScreen from './AddAssignment';
 import { FormControl, Modal, Button, Divider } from 'native-base';
 import { ASSIGNMENT, AUTHENTICATIONS, CLASS, EXAM } from '../services/api.constants';
-import TeacherClassSlider from '../components/teacherClassSlider';
+import TeacherClassSlider from '../components/TeacherClassSlider';
 import MainLayout from './MainLayout';
 import { AuthContext } from '../utils/AuthContext';
+import TeacherAssignmentSlider from '../components/TeacherAssignmentSlider';
 
 export default function HomeScreen() {
   const { userToken, userType } = React.useContext(AuthContext);
@@ -30,16 +31,16 @@ export default function HomeScreen() {
 
   React.useEffect(() => {
     console.log("HomeScreen", userType)
-    if (userType === "user") {
+    if (userType.toLowerCase() === "user") {
       studentApiCall()
     }
     else {
       teacherApiCall()
     }
-  }, [])
+  }, [isFocused])
 
   function teacherApiCall() {
-    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES_BY_TEACHER_ID + '6295cc2b7d505307388d58fd')
+    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_UPCOMING_CLASSES_BY_TEACHER_ID + user)
       .then((response) => response.json())
       .then((responseJson) => {
         console.log('classes ', responseJson.data)
@@ -48,16 +49,7 @@ export default function HomeScreen() {
       .catch(err => {
         console.log(err)
       })
-    fetch(AUTHENTICATIONS.API_URL + EXAM.GET_ALL_ACTIVE_EXAMS_BY_TEACHER_ID + '6295cc2b7d505307388d58fd')
-      .then((response) => response.json())
-      .then((responseJson) => {
-        console.log('exams ', responseJson.data)
-        setExams(responseJson.data)
-      })
-      .catch(err => {
-        console.log(err)
-      })
-    fetch(AUTHENTICATIONS.API_URL + ASSIGNMENT.GET_ALL_ACTIVE_ASSIGNMENTS_BY_TEACHER_ID + '6295cc2b7d505307388d58fd')
+    fetch(AUTHENTICATIONS.API_URL + ASSIGNMENT.GET_ALL_ACTIVE_ASSIGNMENTS_BY_TEACHER_ID + user)
       .then((response) => response.json())
       .then((responseJson) => {
         console.log('assignments ', responseJson.data)
@@ -66,23 +58,24 @@ export default function HomeScreen() {
       .catch(err => {
         console.log(err)
       })
-  }
-  function studentApiCall() {
-    console.log("call", userType)
-    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_UPCOMING_CLASSES)
-      .then((response) => response.json())
-      .then((responseJson) => {
-        console.log('classes ', responseJson.data)
-        setClasses(responseJson.data)
-      })
-      .catch(err => {
-        console.log(err)
-      })
-    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_JOINED_CLASS_EXAMS_BY_STUDENT_ID + user)
+    fetch(AUTHENTICATIONS.API_URL + EXAM.GET_ALL_ACTIVE_EXAMS_BY_TEACHER_ID + user)
       .then((response) => response.json())
       .then((responseJson) => {
         console.log('exams ', responseJson.data)
         setExams(responseJson.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+
+  }
+  function studentApiCall() {
+    console.log("call", userType)
+    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_STUDENT_UPCOMING_CLASSES + user)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log('classes ', responseJson.data)
+        setClasses(responseJson.data)
       })
       .catch(err => {
         console.log(err)
@@ -96,6 +89,16 @@ export default function HomeScreen() {
       .catch(err => {
         console.log(err)
       })
+    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_JOINED_CLASS_EXAMS_BY_STUDENT_ID + user)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log('exams ', responseJson.data)
+        setExams(responseJson.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+
 
   }
   function component() {
@@ -170,20 +173,35 @@ export default function HomeScreen() {
           </Modal.Content>
         </Modal>
         <ScrollView style={{ padding: 10 }}>
-          {/* <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: "center", marginVertical: 10 }}>
-            <TextInput placeholder='Search...' style={{ width: '70%', borderWidth: 1, borderColor: 'lightgray', borderRadius: 10, height: 45 }} />
-            <TouchableOpacity>
-              <Icon name="search1" size={20} style={{ marginLeft: -35 }} />
-            </TouchableOpacity>
-            <Button style={{ backgroundColor: '#3878ee' }} onPress={() => setShowModal(true)} >
-              Add New...
-            </Button>
-          </View> */}
-          <View style={{ marginVertical: 10 }}>
-            <ClassSlider data={classes} categoryText={"My Upcoming Classes"} screen={"ClassDetails"} />
+          <View>
+            {
+              userType.toLowerCase() === "teacher" &&
+              <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: "center", marginVertical: 10 }}>
+                <TextInput placeholder='Search...' style={{ width: '70%', borderWidth: 1, borderColor: 'lightgray', borderRadius: 10, height: 45 }} />
+                <TouchableOpacity>
+                  <Icon name="search1" size={20} style={{ marginLeft: -35 }} />
+                </TouchableOpacity>
+                <Button style={{ backgroundColor: '#3878ee' }} onPress={() => setShowModal(true)} >
+                  Add New...
+                </Button>
+              </View>
+            }
           </View>
           <View style={{ marginVertical: 10 }}>
-            <AssignmentSlider data={assignments} categoryText={"My Assignments"} screen={"AssignmentDetails"} />
+            {
+              userType.toLowerCase() === "user" ?
+                <ClassSlider data={classes} categoryText={"My Upcoming Classes"} screen={"ClassDetails"} />
+                :
+                <TeacherClassSlider data={classes} categoryText={"My Upcoming Classes"} screen={"ClassDetails"} />
+            }
+          </View>
+          <View style={{ marginVertical: 10 }}>
+            {
+              userType.toLowerCase() === "user" ?
+                <AssignmentSlider data={assignments} categoryText={"My Assignments"} screen={"AssignmentDetails"} />
+                :
+                <TeacherAssignmentSlider data={assignments} categoryText={"My Assignments"} screen={"AssignmentDetails"} />
+            }
           </View>
           <View style={{ marginVertical: 10 }}>
             <ExamSlider data={exams} categoryText={"My Exams"} screen={"ExamDetails"} />

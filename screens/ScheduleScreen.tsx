@@ -210,51 +210,53 @@ export default function SchedulesScreen() {
             style={styles.scrollView}
             showsVerticalScrollIndicator={false}
           >
-            <View >
-              {classes.map((classItem, index) => (
-                <TouchableOpacity
-                  style={styles.groupBox}
-                  key={index}
-                  onPress={() => {
-                    navigation.navigate('ClassDetails', { classID: classItem.class._id })
-                  }}
-                >
-                  <Image source={require("../assets/images/bg.jpg")}
-                    style={styles.classImg}
-                  />
-                  <View style={styles.classInfo}>
-                    <View style={styles.levelBox}>
-                      <View
-                        style={
-                          styles.levelIntermediate
-                        }
-                      ></View>
-                      <Text style={styles.levelText}>{classItem.class.level}</Text>
-                    </View>
-                    <View
-                      style={{
-                        flexWrap: "wrap",
-                        flexDirection: "row",
-                        width: "80%",
+            {
+              userType.toLowerCase() === "user" ?
+                <View >
+                  {classes.map((classItem, index) => (
+                    <TouchableOpacity
+                      style={styles.groupBox}
+                      key={index}
+                      onPress={() => {
+                        navigation.navigate('ClassDetails', { classID: classItem.class._id })
                       }}
                     >
-                      <Text style={styles.className}>{classItem.class.name}</Text>
-                    </View>
-                    <View style={{ flexDirection: "row" }}>
-                      <Text style={styles.studio}>{classItem.teacher.username}</Text>
-                      {/* <View style={styles.dot}></View>
+                      <Image source={require("../assets/images/bg.jpg")}
+                        style={styles.classImg}
+                      />
+                      <View style={styles.classInfo}>
+                        <View style={styles.levelBox}>
+                          <View
+                            style={
+                              styles.levelIntermediate
+                            }
+                          ></View>
+                          <Text style={styles.levelText}>{classItem.class.level}</Text>
+                        </View>
+                        <View
+                          style={{
+                            flexWrap: "wrap",
+                            flexDirection: "row",
+                            width: "80%",
+                          }}
+                        >
+                          <Text style={styles.className}>{classItem.class.name}</Text>
+                        </View>
+                        <View style={{ flexDirection: "row" }}>
+                          <Text style={styles.studio}>{classItem.teacher.username}</Text>
+                          {/* <View style={styles.dot}></View>
                     <Text style={styles.studio}>{classItem.studio}</Text> */}
-                    </View>
-                    <Text style={styles.dayTime}>
-                      Monday &nbsp;
-                      12:00 &nbsp;-&nbsp; 14:00
-                    </Text>
-                    {/* {classItem.myJoinStatus &&
+                        </View>
+                        <Text style={styles.dayTime}>
+                          Monday &nbsp;
+                          12:00 &nbsp;-&nbsp; 14:00
+                        </Text>
+                        {/* {classItem.myJoinStatus &&
                     classItem.myJoinStatus === "pending" && ( */}
-                    <Text style={styles.statusMsg}>
-                      {classItem.class.status}
-                    </Text>
-                    {/* )}
+                        <Text style={styles.statusMsg}>
+                          {classItem.class.status}
+                        </Text>
+                        {/* )}
                   {classItem.status &&
                     !classItem.myJoinStatus &&
                     classItem.status === "pending" && (
@@ -262,10 +264,69 @@ export default function SchedulesScreen() {
                         Waiting For Admin Approval
                       </Text>
                     )} */}
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+                :
+                <View >
+                  {classes.map((classItem, index) => (
+                    <TouchableOpacity
+                      style={styles.groupBox}
+                      key={index}
+                      onPress={() => {
+                        navigation.navigate('ClassDetails', { classID: classItem._id })
+                      }}
+                    >
+                      <Image source={require("../assets/images/bg.jpg")}
+                        style={styles.classImg}
+                      />
+                      <View style={styles.classInfo}>
+                        <View style={styles.levelBox}>
+                          <View
+                            style={
+                              styles.levelIntermediate
+                            }
+                          ></View>
+                          <Text style={styles.levelText}>{classItem.level}</Text>
+                        </View>
+                        <View
+                          style={{
+                            flexWrap: "wrap",
+                            flexDirection: "row",
+                            width: "80%",
+                          }}
+                        >
+                          <Text style={styles.className}>{classItem.name}</Text>
+                        </View>
+                        <View style={{ flexDirection: "row" }}>
+                          <Text style={styles.studio}>{classItem.teacher.username}</Text>
+                          {/* <View style={styles.dot}></View>
+                    <Text style={styles.studio}>{classItem.studio}</Text> */}
+                        </View>
+                        <Text style={styles.dayTime}>
+                          Monday &nbsp;
+                          12:00 &nbsp;-&nbsp; 14:00
+                        </Text>
+                        {/* {classItem.myJoinStatus &&
+                    classItem.myJoinStatus === "pending" && ( */}
+                        <Text style={styles.statusMsg}>
+                          {classItem.status}
+                        </Text>
+                        {/* )}
+                  {classItem.status &&
+                    !classItem.myJoinStatus &&
+                    classItem.status === "pending" && (
+                      <Text style={styles.statusMsg}>
+                        Waiting For Admin Approval
+                      </Text>
+                    )} */}
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+            }
           </ScrollView>
         )}
       </SafeAreaView>

@@ -11,6 +11,9 @@ module.exports = {
     CLASS: {
         CREATE: "/api/class",
         GET_ALL_ACTIVE_CLASSES_BY_TEACHER_ID: "/api/class/teacher/active/",
+        
+        GET_ALL_ACTIVE_UPCOMING_CLASSES_BY_TEACHER_ID: "/api/class/teacher/upcoming/active/",
+
         GET_ALL_CLASSES_BY_TEACHER_ID: '/api/class/teacher/',
         GET_CLASS_BY_CLASS_ID: '/api/class/',
         GET_TEACHER_SCHEDULE: '/api/class/teacher/scehdule',
@@ -20,7 +23,10 @@ module.exports = {
         GET_ALL_ACTIVE_CLASSES: '/api/classes/active',
 
         JOIN_CLASS: '/api/joinClass',
-        GET_UPCOMING_CLASSES: '/api/student/getAllTodaysActiveJoinedClasses',
+        
+        GET_TEACHER_UPCOMING_CLASSES: '/api/teacher/getAllTodaysActiveClasses/',
+        GET_STUDENT_UPCOMING_CLASSES: '/api/student/getAllTodaysActiveJoinedClasses/',
+        
         GET_JOINED_CLASS_BY_ID: '/api/student/getJoinedClassByID/',
 
         GET_JOINED_CLASS_ASSIGNMENTS_BY_STUDENT_ID : '/api/student/getAllActiveJoinedClassesAssignments/',

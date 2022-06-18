@@ -8,7 +8,7 @@ interface Iprops {
   screen: string;
   categoryText: string;
 }
-export default function TeacherClassSlider(props: Iprops) {
+export default function TeacherExamSlider(props: Iprops) {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
 
@@ -19,12 +19,12 @@ export default function TeacherClassSlider(props: Iprops) {
       <View style={{ height: 180 }}>
         {!props.data || props.data.length == 0 ? (
           <View style={styles.noResultView}>
-            <Text style={styles.noResultText}>NO CLASSES AVAILABLE !</Text>
+            <Text style={styles.noResultText}>NO EXAM AVAILABLE !</Text>
           </View>
         ) : (
           <ScrollView style={styles.scrollView} horizontal={true}>
             {
-              props.data.map((classData, index: number) => (
+              props.data.map((item: any, index: number) => (
                 <View key={index} style={styles.classBoxWrapper}>
                   <ImageBackground
                     resizeMode='cover'
@@ -35,15 +35,24 @@ export default function TeacherClassSlider(props: Iprops) {
                       <View style={styles.classTakenBox}>
                         <View style={styles.classTakenOverLay}>
                           <Text style={styles.classTakenBoxText}>
-                            {classData.classType}
+                            Virtual
                           </Text>
                         </View>
                       </View>
                       <View style={styles.classBox}>
                         <TouchableOpacity
-                          onPress={
-                            () => navigation.navigate(props.screen, { classID: classData._id })
-                          }
+                          // onPress={
+                          //   () => navigation.reset({
+                          //     index: 0,
+                          //     routes: [{ name: props.screen, params: { assignmentID: item._id } }],
+                          //   })
+                          // }
+                          onPress={() => {
+                            item.status.toLowerCase() === "started" ?
+                              navigation.navigate('ExamStartScreen', { examID: item.exam._id, studentExamID: item._id })
+                              :
+                              navigation.navigate(props.screen, { examID: item.exam._id })
+                          }}
                           style={{
                             width: "100%",
                             height: "100%",
@@ -51,29 +60,32 @@ export default function TeacherClassSlider(props: Iprops) {
                           }}
                         >
                           <View style={styles.levelBox}>
-                            <View
-                              style={styles.levelIntermediate}
-                            >
-                            </View>
-                            <Text style={styles.classBoxText}>
-                              {classData.level}
-                            </Text>
+                            {/* <View
+                          style={styles.levelIntermediate}
+                        >
+                        </View>
+                        <Text style={styles.classBoxText}>
+                          Intermediate
+                        </Text> */}
 
                           </View>
                           <Text style={styles.classBoxName}>
-                            {classData.name}
+                            {/* Class Name */}
                           </Text>
                           <Text style={styles.classBoxInstructor}>
-                            {classData.teacher.username}
+                            {/* Instructor Name */}
                           </Text>
                           <Text style={styles.classBoxDate}>
-                            Tuesday 12:00 - 13:00
+                            {/* Tuesday 12:00 - 13:00 */}
                           </Text>
                           <Text style={styles.classBoxInstructor}>
-                            {classData.subject}
+                            {item.exam.title}
                           </Text>
                           <Text style={styles.classBoxInstructor}>
-                            {classData.status}
+                            {item.status}
+                          </Text>
+                          <Text style={styles.classBoxInstructor}>
+                            {item.exam.startdate}
                           </Text>
                         </TouchableOpacity>
                       </View>
@@ -83,10 +95,9 @@ export default function TeacherClassSlider(props: Iprops) {
               ))
             }
           </ScrollView>
-        )
-        }
-      </View >
-    </View >
+        )}
+      </View>
+    </View>
 
   )
 }
@@ -115,6 +126,7 @@ const styles = StyleSheet.create({
   },
 
   classTakenBox: {
+    marginTop: 15,
     paddingLeft: 0,
     // paddingBottom: 10,
     paddingTop: 0,

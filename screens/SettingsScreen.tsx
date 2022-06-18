@@ -18,11 +18,13 @@ import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import MainLayout from './MainLayout';
 
 export default function SettingsScreen() {
-  const { setUserToken, setUserName } = useUserAuth()!;
+  const { setUserToken, setUserName, setUserEmail, setUserType } = useUserAuth()!;
 
-  const logout = () => {
-    setUserToken('');
+  const handleLogout = () => {
     setUserName('');
+    setUserEmail('');
+    setUserToken('');
+    setUserType('')
   };
 
   const navigation = useNavigation();
@@ -72,11 +74,11 @@ export default function SettingsScreen() {
             <Text style={styles.title}>Settings</Text>
 
             <TouchableOpacity
-            onPress={() =>
-              confirmationBox("Logout", "Do you want to logout?", () =>
-                handleLogout()
-              )
-            }
+              onPress={() =>
+                confirmationBox("Logout", "Do you want to logout?", () =>
+                  handleLogout()
+                )
+              }
             >
               <Text style={styles.logout}>Logout</Text>
             </TouchableOpacity>

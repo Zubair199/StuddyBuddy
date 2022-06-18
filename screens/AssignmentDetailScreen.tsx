@@ -13,10 +13,11 @@ export default function AssignmentDetailScreen({ route }) {
   const { assignmentID } = route.params
   const navigation = useNavigation();
   const isFocused = useIsFocused();
-  const { userToken } = React.useContext(AuthContext);
+  const { userToken, userType } = React.useContext(AuthContext);
   let [user, setUser] = React.useState(userToken)
   const [assignment, setAssignment] = React.useState(null)
   const [studentAssignment, setStudentAssignment] = React.useState(null)
+  const [studentAssignments, setStudentAssignments] = React.useState([])
 
   let [data, setData] = React.useState([])
   let [start, setStart] = React.useState(false)
@@ -24,23 +25,53 @@ export default function AssignmentDetailScreen({ route }) {
   React.useEffect(() => {
     console.log(assignmentID);
 
-    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_JOINED_CLASS_ASSIGNMENT_BY_STUDENT_ASSINGMENT_ID + assignmentID)
-      .then((response) => response.json())
-      .then((responseJson) => {
-        if (responseJson.data.status.toLowerCase() === 'started') {
-          navigation.navigate('AssignmentStartScreen', { assignmentID: assignmentID })
-        }
-        console.log('assignment ', responseJson.data)
-        setAssignment(responseJson.data.assignment)
-        setStudentAssignment(responseJson.data)
-
-      })
-      .catch(err => {
-        console.log(err)
-      })
+    if (userType.toLowerCase() === "user") {
+      studentApiCall()
+    }
+    else {
+      teacherApiCall()
+    }
 
   }, []);
 
+  const teacherApiCall = () => {
+    try {
+      fetch(AUTHENTICATIONS.API_URL + ASSIGNMENT.GET_ASSIGNMENT_BY_ASSIGNMENT_ID + assignmentID)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          console.log('assignment ', responseJson.data)
+          setAssignment(responseJson.data.assignment)
+          setStudentAssignments(responseJson.data.studentAssignments)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    }
+    catch (exception) {
+      console.log('exception ', exception)
+    }
+  }
+  const studentApiCall = () => {
+    try {
+      fetch(AUTHENTICATIONS.API_URL + CLASS.GET_JOINED_CLASS_ASSIGNMENT_BY_STUDENT_ASSINGMENT_ID + assignmentID)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          if (responseJson.data.status.toLowerCase() === 'started') {
+            navigation.navigate('AssignmentStartScreen', { assignmentID: assignmentID })
+          }
+          console.log('assignment ', responseJson.data)
+          setAssignment(responseJson.data.assignment)
+          setStudentAssignment(responseJson.data)
+
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    }
+    catch (exception) {
+      console.log('exception ', exception)
+    }
+  }
   const startAssginment = (id) => {
     try {
       console.log(id)
@@ -82,49 +113,105 @@ export default function AssignmentDetailScreen({ route }) {
               <Text style={styles.title}>Assignment Details</Text>
             </View>
             {
-              (assignment !== null && studentAssignment !== null)
-              &&
-              <ScrollView style={{ padding: 15 }}>
-                <View>
-                  <ImageBackground
-                    resizeMode='cover'
-                    source={require('../assets/images/bg.jpg')}
-                    style={styles.challengeBoxImage}
-                    imageStyle={{ borderRadius: 5 }}
-                  >
-                    <View style={styles.overlay}>
-                      <View style={styles.challengeTypeOverLay}>
-                        <Text style={styles.challengeBoxText}>
-                          Virtual
+              userType.toLowerCase() === "user" ?
+                (assignment !== null && studentAssignment !== null)
+                &&
+                <ScrollView style={{ padding: 15 }}>
+                  <View>
+                    <ImageBackground
+                      resizeMode='cover'
+                      source={require('../assets/images/bg.jpg')}
+                      style={styles.challengeBoxImage}
+                      imageStyle={{ borderRadius: 5 }}
+                    >
+                      <View style={styles.overlay}>
+                        <View style={styles.challengeTypeOverLay}>
+                          <Text style={styles.challengeBoxText}>
+                            Virtual
+                          </Text>
+                        </View>
+                        <Text style={styles.challengeBoxName}>{assignment.title}</Text>
+                        <Text style={styles.challengeBoxDate}>
+                          28-05-2022
                         </Text>
                       </View>
-                      <Text style={styles.challengeBoxName}>{assignment.title}</Text>
-                      <Text style={styles.challengeBoxDate}>
-                        28-05-2022
-                      </Text>
-                    </View>
-                  </ImageBackground>
-                  <Text style={styles.text}>Score: {studentAssignment.score}</Text>
+                    </ImageBackground>
+                    <Text style={styles.text}>Score: {studentAssignment.score}</Text>
 
-                  <Text style={styles.heading}>Details</Text>
-                  <Text style={styles.text}>{assignment.description}</Text>
-                  {
-                    studentAssignment.status.toLowerCase() !== "completed" &&
-                    <View style={{ marginVertical: 15 }}>
-                      <Button title={'Start Assignment'}
-                        onPress={
-                          () => {
-                            // setStart(!start); 
-                            startAssginment(studentAssignment._id);
+                    <Text style={styles.heading}>Details</Text>
+                    <Text style={styles.text}>{assignment.description}</Text>
+                    {
+                      studentAssignment.status.toLowerCase() !== "completed" &&
+                      <View style={{ marginVertical: 15 }}>
+                        <Button title={'Start Assignment'}
+                          onPress={
+                            () => {
+                              // setStart(!start); 
+                              startAssginment(studentAssignment._id);
+                            }
                           }
-                        }
-                      />
+                        />
+                      </View>
+                    }
+
+                  </View>
+
+                </ScrollView>
+                :
+                (assignment !== null)
+                &&
+                <ScrollView style={{ padding: 15 }}>
+                  <View>
+                    <ImageBackground
+                      resizeMode='cover'
+                      source={require('../assets/images/bg.jpg')}
+                      style={styles.challengeBoxImage}
+                      imageStyle={{ borderRadius: 5 }}
+                    >
+                      <View style={styles.overlay}>
+                        <View style={styles.challengeTypeOverLay}>
+                          <Text style={styles.challengeBoxText}>
+                            Virtual
+                          </Text>
+                        </View>
+                        <Text style={styles.challengeBoxName}>{assignment.title}</Text>
+                        <Text style={styles.challengeBoxDate}>
+                          28-05-2022
+                        </Text>
+                      </View>
+                    </ImageBackground>
+                    {/* <Text style={styles.text}>Score: {studentAssignment.score}</Text> */}
+
+                    <Text style={styles.heading}>Details</Text>
+                    <Text style={styles.text}>{assignment.description}</Text>
+                  </View>
+                  <View >
+                    <Text style={styles.heading}>Scores</Text>
+
+                    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                      <Text>Student</Text>
+                      <Text>Status</Text>
+                      <Text>Score</Text>
                     </View>
-                  }
+                    <Divider />
+                    {
 
-                </View>
+                      studentAssignments.map((item, index) => (
+                        <View key={index}>
+                          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                            <Text>{item.student.username}</Text>
+                            <Text>{item.status}</Text>
+                            <Text>{item.score}</Text>
 
-              </ScrollView>
+                          </View>
+                          <Divider />
+                        </View >
+                      ))
+                    }
+                  </View>
+
+                </ScrollView>
+
             }
           </View>
         }
