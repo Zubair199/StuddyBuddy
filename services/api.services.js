@@ -36,9 +36,10 @@ export default {
 		return axios.post(`${AUTHENTICATIONS.API_URL}${CHAT.BLOCK}`, requestData)
 	},
 	getProfile: function (requestData) {
-		return axios.post(`${AUTHENTICATIONS.API_URL}${AUTH.SELF}`, requestData)
+		return axios.get(`${AUTHENTICATIONS.API_URL}${AUTH.SELF}`)
 	},
 	createNewMessage: function (requestData) {
+
 		return axios.post(`${AUTHENTICATIONS.API_URL}${CHAT.NEWCHAT}`, requestData)
 	},
 

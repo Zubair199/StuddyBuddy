@@ -1,12 +1,33 @@
 // import AsyncStorage from "@react-native-community/async-storage";
 import NetInfo, {useNetInfo} from '@react-native-community/netinfo';
 import api from '../constants/api';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 /**
  * Determines whether valid email is
  * @param email
  * @returns true/false
  */
+
+ export async function storeLocalData(key: string, data: any) {
+  try {
+    await AsyncStorage.setItem(key, data)
+  } catch (e) {
+    // saving error
+  }
+}
+export async function getLocalData(key: string) {
+  let returnValue = "";
+  try {
+    const localValue = await AsyncStorage.getItem(key)
+    if (localValue !== null) {
+      returnValue = localValue;
+    }
+  } catch (e) {
+    // error reading value
+  }
+  return returnValue;
+}
+
 
 // function that capitilizes first letter
 export function capitalizes(str: string) {

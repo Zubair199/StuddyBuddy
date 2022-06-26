@@ -22,7 +22,7 @@ import api from "../services/api.services";
 import { useIsFocused, useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import { ChatScreenParamList } from "../types";
 import { AuthContext } from "../utils/AuthContext";
-// import { checkNetwork, storeLocalData } from "../utils/HelperFunctions";
+ import {  storeLocalData } from "../utils/HelperFunctions";
 import CONSTANTS from "../services/api.constants";
 import { Alert, View, Text, TouchableOpacity, Platform, Image, StyleSheet } from "react-native";
 import Menu, { MenuDivider, MenuItem } from "react-native-material-menu";
@@ -48,6 +48,7 @@ export default function ChatScreen() {
     rejectUnauthorized: false,
     jsonp: false,
   });
+
   let userother1 = ""
   const empyString = ""
   const routes = useRoute<RouteProp<ChatScreenParamList, "ChatScreen">>();
@@ -67,12 +68,12 @@ export default function ChatScreen() {
   // }
 
   const previousScreen = () => {
-    socketIo.emit('leaveChat', JSON.stringify({ "chatId": chatId, "userId": userToken }));
+    socketIo.emit('leaveChat', { "chatId": chatId, "userId": userToken });
     navigation.navigate("NetworkScreen");
   };
 
   React.useEffect(() => {
-    
+    console.log("HERE BRO")
     // networkAsync();
     // storeLocalData("@chatId", chatId);
     const ac = new AbortController();
@@ -81,7 +82,7 @@ export default function ChatScreen() {
 
     socketIo.emit(
       "joinChat",
-      JSON.stringify({ chatId: chatId, userId: userToken })
+      { chatId: chatId, userId: userToken }
     );
     //Handle received messages
     socketIo.on("messageReceive", async (data: string) => {
@@ -95,47 +96,47 @@ export default function ChatScreen() {
       );
     });
     //Get message history
-    let requestData = JSON.stringify({ chatId: chatId });
+    let requestData = { chatId: chatId };
     
     api.initiateChat(requestData).then(async (resp) => {
-
-      console.log(resp+"asdasd")
+      console.log("+----------------------------------------------asdasd");
+      console.log(resp.data)
       await storeLocalData("@chatId", chatId);
       let userID 
       let otherUID 
-      if (resp) {
+      if (resp.data) {
         
-        chats = resp.data;
+        chats = resp.data.data;
         setMessages(chats);
-        if (resp.userMe) {
-          setUserMe(resp.userMe);
-          userID = resp.userMe._id
+        if (resp.data.userMe) {
+          setUserMe(resp.data.userMe);
+          userID = resp.data.userMe._id
         }
-        if (resp.userOther) {
-          setUserOther(resp.userOther);
-          otherUID =resp.userOther._id;
-          userother1=resp.userOther.name
+        if (resp.data.userOther) {
+          setUserOther(resp.data.userOther);
+          otherUID =resp.data.userOther._id;
+          userother1=resp.data.userOther.name
           
         }
 
         api.verifyBlocked(JSON.stringify({blockerId:userID,blocksId:otherUID}))
        .then(resp=>{
-         console.log(resp)
-          if(resp&&resp.blockedby===true){
-            setStatus(resp.status)
-            if(resp.status ==='blocked')
+         console.log(resp.data)
+          if(resp.data&&resp.data.blockedby===true){
+            setStatus(resp.data.status)
+            if(resp.data.status ==='blocked')
             setAlertMessage("Unblock")
-            else if(resp.status ==='unblocked')
+            else if(resp.data.status ==='unblocked')
             setAlertMessage("Block")
-            setBlocker(resp.blockedby)
+            setBlocker(resp.data.blockedby)
           }
           else{
-            setStatus(resp.status)
-            if(resp.status ==='blocked')
+            setStatus(resp.data.status)
+            if(resp.data.status ==='blocked')
             setAlertMessage("Unblock")
-            else if(resp.status ==='unblocked')
+            else if(resp.data.status ==='unblocked')
             setAlertMessage("Block")
-            setBlocker(resp.blockedby)
+            setBlocker(resp.data.blockedby)
           }
         })
       }
@@ -144,17 +145,18 @@ export default function ChatScreen() {
     api
       .getProfile()
       .then((resp) => {
+        
         if (resp) {
-          setToggleChat(resp.isEnabledChat);
+          setToggleChat(resp.data.isEnabledChat);
         }
-      });
+      }).catch(e=>console.log(e));
     
     return () => {
       socketIo.off("messageReceive");
       ac.abort();
     };
 
-
+    
 
   }, [chatId]);
 
@@ -295,23 +297,17 @@ export default function ChatScreen() {
           );
         } else {
           return (
-            <View style={{
-              borderWidth: 1,
-              borderRadius: 5,
-              borderColor: "#939698",
-              backgroundColor: "#ffffff",
-              marginHorizontal: 5,
-            }}>
-              <Text style={{
-                alignSelf: "center",
-                color: "red",
-                fontSize: 16,
-                paddingVertical: 8,
-                fontFamily: "roboto-light"
-              }}>Chat Disabled By The User!</Text>
-            </View>
-  
-          )
+            <InputToolbar
+              {...props}
+              containerStyle={{ borderTopWidth: 0 }}
+              primaryStyle={{
+                borderWidth: 1,
+                borderRadius: 5,
+                borderColor: "#939698",
+                marginHorizontal: 5,
+              }}
+            />
+            )
         }
     }
     
@@ -329,9 +325,9 @@ export default function ChatScreen() {
 
   }
 
-  function onAvatarPressed(otherUser: any) {
-    navigation.navigate("ViewProfileScreen", { id: otherUser._id });
-  }
+  // function onAvatarPressed(otherUser: any) {
+  //   navigation.navigate("ViewProfileScreen", { id: otherUser._id });
+  // }
 
   function onBlock(){
     const data = JSON.stringify({
@@ -377,10 +373,10 @@ export default function ChatScreen() {
           {status==='blocked'?" (Blocked)":"" }
         </Text>
         </View>
-            <View style={{alignSelf:'flex-end',position:'absolute',top:5,right:5,paddingRight:10}}>
+            {/* <View style={{alignSelf:'flex-end',position:'absolute',top:5,right:5,paddingRight:10}}>
             {status==='blocked'?(
               
-              <Menu ref={menu}  button={ <FontAwesome name="ellipsis-v" onPress={showMenu} size={30} style={{}} />}>
+              <Menu ref={menu}  button={  <FontAwesome name="ellipsis-v" onPress={showMenu} size={30} style={{}} />}>
               <MenuItem onPress={() =>{hideMenu() ;Alert.alert(alertmessage+" "+capitalizes(userOther.name)+"!","Are you sure you want to "+lowercase(alertmessage)+" "+capitalizes(userOther.name)+"?",[{text: alertmessage,onPress: () => onBlock(),},{text: "Cancel",style: "cancel"}],{ cancelable: false })}}>Unblock</MenuItem>
            </Menu>
             ):(
@@ -391,7 +387,7 @@ export default function ChatScreen() {
           </Menu>
             
             )}
-           </View>
+           </View> */}
             
           
           {/* onSelect={() => onEdit()} */}
@@ -412,7 +408,7 @@ export default function ChatScreen() {
           bottomOffset={-20}
           disableComposer = {(blocker===true&&status==='blocked')?true:status==='blocked'?true:blocker===true?false:false}
           initialText={initialText}
-          onPressAvatar={onAvatarPressed}
+          // onPressAvatar={onAvatarPressed}
           
           onLongPress={(e,message)=>{
             if(message.text.split('/')[0] === "Hi I am inviting you to the class" && message.text.split('/')[2].length ===24 &&message.text.split('/')[3]==='Hold Press To View' ){

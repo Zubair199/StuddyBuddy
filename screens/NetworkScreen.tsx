@@ -9,7 +9,7 @@ import { AUTH, AUTHENTICATIONS } from '../services/api.constants';
 import { AuthContext } from '../utils/AuthContext';
 import MainLayout from './MainLayout';
 import Icon from 'react-native-vector-icons/AntDesign';
-
+import api from "../services/api.services";
 export default function NetworkScreen() {
     const { userToken, userType } = React.useContext(AuthContext);
 
@@ -34,6 +34,23 @@ export default function NetworkScreen() {
                 console.log(err)
             })
     }
+    function handleChat(userId) {
+        console.log(userId)
+        const requestData = { toUser: userId };
+      
+        api.createNewMessage(requestData).then((resp) => {
+            console.log("hit ")
+          if (resp) {
+            const newChatInfo = resp.data;
+            if (newChatInfo && newChatInfo.data.chatId) {
+                console.log("bro here in chat")
+                navigation.navigate("Messages", { chatId: newChatInfo.data.chatId, textMes: "" });
+            }
+            
+          }
+        }).catch(e=>{console.log(e)});
+      
+    }
     function component() {
         return (
             <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
@@ -41,7 +58,7 @@ export default function NetworkScreen() {
                     {
                         users.map((item, index) => {
                             return (
-                                <View>
+                                <View key={index}>
                                     <View style={{ padding: 15, flexDirection: "row", justifyContent: "space-between" }}>
                                         <View>
                                             <View>
@@ -52,7 +69,7 @@ export default function NetworkScreen() {
                                             </View>
                                         </View>
                                         <View>
-                                            <TouchableOpacity onPress={() => { }}>
+                                            <TouchableOpacity onPress={() => {handleChat(item._id)}}>
                                                 <Icon name="message1" size={25} />
                                             </TouchableOpacity>
                                         </View>
@@ -72,3 +89,5 @@ export default function NetworkScreen() {
 }
 
 const styles = StyleSheet.create({});
+
+

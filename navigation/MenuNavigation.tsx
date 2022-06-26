@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SettingsScreen from '../screens/SettingsScreen';
 import PaymentsScreen from '../screens/PaymentsScreen';
-import MessagesScreen from '../screens/MessagesScreen';
+import MessagesScreen from '../screens/ChatScreen';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import HomeScreen from '../screens/HomeScreen';
 import { useNavigation } from '@react-navigation/native';
