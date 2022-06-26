@@ -1,13 +1,23 @@
 module.exports = {
 
     AUTHENTICATIONS: {
-        API_URL: "http://192.168.43.122:5000"
+        API_URL: "http://192.168.100.26:5000",
+        CHAT_SERVER_URL: 'http://192.168.100.26:5000',
+    },
+    CHAT: {
+        NEWCHAT: "/api/createnew",
+        MESSAGES: "/api/getchats",
+        UNREADCOUNTS: "/api/getunreadcounts",
+        OPENCHAT: "/api/openchat",
+        BLOCK: "/api/blockChat",
+        VERIFYBLOCKED: "/api/verifyChatblocked"
     },
     AUTH: {
         SIGNUP: "/api/auth/signup",
         SIGNIN: "/api/auth/signin",
         EMAIL_RESET_PASSWORD: "/api/auth/resetPassword",
         USERS: "/api/users",
+        SELF: "/api/getself"
     },
     CLASS: {
         CREATE: "/api/class",
@@ -44,8 +54,6 @@ module.exports = {
 
         GET_STUDENT_SEARCH: '/api/class/student/search/',
 
-        SUBJECTS: "/api/subjects"
-
     },
     EXAM: {
         CREATE: "/api/exam",
@@ -65,9 +73,7 @@ module.exports = {
         GET_ALL_ASSIGNMENTS_BY_TEACHER_ID: '/api/assignment/teacher/',
 
         GET_ASSIGNMENT_BY_ASSIGNMENT_ID: '/api/assignment/',
-
         GET_ASSIGNMENT_QUESTIONS_BY_ASSIGNEMNT_ID: '/api/assignment/question/',
-
         GET_ALL_ACTIVE_ASSIGNMENTS: '/api/assignment/active',
 
         GET_ALL_COMPLETED_STUDENT_ASSIGNMENTS: '/api/student/assignments/completed/',

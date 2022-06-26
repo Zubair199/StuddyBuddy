@@ -9,3 +9,13 @@ export type RootStackParamList = {
   ResetPassword: undefined;
   NotFound: undefined;
 };
+
+export type ChatScreenParamList = {
+  ChatScreen: {
+    chatId: string,
+    isEnabledChat: boolean,
+    isBanned: boolean,
+    textMes:string,
+    
+  }
+}
