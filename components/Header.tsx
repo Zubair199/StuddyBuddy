@@ -35,6 +35,14 @@ export default function Header(props) {
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => {
+                        setCurrentScreen('NetworkScreen');
+                        navigation.navigate('NetworkScreen');
+                    }}
+                >
+                    <Icon name='earth' size={30} color={currentScreen === 'NetworkScreen' ? '#ffbb74' : "white"} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => {
                         setCurrentScreen('NotificationScreen');
                         navigation.navigate('NotificationScreen');
                     }}

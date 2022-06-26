@@ -34,9 +34,11 @@ export default function ClassDetailScreen({ route }) {
     fetch(AUTHENTICATIONS.API_URL + CLASS.GET_CLASS_BY_CLASS_ID + classID)
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log('classes ', responseJson.data)
-        setClass(responseJson.data)
-        setTeacher(responseJson.data.teacher)
+        console.log('details classes ', responseJson.classes.Subject)
+        setClass(responseJson.classes)
+        setTeacher(responseJson.classes.Teacher)
+        console.log(responseJson.classes.Teacher);
+
       })
       .catch(err => {
         console.log(err)
@@ -139,7 +141,7 @@ export default function ClassDetailScreen({ route }) {
                       Tuesday 12:00 - 13:00
                     </Text>
                     <Text style={styles.classBoxInstructor}>
-                      {_class.subject}
+                      {_class.Subject.name}
                     </Text>
                     <Text style={styles.classBoxInstructor}>
                       {_class.status}

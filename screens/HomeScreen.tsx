@@ -43,8 +43,21 @@ export default function HomeScreen() {
     fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_UPCOMING_CLASSES_BY_TEACHER_ID + user)
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log('classes ', responseJson.data)
-        setClasses(responseJson.data)
+        console.log('classes ', responseJson.classes)
+        console.log('schedules ', responseJson.schedules)
+        let _classes = []
+        responseJson.classes.forEach(item => {
+          let classScheule = responseJson.schedules.filter(schedule => schedule.Class === item._id)
+          console.log(classScheule)
+          if (classScheule.length > 0) {
+            _classes.push({
+              class: item,
+              schedule: classScheule
+            })
+          }
+        })
+        console.log("_classes=> ", _classes)
+        setClasses(_classes)
       })
       .catch(err => {
         console.log(err)

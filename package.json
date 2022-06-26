@@ -28,6 +28,7 @@
         "patch-package": "^6.4.7",
         "react": "17.0.2",
         "react-native": "0.66.2",
+        "react-native-calendars": "^1.1284.0",
         "react-native-collapsible-header-views": "^1.1.2",
         "react-native-confirmation-code-field": "^7.1.0",
         "react-native-date-picker": "^4.2.2",

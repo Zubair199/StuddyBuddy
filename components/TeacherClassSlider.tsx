@@ -24,63 +24,69 @@ export default function TeacherClassSlider(props: Iprops) {
         ) : (
           <ScrollView style={styles.scrollView} horizontal={true}>
             {
-              props.data.map((classData, index: number) => (
-                <View key={index} style={styles.classBoxWrapper}>
-                  <ImageBackground
-                    resizeMode='cover'
-                    source={require('../assets/images/bg.jpg')}
-                    style={styles.classBoxImage}
-                  >
-                    <View style={styles.overlay}>
-                      <View style={styles.classTakenBox}>
-                        <View style={styles.classTakenOverLay}>
-                          <Text style={styles.classTakenBoxText}>
-                            {classData.classType}
-                          </Text>
+              props.data.map((classItem, index: number) => {
+                let classData = classItem.class;
+                // if (classItem.schedule.length > 0) {
+
+                return (
+                  <View key={index} style={styles.classBoxWrapper}>
+                    <ImageBackground
+                      resizeMode='cover'
+                      source={require('../assets/images/bg.jpg')}
+                      style={styles.classBoxImage}
+                    >
+                      <View style={styles.overlay}>
+                        <View style={styles.classTakenBox}>
+                          <View style={styles.classTakenOverLay}>
+                            <Text style={styles.classTakenBoxText}>
+                              {classData.classType}
+                            </Text>
+                          </View>
+                        </View>
+                        <View style={styles.classBox}>
+                          <TouchableOpacity
+                            onPress={
+                              () => navigation.navigate(props.screen, { classID: classData._id })
+                            }
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              justifyContent: "flex-end",
+                            }}
+                          >
+                            <View style={styles.levelBox}>
+                              <View
+                                style={styles.levelIntermediate}
+                              >
+                              </View>
+                              <Text style={styles.classBoxText}>
+                                {classData.level}
+                              </Text>
+
+                            </View>
+                            <Text style={styles.classBoxName}>
+                              {classData.name}
+                            </Text>
+                            <Text style={styles.classBoxInstructor}>
+                              {classData.Teacher.username}
+                            </Text>
+                            <Text style={styles.classBoxDate}>
+                              Tuesday 12:00 - 13:00
+                            </Text>
+                            <Text style={styles.classBoxInstructor}>
+                              {classData.Subject.name}
+                            </Text>
+                            <Text style={styles.classBoxInstructor}>
+                              {classData.status}
+                            </Text>
+                          </TouchableOpacity>
                         </View>
                       </View>
-                      <View style={styles.classBox}>
-                        <TouchableOpacity
-                          onPress={
-                            () => navigation.navigate(props.screen, { classID: classData._id })
-                          }
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            justifyContent: "flex-end",
-                          }}
-                        >
-                          <View style={styles.levelBox}>
-                            <View
-                              style={styles.levelIntermediate}
-                            >
-                            </View>
-                            <Text style={styles.classBoxText}>
-                              {classData.level}
-                            </Text>
-
-                          </View>
-                          <Text style={styles.classBoxName}>
-                            {classData.name}
-                          </Text>
-                          <Text style={styles.classBoxInstructor}>
-                            {classData.teacher.username}
-                          </Text>
-                          <Text style={styles.classBoxDate}>
-                            Tuesday 12:00 - 13:00
-                          </Text>
-                          <Text style={styles.classBoxInstructor}>
-                            {classData.subject}
-                          </Text>
-                          <Text style={styles.classBoxInstructor}>
-                            {classData.status}
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </ImageBackground>
-                </View>
-              ))
+                    </ImageBackground>
+                  </View>
+                )
+                // }
+              })
             }
           </ScrollView>
         )

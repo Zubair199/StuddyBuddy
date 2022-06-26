@@ -29,6 +29,7 @@ import MyClassesScreen from '../screens/MyClassesScreen';
 import StudentAssignmentScreen from '../screens/StudentAssignmentScreen';
 import AssignmentStartScreen from '../screens/AssignmentStartScreen';
 import ExamStartScreen from '../screens/ExamStartScreen';
+import NetworkScreen from '../screens/NetworkScreen';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -289,6 +290,11 @@ const HomeStackScreen = ({ navigation, route }: any) => {
         name="HomeScreen"
         options={mainHeader}
         component={HomeScreen}
+      />
+      <HomeStack.Screen
+        name="NetworkScreen"
+        options={mainHeader}
+        component={NetworkScreen}
       />
       <HomeStack.Screen
         name="Classes"

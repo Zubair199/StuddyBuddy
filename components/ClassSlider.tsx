@@ -64,7 +64,7 @@ export default function ClassSlider(props: Iprops) {
                             {item.class.name}
                           </Text>
                           <Text style={styles.classBoxInstructor}>
-                            {item.teacher.username}
+                            {item.Teacher.username}
                           </Text>
                           <Text style={styles.classBoxDate}>
                             Tuesday 12:00 - 13:00
