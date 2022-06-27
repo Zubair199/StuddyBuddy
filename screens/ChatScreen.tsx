@@ -17,7 +17,8 @@ import {
   Bubble,
   InputToolbar,
 } from "react-native-gifted-chat";
-import io from "socket.io-client";
+// import io from "socket.io-client";
+const io = require('socket.io-client');
 import api from "../services/api.services";
 import { useIsFocused, useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import { ChatScreenParamList } from "../types";
@@ -25,8 +26,8 @@ import { AuthContext } from "../utils/AuthContext";
  import {  storeLocalData } from "../utils/HelperFunctions";
 import CONSTANTS from "../services/api.constants";
 import { Alert, View, Text, TouchableOpacity, Platform, Image, StyleSheet } from "react-native";
-import Menu, { MenuDivider, MenuItem } from "react-native-material-menu";
-import { FontAwesome } from "@expo/vector-icons";
+import { Menu,MenuDivider, MenuItem } from "react-native-material-menu";
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { BorderlessButton, ScrollView } from "react-native-gesture-handler";
 
 export const useUserAuth = () => React.useContext(AuthContext);
@@ -39,8 +40,6 @@ export default function ChatScreen() {
   const [toggleChat, setToggleChat] = React.useState(true);
   const [status, setStatus] = React.useState("unblocked");
   const [alertmessage, setAlertMessage] = React.useState("Unblocked");
-  const menu = React.useRef();
-  const menu1 = React.useRef();
   const [blocker, setBlocker] = React.useState(false);
   const [userOther, setUserOther] = React.useState<any>();
   const [blockedMessage,setBM ] = React.useState("");
@@ -56,7 +55,9 @@ export default function ChatScreen() {
   const isEnabledChat = routes.params === undefined ? null : routes.params.isEnabledChat;
   const isBanned = routes.params === undefined ? null : routes.params.isBanned;
   const initialText = routes.params === undefined ? "" : routes.params.textMes;
-  
+  const [visible, setVisible] = React.useState(false);
+
+
   const { userToken } = useUserAuth()!;
 
   // async function networkAsync() {
@@ -86,6 +87,7 @@ export default function ChatScreen() {
     );
     //Handle received messages
     socketIo.on("messageReceive", async (data: string) => {
+      console.log("client recieved after emmition",data)
       const newMsg = JSON.parse(data);
       if (newMsg.unreadCount) {
         await storeLocalData("@unread_message_count", "" + newMsg.unreadCount);
@@ -119,7 +121,7 @@ export default function ChatScreen() {
           
         }
 
-        api.verifyBlocked(JSON.stringify({blockerId:userID,blocksId:otherUID}))
+        api.verifyBlocked({blockerId:userID,blocksId:otherUID})
        .then(resp=>{
          console.log(resp.data)
           if(resp.data&&resp.data.blockedby===true){
@@ -152,6 +154,7 @@ export default function ChatScreen() {
       }).catch(e=>console.log(e));
     
     return () => {
+      console.log("sdasdasd")
       socketIo.off("messageReceive");
       ac.abort();
     };
@@ -167,12 +170,12 @@ export default function ChatScreen() {
     
     const currentMessage = messages[0];
     console.log(blockerI+'blocker')
-    let requestData = JSON.stringify({
+    let requestData = {
       chatId: chatId,
       text: currentMessage.text,
       blockerId:blockerI,
       blocksId:blocksI
-    });
+    };
     api.createNewMessage(requestData).then((resp) => {
       if (resp) {
         if(resp.data.blockedby===true){
@@ -330,25 +333,25 @@ export default function ChatScreen() {
   // }
 
   function onBlock(){
-    const data = JSON.stringify({
+    const data = {
       blockerId : userMe._id,
       blocksId : userOther._id
-    })
+    }
     api.blockChats(data).then((resp)=>{
       
-      setStatus(resp.status)
-      if(resp.status ==='blocked')
+      setStatus(resp.data.status)
+      if(resp.data.status ==='blocked')
             setAlertMessage("Unblock")
-            else if(resp.status ==='unblocked')
+            else if(resp.data.status ==='unblocked')
             setAlertMessage("Block")
     })
     
   }
     // FUNCTION FOR DROPDOWN MENU  
 
-    const hideMenu = () => menu.current.hide();
+    const hideMenu = () => setVisible(false);
 
-    const showMenu = () => menu.current.show();
+    const showMenu = () => setVisible(true);
   return (
    
     <View style={{ flex: 1, paddingBottom: 4 }}>
@@ -373,21 +376,31 @@ export default function ChatScreen() {
           {status==='blocked'?" (Blocked)":"" }
         </Text>
         </View>
-            {/* <View style={{alignSelf:'flex-end',position:'absolute',top:5,right:5,paddingRight:10}}>
+            <View style={{alignSelf:'flex-end',position:'absolute',top:5,right:5,paddingRight:10}}>
             {status==='blocked'?(
               
-              <Menu ref={menu}  button={  <FontAwesome name="ellipsis-v" onPress={showMenu} size={30} style={{}} />}>
-              <MenuItem onPress={() =>{hideMenu() ;Alert.alert(alertmessage+" "+capitalizes(userOther.name)+"!","Are you sure you want to "+lowercase(alertmessage)+" "+capitalizes(userOther.name)+"?",[{text: alertmessage,onPress: () => onBlock(),},{text: "Cancel",style: "cancel"}],{ cancelable: false })}}>Unblock</MenuItem>
-           </Menu>
+              <Menu
+                visible={visible}
+                anchor={<Icon onPress={showMenu} name="ellipsis-v" size={20}/>}
+                onRequestClose={hideMenu}
+              >
+                <MenuItem onPress={() =>{hideMenu() ;Alert.alert(alertmessage+" "+capitalizes(userOther.name)+"!","Are you sure you want to "+lowercase(alertmessage)+" "+capitalizes(userOther.name)+"?",[{text: alertmessage,onPress: () => onBlock(),},{text: "Cancel",style: "cancel"}],{ cancelable: false })}}>Unblock User</MenuItem>
+                
+              </Menu>
             ):(
               
-              <Menu ref={menu} button={ <FontAwesome name="ellipsis-v" onPress={showMenu} size={30} style={{ alignSelf:'flex-end',paddingRight:10}} />}>
+              <Menu
+                visible={visible}
+                anchor={<Icon onPress={showMenu} name="ellipsis-v" size={20}/>}
+                onRequestClose={hideMenu}
+              >
+                <MenuItem onPress={()=>{hideMenu();Alert.alert(alertmessage+" "+capitalizes(userOther.name)+"!","Are you sure you want to "+lowercase(alertmessage)+" "+capitalizes(userOther.name)+"?",[{text: alertmessage,onPress: () => onBlock(),},{text: "Cancel",style: "cancel"}],{ cancelable: false })}}>Block User</MenuItem>
                 
-                <MenuItem onPress={() =>{ hideMenu();Alert.alert(alertmessage+" "+capitalizes(userOther.name)+"!","Are you sure you want to "+lowercase(alertmessage)+" "+capitalizes(userOther.name)+"?",[{text: alertmessage,onPress: () => onBlock(),},{text: "Cancel",style: "cancel"}],{ cancelable: false })}}>Block</MenuItem>
-          </Menu>
+                
+              </Menu>
             
             )}
-           </View> */}
+           </View>
             
           
           {/* onSelect={() => onEdit()} */}
