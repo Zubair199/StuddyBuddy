@@ -11,6 +11,8 @@ module.exports = {
     },
     CLASS: {
         CREATE: "/api/class",
+        CREATE_TOPIC: "/api/class/topic",
+        CREATE_ANNOUNCEMENT: "/api/class/announcement",
         GET_ALL_ACTIVE_CLASSES_BY_TEACHER_ID: "/api/class/teacher/active/",
 
         GET_ALL_ACTIVE_UPCOMING_CLASSES_BY_TEACHER_ID: "/api/class/teacher/upcoming/active/",
@@ -44,7 +46,8 @@ module.exports = {
 
         GET_STUDENT_SEARCH: '/api/class/student/search/',
 
-        SUBJECTS: "/api/subjects"
+        SUBJECTS: "/api/subjects",
+        GET_TOPIC_ANNOUNCEMENT_BY_SCHEDULE_ID: "/api/class/topics/announcements/"
 
     },
     EXAM: {

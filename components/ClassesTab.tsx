@@ -34,11 +34,27 @@ export default function ClassesTab() {
         }
     }, [])
     function teacherApiCall() {
-        fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES)
+        fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES_BY_TEACHER_ID + user)
             .then((response) => response.json())
             .then((responseJson) => {
-                console.log('classes ', responseJson.data)
-                setClasses(responseJson.data)
+                // console.log('classes ', responseJson.classes)
+                // console.log('schedule ', responseJson.schedule)
+
+                let _classes = []
+                responseJson.classes.forEach(item => {
+                    let classScheule = responseJson.schedules.filter(schedule => schedule.Class === item._id)
+                    // console.log("classScheule ", classScheule)
+                    if (classScheule.length > 0) {
+                        _classes.push({
+                            class: item,
+                            schedule: classScheule
+                        })
+                    }
+                    console.log("classScheule", _classes)
+
+                })
+                console.log(_classes)
+                setClasses(_classes)
             })
             .catch(err => {
                 console.log(err)
@@ -72,48 +88,53 @@ export default function ClassesTab() {
                         showsVerticalScrollIndicator={false}
                     >
                         <View >
-                            {classes.map((classItem, index) => (
-                                <TouchableOpacity
-                                    style={styles.groupBox}
-                                    key={index}
-                                    onPress={() => {
-                                        navigation.navigate('ClassDetails', { classID: classItem._id })
-                                    }}
-                                >
-                                    <Image source={require("../assets/images/bg.jpg")}
-                                        style={styles.classImg}
-                                    />
-                                    <View style={styles.classInfo}>
-                                        <View style={styles.levelBox}>
-                                            <View
-                                                style={
-                                                    styles.levelIntermediate
-                                                }
-                                            ></View>
-                                            <Text style={styles.levelText}>{classItem.level}</Text>
-                                        </View>
-                                        <View
-                                            style={{
-                                                flexWrap: "wrap",
-                                                flexDirection: "row",
-                                                width: "80%",
+                            {
+                                classes.map((item, index) => {
+                                    let classItem = item.class
+                                    return (
+                                        <TouchableOpacity
+                                            style={styles.groupBox}
+                                            key={index}
+                                            onPress={() => {
+                                                navigation.navigate('ClassDetails', { classID: classItem._id })
                                             }}
                                         >
-                                            <Text style={styles.className}>{classItem.name}</Text>
-                                        </View>
-                                        <View style={{ flexDirection: "row" }}>
-                                            <Text style={styles.studio}>{classItem.teacher.username}</Text>
-                                        </View>
-                                        <Text style={styles.dayTime}>
-                                            Monday &nbsp;
-                                            12:00 &nbsp;-&nbsp; 14:00
-                                        </Text>
-                                        <Text style={styles.statusMsg}>
-                                            {classItem.status}
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                            ))}
+                                            <Image source={require("../assets/images/bg.jpg")}
+                                                style={styles.classImg}
+                                            />
+                                            <View style={styles.classInfo}>
+                                                <View style={styles.levelBox}>
+                                                    <View
+                                                        style={
+                                                            styles.levelIntermediate
+                                                        }
+                                                    ></View>
+                                                    <Text style={styles.levelText}>{classItem.level}</Text>
+                                                </View>
+                                                <View
+                                                    style={{
+                                                        flexWrap: "wrap",
+                                                        flexDirection: "row",
+                                                        width: "80%",
+                                                    }}
+                                                >
+                                                    <Text style={styles.className}>{classItem.name}</Text>
+                                                </View>
+                                                <View style={{ flexDirection: "row" }}>
+                                                    <Text style={styles.studio}>{classItem.Teacher.username}</Text>
+                                                </View>
+                                                <Text style={styles.dayTime}>
+                                                    Monday &nbsp;
+                                                    12:00 &nbsp;-&nbsp; 14:00
+                                                </Text>
+                                                <Text style={styles.statusMsg}>
+                                                    {classItem.status}
+                                                </Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                    )
+                                })
+                            }
                         </View>
                     </ScrollView>
                 )}
