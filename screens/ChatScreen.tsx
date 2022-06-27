@@ -74,6 +74,7 @@ export default function ChatScreen() {
   };
 
   React.useEffect(() => {
+   
     console.log("HERE BRO")
     // networkAsync();
     // storeLocalData("@chatId", chatId);
@@ -86,23 +87,21 @@ export default function ChatScreen() {
       { chatId: chatId, userId: userToken }
     );
     //Handle received messages
-    socketIo.on("messageReceive", async (data: string) => {
-      console.log("client recieved after emmition",data)
-      const newMsg = JSON.parse(data);
+    socketIo.on("messageReceive", async (data:Object) => {
+      const newMsg = data.data;
       if (newMsg.unreadCount) {
         await storeLocalData("@unread_message_count", "" + newMsg.unreadCount);
       }
       setBlocker(false)
-      setMessages((previousMessages: any) =>
-        GiftedChat.append(previousMessages, [newMsg])
-      );
+      setMessages((previousMessages: any) => 
+      GiftedChat.append(previousMessages, [newMsg]));
     });
     //Get message history
     let requestData = { chatId: chatId };
     
     api.initiateChat(requestData).then(async (resp) => {
       console.log("+----------------------------------------------asdasd");
-      console.log(resp.data)
+      console.log(resp.data.data[0].user)
       await storeLocalData("@chatId", chatId);
       let userID 
       let otherUID 
@@ -167,7 +166,8 @@ export default function ChatScreen() {
   //Send new message
   const onSend = React.useCallback((messages = [],blockerI,blocksI) => {
     // networkAsync();
-    
+    console.log(messages[0])
+    console.log("tracler paksdpaksdpkapsdkpaksdkaskkkkkkkkkkkkkkkkkkkkkkkkkkk")
     const currentMessage = messages[0];
     console.log(blockerI+'blocker')
     let requestData = {
@@ -185,10 +185,10 @@ export default function ChatScreen() {
         }
         else{
           setMessages((previousMessages: any) =>
-      GiftedChat.append(previousMessages, messages)
+          GiftedChat.append(previousMessages, messages)
     );
           const newMsg = resp.data;
-          socketIo.emit("messaging", JSON.stringify(newMsg));
+          socketIo.emit("messaging", newMsg);
           setBlocker(false)
         }
        
