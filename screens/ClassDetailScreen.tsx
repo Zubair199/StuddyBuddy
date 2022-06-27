@@ -1,12 +1,14 @@
 import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
-import { Alert, ImageBackground, Linking, SafeAreaView, ScrollView, StyleSheet, Touchable, TouchableOpacity, TouchableOpacityBase, View } from 'react-native';
-import { Button, Text } from 'react-native-elements';
+import { Alert, ImageBackground, Linking, Modal, SafeAreaView, ScrollView, StyleSheet, Touchable, TouchableOpacity, TouchableOpacityBase, View } from 'react-native';
+import { Button, Divider, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 import { AUTHENTICATIONS, CLASS } from '../services/api.constants';
 import MainLayout from './MainLayout';
 import { AuthContext } from '../utils/AuthContext';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import { Select, Input, TextArea, IconButton } from "native-base";
 
 export default function ClassDetailScreen({ route }) {
   const { classID } = route.params
@@ -17,8 +19,17 @@ export default function ClassDetailScreen({ route }) {
 
 
   const [_class, setClass] = React.useState(null)
+  const [schedule, setSchedule] = React.useState([])
+  const [topics, setTopics] = React.useState([])
+  const [announcements, setAnnouncements] = React.useState([])
+
+
   const [teacher, setTeacher] = React.useState(null)
   const [isJoined, setIsJoined] = React.useState(false)
+
+  const [description, setDescription] = React.useState("")
+  const [scheduleID, setScheduleID] = React.useState("")
+
 
   React.useEffect(() => {
     console.log(user)
@@ -34,10 +45,11 @@ export default function ClassDetailScreen({ route }) {
     fetch(AUTHENTICATIONS.API_URL + CLASS.GET_CLASS_BY_CLASS_ID + classID)
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log('details classes ', responseJson.classes.Subject)
+        console.log('details classes ', responseJson.schedules)
         setClass(responseJson.classes)
         setTeacher(responseJson.classes.Teacher)
-        console.log(responseJson.classes.Teacher);
+        setSchedule(responseJson.schedules)
+        console.log(responseJson.classes.schedules);
 
       })
       .catch(err => {
@@ -91,9 +103,10 @@ export default function ClassDetailScreen({ route }) {
         body: JSON.stringify(body)
       }
       fetch(AUTHENTICATIONS.API_URL + CLASS.JOIN_CLASS, requestObj)
-        .then((response: any) => {
-          console.log(response)
-          Alert.alert(response.data.message)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          console.log(responseJson)
+          Alert.alert(responseJson.data.message)
           studentApiCall()
         })
         .catch((err: any) => {
@@ -103,6 +116,104 @@ export default function ClassDetailScreen({ route }) {
     }
     catch (exception) {
       console.log('exception ', exception)
+    }
+  }
+  function formatDate(date) {
+    var d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+
+    if (month.length < 2)
+      month = '0' + month;
+    if (day.length < 2)
+      day = '0' + day;
+
+    return [year, month, day].join('-');
+  }
+  function formatTime(d) {
+    var date = new Date(d)
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    var strTime = hours + ':' + minutes + ' ' + ampm;
+    return strTime;
+  }
+  const [subjectText, setSubjectText] = React.useState("")
+  const [isModal, setIsModal] = React.useState(false)
+  function toggleModal() {
+    console.log("modal")
+    setIsModal(!isModal)
+  }
+  function apiCallTopicAnnouncement(id) {
+
+  }
+  function setPropertySubjectText(x, id) {
+    if (x === "view") {
+      apiCallTopicAnnouncement(id)
+      fetch(AUTHENTICATIONS.API_URL + CLASS.GET_TOPIC_ANNOUNCEMENT_BY_SCHEDULE_ID + id)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          console.log('json ', responseJson)
+          setTopics(responseJson.topics)
+          setAnnouncements(responseJson.announcements)
+
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    }
+    setSubjectText(x)
+    setScheduleID(id)
+    toggleModal()
+  }
+  function addTA() {
+    if (description !== "") {
+
+      const body = {
+        ClassSchedule: scheduleID,
+        description: description,
+      }
+      console.log(body)
+      let endpoint = ''
+      if (subjectText.toLocaleLowerCase() === "topic") {
+        endpoint = CLASS.CREATE_TOPIC
+      }
+      else {
+        endpoint = CLASS.CREATE_ANNOUNCEMENT
+      }
+      console.log(endpoint);
+
+      try {
+        let requestObj = {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        }
+        fetch(AUTHENTICATIONS.API_URL + endpoint, requestObj)
+          .then((response) => response.json())
+          .then((responseJson) => {
+            console.log(responseJson)
+            toggleModal()
+            Alert.alert(responseJson.message)
+          })
+          .catch((err: any) => {
+            console.log(err)
+            console.log(err.response)
+          })
+      }
+      catch (exception) {
+        console.log('exception ', exception)
+      }
+    }
+    else {
+      Alert.alert("All Fields are required.")
     }
   }
   function component() {
@@ -118,7 +229,7 @@ export default function ClassDetailScreen({ route }) {
         {
           (_class !== null && teacher !== null)
           &&
-          <ScrollView style={{ marginBottom: '25%', padding: 15 }}>
+          <ScrollView style={{ marginBottom: "5%", padding: 15 }}>
             <View >
               {/* header starts here */}
               <View style={{ marginTop: 10 }}>
@@ -137,9 +248,9 @@ export default function ClassDetailScreen({ route }) {
                     <Text style={styles.classBoxInstructor}>
                       {teacher.username}
                     </Text>
-                    <Text style={styles.classBoxDate}>
+                    {/* <Text style={styles.classBoxDate}>
                       Tuesday 12:00 - 13:00
-                    </Text>
+                    </Text> */}
                     <Text style={styles.classBoxInstructor}>
                       {_class.Subject.name}
                     </Text>
@@ -167,8 +278,8 @@ export default function ClassDetailScreen({ route }) {
                 }
                 <View style={styles.joinBox}>
                   <Text style={styles.cost}>
-                    {/* Cost: &#36;{12} */}
-                    Max. Students : {_class.maxStudents}
+                    Cost: &#36;{12}
+                    {/* Max. Students : {_class.maxStudents} */}
                   </Text>
                 </View>
 
@@ -194,6 +305,134 @@ export default function ClassDetailScreen({ route }) {
                     >
                       <Text style={styles.languageText}>{_class.language}</Text>
                     </View>
+                  </View>
+                </View>
+
+                <Modal
+                  animationType="slide"
+                  visible={isModal}
+                  onRequestClose={() => {
+                    toggleModal();
+                  }}
+                >
+                  <View style={{ flex: 1, backgroundColor: '#ffffff', padding: 15 }}>
+                    <View style={{ flexDirection: "row-reverse" }}>
+                      <TouchableOpacity
+                        onPress={
+                          () => { toggleModal(); }
+                        }
+                      >
+                        <Icon name='close' size={25} />
+                      </TouchableOpacity>
+                    </View>
+                    <View style={{ flexDirection: 'row', marginVertical: 15, justifyContent: "center" }}>
+                      {
+                        subjectText !== "view" ?
+                          <Text style={styles.title}>Add {subjectText}</Text>
+                          :
+                          <Text style={styles.title}>Details</Text>
+                      }
+                    </View>
+                    <View>
+                      <ScrollView >
+                        {
+                          subjectText !== "view" ?
+                            <View>
+                              <View style={{ marginVertical: 10 }}>
+                                <Input variant="outline" placeholder="Description"
+                                  onChangeText={(text) => { setDescription(text) }} />
+                              </View>
+
+                              <View style={{ marginVertical: 10, marginBottom: 40 }}>
+                                <Button title={"Submit"} onPress={() => { addTA() }} />
+                              </View>
+                            </View>
+                            :
+                            <View>
+                              <View style={styles.languageBoxLanguage}>
+                                <View style={styles.languageWithIcon}>
+                                  <Text style={styles.languageAttributesHeading}>Topics</Text>
+                                </View>
+                                {
+                                  topics.length > 0 &&
+                                  topics.map((item, index) => {
+                                    return (
+                                      <View style={{ marginVertical: 5 }}>
+                                        <Text>{index + 1} {"- "} {item.description}</Text>
+                                      </View>
+                                    )
+                                  })
+                                }
+                              </View>
+
+                              <View style={styles.languageBoxLanguage}>
+                                <View style={styles.languageWithIcon}>
+                                  <Text style={styles.languageAttributesHeading}>Announcements</Text>
+                                </View>
+                                {
+                                  announcements.length > 0 &&
+                                  announcements.map((item, index) => {
+                                    return (
+                                      <View style={{ marginVertical: 5 }}>
+                                        <Text>{index + 1} {"- "} {item.description}</Text>
+                                      </View>
+                                    )
+                                  })
+                                }
+                              </View>
+                            </View>
+                        }
+
+
+
+                      </ScrollView>
+                    </View>
+                  </View>
+                </Modal>
+                <View style={styles.languageBoxLanguage}>
+                  <View style={styles.languageWithIcon}>
+                    <Text style={styles.languageAttributesHeading}>SCHEDULE</Text>
+                  </View>
+                  <View style={{ marginBottom: 25 }}>
+                    {
+                      schedule.map((item, index) => {
+                        return (
+                          <View key={index} style={{ marginVertical: 20 }}>
+                            <View style={{ flexDirection: "row" }}>
+                              <Text>Start Date: {" "}{formatDate(item.startdate)}{" "}</Text>
+                              <Text>{formatTime(item.startdate)}</Text>
+                            </View>
+                            <View style={{ flexDirection: "row" }}>
+                              <Text>End Date: {" "}{formatDate(item.enddate)}{" "}</Text>
+                              <Text>{formatTime(item.enddate)}</Text>
+                            </View>
+                            <View>
+                              <Text>Max. Students:{" "} {item.maxStudents}</Text>
+                            </View>
+                            <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 15 }}>
+                              <Divider orientation="vertical" width={3} />
+                              <TouchableOpacity style={{ flexDirection: "row" }} onPress={() => setPropertySubjectText("view", item._id)}>
+                                <Text >View Details</Text>
+                              </TouchableOpacity>
+                              <Divider orientation="vertical" width={3} />
+                              <TouchableOpacity style={{ flexDirection: "row" }} onPress={() => { setPropertySubjectText("Topic", item._id) }}>
+                                <Text>Add Topic</Text>
+                                {/* <Icon name="plus" size={20} /> */}
+                              </TouchableOpacity>
+                              <Divider orientation="vertical" width={3} />
+                              <TouchableOpacity style={{ flexDirection: "row" }} onPress={() => { setPropertySubjectText("Announement", item._id) }}>
+                                <Text>Add Announcement</Text>
+                                {/* <Icon name="plus" size={20} /> */}
+                              </TouchableOpacity>
+                              <Divider orientation="vertical" width={3} />
+                            </View>
+                            <Divider width={1} />
+
+                          </View>
+                        )
+                      })
+                    }
+                    <View style={{ marginBottom: 20 }} />
                   </View>
                 </View>
                 {/* Language section ends here */}

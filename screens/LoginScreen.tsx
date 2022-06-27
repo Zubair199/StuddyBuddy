@@ -81,15 +81,6 @@ export default function LoginScreen() {
                     setUserType(responseJson.user.roles.name.toLowerCase())
                     setGuestView(false);
                     setIsLoading(false);
-
-                    (async () => {
-                      await AsyncStorage.setItem('userId', responseJson.user._id);
-                      await AsyncStorage.setItem('password', password);
-                      await AsyncStorage.setItem(
-                        'email',
-                        responseJson.user.email,
-                      );
-                    })();
                   } else {
                     setIsLoading(false);
                     Alert.alert('Alert', 'Email not verified! Kindly check you email to verify your account.');

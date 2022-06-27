@@ -28,7 +28,7 @@ export default function NetworkScreen() {
             .then((response) => response.json())
             .then((responseJson) => {
                 console.log('users ', responseJson.data)
-                setUsers(responseJson.data)
+                setUsers(responseJson.data.filter(item => item._id !== user))
             })
             .catch(err => {
                 console.log(err)
