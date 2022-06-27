@@ -39,6 +39,83 @@ export default function LoginScreen() {
 
   const ref: any = React.useRef();
 
+  React.useEffect(() => {
+
+    (async () => {
+
+      let _password = await AsyncStorage.getItem('password');
+      let _email = await AsyncStorage.getItem(
+        'email'
+      );
+      console.log(_password, _email)
+      if (_email !== null && _password !== null) {
+        setEmail(_email)
+        setPassword(_password)
+        let loginRequest: any = JSON.stringify({
+          username: _email,
+          password: _password,
+          notificationToken: notificationToken,
+          os: Platform.OS,
+        });
+
+        setIsLoading(true);
+        try {
+          let requestObj = {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: loginRequest
+          }
+          fetch(AUTHENTICATIONS.API_URL + AUTH.SIGNIN, requestObj)
+            .then((response) => response.json())
+            .then((responseJson) => {
+              console.log(responseJson)
+              if (responseJson) {
+                if (responseJson.user.isActive) {
+                  if (responseJson.user.emailVerified && responseJson.user.profileCreated) {
+                    setUserName(responseJson.user.username);
+                    setUserEmail(responseJson.user.email);
+                    setUserToken(responseJson.user._id);
+                    setUserType(responseJson.user.roles.name.toLowerCase())
+                    setGuestView(false);
+                    setIsLoading(false);
+
+                    (async () => {
+                      await AsyncStorage.setItem('userId', responseJson.user._id);
+                      await AsyncStorage.setItem('password', password);
+                      await AsyncStorage.setItem(
+                        'email',
+                        responseJson.user.email,
+                      );
+                    })();
+                  } else {
+                    setIsLoading(false);
+                    Alert.alert('Alert', 'Email not verified! Kindly check you email to verify your account.');
+                  }
+                }
+                else {
+                  setIsLoading(false);
+                  Alert.alert('Alert', 'User is inactive.');
+                }
+              }
+
+            })
+            .catch((err: any) => {
+              console.log(err)
+              console.log(err.response)
+              setIsLoading(false);
+            })
+        }
+        catch (exception) {
+          setIsLoading(false);
+          console.log('exception ', exception)
+        }
+      }
+    })();
+
+  }, [])
   const onPressLoginBtn = () => {
     if (email.trim().length == 0) {
       Alert.alert('Alert', 'Email and password cannot be empty.');
@@ -80,11 +157,23 @@ export default function LoginScreen() {
                 setUserToken(responseJson.user._id);
                 setUserType(responseJson.user.roles.name.toLowerCase())
                 setGuestView(false);
+                setIsLoading(false);
+
+                (async () => {
+                  await AsyncStorage.setItem('userId', responseJson.user._id);
+                  await AsyncStorage.setItem('password', password);
+                  await AsyncStorage.setItem(
+                    'email',
+                    responseJson.user.email,
+                  );
+                })();
               } else {
+                setIsLoading(false);
                 Alert.alert('Alert', 'Email not verified! Kindly check you email to verify your account.');
               }
             }
             else {
+              setIsLoading(false);
               Alert.alert('Alert', 'User is inactive.');
             }
           }
@@ -93,9 +182,11 @@ export default function LoginScreen() {
         .catch((err: any) => {
           console.log(err)
           console.log(err.response)
+          setIsLoading(false);
         })
     }
     catch (exception) {
+      setIsLoading(false);
       console.log('exception ', exception)
     }
     // api.userLogin(loginRequest).then((loginResponse: any) => {
