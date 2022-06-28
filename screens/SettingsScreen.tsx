@@ -16,15 +16,29 @@ import { useUserAuth } from '../navigation';
 import genericStyle from '../assets/styles/styleSheet';
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import MainLayout from './MainLayout';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ThemeContext } from 'react-native-elements';
 
 export default function SettingsScreen() {
   const { setUserToken, setUserName, setUserEmail, setUserType } = useUserAuth()!;
-
+  const { currentScreen, setCurrentScreen } = React.useContext(ThemeContext);
   const handleLogout = () => {
-    setUserName('');
-    setUserEmail('');
-    setUserToken('');
-    setUserType('')
+
+    (async () => {
+      await AsyncStorage.setItem('userId', "");
+      await AsyncStorage.setItem('password', "");
+      await AsyncStorage.setItem(
+        'email',
+        "",
+      );
+      setUserName('');
+      setUserEmail('');
+      setUserToken('');
+      setUserType('');
+
+    })();
+
+
   };
 
   const navigation = useNavigation();

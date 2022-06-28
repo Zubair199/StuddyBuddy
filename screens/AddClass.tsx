@@ -280,7 +280,8 @@ export default function AddClassScreen() {
         .then((response) => response.json())
         .then((responseJson) => {
           console.log(responseJson)
-          // Alert.alert(responseJson.data.message)
+          Alert.alert(responseJson.message)
+          navigation.navigate("Classes")
         })
         .catch((err: any) => {
           console.log(err)

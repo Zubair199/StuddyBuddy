@@ -60,9 +60,10 @@ export default function ClassDetailScreen({ route }) {
     fetch(AUTHENTICATIONS.API_URL + CLASS.GET_CLASS_BY_CLASS_ID + classID)
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log('classes ', responseJson.data)
-        setClass(responseJson.data)
-        setTeacher(responseJson.data.teacher)
+        console.log('classes ', responseJson.schedules)
+        setClass(responseJson.classes)
+        setTeacher(responseJson.classes.Teacher)
+        setSchedule(responseJson.schedules)
       })
       .catch(err => {
         console.log(err)
@@ -88,7 +89,7 @@ export default function ClassDetailScreen({ route }) {
   }
   function joinClass(props) {
     const body = {
-      teacher: props.teacher._id,
+      teacher: props.Teacher._id,
       student: user,
       class: props._id
     }
