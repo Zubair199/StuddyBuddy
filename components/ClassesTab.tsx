@@ -64,8 +64,24 @@ export default function ClassesTab() {
         fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES)
             .then((response) => response.json())
             .then((responseJson) => {
-                console.log('classes ', responseJson.data)
-                setClasses(responseJson.data)
+                console.log('classes ', responseJson.classes)
+                console.log('schedule ', responseJson.schedules)
+
+                let _classes = []
+                responseJson.classes.forEach(item => {
+                    let classScheule = responseJson.schedules.filter(schedule => schedule.Class === item._id)
+                    // console.log("classScheule ", classScheule)
+                    if (classScheule.length > 0) {
+                        _classes.push({
+                            class: item,
+                            schedule: classScheule
+                        })
+                    }
+                    console.log("classScheule", _classes)
+
+                })
+                console.log(_classes)
+                setClasses(_classes)
             })
             .catch(err => {
                 console.log(err)
@@ -123,10 +139,10 @@ export default function ClassesTab() {
                                                 <View style={{ flexDirection: "row" }}>
                                                     <Text style={styles.studio}>{classItem.Teacher.username}</Text>
                                                 </View>
-                                                <Text style={styles.dayTime}>
+                                                {/* <Text style={styles.dayTime}>
                                                     Monday &nbsp;
                                                     12:00 &nbsp;-&nbsp; 14:00
-                                                </Text>
+                                                </Text> */}
                                                 <Text style={styles.statusMsg}>
                                                     {classItem.status}
                                                 </Text>
@@ -155,7 +171,7 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         // marginTop: 10,
-        marginBottom: '28%',
+        // marginBottom: '28%',
         paddingHorizontal: 15,
 
     },

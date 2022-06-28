@@ -13,7 +13,7 @@ import {
   Image,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { ThemeProvider, useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 import { isValidEmail, logError } from '../utils/HelperFunctions';
 import { AuthContext } from '../utils/AuthContext';
@@ -22,6 +22,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import CONSTANTS from '../constants/common';
 import genericStyle from '../assets/styles/styleSheet';
 import { AUTH, AUTHENTICATIONS } from '../services/api.constants';
+import { ThemeContext } from '../context/ThemeContext';
 const useUserAuth = () => React.useContext(AuthContext);
 
 export default function LoginScreen() {
@@ -31,6 +32,7 @@ export default function LoginScreen() {
   const [secure, setSecure] = useState(true);
   const [showSpinner, setShowSpinner] = useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const { currentScreen, setCurrentScreen } = React.useContext(ThemeContext);
 
   const { setUserToken, setUserName, setUserEmail, setGuestView, userToken, setUserType } =
     useUserAuth()!;
@@ -40,6 +42,7 @@ export default function LoginScreen() {
   const ref: any = React.useRef();
 
   React.useEffect(() => {
+    setCurrentScreen("HomeScreen");
 
     (async () => {
 
@@ -48,7 +51,7 @@ export default function LoginScreen() {
         'email'
       );
       console.log(_password, _email)
-      if (_email !== null && _password !== null) {
+      if ((_email !== null || _email !== "") && (_password !== null || _password !== "")) {
         setEmail(_email)
         setPassword(_password)
         let loginRequest: any = JSON.stringify({

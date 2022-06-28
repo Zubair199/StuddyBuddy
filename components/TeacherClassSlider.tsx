@@ -70,9 +70,9 @@ export default function TeacherClassSlider(props: Iprops) {
                             <Text style={styles.classBoxInstructor}>
                               {classData.Teacher.username}
                             </Text>
-                            <Text style={styles.classBoxDate}>
+                            {/* <Text style={styles.classBoxDate}>
                               Tuesday 12:00 - 13:00
-                            </Text>
+                            </Text> */}
                             <Text style={styles.classBoxInstructor}>
                               {classData.Subject.name}
                             </Text>
