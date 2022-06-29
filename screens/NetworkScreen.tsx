@@ -76,21 +76,41 @@ export default function NetworkScreen() {
                 console.log(err)
             })
     }
-    function handleChat(userId) {
-        console.log(userId)
-        const requestData = { toUser: userId };
+    function handleChat(classId,group) {
+        console.log(classId)
+        if(group === true){
+            const requestData = {classId:"62ba40cc2c9acbf79d1b1326" ,flag:group,groupUsers:["62bb70317d78ecbb83bcb7d1","6295cc2b7d505307388d58fd","62a1af738c535a276ca3c3ef"] };
       
-        api.createNewMessage(requestData).then((resp) => {
-            console.log("hit ")
-          if (resp) {
-            const newChatInfo = resp.data;
-            if (newChatInfo && newChatInfo.data.chatId) {
-                console.log("bro here in chat")
-                navigation.navigate("Messages", { chatId: newChatInfo.data.chatId, textMes: "" });
-            }
-            
-          }
-        }).catch(e=>{console.log(e)});
+            api.createNewMessage(requestData).then((resp) => {
+             
+              if (resp) {
+                const newChatInfo = resp.data;
+                if (newChatInfo && newChatInfo.data.chatId) {
+                  
+                  
+                     navigation.navigate("Messages", { chatId: newChatInfo.data.chatId, textMes: "" });
+                }
+                
+              }
+            }).catch(e=>{console.log(e)});
+        }
+        else{
+            const requestData = { toUser: userId };
+      
+            api.createNewMessage(requestData).then((resp) => {
+                console.log("hit ")
+              if (resp) {
+                const newChatInfo = resp.data;
+                if (newChatInfo && newChatInfo.data.chatId) {
+                    console.log("bro here in chat")
+                    navigation.navigate("Messages", { chatId: newChatInfo.data.chatId, textMes: "" });
+                }
+                
+              }
+            }).catch(e=>{console.log(e)});
+        }
+      
+       
 
     }
       
@@ -245,6 +265,7 @@ export default function NetworkScreen() {
                 <ScrollView >
                     {
                         users.map((item, index) => {
+                            console.log(item)
                             return (
                                 <TouchableOpacity key={index} onPress={() => { toggleModal(); getProfileData(item._id) }}>
                                     <View style={{ padding: 15, flexDirection: "row", justifyContent: "space-between" }}>
@@ -257,7 +278,8 @@ export default function NetworkScreen() {
                                             </View>
                                         </View>
                                         <View>
-                                            <TouchableOpacity onPress={() => {handleChat(item._id)}}>
+                                            {/* <TouchableOpacity onPress={() => {handleChat(item._id,)}}> */}
+                                            <TouchableOpacity onPress={() => {handleChat(item._id,true)}}>
                                                 <Icon name="message1" size={25} />
                                             </TouchableOpacity>
                                         </View>
