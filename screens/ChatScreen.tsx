@@ -101,7 +101,7 @@ export default function ChatScreen() {
     
     api.initiateChat(requestData).then(async (resp) => {
       console.log("+----------------------------------------------asdasd");
-      console.log(resp.data.data[0].user)
+      //console.log(resp.data.data[0].user)
       await storeLocalData("@chatId", chatId);
       let userID 
       let otherUID 

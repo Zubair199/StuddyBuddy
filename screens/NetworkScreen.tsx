@@ -95,7 +95,7 @@ export default function NetworkScreen() {
             }).catch(e=>{console.log(e)});
         }
         else{
-            const requestData = { toUser: userId };
+            const requestData = { toUser: classId };
       
             api.createNewMessage(requestData).then((resp) => {
                 console.log("hit ")
@@ -279,7 +279,7 @@ export default function NetworkScreen() {
                                         </View>
                                         <View>
                                             {/* <TouchableOpacity onPress={() => {handleChat(item._id,)}}> */}
-                                            <TouchableOpacity onPress={() => {handleChat(item._id,true)}}>
+                                            <TouchableOpacity onPress={() => {handleChat(item._id,false)}}>
                                                 <Icon name="message1" size={25} />
                                             </TouchableOpacity>
                                         </View>
