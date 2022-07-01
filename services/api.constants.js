@@ -4,6 +4,10 @@ module.exports = {
         API_URL: "http://192.168.100.26:5000",
         CHAT_SERVER_URL: 'http://192.168.100.26:5000',
     },
+    NOTIFICATION: {
+        GETNOTIFICATION: "/notifications?limit=50",
+        READNOTIFICATION: "/notifications/read/"
+    },
     CHAT: {
         NEWCHAT: "/api/createnew",
         MESSAGES: "/api/getchats",

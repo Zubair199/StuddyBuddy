@@ -88,7 +88,7 @@ export default function NetworkScreen() {
                 if (newChatInfo && newChatInfo.data.chatId) {
                   
                   
-                     navigation.navigate("Messages", { chatId: newChatInfo.data.chatId, textMes: "" });
+                     navigation.navigate("ChatScreen", { chatId: newChatInfo.data.chatId, textMes: "" });
                 }
                 
               }
@@ -103,7 +103,7 @@ export default function NetworkScreen() {
                 const newChatInfo = resp.data;
                 if (newChatInfo && newChatInfo.data.chatId) {
                     console.log("bro here in chat")
-                    navigation.navigate("Messages", { chatId: newChatInfo.data.chatId, textMes: "" });
+                    navigation.navigate("ChatScreen", { chatId: newChatInfo.data.chatId, textMes: "" });
                 }
                 
               }

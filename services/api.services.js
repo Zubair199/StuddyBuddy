@@ -1,5 +1,5 @@
 import axios from "axios";
-import { AUTHENTICATIONS, AUTH, USER, CLASS, EXAM, ASSIGNMENT, CHAT } from "./api.constants";
+import { AUTHENTICATIONS, AUTH, USER, CLASS, EXAM, ASSIGNMENT, CHAT, NOTIFICATION } from "./api.constants";
 
 export default {
 
@@ -25,7 +25,18 @@ export default {
 	// 		return axios.put(`${AUTHENTICATIONS.API_URL}${USER.UPDATE_PASS}`+ value, values, { headers: services.authHeader() })
 	// 	},
 
+
+	//Notification
+	getNotifications: function () {
+		return axios.get(`${AUTHENTICATIONS.API_URL}${NOTIFICATION.GETNOTIFICATION}`)
+	},
+	readNotification: function (requestData) {
+		return axios.post(`${AUTHENTICATIONS.API_URL}${NOTIFICATION.READNOTIFICATION}` + requestData)
+	},
 	// Chat 
+	getUnreadCounts: function () {
+		return axios.get(`${AUTHENTICATIONS.API_URL}${CHAT.UNREADCOUNTS}`)
+	},
 	initiateChat: function (requestData) {
 		return axios.post(`${AUTHENTICATIONS.API_URL}${CHAT.OPENCHAT}`, requestData)
 	},
@@ -41,6 +52,9 @@ export default {
 	createNewMessage: function (requestData) {
 
 		return axios.post(`${AUTHENTICATIONS.API_URL}${CHAT.NEWCHAT}`, requestData)
+	},
+	getAllMessages: function () {
+		return axios.get(`${AUTHENTICATIONS.API_URL}${CHAT.MESSAGES}`)
 	},
 
 
