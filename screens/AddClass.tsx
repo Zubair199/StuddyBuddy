@@ -69,10 +69,11 @@ export default function AddClassScreen() {
   let [subjectID, setSubjectID] = React.useState("")
 
   let [announcements, setAnnouncements] = React.useState("")
-  let [maxStudents, setMaxStudents] = React.useState("")
+  let [maxStudents, setMaxStudents] = React.useState("100")
   let [language, setLanguage] = React.useState("")
   let [classDuration, setClassDuration] = React.useState("")
   let [subjects, setSubjects] = React.useState([])
+  let [price, setPrice] = React.useState("")
 
   let [schedule, setSchedule] = React.useState([])
   let [step1Errors, setStep1Errors] = React.useState(false)
@@ -264,7 +265,8 @@ export default function AddClassScreen() {
       subject: subjectID,
       duration: classDuration,
       language: language,
-      schedule: schedule
+      schedule: schedule,
+      price: price
     }
     console.log(body)
     try {
@@ -319,8 +321,19 @@ export default function AddClassScreen() {
   }
   return (
     <View style={{ backgroundColor: "white", flex: 1 }}>
-      <View>
-        <Text style={styles.title}>Add Class</Text>
+      <View style={{ flexDirection: "row" }}>
+        <View style={{ padding: 27, marginRight: 50 }}>
+          <TouchableOpacity
+            onPress={
+              () => { navigation.navigate('HomeScreen') }
+            }
+          >
+            <Icon name='leftcircleo' size={25} style={{ fontWeight: '600' }} />
+          </TouchableOpacity>
+        </View>
+        <View >
+          <Text style={styles.title}>Add Class</Text>
+        </View>
 
       </View>
       <Modal
@@ -489,6 +502,10 @@ export default function AddClassScreen() {
                   onValueChange={itemValue => setLanguage(itemValue)}>
                   <Select.Item label="English" value="English" />
                 </Select>
+              </View>
+              <View style={{ marginVertical: 10 }}>
+                <Input variant="outline" value={name} placeholder="Enter Price"
+                  onChangeText={(text) => { setPrice(text) }} />
               </View>
 
             </ScrollView>
