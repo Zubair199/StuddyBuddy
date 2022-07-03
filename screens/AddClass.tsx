@@ -531,10 +531,10 @@ export default function AddClassScreen() {
               <View style={{ flexDirection: "row", justifyContent: "space-evenly", marginTop: 10 }}>
               <Calendar
                   markedDates={{
-                    '2022-05-16': {selected: true, marked: true, selectedColor: 'blue'},
-                    '2022-05-17': {marked: true},
-                    '2022-05-18': {marked: true, dotColor: 'red', activeOpacity: 0},
-                    '2022-05-19': {disabled: true, disableTouchEvent: true}
+                    '2022-07-16': {selected: true, marked: true, selectedColor: 'blue'},
+                    '2022-07-17': {marked: true},
+                    '2022-07-18': {marked: true, dotColor: 'red', activeOpacity: 0},
+                    '2022-07-19': {disabled: true, disableTouchEvent: true}
                   }}
                 />
                 {/* {
