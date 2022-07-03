@@ -56,6 +56,11 @@ export default {
 	getAllMessages: function () {
 		return axios.get(`${AUTHENTICATIONS.API_URL}${CHAT.MESSAGES}`)
 	},
+	getGroupMessages: function () {
+		return axios.get(`${AUTHENTICATIONS.API_URL}${CHAT.GROUP}`)
+	},
+
+	//CLASS
 
 
 	//  PROFILE

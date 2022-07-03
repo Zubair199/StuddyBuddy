@@ -47,14 +47,20 @@ import { storeLocalData, getLocalData, checkNetwork } from "../utils/HelperFunct
        if (!isCancelled) {
          await api
            .getAllMessages()
-           .then((resp) => {
+           .then(async (resp) => {
              if (resp) {
-              console.log("ASddddddddddddddddddddddddddddddddddd")
-              console.log(resp.data.meta.result)
-              console.log("ASddddddddddddddddddddddddddddddddddd")
-               setMessagesList(resp.data.meta.result);
+              await api.getGroupMessages().then(resp1=>{
+                console.log("GROUP MESSAGES");
+                console.log(resp1.data);
+                const mes = resp.data.meta.result.concat(resp1.data)
+                setMessagesList(mes);
+               }).catch(e=>{
+                console.log(e)
+               })
+             
              }
            }).then(() => setLoader(false));
+        
          await api
            .getUnreadCounts()
            .then(async (resp) => {
@@ -98,15 +104,18 @@ import { storeLocalData, getLocalData, checkNetwork } from "../utils/HelperFunct
        ) : (
          <ScrollView style={styles.scrollView}>
            {messagesList.map((message: any, index: number) =>{
-            console.log(message.isRead, message.message)
+            console.log("--------------------------------------------")
+            console.log( message.message)
+            console.log("--------------------------------------------")
             return (  <View key={index} style={message.isRead ? styles.messageBoxWrapperRead : styles.messageBoxWrapperNew}>
+              {/* condition required when clicked on group chat go to that group chat  */}
                <TouchableOpacity onPress={() => openChat(message.chatId, message.isEnabledChat, message.isBanned)} style={styles.messageBox}>
                  <Image source={ require("../assets/images/profile-default.jpg")} style={styles.messageImage} />
                  <View style={styles.messageInfo}>
                    {message.isRead ===false && (<Image style={styles.newMessageIcon} source={require('../assets/images/icons/new-message.png')} />)}
                    <Text style={styles.messageDate}>{moment().diff(message.lastMessageAt, 'hours') < 24 ? moment(message.lastMessageAt).fromNow(true) : (moment().diff(message.lastMessageAt, 'hours') >= 24 && moment().diff(message.lastMessageAt, 'hours') < 48) ? 'YESTERDAY' : moment(message.lastMessageAt).format('MM/DD/YYYY')}</Text>
-                   <Text style={styles.messageName}>{message.username}</Text>
-                   <Text numberOfLines={5} ellipsizeMode="tail" style={styles.messageDescription}>{message.message}</Text>
+                   <Text style={styles.messageName}>{message.isGroupChat?"Class: "+message.classes[0].name:message.username}</Text>
+                   <Text numberOfLines={5} ellipsizeMode="tail" style={styles.messageDescription}>{message.isGroupChat?message.username+" : "+message.message:message.message}</Text>
                  </View>
                </TouchableOpacity>
              </View>)}

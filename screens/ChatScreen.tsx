@@ -100,7 +100,7 @@ export default function ChatScreen() {
     let requestData = { chatId: chatId };
     
     api.initiateChat(requestData).then(async (resp) => {
-      console.log("+----------------------------------------------asdasd");
+     // console.log("+----------------------------------------------asdasd");
       //console.log(resp.data.data[0].user)
       await storeLocalData("@chatId", chatId);
       let userID 
@@ -122,7 +122,7 @@ export default function ChatScreen() {
 
         api.verifyBlocked({blockerId:userID,blocksId:otherUID})
        .then(resp=>{
-         console.log(resp.data)
+        // console.log(resp.data)
           if(resp.data&&resp.data.blockedby===true){
             setStatus(resp.data.status)
             if(resp.data.status ==='blocked')

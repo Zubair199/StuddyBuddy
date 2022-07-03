@@ -149,7 +149,7 @@ export default function ChatScreen() {
   const onSend = React.useCallback((messages = []) => {
     // networkAsync();
     console.log(messages[0])
-    console.log("tracler paksdpaksdpkapsdkpaksdkaskkkkkkkkkkkkkkkkkkkkkkkkkkk")
+    console.log("sending message using socket IO ")
     const currentMessage = messages[0];
   
     let requestData = {
@@ -157,16 +157,12 @@ export default function ChatScreen() {
       text: currentMessage.text,
     };
     api.createNewMessage(requestData).then((resp) => {
-      if (resp) {
-       
-      
+      if (resp) { 
           setMessages((previousMessages: any) =>
           GiftedChat.append(previousMessages, messages));
           const newMsg = resp.data;
           socketIo.emit("messaging", newMsg);
           setBlocker(false)
-        
-       
       }
     });
   }, []);

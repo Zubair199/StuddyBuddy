@@ -11,6 +11,7 @@ module.exports = {
     CHAT: {
         NEWCHAT: "/api/createnew",
         MESSAGES: "/api/getchats",
+        GROUP: "/api/getgroupchats",
         UNREADCOUNTS: "/api/getunreadcounts",
         OPENCHAT: "/api/openchat",
         BLOCK: "/api/blockChat",

@@ -60,7 +60,7 @@ export default function NetworkScreen() {
     });
 
     React.useEffect(() => {
-        console.log("NetworkScreen", userType)
+        //console.log("NetworkScreen", userType)
         apiCall()
 
     }, [isFocused])
@@ -68,7 +68,7 @@ export default function NetworkScreen() {
         fetch(AUTHENTICATIONS.API_URL + AUTH.USERS)
             .then((response) => response.json())
             .then((responseJson) => {
-                console.log('users ', responseJson.data)
+                //console.log('users ', responseJson.data)
                 setUsers(responseJson.data.filter(item => item._id !== user))
                 setUserProfiles(responseJson.profiles)
             })
@@ -77,7 +77,7 @@ export default function NetworkScreen() {
             })
     }
     function handleChat(classId,group) {
-        console.log(classId)
+        console.log(group)
         if(group === true){
             const requestData = {classId:"62ba40cc2c9acbf79d1b1326" ,flag:group,groupUsers:["62bb70317d78ecbb83bcb7d1","6295cc2b7d505307388d58fd","62a1af738c535a276ca3c3ef"] };
       
@@ -95,8 +95,9 @@ export default function NetworkScreen() {
             }).catch(e=>{console.log(e)});
         }
         else{
+           console.log("here in one to one")
             const requestData = { toUser: classId };
-      
+            console.log(classId)
             api.createNewMessage(requestData).then((resp) => {
                 console.log("hit ")
               if (resp) {
@@ -121,7 +122,7 @@ export default function NetworkScreen() {
     }
     function getProfileData(id) {
         let result = userProfiles.filter(item => item.User === id)
-        console.log(result);
+        // console.log(result);
         if (result.length > 0) {
             setProfile(result[0])
             setSkills(result[0].skills)
@@ -265,7 +266,7 @@ export default function NetworkScreen() {
                 <ScrollView >
                     {
                         users.map((item, index) => {
-                            console.log(item)
+                            // console.log(item)
                             return (
                                 <TouchableOpacity key={index} onPress={() => { toggleModal(); getProfileData(item._id) }}>
                                     <View style={{ padding: 15, flexDirection: "row", justifyContent: "space-between" }}>
