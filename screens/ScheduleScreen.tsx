@@ -53,7 +53,7 @@ export default function SchedulesScreen() {
     "July", "August", "September", "October", "November", "December"
   ];
   React.useEffect(() => {
-    console.log(user)
+    console.log(userType)
     if (userType.toLowerCase() === "user") {
       studentApiCall(date);
     }
@@ -88,6 +88,7 @@ export default function SchedulesScreen() {
         teacher: user,
         date: text,
       }
+      console.log(body)
       let requestObj = {
         method: 'POST',
         headers: {
@@ -198,7 +199,12 @@ export default function SchedulesScreen() {
               onConfirm={(text) => {
                 _setStartdate(text);
                 setOpen(false);
-                studentApiCall(text);
+                if (userType.toLowerCase() === "user") {
+                  studentApiCall(text);
+                }
+                else {
+                  teacherApiCall(text)
+                }
               }}
               onCancel={() => {
                 setOpen(false)
