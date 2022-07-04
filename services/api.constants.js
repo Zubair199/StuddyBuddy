@@ -2,12 +2,16 @@ module.exports = {
 
     AUTHENTICATIONS: {
 
-        // API_URL: "http://192.168.43.122:5000"
-        API_URL: "http://192.168.117.123:5000"
+        API_URL: "http://192.168.43.122:5000"
+        // API_URL: "http://192.168.117.123:5000"
+    },
+    GENERAL: {
+        SITE_CONTENTS: "/api/sitecontents"
     },
     AUTH: {
         SIGNUP: "/api/auth/signup",
         SIGNIN: "/api/auth/signin",
+        VERIFY: "/api/auth/verify",
         EMAIL_RESET_PASSWORD: "/api/auth/resetPassword",
         USERS: "/api/users",
     },
@@ -49,8 +53,9 @@ module.exports = {
         GET_STUDENT_SEARCH: '/api/class/student/search/',
 
         SUBJECTS: "/api/subjects",
-        GET_TOPIC_ANNOUNCEMENT_BY_SCHEDULE_ID: "/api/class/topics/announcements/"
+        GET_TOPIC_ANNOUNCEMENT_BY_SCHEDULE_ID: "/api/class/topics/announcements/",
 
+        JOINED_STUDENTS: "/api/class/students/",
     },
     EXAM: {
         CREATE: "/api/exam",
