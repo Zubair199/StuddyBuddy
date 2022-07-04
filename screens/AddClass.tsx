@@ -238,11 +238,10 @@ export default function AddClassScreen() {
   }
 
   function submitSchedule() {
-    if (startdate !== "" && enddate !== "" && maxStudents !== "") {
+    if (startdate !== "" && enddate !== "") {
       const scheduleObj = {
         startdate: startdate,
         enddate: enddate,
-        maxStudents: maxStudents,
       }
       let _schedule = schedule;
       _schedule.push(scheduleObj)
@@ -297,7 +296,7 @@ export default function AddClassScreen() {
   }
 
   function step1() {
-    if (name !== "" && level !== "" && subject !== "" && classDuration !== "" && language !== "") {
+    if (name !== "" && level !== "" && subject !== "" && classDuration !== "" && language !== "" && maxStudents !== "") {
       setStep1Errors(false)
     }
     else {
@@ -318,6 +317,9 @@ export default function AddClassScreen() {
     else {
       setStep2Errors(false)
     }
+  }
+  function deleteSchedule(item) {
+    console.log(item)
   }
   return (
     <View style={{ backgroundColor: "white", flex: 1 }}>
@@ -428,10 +430,7 @@ export default function AddClassScreen() {
                 />
               </View>
 
-              <View style={{ marginVertical: 10 }}>
-                <Input variant="outline" placeholder="Max. Students"
-                  onChangeText={(text) => { setMaxStudents(text) }} />
-              </View>
+
 
               <View style={{ marginVertical: 10, marginBottom: 40 }}>
                 <Button title={"Submit"} onPress={() => { submitSchedule() }} />
@@ -445,7 +444,7 @@ export default function AddClassScreen() {
       <ProgressSteps>
         <ProgressStep label="Class Information" onNext={() => step1()} errors={step1Errors}>
           <View >
-            <ScrollView style={{ padding: 15, marginBottom: '28%' }}>
+            <ScrollView style={{ padding: 15 }}>
 
               <View style={{ marginVertical: 10 }}>
                 <Input variant="outline" value={name} placeholder="Enter Class Name"
@@ -464,7 +463,6 @@ export default function AddClassScreen() {
                     subjects.map((item, index) => {
                       return (
                         <Select.Item label={item.name} key={index} value={item._id} />
-
                       )
                     })
                   }
@@ -504,8 +502,12 @@ export default function AddClassScreen() {
                 </Select>
               </View>
               <View style={{ marginVertical: 10 }}>
-                <Input variant="outline" value={name} placeholder="Enter Price"
+                <Input variant="outline" value={price} placeholder="Enter Price"
                   onChangeText={(text) => { setPrice(text) }} />
+              </View>
+              <View style={{ marginVertical: 10 }}>
+                <Input variant="outline" placeholder="Max. Students"
+                  onChangeText={(text) => { setMaxStudents(text) }} />
               </View>
 
             </ScrollView>
@@ -540,6 +542,7 @@ export default function AddClassScreen() {
                 }
 
               </View>
+              {/* Add Calender here */}
               {getMonthDates()}
             </View>
           </View>
@@ -570,7 +573,7 @@ export default function AddClassScreen() {
                         <Text>{item.maxStudents}</Text>
                       </View>
                       <View>
-                        <TouchableOpacity onPress={() => console.log("pressed")}>
+                        <TouchableOpacity onPress={() => deleteSchedule(item)}>
                           <FontAwesomeIcon name='trash' size={20} />
                         </TouchableOpacity>
                       </View>
