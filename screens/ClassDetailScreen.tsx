@@ -78,9 +78,9 @@ export default function ClassDetailScreen({ route }) {
           apiCall()
         }
         else {
-          setClass(responseJson.data.class)
+          setClass(responseJson.data.Class)
           setIsJoined(responseJson.data.isJoined)
-          setTeacher(responseJson.data.teacher)
+          setTeacher(responseJson.data.Teacher)
         }
       })
       .catch(err => {
@@ -89,9 +89,9 @@ export default function ClassDetailScreen({ route }) {
   }
   function joinClass(props) {
     const body = {
-      teacher: props.Teacher._id,
-      student: user,
-      class: props._id
+      Teacher: props.Teacher._id,
+      Student: user,
+      Class: props._id
     }
     console.log(body)
     try {
@@ -107,7 +107,7 @@ export default function ClassDetailScreen({ route }) {
         .then((response) => response.json())
         .then((responseJson) => {
           console.log(responseJson)
-          Alert.alert(responseJson.data.message)
+          Alert.alert(responseJson.message)
           studentApiCall()
         })
         .catch((err: any) => {
@@ -217,6 +217,18 @@ export default function ClassDetailScreen({ route }) {
       Alert.alert("All Fields are required.")
     }
   }
+
+  function groupChat() {
+    fetch(AUTHENTICATIONS.API_URL + CLASS.JOINED_STUDENTS + classID)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log('JOINED_STUDENTS : = ', responseJson.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
+
   function component() {
     return (
       <View style={styles.container}>
@@ -283,7 +295,12 @@ export default function ClassDetailScreen({ route }) {
                     {/* Max. Students : {_class.maxStudents} */}
                   </Text>
                 </View>
-
+                <View style={styles.joinBox}>
+                  <TouchableOpacity style={{ marginTop: 5 }}
+                    onPress={() => groupChat()}>
+                    <Icon color={'black'} name="message1" size={25} />
+                  </TouchableOpacity>
+                </View>
                 {/* price ends here */}
 
 
