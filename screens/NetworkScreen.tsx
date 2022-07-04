@@ -78,23 +78,23 @@ export default function NetworkScreen() {
     }
     function handleChat(classId,group) {
         console.log(group)
-        if(group === true){
-            const requestData = {classId:"62ba40cc2c9acbf79d1b1326" ,flag:group,groupUsers:["62bb70317d78ecbb83bcb7d1","6295cc2b7d505307388d58fd","62a1af738c535a276ca3c3ef"] };
+        // if(group === true){
+        //     const requestData = {classId:"62ba40cc2c9acbf79d1b1326" ,flag:group,groupUsers:["62bb70317d78ecbb83bcb7d1","6295cc2b7d505307388d58fd","62a1af738c535a276ca3c3ef"] };
       
-            api.createNewMessage(requestData).then((resp) => {
+        //     api.createNewMessage(requestData).then((resp) => {
              
-              if (resp) {
-                const newChatInfo = resp.data;
-                if (newChatInfo && newChatInfo.data.chatId) {
+        //       if (resp) {
+        //         const newChatInfo = resp.data;
+        //         if (newChatInfo && newChatInfo.data.chatId) {
                   
                   
-                     navigation.navigate("ChatScreen", { chatId: newChatInfo.data.chatId, textMes: "" });
-                }
+        //              navigation.navigate("ChatScreen", { chatId: newChatInfo.data.chatId, textMes: "",classId });
+        //         }
                 
-              }
-            }).catch(e=>{console.log(e)});
-        }
-        else{
+        //       }
+        //     }).catch(e=>{console.log(e)});
+        // }
+        // else{
            console.log("here in one to one")
             const requestData = { toUser: classId };
             console.log(classId)
@@ -109,7 +109,7 @@ export default function NetworkScreen() {
                 
               }
             }).catch(e=>{console.log(e)});
-        }
+        // }
       
        
 

@@ -25,7 +25,7 @@ import { storeLocalData, getLocalData, checkNetwork } from "../utils/HelperFunct
        unreadCount = unreadCount - 1;
      }
      await storeLocalData('@unread_message_count', "" + unreadCount);
-     navigation.navigate("ChatScreen", {
+     navigation.navigate("ChatScreenG", {
        chatId: chatId,
        isEnabledChat: isEnabledChat,
        isBanned: isBanned,

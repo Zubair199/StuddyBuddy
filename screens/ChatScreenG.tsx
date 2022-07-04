@@ -52,6 +52,7 @@ export default function ChatScreen() {
   const empyString = ""
   const routes = useRoute<RouteProp<ChatScreenParamList, "ChatScreen">>();
   const chatId = routes.params === undefined ? null : routes.params.chatId;
+  const classId = routes.params === undefined ? null : routes.params.classId;
   const isEnabledChat = routes.params === undefined ? null : routes.params.isEnabledChat;
   const isBanned = routes.params === undefined ? null : routes.params.isBanned;
   const initialText = routes.params === undefined ? "" : routes.params.textMes;
@@ -70,7 +71,13 @@ export default function ChatScreen() {
 
   const previousScreen = () => {
     socketIo.emit('leaveChat', { "chatId": chatId, "userId": userToken });
-    navigation.navigate("NetworkScreen");
+    if(classId){
+      navigation.navigate("ClassDetails",{classID:classId});
+    }
+    else{
+      navigation.navigate("Messages");
+    }
+  
   };
 
   React.useEffect(() => {
