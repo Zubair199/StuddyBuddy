@@ -30,9 +30,21 @@ export default function ClassDetailScreen({ route }) {
   const [description, setDescription] = React.useState("")
   const [scheduleID, setScheduleID] = React.useState("")
 
+  const [studentIds, setStudentIds] = React.useState([])
+  const [teacherId, setTeacherId] = React.useState([])
 
   React.useEffect(() => {
     console.log(user)
+    fetch(AUTHENTICATIONS.API_URL + CLASS.JOINED_STUDENTS + classID)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log('JOINED_STUDENTS : = ', responseJson)
+        setStudentIds(responseJson.students)
+        setTeacherId(responseJson.teacher)
+      })
+      .catch(err => {
+        console.log(err)
+      })
     if (userType.toLowerCase() === "user") {
       studentApiCall();
     }
@@ -219,14 +231,7 @@ export default function ClassDetailScreen({ route }) {
   }
 
   function groupChat() {
-    fetch(AUTHENTICATIONS.API_URL + CLASS.JOINED_STUDENTS + classID)
-      .then((response) => response.json())
-      .then((responseJson) => {
-        console.log('JOINED_STUDENTS : = ', responseJson.data)
-      })
-      .catch(err => {
-        console.log(err)
-      })
+    console.log(studentIds, teacherId)
   }
 
   function component() {
@@ -289,18 +294,36 @@ export default function ClassDetailScreen({ route }) {
                     </TouchableOpacity>
                   </View>
                 }
+
                 <View style={styles.joinBox}>
                   <Text style={styles.cost}>
                     Cost: &#36;{12}
                     {/* Max. Students : {_class.maxStudents} */}
                   </Text>
                 </View>
-                <View style={styles.joinBox}>
-                  <TouchableOpacity style={{ marginTop: 5 }}
-                    onPress={() => groupChat()}>
-                    <Icon color={'black'} name="message1" size={25} />
-                  </TouchableOpacity>
-                </View>
+                {
+                  userType.toLowerCase() === "teacher" &&
+                  <View style={styles.joinBox}>
+                    <TouchableOpacity style={{ marginTop: 5 }}
+                      onPress={() => groupChat()}>
+                      <Icon color={'black'} name="message1" size={25} />
+                    </TouchableOpacity>
+                  </View>
+                }
+                {
+                  (
+                    userType.toLowerCase() === "user"
+                    &&
+                    isJoined
+                  )
+                  &&
+                  <View style={styles.joinBox}>
+                    <TouchableOpacity style={{ marginTop: 5 }}
+                      onPress={() => groupChat()}>
+                      <Icon color={'black'} name="message1" size={25} />
+                    </TouchableOpacity>
+                  </View>
+                }
                 {/* price ends here */}
 
 
