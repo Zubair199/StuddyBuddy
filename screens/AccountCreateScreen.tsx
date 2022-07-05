@@ -20,6 +20,8 @@ import {
 import api from '../constants/api';
 import genericStyle from '../assets/styles/styleSheet';
 import { RadioGroup } from 'react-native-radio-buttons-group';
+import { AUTH, AUTHENTICATIONS } from '../services/api.constants';
+import { Radio } from 'native-base';
 
 /**
  * Accounts create
@@ -38,17 +40,19 @@ export default function AccountCreateScreen() {
   const radioButtonsData = [{
     id: '1', // acts as primary key, should be unique and non-empty string
     label: 'Teacher',
-    value: 'Teacher'
+    value: '0'
   }, {
     id: '2',
     label: 'Student',
-    value: 'Student'
+    value: '1'
   }]
 
   const [radioButtons, setRadioButtons] = React.useState(radioButtonsData)
+  const [role, setRole] = React.useState('0')
 
   function onPressRadioButton(radioButtonsArray) {
-    setRadioButtons(radioButtonsArray);
+    setRole(radioButtonsArray);
+    console.log(radioButtonsArray)
   }
 
 
@@ -95,31 +99,62 @@ export default function AccountCreateScreen() {
     setShowSpinner(true);
 
     let signUpRequest = JSON.stringify({
-      fullName: fullName,
+      username: fullName,
       email: email,
       password: password,
+      role: role
     });
 
-    api.collaboratorSignUp(signUpRequest).then(signUpResponse => {
-      if (!signUpResponse.error && signUpResponse.success) {
-        setShowSpinner(false);
-        navigation.navigate('AccountVerify', {
-          fullName: fullName,
-          email: email,
-          password: password,
-        });
-      } else {
-        let messageText = '';
-        if (signUpResponse.message) {
-          messageText = signUpResponse.message;
-        } else if (signUpResponse.errors && signUpResponse.errors.message) {
-          messageText = signUpResponse.errors.message;
-        }
-        Alert.alert('Alert', messageText);
-        setShowSpinner(false);
+    //   api.collaboratorSignUp(signUpRequest).then(signUpResponse => {
+    //     if (!signUpResponse.error && signUpResponse.success) {
+    //       setShowSpinner(false);
+    //       navigation.navigate('AccountVerify', {
+    //         fullName: fullName,
+    //         email: email,
+    //         password: password,
+    //       });
+    //     } else {
+    //       let messageText = '';
+    //       if (signUpResponse.message) {
+    //         messageText = signUpResponse.message;
+    //       } else if (signUpResponse.errors && signUpResponse.errors.message) {
+    //         messageText = signUpResponse.errors.message;
+    //       }
+    //       Alert.alert('Alert', messageText);
+    //       setShowSpinner(false);
+    //     }
+    //   });
+    try {
+      let requestObj = {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: signUpRequest
       }
-    });
+      fetch(AUTHENTICATIONS.API_URL + AUTH.SIGNUP, requestObj)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          console.log(responseJson)
+          setShowSpinner(false);
+          Alert.alert('Alert', responseJson.message);
+          navigation.navigate("AccountVerify", { email: email });
+        })
+        .catch((err: any) => {
+          console.log(err)
+          console.log(err.response)
+          Alert.alert('Alert', "Registration Failed. Try Again!");
+          setShowSpinner(false);
+        })
+    }
+    catch (exception) {
+      console.log('exception ', exception)
+      Alert.alert('Alert', "Registration Failed. Try Again!");
+      setShowSpinner(false);
+    }
   };
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -130,12 +165,27 @@ export default function AccountCreateScreen() {
               marginTop: 8,
               height: 50,
             }}>
-            <RadioGroup
+            {/* <RadioGroup
               radioButtons={radioButtons}
               onPress={onPressRadioButton}
               layout="row"
-              containerStyle={{justifyContent:"space-around"}}
-            />
+              containerStyle={{ justifyContent: "space-around" }}
+            /> */}
+            <Radio.Group
+              name="myRadioGroup"
+              value={role}
+              onChange={(nextValue) => {
+                console.log(nextValue)
+                setRole(nextValue);
+              }}
+            >
+              <Radio value="1" my="1">
+                Student
+              </Radio>
+              <Radio value="0" my="1">
+                Teacher
+              </Radio>
+            </Radio.Group>
           </View>
           <View
             style={{

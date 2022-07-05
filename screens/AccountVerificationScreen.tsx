@@ -9,8 +9,8 @@ import {
   Alert,
 } from 'react-native';
 
-import {useNavigation, useRoute} from '@react-navigation/native';
-import {useState} from 'react';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useState } from 'react';
 import api from '../constants/api';
 
 import {
@@ -19,8 +19,9 @@ import {
   useBlurOnFulfill,
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
-import {logError} from '../utils/HelperFunctions';
+import { logError } from '../utils/HelperFunctions';
 import genericStyle from '../assets/styles/styleSheet';
+import { AUTH, AUTHENTICATIONS } from '../services/api.constants';
 
 const CELL_COUNT = 6;
 export default function AccountVerificationScreen() {
@@ -29,7 +30,7 @@ export default function AccountVerificationScreen() {
   const routeParams: any = route.params;
   const [showSpinner, setShowSpinner] = useState(false);
   const [value, setValue] = useState('');
-  const ref = useBlurOnFulfill({value, cellCount: CELL_COUNT});
+  const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue,
@@ -46,57 +47,97 @@ export default function AccountVerificationScreen() {
 
     let verifyRequest = JSON.stringify({
       email: routeParams.email,
-      code: value,
+      verificationToken: value,
     });
 
-    api.verifyAccount(verifyRequest).then(verifyResponse => {
-      if (verifyResponse.success) {
-        let allSkill: any = [];
-        let allGenres: any = [];
-        let allLocations: any = [];
+    // api.verifyAccount(verifyRequest).then(verifyResponse => {
+    //   if (verifyResponse.success) {
+    //     let allSkill: any = [];
+    //     let allGenres: any = [];
+    //     let allLocations: any = [];
 
-        api.getSiteContents('skills,genre,location').then(response => {
-          if (response && response.success) {
-            allSkill = response['meta'].result.filter(
-              (item: any) => item.contentType === 'skills',
-            );
-            allGenres = response['meta'].result.filter(
-              (item: any) => item.contentType === 'genre',
-            );
-            allLocations = response['meta'].result.filter(
-              (item: any) => item.contentType === 'location',
-            );
+    //     api.getSiteContents('skills,genre,location').then(response => {
+    //       if (response && response.success) {
+    //         allSkill = response['meta'].result.filter(
+    //           (item: any) => item.contentType === 'skills',
+    //         );
+    //         allGenres = response['meta'].result.filter(
+    //           (item: any) => item.contentType === 'genre',
+    //         );
+    //         allLocations = response['meta'].result.filter(
+    //           (item: any) => item.contentType === 'location',
+    //         );
 
-            navigation.navigate('ProfileSetup', {
-              email: verifyResponse.email,
-              allSkills: allSkill,
-              allGenres: allGenres,
-              allLocations: allLocations,
+    //         navigation.navigate('ProfileSetup', {
+    //           email: verifyResponse.email,
+    //           allSkills: allSkill,
+    //           allGenres: allGenres,
+    //           allLocations: allLocations,
+    //           skills: [],
+    //           genres: [],
+    //           locations: [],
+    //         });
+    //       } else {
+    //         let description = 'error occurred while fetching skills';
+    //         let error = response.message
+    //           ? Error(response.message)
+    //           : Error("Couldn't fetch skills");
+    //         logError(description, error, 'ProfileScreen');
+    //       }
+    //     });
+    //     setShowSpinner(false);
+    //   } else {
+    //     let messageText = '';
+    //     if (verifyResponse.message) {
+    //       messageText = verifyResponse.message;
+    //     } else if (verifyResponse.errors && verifyResponse.errors.message) {
+    //       messageText = verifyResponse.errors.message;
+    //     }
+    //     Alert.alert('Alert', messageText);
+    //     setShowSpinner(false);
+    //     return;
+    //   }
+    // });
+    try {
+      let requestObj = {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: verifyRequest
+      }
+      fetch(AUTHENTICATIONS.API_URL + AUTH.VERIFY, requestObj)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          console.log(responseJson)
+          if (responseJson.isActive) {
+            setShowSpinner(false);
+            Alert.alert('Alert', responseJson.message);
+            navigation.navigate("ProfileSetup", {
+              email: responseJson.email,
+              allSkills: [],
+              allGenres: [],
+              allLocations: [],
               skills: [],
               genres: [],
               locations: [],
             });
-          } else {
-            let description = 'error occurred while fetching skills';
-            let error = response.message
-              ? Error(response.message)
-              : Error("Couldn't fetch skills");
-            logError(description, error, 'ProfileScreen');
+
           }
-        });
-        setShowSpinner(false);
-      } else {
-        let messageText = '';
-        if (verifyResponse.message) {
-          messageText = verifyResponse.message;
-        } else if (verifyResponse.errors && verifyResponse.errors.message) {
-          messageText = verifyResponse.errors.message;
-        }
-        Alert.alert('Alert', messageText);
-        setShowSpinner(false);
-        return;
-      }
-    });
+        })
+        .catch((err: any) => {
+          console.log(err)
+          console.log(err.response)
+          Alert.alert('Alert', "Registration Failed. Try Again!");
+          setShowSpinner(false);
+        })
+    }
+    catch (exception) {
+      console.log('exception ', exception)
+      Alert.alert('Alert', "Registration Failed. Try Again!");
+      setShowSpinner(false);
+    }
   };
 
   function handleBack() {
@@ -104,6 +145,7 @@ export default function AccountVerificationScreen() {
   }
 
   React.useEffect(() => {
+    console.log(routeParams.email)
     const backAction = () => {
       navigation.navigate('Login');
       return true;
@@ -130,7 +172,7 @@ export default function AccountVerificationScreen() {
             rootStyle={styles.codeFieldRoot}
             keyboardType="number-pad"
             textContentType="oneTimeCode"
-            renderCell={({index, symbol, isFocused}) => (
+            renderCell={({ index, symbol, isFocused }) => (
               <Text
                 key={index}
                 style={[styles.cell, isFocused && styles.focusCell]}
@@ -141,7 +183,7 @@ export default function AccountVerificationScreen() {
           />
           <TouchableOpacity
             onPress={onPressVerifyBtn}
-            style={[genericStyle.loginBtn, {marginTop: 55}]}>
+            style={[genericStyle.loginBtn, { marginTop: 55 }]}>
             <Text style={genericStyle.loginBtnText}>VERIFY</Text>
           </TouchableOpacity>
 
@@ -257,7 +299,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     fontFamily: 'System',
   },
-  codeFieldRoot: {marginTop: 20},
+  codeFieldRoot: { marginTop: 20 },
   cell: {
     width: 43,
     height: 43,

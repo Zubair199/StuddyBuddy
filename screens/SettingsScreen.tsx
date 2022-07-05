@@ -31,6 +31,10 @@ export default function SettingsScreen() {
         'email',
         "",
       );
+      await AsyncStorage.setItem(
+        'rememberMe',
+        null,
+      );
       setUserName('');
       setUserEmail('');
       setUserToken('');
