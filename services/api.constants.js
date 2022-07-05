@@ -1,11 +1,9 @@
 module.exports = {
 
     AUTHENTICATIONS: {
-        API_URL: "http://192.168.100.26:5000",
-        CHAT_SERVER_URL: 'http://192.168.100.26:5000',
+        API_URL: "http://192.168.43.122:5000",
+        CHAT_SERVER_URL: 'http://192.168.43.122:5000',
     },
-    API_URL: "http://192.168.43.122:5000",
-    // API_URL: "http://192.168.117.123:5000"
 
     NOTIFICATION: {
         GETNOTIFICATION: "/notifications?limit=50",

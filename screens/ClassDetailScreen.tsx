@@ -46,7 +46,7 @@ export default function ClassDetailScreen({ route }) {
         console.log(err)
       })
     if (userType.toLowerCase() === "user") {
-     studentApiCall();
+      studentApiCall();
     }
     else {
       teacherApiCall()
@@ -232,24 +232,20 @@ export default function ClassDetailScreen({ route }) {
 
   function groupChat() {
     console.log(studentIds, teacherId)
-    const grUsers= studentIds.concat(teacherId)
-    console.log(grUsers,classID)
-    
-      const requestData = {classId:classID ,groupUsers:grUsers,flag:true };
+    const grUsers = studentIds.concat(teacherId)
+    console.log(grUsers, classID)
 
-      api.createNewMessage(requestData).then((resp) => {
-       
-        if (resp) {
-          const newChatInfo = resp.data;
-          if (newChatInfo && newChatInfo.data.chatId) {
-            
-            
-               navigation.navigate("ChatScreenG", { chatId: newChatInfo.data.chatId, textMes: "" });
-          }
-          
+    const requestData = { classId: classID, groupUsers: grUsers, flag: true };
+
+    api.createNewMessage(requestData).then((resp) => {
+      if (resp) {
+        const newChatInfo = resp.data;
+        if (newChatInfo && newChatInfo.data.chatId) {
+          navigation.navigate("ChatScreenG", { chatId: newChatInfo.data.chatId, textMes: "", classID: classID });
         }
-      }).catch(e=>{console.log(e)});
-  
+      }
+    }).catch(e => { console.log(e) });
+
   }
 
   function component() {
