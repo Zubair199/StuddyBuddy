@@ -9,7 +9,7 @@ import { AUTH, AUTHENTICATIONS } from '../services/api.constants';
 import { AuthContext } from '../utils/AuthContext';
 import MainLayout from './MainLayout';
 import Icon from 'react-native-vector-icons/AntDesign';
-
+import api from "../services/api.services";
 export default function NetworkScreen() {
     const { userToken, userType } = React.useContext(AuthContext);
 
@@ -60,7 +60,7 @@ export default function NetworkScreen() {
     });
 
     React.useEffect(() => {
-        console.log("NetworkScreen", userType)
+        //console.log("NetworkScreen", userType)
         apiCall()
 
     }, [isFocused])
@@ -68,7 +68,7 @@ export default function NetworkScreen() {
         fetch(AUTHENTICATIONS.API_URL + AUTH.USERS)
             .then((response) => response.json())
             .then((responseJson) => {
-                console.log('users ', responseJson.data)
+                //console.log('users ', responseJson.data)
                 setUsers(responseJson.data.filter(item => item._id !== user))
                 setUserProfiles(responseJson.profiles)
             })
@@ -76,6 +76,45 @@ export default function NetworkScreen() {
                 console.log(err)
             })
     }
+    function handleChat(classId,group) {
+        console.log(group)
+        // if(group === true){
+        //     const requestData = {classId:"62ba40cc2c9acbf79d1b1326" ,flag:group,groupUsers:["62bb70317d78ecbb83bcb7d1","6295cc2b7d505307388d58fd","62a1af738c535a276ca3c3ef"] };
+      
+        //     api.createNewMessage(requestData).then((resp) => {
+             
+        //       if (resp) {
+        //         const newChatInfo = resp.data;
+        //         if (newChatInfo && newChatInfo.data.chatId) {
+                  
+                  
+        //              navigation.navigate("ChatScreen", { chatId: newChatInfo.data.chatId, textMes: "",classId });
+        //         }
+                
+        //       }
+        //     }).catch(e=>{console.log(e)});
+        // }
+        // else{
+           console.log("here in one to one")
+            const requestData = { toUser: classId };
+            console.log(classId)
+            api.createNewMessage(requestData).then((resp) => {
+                console.log("hit ")
+              if (resp) {
+                const newChatInfo = resp.data;
+                if (newChatInfo && newChatInfo.data.chatId) {
+                    console.log("bro here in chat")
+                    navigation.navigate("ChatScreen", { chatId: newChatInfo.data.chatId, textMes: "" });
+                }
+                
+              }
+            }).catch(e=>{console.log(e)});
+        // }
+      
+       
+
+    }
+      
     const [isModal, setIsModal] = React.useState(false)
     function toggleModal() {
         console.log("modal")
@@ -83,7 +122,7 @@ export default function NetworkScreen() {
     }
     function getProfileData(id) {
         let result = userProfiles.filter(item => item.User === id)
-        console.log(result);
+        // console.log(result);
         if (result.length > 0) {
             setProfile(result[0])
             setSkills(result[0].skills)
@@ -227,8 +266,9 @@ export default function NetworkScreen() {
                 <ScrollView >
                     {
                         users.map((item, index) => {
+                            // console.log(item)
                             return (
-                                <TouchableOpacity onPress={() => { toggleModal(); getProfileData(item._id) }}>
+                                <TouchableOpacity key={index} onPress={() => { toggleModal(); getProfileData(item._id) }}>
                                     <View style={{ padding: 15, flexDirection: "row", justifyContent: "space-between" }}>
                                         <View>
                                             <View>
@@ -239,7 +279,8 @@ export default function NetworkScreen() {
                                             </View>
                                         </View>
                                         <View>
-                                            <TouchableOpacity onPress={() => { }}>
+                                            {/* <TouchableOpacity onPress={() => {handleChat(item._id,)}}> */}
+                                            <TouchableOpacity onPress={() => {handleChat(item._id,false)}}>
                                                 <Icon name="message1" size={25} />
                                             </TouchableOpacity>
                                         </View>

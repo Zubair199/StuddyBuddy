@@ -11,7 +11,7 @@ import RadioGroup from 'react-native-radio-buttons-group';
 import { Select, Input, TextArea, IconButton } from "native-base";
 import Icon from 'react-native-vector-icons/AntDesign';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-
+import {Calendar} from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 
@@ -531,19 +531,16 @@ export default function AddClassScreen() {
             </View>
             <View>
               <View style={{ flexDirection: "row", justifyContent: "space-evenly", marginTop: 10 }}>
-                {
-                  dayNames.map((item, index) => {
-                    return (
-                      <View style={styles.box}>
-                        <Text style={{ fontWeight: '400' }}>{item.slice(0, 3)}</Text>
-                      </View>
-                    )
-                  })
-                }
+              <Calendar
+                  markedDates={{
+                    '2022-07-16': {selected: true, marked: true, selectedColor: 'blue'},
+                    '2022-07-17': {marked: true},
+                    '2022-07-18': {marked: true, dotColor: 'red', activeOpacity: 0},
+                    '2022-07-19': {disabled: true, disableTouchEvent: true}
+                  }}
+                />
 
               </View>
-              {/* Add Calender here */}
-              {getMonthDates()}
             </View>
           </View>
         </ProgressStep>

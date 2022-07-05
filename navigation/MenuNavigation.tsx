@@ -4,6 +4,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SettingsScreen from '../screens/SettingsScreen';
 import PaymentsScreen from '../screens/PaymentsScreen';
+import ChatScreen from '../screens/ChatScreen';
+import ChatScreenG from '../screens/ChatScreenG';
 import MessagesScreen from '../screens/MessagesScreen';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import HomeScreen from '../screens/HomeScreen';
@@ -291,6 +293,7 @@ const HomeStackScreen = ({ navigation, route }: any) => {
         options={mainHeader}
         component={HomeScreen}
       />
+     
       <HomeStack.Screen
         name="NetworkScreen"
         options={mainHeader}
@@ -391,6 +394,16 @@ const HomeStackScreen = ({ navigation, route }: any) => {
         options={mainHeader}
         component={MessagesScreen}
       />
+       <HomeStack.Screen
+        name="ChatScreen"
+        options={mainHeader}
+        component={ChatScreen}
+      />
+       <HomeStack.Screen
+        name="ChatScreenG"
+        options={mainHeader}
+        component={ChatScreenG}
+      />
       <HomeStack.Screen
         name="Settings"
         options={mainHeader}
@@ -413,8 +426,10 @@ const PaymentStackScreen = () => (
     />
   </PaymentStack.Navigator>
 );
-const MessagesStackScreen = () => (
-  <MessagesStack.Navigator screenOptions={{}}>
+const MessagesStackScreen = () => {
+  const mainHeader = { headerShown: false }
+  return(
+  <MessagesStack.Navigator screenOptions={{headerShown: false}}>
     <MessagesStack.Screen
       name="Messages"
       options={mainHeader}
@@ -422,6 +437,7 @@ const MessagesStackScreen = () => (
     />
   </MessagesStack.Navigator>
 )
+  }
 const SettingsStackScreen = () => (
   <SettingsStack.Navigator screenOptions={{}}>
     <SettingsStack.Screen

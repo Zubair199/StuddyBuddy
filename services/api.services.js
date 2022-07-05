@@ -1,7 +1,8 @@
 import axios from "axios";
-import { AUTHENTICATIONS, AUTH, USER, CLASS, EXAM, ASSIGNMENT} from "./api.constants";
+import { AUTHENTICATIONS, AUTH, USER, CLASS, EXAM, ASSIGNMENT, CHAT, NOTIFICATION } from "./api.constants";
 
 export default {
+
 
 	// AUTH
 	// 	Login : function(values){
@@ -24,31 +25,69 @@ export default {
 	// 		return axios.put(`${AUTHENTICATIONS.API_URL}${USER.UPDATE_PASS}`+ value, values, { headers: services.authHeader() })
 	// 	},
 
+
+	//Notification
+	getNotifications: function () {
+		return axios.get(`${AUTHENTICATIONS.API_URL}${NOTIFICATION.GETNOTIFICATION}`)
+	},
+	readNotification: function (requestData) {
+		return axios.post(`${AUTHENTICATIONS.API_URL}${NOTIFICATION.READNOTIFICATION}` + requestData)
+	},
+	// Chat 
+	getUnreadCounts: function () {
+		return axios.get(`${AUTHENTICATIONS.API_URL}${CHAT.UNREADCOUNTS}`)
+	},
+	initiateChat: function (requestData) {
+		return axios.post(`${AUTHENTICATIONS.API_URL}${CHAT.OPENCHAT}`, requestData)
+	},
+	verifyBlocked: function (requestData) {
+		return axios.post(`${AUTHENTICATIONS.API_URL}${CHAT.VERIFYBLOCKED}`, requestData)
+	},
+	blockChats: function (requestData) {
+		return axios.post(`${AUTHENTICATIONS.API_URL}${CHAT.BLOCK}`, requestData)
+	},
+	getProfile: function (requestData) {
+		return axios.get(`${AUTHENTICATIONS.API_URL}${AUTH.SELF}`)
+	},
+	createNewMessage: function (requestData) {
+
+		return axios.post(`${AUTHENTICATIONS.API_URL}${CHAT.NEWCHAT}`, requestData)
+	},
+	getAllMessages: function () {
+		return axios.get(`${AUTHENTICATIONS.API_URL}${CHAT.MESSAGES}`)
+	},
+	getGroupMessages: function () {
+		return axios.get(`${AUTHENTICATIONS.API_URL}${CHAT.GROUP}`)
+	},
+
+	//CLASS
+
+
 	//  PROFILE
-		createClass : function(values,token){
-			return axios.post(`${AUTHENTICATIONS.API_URL}${CLASS.CREATE}`, values)
-		},
-		createExam : function(values,token){
-			return axios.post(`${AUTHENTICATIONS.API_URL}${EXAM.CREATE}`, values)
-		},
-		createAssignment : function(values,token){
-			return axios.post(`${AUTHENTICATIONS.API_URL}${ASSIGNMENT.CREATE}`, values)
-		},
-		// updateDp : function(values, value){
-		// 	return axios.post(`${AUTHENTICATIONS.API_URL}${PROFILE.UPDATE_DP}`,values, { headers: services.authHeader() })
-		// },
-		// updateProfile : function(values, id){
-		// 	return axios.put(`${AUTHENTICATIONS.API_URL}${PROFILE.UPDATE_PROFILE}` + id ,values , { headers: services.authHeader() })
-		// },
-		// getUserProfile : function(value,token){
-		// 	return axios.get(`${AUTHENTICATIONS.API_URL}${PROFILE.PROFILE_USER_ID}`+ value + '/profile/'+ Math.random().toString(36).substring(7), { headers: services.authHeader() })
-		// },
-		// updateStatus : function(values, value, token){
-		// 	return axios.put(`${AUTHENTICATIONS.API_URL}${PROFILE.UPDATE_STATUS}`+ value, values, { headers: services.authHeader() })
-		// },
-		// getChat : function(value){
-		// 	return axios.get(`${AUTHENTICATIONS.API_URL}${PROFILE.CHAT}`+ value, { headers: services.authHeader() })
-		// },
+	createClass: function (values, token) {
+		return axios.post(`${AUTHENTICATIONS.API_URL}${CLASS.CREATE}`, values)
+	},
+	createExam: function (values, token) {
+		return axios.post(`${AUTHENTICATIONS.API_URL}${EXAM.CREATE}`, values)
+	},
+	createAssignment: function (values, token) {
+		return axios.post(`${AUTHENTICATIONS.API_URL}${ASSIGNMENT.CREATE}`, values)
+	},
+	// updateDp : function(values, value){
+	// 	return axios.post(`${AUTHENTICATIONS.API_URL}${PROFILE.UPDATE_DP}`,values, { headers: services.authHeader() })
+	// },
+	// updateProfile : function(values, id){
+	// 	return axios.put(`${AUTHENTICATIONS.API_URL}${PROFILE.UPDATE_PROFILE}` + id ,values , { headers: services.authHeader() })
+	// },
+	// getUserProfile : function(value,token){
+	// 	return axios.get(`${AUTHENTICATIONS.API_URL}${PROFILE.PROFILE_USER_ID}`+ value + '/profile/'+ Math.random().toString(36).substring(7), { headers: services.authHeader() })
+	// },
+	// updateStatus : function(values, value, token){
+	// 	return axios.put(`${AUTHENTICATIONS.API_URL}${PROFILE.UPDATE_STATUS}`+ value, values, { headers: services.authHeader() })
+	// },
+	// getChat : function(value){
+	// 	return axios.get(`${AUTHENTICATIONS.API_URL}${PROFILE.CHAT}`+ value, { headers: services.authHeader() })
+	// },
 
 	// //  Product routes
 	// 	createProduct : function(values){

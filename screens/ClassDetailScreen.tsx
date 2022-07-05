@@ -9,7 +9,7 @@ import MainLayout from './MainLayout';
 import { AuthContext } from '../utils/AuthContext';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { Select, Input, TextArea, IconButton } from "native-base";
-
+import api from "../services/api.services";
 export default function ClassDetailScreen({ route }) {
   const { classID } = route.params
   const navigation = useNavigation();
@@ -46,7 +46,7 @@ export default function ClassDetailScreen({ route }) {
         console.log(err)
       })
     if (userType.toLowerCase() === "user") {
-      studentApiCall();
+     studentApiCall();
     }
     else {
       teacherApiCall()
@@ -232,6 +232,24 @@ export default function ClassDetailScreen({ route }) {
 
   function groupChat() {
     console.log(studentIds, teacherId)
+    const grUsers= studentIds.concat(teacherId)
+    console.log(grUsers,classID)
+    
+      const requestData = {classId:classID ,groupUsers:grUsers,flag:true };
+
+      api.createNewMessage(requestData).then((resp) => {
+       
+        if (resp) {
+          const newChatInfo = resp.data;
+          if (newChatInfo && newChatInfo.data.chatId) {
+            
+            
+               navigation.navigate("ChatScreenG", { chatId: newChatInfo.data.chatId, textMes: "" });
+          }
+          
+        }
+      }).catch(e=>{console.log(e)});
+  
   }
 
   function component() {
