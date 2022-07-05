@@ -166,7 +166,7 @@ export default function LoginScreen() {
                 setPassword("")
                 if (rememberMe) {
                   (async () => {
-                    await AsyncStorage.setItem('rememberMe', rememberMe);
+                    await AsyncStorage.setItem('rememberMe', "yes");
                     await AsyncStorage.setItem('userId', responseJson.user._id);
                     await AsyncStorage.setItem('password', password);
                     await AsyncStorage.setItem(
