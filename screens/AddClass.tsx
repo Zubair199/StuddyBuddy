@@ -11,7 +11,7 @@ import RadioGroup from 'react-native-radio-buttons-group';
 import { Select, Input, TextArea, IconButton } from "native-base";
 import Icon from 'react-native-vector-icons/AntDesign';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import {Calendar} from 'react-native-calendars';
+import { Calendar } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 
@@ -79,7 +79,11 @@ export default function AddClassScreen() {
   let [step1Errors, setStep1Errors] = React.useState(false)
   let [step2Errors, setStep2Errors] = React.useState(false)
 
+  let [minDate, setMinDate] = React.useState("")
+  let [maxDate, setMaxDate] = React.useState("")
+  const [markedDates, setMarkedDates] = React.useState(null)
   React.useEffect(() => {
+    setMinDate(formatDate(new Date()))
     createCalendar(date.getFullYear(), currentMonth);
     fetch(AUTHENTICATIONS.API_URL + CLASS.SUBJECTS)
       .then((response) => response.json())
@@ -212,6 +216,20 @@ export default function AddClassScreen() {
     setMaxStudents("")
   }
 
+  function formatDateWithCounter(date, i) {
+    var d = new Date(date),
+      month = '' + (d.getMonth() + 1 + parseInt(i)),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+
+    if (month.length < 2)
+      month = '0' + month;
+    if (day.length < 2)
+      day = '0' + day;
+
+    console.log([year, month, day].join('-'))
+    return [year, month, day].join('-');
+  }
   function formatDate(date) {
     var d = new Date(date),
       month = '' + (d.getMonth() + 1),
@@ -242,6 +260,21 @@ export default function AddClassScreen() {
       const scheduleObj = {
         startdate: startdate,
         enddate: enddate,
+      }
+      let d = formatDate(startdate)
+      if (markedDates !== null) {
+        let marked = {
+          [d]: { selected: true, marked: true, selectedColor: 'blue' },
+        }
+        Object.assign(marked, markedDates);
+        console.log(marked)
+        setMarkedDates(marked)
+      }
+      else {
+        let marked = {
+          [d]: { selected: true, marked: true, selectedColor: 'blue' },
+        }
+        setMarkedDates(marked)
       }
       let _schedule = schedule;
       _schedule.push(scheduleObj)
@@ -319,7 +352,12 @@ export default function AddClassScreen() {
     }
   }
   function deleteSchedule(item) {
-    console.log(item)
+    let key = formatDate(new Date(item.startdate))
+    console.log(key)
+    let marked = markedDates
+    delete marked[key.toString()];
+    setMarkedDates(marked);
+    setSchedule(schedule.filter(x => x !== item))
   }
   return (
     <View style={{ backgroundColor: "white", flex: 1 }}>
@@ -445,13 +483,10 @@ export default function AddClassScreen() {
         <ProgressStep label="Class Information" onNext={() => step1()} errors={step1Errors}>
           <View >
             <ScrollView style={{ padding: 15 }}>
-
               <View style={{ marginVertical: 10 }}>
                 <Input variant="outline" value={name} placeholder="Enter Class Name"
                   onChangeText={(text) => { setName(text) }} />
               </View>
-
-
               <View style={{ marginVertical: 10 }}>
                 <Select accessibilityLabel="Choose Subject" selectedValue={subjectID}
                   placeholder="Choose Subject" onValueChange={itemValue => {
@@ -466,14 +501,8 @@ export default function AddClassScreen() {
                       )
                     })
                   }
-                  {/* <Select.Item label="Web Development" value="web" />
-                  <Select.Item label="Cross Platform Development" value="cross" />
-                  <Select.Item label="UI Designing" value="ui" />
-                  <Select.Item label="Backend Development" value="backend" /> */}
                 </Select>
-
               </View>
-
               <View style={{ marginVertical: 10 }}>
                 <Select accessibilityLabel="Choose Level" selectedValue={level} placeholder="Choose Level"
                   onValueChange={itemValue => setLevel(itemValue)}
@@ -483,9 +512,14 @@ export default function AddClassScreen() {
                   <Select.Item label="Advanced" value="Advanced" />
                 </Select>
               </View>
-
               <View style={{ marginVertical: 10 }}>
-                <Select accessibilityLabel="Choose Class Duration" selectedValue={classDuration} placeholder="Choose Class Duration" onValueChange={itemValue => setClassDuration(itemValue)}>
+                <Select accessibilityLabel="Choose Class Duration" selectedValue={classDuration}
+                  placeholder="Choose Class Duration"
+                  onValueChange={itemValue => {
+                    setClassDuration(itemValue);
+                    setMaxDate(formatDateWithCounter(new Date(), itemValue));
+                  }}
+                >
                   <Select.Item label="1 month" value="1" />
                   <Select.Item label="2 month" value="2" />
                   <Select.Item label="3 month" value="3" />
@@ -494,7 +528,6 @@ export default function AddClassScreen() {
                   <Select.Item label="6 month" value="6" />
                 </Select>
               </View>
-
               <View style={{ marginVertical: 10 }}>
                 <Select accessibilityLabel="Choose Delivery Language" selectedValue={language} placeholder="Choose Delivery Language"
                   onValueChange={itemValue => setLanguage(itemValue)}>
@@ -506,7 +539,7 @@ export default function AddClassScreen() {
                   onChangeText={(text) => { setPrice(text) }} />
               </View>
               <View style={{ marginVertical: 10 }}>
-                <Input variant="outline" placeholder="Max. Students"
+                <Input variant="outline" placeholder="Max. Students" defaultValue={maxStudents}
                   onChangeText={(text) => { setMaxStudents(text) }} />
               </View>
 
@@ -516,7 +549,22 @@ export default function AddClassScreen() {
         <ProgressStep label="Add Schedule" //</ProgressSteps>onNext={() => step2()} errors={step2Errors}
         >
           <View >
-            <View style={{ flexDirection: "row", justifyContent: "space-between", padding: 15 }}>
+            <Calendar
+              onDayPress={
+                (dateData) => {
+                  console.log(dateData);
+                  _setStartdate(new Date(dateData.dateString))
+                  _setEnddate(new Date(dateData.dateString))
+                  setStartdate(new Date(dateData.dateString).toString())
+                  toggleModal()
+                }
+              }
+              minDate={minDate}
+              maxDate={maxDate}
+              markedDates={markedDates}
+            />
+
+            {/* <View style={{ flexDirection: "row", justifyContent: "space-between", padding: 15 }}>
               <View>
                 <Text style={{ fontSize: 20 }}>{monthNames[currentMonth - 1]}</Text>
               </View>
@@ -531,17 +579,22 @@ export default function AddClassScreen() {
             </View>
             <View>
               <View style={{ flexDirection: "row", justifyContent: "space-evenly", marginTop: 10 }}>
-              <Calendar
-                  markedDates={{
-                    '2022-07-16': {selected: true, marked: true, selectedColor: 'blue'},
-                    '2022-07-17': {marked: true},
-                    '2022-07-18': {marked: true, dotColor: 'red', activeOpacity: 0},
-                    '2022-07-19': {disabled: true, disableTouchEvent: true}
-                  }}
+                <Calendar
+                  onDayPress={
+                    (dateData) => {
+                      console.log(dateData);
+                      _setStartdate(new Date(dateData.dateString))
+                      _setEnddate(new Date(dateData.dateString))
+                      setStartdate(new Date(dateData.dateString).toString())
+                      toggleModal()
+                    }
+                  }
+                  minDate={minDate}
+                  maxDate={maxDate}
+                  markedDates={markedDates}
                 />
-
               </View>
-            </View>
+            </View> */}
           </View>
         </ProgressStep>
         <ProgressStep label="Review Class & Schedule" onSubmit={() => addClass()}>

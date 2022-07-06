@@ -34,7 +34,7 @@ export default function ClassesTab() {
         }
     }, [])
     function teacherApiCall() {
-        fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES_BY_TEACHER_ID + user)
+        fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_CLASSES_BY_TEACHER_ID + user)
             .then((response) => response.json())
             .then((responseJson) => {
                 // console.log('classes ', responseJson.classes)
