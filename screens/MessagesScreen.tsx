@@ -1,37 +1,60 @@
-
 import * as React from 'react';
-import { StyleSheet, ScrollView, Image, TouchableOpacity, Alert } from 'react-native';
-
-import { Text, View } from '../components/Themed';
-import { useNavigation, useIsFocused } from '@react-navigation/native';
+import {
+  StyleSheet,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
+const TimSort = require('timsort');
+import {Text, View} from '../components/Themed';
+import LottieView from 'lottie-react-native';
+import {useNavigation, useIsFocused} from '@react-navigation/native';
 import api from '../services/api.services';
 //  import Loader from '../components/loader';
-import moment from "moment-timezone";
-import { storeLocalData, getLocalData, checkNetwork } from "../utils/HelperFunctions";
+import moment from 'moment-timezone';
+import {
+  storeLocalData,
+  getLocalData,
+  checkNetwork,
+} from '../utils/HelperFunctions';
 import MainLayout from './MainLayout';
-import { Divider } from 'native-base';
+import {Divider} from 'native-base';
 
 export default function MessagesScreen() {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
   const [messagesList, setMessagesList] = React.useState<any>();
   const [loader, setLoader] = React.useState(false);
-  const isFocused = useIsFocused()
+  const isFocused = useIsFocused();
 
   function onClose() {
-    navigation.navigate("HomeScreen");
+    navigation.navigate('HomeScreen');
   }
 
-  async function openChat(chatId: string, isEnabledChat: boolean, isBanned: boolean) {
-    let unreadCount = parseInt(await getLocalData("@unread_message_count"));
+  async function openChat(
+    chatId: string,
+    isEnabledChat: boolean,
+    isBanned: boolean,
+    group: Boolean,
+  ) {
+    let unreadCount = parseInt(await getLocalData('@unread_message_count'));
     if (unreadCount > 0) {
       unreadCount = unreadCount - 1;
     }
-    await storeLocalData('@unread_message_count', "" + unreadCount);
-    navigation.navigate("ChatScreenG", {
-      chatId: chatId,
-      isEnabledChat: isEnabledChat,
-      isBanned: isBanned,
-    });
+    await storeLocalData('@unread_message_count', '' + unreadCount);
+    if (group) {
+      navigation.navigate('ChatScreenG', {
+        chatId: chatId,
+        isEnabledChat: isEnabledChat,
+        isBanned: isBanned,
+      });
+    } else {
+      navigation.navigate('ChatScreen', {
+        chatId: chatId,
+        isEnabledChat: isEnabledChat,
+        isBanned: isBanned,
+      });
+    }
   }
 
   //  async function networkAsync() {
@@ -44,111 +67,173 @@ export default function MessagesScreen() {
 
   React.useEffect(() => {
     //  networkAsync()
+    setLoader(true);
     let isCancelled = false;
     const fetchMessages = async () => {
       if (!isCancelled) {
         await api
           .getAllMessages()
-          .then(async (resp) => {
+          .then(async resp => {
             if (resp) {
-              await api.getGroupMessages().then(resp1 => {
-                console.log("GROUP MESSAGES");
-                console.log(resp1.data);
-                const mes = resp.data.meta.result.concat(resp1.data)
-                setMessagesList(mes);
-              }).catch(e => {
-                console.log(e)
-              })
+              await api
+                .getGroupMessages()
+                .then(resp1 => {
+                  //console.log(resp.data.meta.result);
+                  const mes = resp.data.meta.result.concat(resp1.data);
+                  console.log('GROUP MESSAGES');
+                  console.log(
+                    moment(mes[0].lastMessageAt).valueOf(),
 
+                    mes[0].message,
+                    moment(mes[1].lastMessageAt).valueOf(),
+
+                    mes[1].message,
+                  );
+                  TimSort.sort(mes, function (a, b) {
+                    return (
+                      moment(b.lastMessageAt).valueOf() -
+                      moment(a.lastMessageAt).valueOf()
+                    );
+                  });
+                  setMessagesList(mes);
+                })
+                .catch(e => {
+                  console.log(e);
+                });
             }
-          }).then(() => setLoader(false));
+          })
+          .then(() => setLoader(false));
 
-        await api
-          .getUnreadCounts()
-          .then(async (resp) => {
-
-            if (resp) {
-              if (resp.data) {
-                if (resp.data.messageCount) {
-                  await storeLocalData('@unread_message_count', "" + resp.data.messageCount);
-                }
-                if (resp.data.notificationCount) {
-                  await storeLocalData('@unread_notification_count', "" + resp.data.notificationCount);
-                }
-              } else {
-                await storeLocalData('@unread_message_count', "0");
-                await storeLocalData('@unread_notification_count', "0");
+        await api.getUnreadCounts().then(async resp => {
+          if (resp) {
+            if (resp.data) {
+              if (resp.data.messageCount) {
+                await storeLocalData(
+                  '@unread_message_count',
+                  '' + resp.data.messageCount,
+                );
               }
+              if (resp.data.notificationCount) {
+                await storeLocalData(
+                  '@unread_notification_count',
+                  '' + resp.data.notificationCount,
+                );
+              }
+            } else {
+              await storeLocalData('@unread_message_count', '0');
+              await storeLocalData('@unread_notification_count', '0');
             }
-          });
+          }
+        });
       }
-    }
+    };
     fetchMessages();
     return () => {
       isCancelled = true;
     };
-
   }, [isFocused]);
 
   function component() {
-
     if (loader || messagesList == undefined) {
-      return <></>;
+      return (
+        <LottieView
+          source={require('../assets/images/Gifs/study.json')}
+          autoPlay
+          loop
+        />
+      );
     }
     return (
       <View style={styles.container}>
-
         <Text style={styles.title}>Messages</Text>
         {messagesList.length === 0 ? (
           <View style={styles.contentBox}>
-            <Text style={styles.emptySearchText}>
-              No Messages Received Yet
-            </Text>
+            <Text style={styles.emptySearchText}>No Messages Received Yet</Text>
           </View>
         ) : (
           <ScrollView style={styles.scrollView}>
             {messagesList.map((message: any, index: number) => {
-              console.log("--------------------------------------------")
-              console.log(message.message)
-              console.log("--------------------------------------------")
+              console.log('--------------------------------------------');
+              console.log(message.message);
+              console.log('--------------------------------------------');
               return (
                 <View key={index}>
-                  <View key={index} style={message.isRead ? styles.messageBoxWrapperRead : styles.messageBoxWrapperNew}>
+                  <View
+                    key={index}
+                    style={
+                      message.isRead
+                        ? styles.messageBoxWrapperRead
+                        : styles.messageBoxWrapperNew
+                    }>
                     {/* condition required when clicked on group chat go to that group chat  */}
-                    <TouchableOpacity onPress={() => openChat(message.chatId, message.isEnabledChat, message.isBanned)} style={styles.messageBox}>
-                      <Image source={require("../assets/images/profile-default.jpg")} style={styles.messageImage} />
+                    <TouchableOpacity
+                      onPress={() =>
+                        openChat(
+                          message.chatId,
+                          message.isEnabledChat,
+                          message.isBanned,
+                          message.isGroupChat,
+                        )
+                      }
+                      style={styles.messageBox}>
+                      <Image
+                        source={require('../assets/images/profile-default.jpg')}
+                        style={styles.messageImage}
+                      />
                       <View style={styles.messageInfo}>
-                        {message.isRead === false && (<Image style={styles.newMessageIcon} source={require('../assets/images/icons/new-message.png')} />)}
-                        <Text style={styles.messageDate}>{moment().diff(message.lastMessageAt, 'hours') < 24 ? moment(message.lastMessageAt).fromNow(true) : (moment().diff(message.lastMessageAt, 'hours') >= 24 && moment().diff(message.lastMessageAt, 'hours') < 48) ? 'YESTERDAY' : moment(message.lastMessageAt).format('MM/DD/YYYY')}</Text>
-                        <Text style={styles.messageName}>{message.isGroupChat ? "Class: " + message.classes[0].name : message.username}</Text>
-                        <Text numberOfLines={5} ellipsizeMode="tail" style={styles.messageDescription}>{message.isGroupChat ? message.username + " : " + message.message : message.message}</Text>
+                        {message.isRead === false && (
+                          <Image
+                            style={styles.newMessageIcon}
+                            source={require('../assets/images/icons/new-message.png')}
+                          />
+                        )}
+                        <Text style={styles.messageDate}>
+                          {moment().diff(message.lastMessageAt, 'hours') < 24
+                            ? moment(message.lastMessageAt).fromNow(true)
+                            : moment().diff(message.lastMessageAt, 'hours') >=
+                                24 &&
+                              moment().diff(message.lastMessageAt, 'hours') < 48
+                            ? 'YESTERDAY'
+                            : moment(message.lastMessageAt).format(
+                                'MM/DD/YYYY',
+                              )}
+                        </Text>
+                        <Text style={styles.messageName}>
+                          {message.isGroupChat
+                            ? 'Class: ' + message.classes[0].name
+                            : message.username}
+                        </Text>
+                        <Text
+                          numberOfLines={5}
+                          ellipsizeMode="tail"
+                          style={styles.messageDescription}>
+                          {message.isGroupChat
+                            ? message.username + ' : ' + message.message
+                            : message.message}
+                        </Text>
                       </View>
                     </TouchableOpacity>
                   </View>
                   <Divider />
                 </View>
-              )
-            }
-
-            )}
+              );
+            })}
           </ScrollView>
         )}
       </View>
     );
   }
-  return (
-    <MainLayout Component={component()} />
-  )
+  return <MainLayout Component={component()} />;
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 20
+    paddingTop: 20,
   },
   closeIconBox: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
     marginRight: 15,
     marginTop: 20,
   },
@@ -161,7 +246,7 @@ const styles = StyleSheet.create({
     fontFamily: 'roboto-light',
     textTransform: 'uppercase',
     // marginTop: 8,
-    textAlign: "center",
+    textAlign: 'center',
   },
   separator: {
     marginVertical: 30,
@@ -169,67 +254,67 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   scrollView: {
-    marginTop: 40
+    marginTop: 40,
   },
   messageBoxWrapperNew: {
-    backgroundColor: "#4B5F79",
+    backgroundColor: '#D3D3D3',
     width: '100%',
   },
   messageBoxWrapperRead: {
     width: '100%',
   },
   messageBox: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: 10,
     backgroundColor: 'transparent',
-    padding: 15
+    padding: 15,
   },
   messageImage: {
-    width: "15%",
+    width: '15%',
     height: 50,
     marginRight: 10,
     borderRadius: 5,
   },
   messageInfo: {
     width: '65%',
-    backgroundColor: 'transparent'
+    backgroundColor: 'transparent',
   },
   messageDate: {
     fontSize: 15,
-    color: "#000000",
-    width: "100%",
+    color: '#000000',
+    width: '100%',
     textTransform: 'uppercase',
   },
   messageName: {
     fontSize: 18,
-    color: "#4B5F79",
-    width: "100%",
+    color: '#4B5F79',
+    width: '100%',
     textTransform: 'uppercase',
   },
   messageDescription: {
     fontSize: 15,
-    color: "#000000",
+    color: '#000000',
     flex: 1,
-    marginEnd: 20
+    marginEnd: 20,
   },
   newMessageIcon: {
     position: 'absolute',
-    top: 5,
+    top: 20,
     right: 10,
     width: 15,
-    height: 15
+    height: 15,
   },
   contentBox: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   emptySearchText: {
     fontSize: 24,
-    fontFamily: "roboto-regular",
-    color: "#949599",
-    textTransform: "uppercase",
-    textAlign: "center",
+    fontFamily: 'roboto-regular',
+    color: '#949599',
+    textTransform: 'uppercase',
+    textAlign: 'center',
   },
 });
