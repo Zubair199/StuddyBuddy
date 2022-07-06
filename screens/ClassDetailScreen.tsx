@@ -293,25 +293,11 @@ export default function ClassDetailScreen({ route }) {
                 </ImageBackground>
                 {/* header ends here */}
 
-                {/* price tags start here */}
-                {/* this will be render if student has not already joined the class */}
-                {
-                  (
-                    userType.toLowerCase() === "user"
-                    &&
-                    !isJoined
-                  )
-                  &&
-                  <View style={styles.joinBox}>
-                    <TouchableOpacity onPress={() => { joinClass(_class) }} style={{ backgroundColor: '#4B5F79', padding: 10, borderRadius: 5, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                      <Text style={{ fontSize: 18, fontWeight: '300', color: "white" }}>Join Class</Text>
-                    </TouchableOpacity>
-                  </View>
-                }
+               
 
                 <View style={styles.joinBox}>
                   <Text style={styles.cost}>
-                    Cost: &#36;{12}
+                    Cost: &#36;{_class.price}
                     {/* Max. Students : {_class.maxStudents} */}
                   </Text>
                 </View>
@@ -461,9 +447,9 @@ export default function ClassDetailScreen({ route }) {
                               <Text>End Date: {" "}{formatDate(item.enddate)}{" "}</Text>
                               <Text>{formatTime(item.enddate)}</Text>
                             </View>
-                            <View>
+                            {/* <View>
                               <Text>Max. Students:{" "} {item.maxStudents}</Text>
-                            </View>
+                            </View> */}
                             <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 15 }}>
                               <Divider orientation="vertical" width={3} />
                               <TouchableOpacity style={{ flexDirection: "row" }} onPress={() => setPropertySubjectText("view", item._id)}>
