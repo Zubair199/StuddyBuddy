@@ -55,73 +55,125 @@ export default function ExamsTab() {
                 console.log(err)
             })
     }
+    if (userType.toLowerCase() === "user") {
+        return (
+            <View style={styles.container}>
+                <View style={{ height: containerHeight }}>
 
-    return (
-        <View style={styles.container}>
-            <View style={{ height: containerHeight }}>
-
-                {!exams || exams.length == 0 ? (
-                    <View style={styles.contentBox}>
-                        <Text style={styles.emptySearchText}>
-                            No Exams Has Been Found
-                        </Text>
-                    </View>
-                ) : (
-                    <ScrollView
-                        style={styles.scrollView}
-                        showsVerticalScrollIndicator={false}
-                    >
-                        <View >
-                            {exams.map((examItem, index) => (
-                                <TouchableOpacity
-                                    style={styles.groupBox}
-                                    key={index}
-                                    onPress={() => {
-                                        navigation.navigate('ExamDetails', { examID: examItem.exam._id })
-                                    }}
-                                >
-                                    <Image source={require("../assets/images/bg.jpg")}
-                                        style={styles.classImg}
-                                    />
-                                    <View style={styles.classInfo}>
-                                        {/* <View style={styles.levelBox}>
-                                            <View
-                                                style={
-                                                    styles.levelIntermediate
-                                                }
-                                            ></View>
-                                            <Text style={styles.levelText}>{examItem.level}</Text>
-                                        </View> */}
-                                        <View
-                                            style={{
-                                                flexWrap: "wrap",
-                                                flexDirection: "row",
-                                                width: "80%",
-                                            }}
-                                        >
-                                            <Text style={styles.className}>{examItem.exam.title}</Text>
-                                        </View>
-                                        <View style={{ flexDirection: "row" }}>
-                                            <Text style={styles.studio}>{examItem.teacher.username}</Text>
-                                        </View>
-                                        <Text style={styles.dayTime}>
-                                            Monday &nbsp;
-                                            12:00 &nbsp;-&nbsp; 14:00
-                                        </Text>
-                                        <Text style={styles.statusMsg}>
-                                            {examItem.status}
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                            ))}
+                    {!exams || exams.length == 0 ? (
+                        <View style={styles.contentBox}>
+                            <Text style={styles.emptySearchText}>
+                                No Exams Has Been Found
+                            </Text>
                         </View>
-                    </ScrollView>
-                )}
-            </View>
+                    ) : (
+                        <ScrollView
+                            style={styles.scrollView}
+                            showsVerticalScrollIndicator={false}
+                        >
+                            <View >
+                                {/* {exams.map((examItem, index) => (
+                                    <TouchableOpacity
+                                        style={styles.groupBox}
+                                        key={index}
+                                        onPress={() => {
+                                            navigation.navigate('ExamDetails', { examID: examItem.exam._id })
+                                        }}
+                                    >
+                                        <Image source={require("../assets/images/bg.jpg")}
+                                            style={styles.classImg}
+                                        />
+                                        <View style={styles.classInfo}>                                        
+                                            <View
+                                                style={{
+                                                    flexWrap: "wrap",
+                                                    flexDirection: "row",
+                                                    width: "80%",
+                                                }}
+                                            >
+                                                <Text style={styles.className}>{examItem.exam.title}</Text>
+                                            </View>
+                                            <View style={{ flexDirection: "row" }}>
+                                                <Text style={styles.studio}>{examItem.teacher.username}</Text>
+                                            </View>
+                                            <Text style={styles.dayTime}>
+                                                Monday &nbsp;
+                                                12:00 &nbsp;-&nbsp; 14:00
+                                            </Text>
+                                            <Text style={styles.statusMsg}>
+                                                {examItem.status}
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                ))} */}
+                            </View>
+                        </ScrollView>
+                    )}
+                </View>
 
 
-        </View >
-    );
+            </View >
+        );
+    }
+    else {
+        return (
+            <View style={styles.container}>
+                <View style={{ height: containerHeight }}>
+
+                    {!exams || exams.length == 0 ? (
+                        <View style={styles.contentBox}>
+                            <Text style={styles.emptySearchText}>
+                                No Exams Has Been Found
+                            </Text>
+                        </View>
+                    ) : (
+                        <ScrollView
+                            style={styles.scrollView}
+                            showsVerticalScrollIndicator={false}
+                        >
+                            <View >
+                                {exams.map((examItem, index) => (
+                                    <TouchableOpacity
+                                        style={styles.groupBox}
+                                        key={index}
+                                        onPress={() => {
+                                            navigation.navigate('ExamDetails', { examID: examItem._id })
+                                        }}
+                                    >
+                                        <Image source={require("../assets/images/bg.jpg")}
+                                            style={styles.classImg}
+                                        />
+                                        <View style={styles.classInfo}>
+                                            <View
+                                                style={{
+                                                    flexWrap: "wrap",
+                                                    flexDirection: "row",
+                                                    width: "80%",
+                                                }}
+                                            >
+                                                <Text style={styles.className}>{examItem.title}</Text>
+                                            </View>
+                                            <View style={{ flexDirection: "row" }}>
+                                                <Text style={styles.studio}>{examItem.teacher.username}</Text>
+                                            </View>
+                                            <Text style={styles.dayTime}>
+                                                Monday &nbsp;
+                                                12:00 &nbsp;-&nbsp; 14:00
+                                            </Text>
+                                            <Text style={styles.statusMsg}>
+                                                {examItem.status}
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        </ScrollView>
+                    )}
+                </View>
+            </View >
+        );
+    }
+
 
 }
 

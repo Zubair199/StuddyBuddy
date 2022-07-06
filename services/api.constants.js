@@ -75,6 +75,7 @@ module.exports = {
     },
     EXAM: {
         CREATE: "/api/exam",
+        CREATE_QUESTIONS: "/api/exam/question",
         GET_ALL_ACTIVE_EXAMS_BY_TEACHER_ID: "/api/exam/teacher/active/",
         GET_ALL_EXAMS_BY_TEACHER_ID: '/api/exam/teacher/',
         GET_EXAM_BY_EXAM_ID: '/api/exam/',
@@ -85,6 +86,7 @@ module.exports = {
     },
     ASSIGNMENT: {
         CREATE: "/api/assignment",
+        CREATE_QUESTIONS: "/api/assignment/question",
 
         GET_ALL_ACTIVE_ASSIGNMENTS_BY_TEACHER_ID: "/api/assignment/teacher/active/",
 

@@ -37,7 +37,7 @@ export default function SearchScreen() {
 
   React.useEffect(() => {
     console.log(user)
-    studentApiCall()
+    // studentApiCall()
   }, [])
 
   function teacherApiCall() {
@@ -106,7 +106,7 @@ export default function SearchScreen() {
               width: '100%', borderWidth: 1,
               borderColor: 'lightgray', borderRadius: 10, height: 40
             }}
-            onChangeText={(text) => { searchClasses(text) }}
+            onChangeText={(text) => { console.log(text) }}
           />
           <TouchableOpacity>
             <Icon name="search1" size={20} style={{ marginLeft: -35 }} />
