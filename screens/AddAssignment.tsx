@@ -1,7 +1,7 @@
 import { useIsFocused } from '@react-navigation/native';
 import moment from 'moment';
 import * as React from 'react';
-import { Alert, SafeAreaView, StyleSheet, Text, View, } from 'react-native';
+import { Alert, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, } from 'react-native';
 import { RadioButton, TextInput } from 'react-native-paper';
 import { Button } from 'react-native-elements';
 import DatePicker from 'react-native-date-picker'
@@ -13,6 +13,7 @@ import { Select, Input, TextArea, IconButton } from "native-base";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 import { ASSIGNMENT, AUTHENTICATIONS, CLASS, EXAM } from '../services/api.constants';
+import { AuthContext } from '../utils/AuthContext';
 
 
 const radioButtonsData = [{
@@ -25,6 +26,7 @@ const radioButtonsData = [{
   value: 'InClass'
 }]
 export default function AddAssignmentScreen() {
+  const { userToken, userType } = React.useContext(AuthContext);
 
   const [value, setValue] = React.useState('first');
   const [date, setDate] = React.useState(new Date())
@@ -41,20 +43,12 @@ export default function AddAssignmentScreen() {
   function openDatePicker1() {
     setOpen1(true)
   }
-
-  // teacher:6295cc2b7d505307388d58fd
-  //   title:test assignment
-  // description:test 12
-  // questioncount:5
-  // subject:english
-  // startdate:31/5/2022
-  // enddate:31/5/2022
-
   let [_startdate, _setStartdate] = React.useState(new Date())
   let [_enddate, _setEnddate] = React.useState(new Date())
 
 
-  let [user, setUser] = React.useState("")
+  let [user, setUser] = React.useState(userToken)
+
   let [_class, setClass] = React.useState('')
   let [title, setTitle] = React.useState('')
   let [description, setDescription] = React.useState('')
@@ -62,6 +56,8 @@ export default function AddAssignmentScreen() {
   let [enddate, setEnddate] = React.useState('')
   let [subject, setSubject] = React.useState('')
   let [questionCount, setQuestionCount] = React.useState('')
+  let [subjectID, setSubjectID] = React.useState("")
+  let [selectedClass, setSelectedClass] = React.useState(null)
 
   let [loader, setLoader] = React.useState(true)
 
@@ -80,7 +76,7 @@ export default function AddAssignmentScreen() {
         title: title,
         startdate: startdate,
         enddate: enddate,
-        subject: subject,
+        subject: subjectID,
         questioncount: questionCount,
         description: description
       }
@@ -95,9 +91,10 @@ export default function AddAssignmentScreen() {
           body: JSON.stringify(body)
         }
         fetch(AUTHENTICATIONS.API_URL + ASSIGNMENT.CREATE, requestObj)
-          .then((response: any) => {
+          .then((response) => response.json())
+          .then((responseJson) => {
             console.log(response)
-            navigation.navigate('AddAssignmentQuestions', { questionCount: questionCount })
+            navigation.navigate('AddAssignmentQuestions', { assignmentID: responseJson.assignmentID })
           })
           .catch((err: any) => {
             console.log(err)
@@ -110,12 +107,11 @@ export default function AddAssignmentScreen() {
     }
   }
   React.useEffect(() => {
-    setUser('6295cc2b7d505307388d58fd')
-    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES_BY_TEACHER_ID + '6295cc2b7d505307388d58fd')
+    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES_BY_TEACHER_ID + user)
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log('classes ', responseJson.data)
-        setClasses(responseJson.data)
+        console.log('classes ', responseJson.classes)
+        setClasses(responseJson.classes)
         setLoader(false)
       })
       .catch(err => {
@@ -134,12 +130,36 @@ export default function AddAssignmentScreen() {
     return (
       <View style={{ backgroundColor: "white", flex: 1 }}>
         <ScrollView style={{ padding: 15, marginBottom: '28%' }}>
-
-          <Text style={styles.title}>Add Assignment</Text>
+          <View style={{ flexDirection: "row" }}>
+            <View style={{ paddingTop: 29, marginRight: 25 }}>
+              <TouchableOpacity
+                onPress={
+                  () => { navigation.navigate('HomeScreen') }
+                }
+              >
+                <Icon name='leftcircleo' size={25} style={{ fontWeight: '600' }} />
+              </TouchableOpacity>
+            </View>
+            <View >
+              <Text style={styles.title}>Add Assignment</Text>
+            </View>
+          </View>
 
           <View style={{ marginVertical: 10 }}>
             <Select accessibilityLabel="Choose Subject" placeholder="Choose Class"
-              onValueChange={itemValue => setClass(itemValue)}>
+              onValueChange={
+                itemValue => {
+                  setClass(itemValue);
+                  let res = classes.filter(item => item._id === itemValue);
+                  console.log(res)
+                  if (res.length > 0) {
+                    setSubjectID(res[0].Subject._id)
+                    setSubject(res[0].Subject.name)
+                    setSelectedClass(res);
+                  }
+                }
+              }
+            >
               {
                 classes.length > 0 &&
                 classes.map((item, index) => {
@@ -157,14 +177,7 @@ export default function AddAssignmentScreen() {
           </View>
 
           <View style={{ marginVertical: 10 }}>
-            <Select accessibilityLabel="Choose Subject" placeholder="Choose Subject" onValueChange={itemValue => setSubject(itemValue)}>
-              <Select.Item label="UX Research" value="ux" />
-              <Select.Item label="Web Development" value="web" />
-              <Select.Item label="Cross Platform Development" value="cross" />
-              <Select.Item label="UI Designing" value="ui" />
-              <Select.Item label="Backend Development" value="backend" />
-            </Select>
-
+            <Input variant="outline" placeholder="Subject" value={subject} />
           </View>
 
           <View style={{ marginVertical: 10 }}>

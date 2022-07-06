@@ -576,8 +576,343 @@ export default function ClassDetailScreen({ route }) {
 
     )
   }
+  function studentComponent() {
+    return (
+      <View style={styles.container}>
+        <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15 }}>
+          <TouchableOpacity style={{ marginTop: 5 }}
+            onPress={() => navigation.goBack()}>
+            <Icon color={'black'} name="leftcircleo" size={25} />
+          </TouchableOpacity>
+          <Text style={styles.title}>Class Details</Text>
+        </View>
+        {
+          (_class !== null && teacher !== null)
+          &&
+          <ScrollView style={{ marginBottom: "5%", padding: 15 }}>
+            <View >
+              {/* header starts here */}
+              <View style={{ marginTop: 10 }}>
+                <ImageBackground
+                  resizeMode='cover'
+                  source={require("../assets/images/bg.jpg")}
+                  style={styles.classBoxImage}
+                  imageStyle={{ borderRadius: 5 }}
+                >
+                  <View style={styles.overlay}>
+                    <View style={styles.levelBox}>
+                      <View style={styles.levelIntermediate}></View>
+                      <Text style={styles.classBoxText}>{_class.level}</Text>
+                    </View>
+                    <Text style={styles.classBoxName}>{_class.name}</Text>
+                    <Text style={styles.classBoxInstructor}>
+                      {teacher.username}
+                    </Text>
+                    {/* <Text style={styles.classBoxDate}>
+                      Tuesday 12:00 - 13:00
+                    </Text> */}
+                    <Text style={styles.classBoxInstructor}>
+                      {_class.Subject.name}
+                    </Text>
+                    <Text style={styles.classBoxInstructor}>
+                      {_class.status}
+                    </Text>
+                  </View>
+                </ImageBackground>
+                {/* header ends here */}
+
+                {/* price tags start here */}
+                {/* this will be render if student has not already joined the class */}
+                {
+                  (
+                    userType.toLowerCase() === "user"
+                    &&
+                    !isJoined
+                  )
+                  &&
+                  <View style={styles.joinBox}>
+                    <TouchableOpacity onPress={() => { joinClass(_class) }} style={{ backgroundColor: '#4B5F79', padding: 10, borderRadius: 5, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                      <Text style={{ fontSize: 18, fontWeight: '300', color: "white" }}>Join Class</Text>
+                    </TouchableOpacity>
+                  </View>
+                }
+
+                <View style={styles.joinBox}>
+                  <Text style={styles.cost}>
+                    Cost: &#36;{12}
+                    {/* Max. Students : {_class.maxStudents} */}
+                  </Text>
+                </View>
+                {
+                  userType.toLowerCase() === "teacher" &&
+                  <View style={styles.joinBox}>
+                    <TouchableOpacity style={{ marginTop: 5 }}
+                      onPress={() => groupChat()}>
+                      <Icon color={'black'} name="message1" size={25} />
+                    </TouchableOpacity>
+                  </View>
+                }
+                {
+                  (
+                    userType.toLowerCase() === "user"
+                    &&
+                    isJoined
+                  )
+                  &&
+                  <View style={styles.joinBox}>
+                    <TouchableOpacity style={{ marginTop: 5 }}
+                      onPress={() => groupChat()}>
+                      <Icon color={'black'} name="message1" size={25} />
+                    </TouchableOpacity>
+                  </View>
+                }
+                {/* price ends here */}
+
+
+                {/* Class Location Starts here */}
+                {/* <View>
+                <Text style={styles.heading}>Class Location</Text>
+                <Text style={styles.text}>CR 4 EE Building</Text>
+              </View> */}
+                {/* Class Location ends here */}
+
+
+                {/* Language section starts here */}
+                <View style={styles.languageBoxLanguage}>
+                  <View style={styles.languageWithIcon}>
+                    <Text style={styles.languageAttributesHeading}>Languages</Text>
+                  </View>
+                  <View style={styles.language}>
+                    <View
+                      style={{ flexDirection: "row" }}
+                    >
+                      <Text style={styles.languageText}>{_class.language}</Text>
+                    </View>
+                  </View>
+                </View>
+
+                <Modal
+                  animationType="slide"
+                  visible={isModal}
+                  onRequestClose={() => {
+                    toggleModal();
+                  }}
+                >
+                  <View style={{ flex: 1, backgroundColor: '#ffffff', padding: 15 }}>
+                    <View style={{ flexDirection: "row-reverse" }}>
+                      <TouchableOpacity
+                        onPress={
+                          () => { toggleModal(); }
+                        }
+                      >
+                        <Icon name='close' size={25} />
+                      </TouchableOpacity>
+                    </View>
+                    <View style={{ flexDirection: 'row', marginVertical: 15, justifyContent: "center" }}>
+                      {
+                        subjectText !== "view" ?
+                          <Text style={styles.title}>Add {subjectText}</Text>
+                          :
+                          <Text style={styles.title}>Details</Text>
+                      }
+                    </View>
+                    <View>
+                      <ScrollView >
+                        {
+                          subjectText !== "view" ?
+                            <View>
+                              <View style={{ marginVertical: 10 }}>
+                                <Input variant="outline" placeholder="Description"
+                                  onChangeText={(text) => { setDescription(text) }} />
+                              </View>
+
+                              <View style={{ marginVertical: 10, marginBottom: 40 }}>
+                                <Button title={"Submit"} onPress={() => { addTA() }} />
+                              </View>
+                            </View>
+                            :
+                            <View>
+                              <View style={styles.languageBoxLanguage}>
+                                <View style={styles.languageWithIcon}>
+                                  <Text style={styles.languageAttributesHeading}>Topics</Text>
+                                </View>
+                                {
+                                  topics.length > 0 &&
+                                  topics.map((item, index) => {
+                                    return (
+                                      <View style={{ marginVertical: 5 }}>
+                                        <Text>{index + 1} {"- "} {item.description}</Text>
+                                      </View>
+                                    )
+                                  })
+                                }
+                              </View>
+
+                              <View style={styles.languageBoxLanguage}>
+                                <View style={styles.languageWithIcon}>
+                                  <Text style={styles.languageAttributesHeading}>Announcements</Text>
+                                </View>
+                                {
+                                  announcements.length > 0 &&
+                                  announcements.map((item, index) => {
+                                    return (
+                                      <View style={{ marginVertical: 5 }}>
+                                        <Text>{index + 1} {"- "} {item.description}</Text>
+                                      </View>
+                                    )
+                                  })
+                                }
+                              </View>
+                            </View>
+                        }
+
+
+
+                      </ScrollView>
+                    </View>
+                  </View>
+                </Modal>
+                <View style={styles.languageBoxLanguage}>
+                  <View style={styles.languageWithIcon}>
+                    <Text style={styles.languageAttributesHeading}>SCHEDULE</Text>
+                  </View>
+                  <View style={{ marginBottom: 25 }}>
+                    {
+                      schedule.map((item, index) => {
+                        return (
+                          <View key={index} style={{ marginVertical: 20 }}>
+                            <View style={{ flexDirection: "row" }}>
+                              <Text>Start Date: {" "}{formatDate(item.startdate)}{" "}</Text>
+                              <Text>{formatTime(item.startdate)}</Text>
+                            </View>
+                            <View style={{ flexDirection: "row" }}>
+                              <Text>End Date: {" "}{formatDate(item.enddate)}{" "}</Text>
+                              <Text>{formatTime(item.enddate)}</Text>
+                            </View>
+                            <View>
+                              <Text>Max. Students:{" "} {item.maxStudents}</Text>
+                            </View>
+                            <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 15 }}>
+                              <Divider orientation="vertical" width={3} />
+                              <TouchableOpacity style={{ flexDirection: "row" }} onPress={() => setPropertySubjectText("view", item._id)}>
+                                <Text >View Details</Text>
+                              </TouchableOpacity>
+                              <Divider orientation="vertical" width={3} />
+                              <TouchableOpacity style={{ flexDirection: "row" }} onPress={() => { setPropertySubjectText("Topic", item._id) }}>
+                                <Text>Add Topic</Text>
+                                {/* <Icon name="plus" size={20} /> */}
+                              </TouchableOpacity>
+                              <Divider orientation="vertical" width={3} />
+                              <TouchableOpacity style={{ flexDirection: "row" }} onPress={() => { setPropertySubjectText("Announement", item._id) }}>
+                                <Text>Add Announcement</Text>
+                                {/* <Icon name="plus" size={20} /> */}
+                              </TouchableOpacity>
+                              <Divider orientation="vertical" width={3} />
+                            </View>
+                            <Divider width={1} />
+
+                          </View>
+                        )
+                      })
+                    }
+                    <View style={{ marginBottom: 20 }} />
+                  </View>
+                </View>
+                {/* Language section ends here */}
+
+                {/* Announcements Starts here */}
+                {/* <Text style={styles.heading}>Announcements</Text>
+              <Text style={styles.text}>class announcements</Text> */}
+                {/* Announcements ends here */}
+
+                {/* Topics & Instructions Starts here */}
+                {/* <Text style={styles.heading}>Topics and Instructions</Text>
+              <Text style={styles.text}>class topics</Text> */}
+                {/* Topics & Instructions ends here */}
+
+                {/* connectivity link for enrolled students Starts here */}
+                {/* <Text style={styles.heading}>Pre Recorded Class Link</Text> */}
+                {/* <Text style={styles.heading}>Class Link</Text>
+
+              <TouchableOpacity
+                onPress={() => Linking.openURL("https://www.google.com/")}
+              >
+                <Text style={styles.text}>connectivityLink</Text>
+              </TouchableOpacity> */}
+                {/* connectivity link for enrolled students ends here */}
+
+                {/* Schedule Starts here */}
+                {/* <Text style={styles.heading}>Schedule</Text>
+              <Text style={styles.text}>
+                Day: Tuesday
+                Time: 12:00 - 13:00
+              </Text> */}
+                {/* Schedule ends here */}
+
+                {/* classes starts here */}
+                {
+        /*classData.documents.length === 0 ? null : (
+        //   <>
+        //     <Text style={styles.heading}>Instructor Uploads</Text>
+        //     <View style={{ height: 180 }}>
+        //       <ScrollView style={styles.scrollView} horizontal={true}>
+        //         {classData.documents.map((upload: any, index: number) => (
+        //           <TouchableOpacity
+        //             key={index}
+        //             style={styles.classBoxWrapper}
+        //             onPress={() => Linking.openURL(upload)}
+        //           >
+        //             <ImageBackground
+        //               source={
+        //                 upload
+        //                   .substring(upload.lastIndexOf(".") + 1)
+        //                   .toLowerCase() == "pdf"
+        //                   ? require("../assets/images/icons/document.png")
+        //                   : { uri: upload }
+        //               }
+        //               style={styles.uploadBoxImage}
+        //             >
+        //               <View style={styles.overlay}>
+        //                 <View style={styles.uploadBox}>
+        //                   <Text style={styles.uploadName}>{upload.name}</Text>
+        //                   <Text style={styles.uploadDate}>Uploaded Today</Text>
+        //                 </View>
+        //               </View>
+        //             </ImageBackground>
+        //           </TouchableOpacity>
+        //         ))}
+        //       </ScrollView>
+        //     </View>
+        //   </>
+        // )
+        */}
+
+                {/* classes ends here */}
+
+                {/* Enrolled Students Starts here */}
+                {/* <Text style={styles.heading}>Students Enrolled</Text>
+              <Text style={styles.text}>{5}</Text> */}
+                {/* Enrolled Students ends here */}
+
+              </View>
+            </View>
+          </ScrollView>
+
+        }
+
+      </View>
+
+    )
+  }
   return (
-    <MainLayout Component={component()} />
+    <>
+      {
+        userType.toLowerCase() === "user" ?
+          <MainLayout Component={studentComponent()} />
+          :
+          <MainLayout Component={component()} />
+      }
+    </>
   )
 }
 

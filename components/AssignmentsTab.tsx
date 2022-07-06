@@ -27,10 +27,10 @@ export default function AssignmentsTab() {
         console.log(user)
         if (userType.toLowerCase() === "user") {
             studentApiCall();
-          }
-          else {
+        }
+        else {
             teacherApiCall()
-          }
+        }
     }, [])
     function teacherApiCall() {
         fetch(AUTHENTICATIONS.API_URL + ASSIGNMENT.GET_ALL_ASSIGNMENTS_BY_TEACHER_ID + user)
@@ -56,72 +56,123 @@ export default function AssignmentsTab() {
             })
     }
 
-    return (
-        <View style={styles.container}>
-            <View style={{ height: containerHeight }}>
+    if (userType.toLowerCase() === "user") {
+        return (
+            <View style={styles.container}>
+                <View style={{ height: containerHeight }}>
 
-                {!assignments || assignments.length == 0 ? (
-                    <View style={styles.contentBox}>
-                        <Text style={styles.emptySearchText}>
-                            No Assignments Has Been Found
-                        </Text>
-                    </View>
-                ) : (
-                    <ScrollView
-                        style={styles.scrollView}
-                        showsVerticalScrollIndicator={false}
-                    >
-                        <View >
-                            {assignments.map((assignmentItem, index) => (
-                                <TouchableOpacity
-                                    style={styles.groupBox}
-                                    key={index}
-                                    onPress={() => {
-                                        navigation.navigate('AssignmentDetails', { assignmentID: assignmentItem.assignment._id })
-                                    }}
-                                >
-                                    <Image source={require("../assets/images/bg.jpg")}
-                                        style={styles.classImg}
-                                    />
-                                    <View style={styles.classInfo}>
-                                        {/* <View style={styles.levelBox}>
-                                            <View
-                                                style={
-                                                    styles.levelIntermediate
-                                                }
-                                            ></View>
-                                            <Text style={styles.levelText}>{assignmentItem.level}</Text>
-                                        </View> */}
-                                        <View
-                                            style={{
-                                                flexWrap: "wrap",
-                                                flexDirection: "row",
-                                                width: "80%",
-                                            }}
-                                        >
-                                            <Text style={styles.className}>{assignmentItem.assignment.title}</Text>
-                                        </View>
-                                        <View style={{ flexDirection: "row" }}>
-                                            <Text style={styles.studio}>{assignmentItem.teacher.username}</Text>
-                                        </View>
-                                        <Text style={styles.dayTime}>
-                                            Monday &nbsp;
-                                            12:00 &nbsp;-&nbsp; 14:00
-                                        </Text>
-                                        <Text style={styles.statusMsg}>
-                                            {assignmentItem.status}
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                            ))}
+                    {!assignments || assignments.length == 0 ? (
+                        <View style={styles.contentBox}>
+                            <Text style={styles.emptySearchText}>
+                                No Assignments Has Been Found
+                            </Text>
                         </View>
-                    </ScrollView>
-                )}
-            </View>
+                    ) : (
+                        <ScrollView
+                            style={styles.scrollView}
+                            showsVerticalScrollIndicator={false}
+                        >
+                            <View >
+                                {assignments.map((assignmentItem, index) => (
+                                    <TouchableOpacity
+                                        style={styles.groupBox}
+                                        key={index}
+                                        onPress={() => {
+                                            navigation.navigate('AssignmentDetails', { assignmentID: assignmentItem.assignment._id })
+                                        }}
+                                    >
+                                        <Image source={require("../assets/images/bg.jpg")}
+                                            style={styles.classImg}
+                                        />
+                                        <View style={styles.classInfo}>
+                                            <View
+                                                style={{
+                                                    flexWrap: "wrap",
+                                                    flexDirection: "row",
+                                                    width: "80%",
+                                                }}
+                                            >
+                                                <Text style={styles.className}>{assignmentItem.assignment.title}</Text>
+                                            </View>
+                                            <View style={{ flexDirection: "row" }}>
+                                                <Text style={styles.studio}>{assignmentItem.teacher.username}</Text>
+                                            </View>
+                                            <Text style={styles.dayTime}>
+                                                Monday &nbsp;
+                                                12:00 &nbsp;-&nbsp; 14:00
+                                            </Text>
+                                            <Text style={styles.statusMsg}>
+                                                {assignmentItem.status}
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        </ScrollView>
+                    )}
+                </View>
+            </View >
+        );
 
+    }
+    else {
+        return (
+            <View style={styles.container}>
+                <View style={{ height: containerHeight }}>
 
-        </View >
-    );
+                    {!assignments || assignments.length == 0 ? (
+                        <View style={styles.contentBox}>
+                            <Text style={styles.emptySearchText}>
+                                No Assignments Has Been Found
+                            </Text>
+                        </View>
+                    ) : (
+                        <ScrollView
+                            style={styles.scrollView}
+                            showsVerticalScrollIndicator={false}
+                        >
+                            <View >
+                                {assignments.map((assignmentItem, index) => (
+                                    <TouchableOpacity
+                                        style={styles.groupBox}
+                                        key={index}
+                                        onPress={() => {
+                                            navigation.navigate('AssignmentDetails', { assignmentID: assignmentItem._id })
+                                        }}
+                                    >
+                                        <Image source={require("../assets/images/bg.jpg")}
+                                            style={styles.classImg}
+                                        />
+                                        <View style={styles.classInfo}>
+                                            <View
+                                                style={{
+                                                    flexWrap: "wrap",
+                                                    flexDirection: "row",
+                                                    width: "80%",
+                                                }}
+                                            >
+                                                <Text style={styles.className}>{assignmentItem.title}</Text>
+                                            </View>
+                                            <View style={{ flexDirection: "row" }}>
+                                                <Text style={styles.studio}>{assignmentItem.teacher.username}</Text>
+                                            </View>
+                                            <Text style={styles.dayTime}>
+                                                Monday &nbsp;
+                                                12:00 &nbsp;-&nbsp; 14:00
+                                            </Text>
+                                            <Text style={styles.statusMsg}>
+                                                {assignmentItem.status}
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        </ScrollView>
+                    )}
+                </View>
+            </View >
+        );
+    }
 
 }
 
