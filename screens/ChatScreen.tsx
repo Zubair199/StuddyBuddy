@@ -173,6 +173,8 @@ export default function ChatScreen() {
   const onSend = React.useCallback((messages = [], blockerI, blocksI) => {
     // networkAsync();
     console.log(messages[0]);
+    console.log('sending chat info ');
+
     console.log('tracler paksdpaksdpkapsdkpaksdkaskkkkkkkkkkkkkkkkkkkkkkkkkkk');
     const currentMessage = messages[0];
     console.log(blockerI + 'blocker');
@@ -338,8 +340,13 @@ export default function ChatScreen() {
   }
   // function that capitilizes first letter
   function capitalizes(str: string) {
-    //consol
-
+    //console.log(str.charAt(0)+str.substr(1,str.length-1))
+    return str.charAt(0).toUpperCase() + str.substr(1, str.length - 1);
+  }
+  function lowercase(str: string) {
+    //console.log(str.charAt(0)+str.substr(1,str.length-1))
+    return str.charAt(0).toLowerCase() + str.substr(1, str.length - 1);
+  }
 
   // function onAvatarPressed(otherUser: any) {
   //   navigation.navigate("ViewProfileScreen", { id: otherUser._id });
