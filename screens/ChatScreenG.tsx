@@ -17,7 +17,7 @@ import {
   Bubble,
   InputToolbar,
 } from "react-native-gifted-chat";
-// import io from "socket.io-client";
+import LottieView from 'lottie-react-native';
 const io = require('socket.io-client');
 import api from "../services/api.services";
 import { useIsFocused, useRoute, RouteProp, useNavigation } from "@react-navigation/native";
@@ -29,6 +29,7 @@ import { Alert, View, Text, TouchableOpacity, Platform, Image, StyleSheet } from
 import { Menu, MenuDivider, MenuItem } from "react-native-material-menu";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { BorderlessButton, ScrollView } from "react-native-gesture-handler";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export const useUserAuth = () => React.useContext(AuthContext);
 
@@ -41,6 +42,7 @@ export default function ChatScreen() {
   const [status, setStatus] = React.useState("unblocked");
   const [alertmessage, setAlertMessage] = React.useState("Unblocked");
   const [blocker, setBlocker] = React.useState(false);
+  const [loader, setLoader] = React.useState(false);
   const [userOther, setUserOther] = React.useState<any>();
   const [blockedMessage, setBM] = React.useState("");
   const socketIo = io(CONSTANTS.AUTHENTICATIONS.CHAT_SERVER_URL, {
@@ -82,7 +84,7 @@ export default function ChatScreen() {
   };
 
   React.useEffect(() => {
-
+    setLoader(true);
     console.log("HERE BRO")
     // networkAsync();
     // storeLocalData("@chatId", chatId);
@@ -127,7 +129,7 @@ export default function ChatScreen() {
           userother1 = resp.data.class.name
 
         }
-
+        setLoader(false);
 
 
       }
@@ -314,6 +316,16 @@ export default function ChatScreen() {
 
 
   return (
+    loader === true ? (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <LottieView
+          source={require('../assets/images/Gifs/study.json')}
+          autoPlay
+          loop
+        />
+      </View>
+    ) : (
+      <SafeAreaProvider>
     <View style={{ flex: 1, paddingBottom: 4 }}>
       <View style={{ flexDirection: "row", height: 50, backgroundColor: "#3878ee", justifyContent: "flex-start" }}>
         <View style={{ flexDirection: 'row', marginTop: 9 }}>
@@ -355,6 +367,8 @@ export default function ChatScreen() {
         }}
       />
     </View>
+    </SafeAreaProvider>
+    )
   );
 }
 const styles = StyleSheet.create({

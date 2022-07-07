@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1330"
+   LastUpgradeVersion = "1210"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "Teaching.app"
-               BlueprintName = "Teaching"
-               ReferencedContainer = "container:Teaching.xcodeproj">
+               BuildableName = "studyBuddy.app"
+               BlueprintName = "studyBuddy"
+               ReferencedContainer = "container:studyBuddy.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "TeachingTests.xctest"
-               BlueprintName = "TeachingTests"
-               ReferencedContainer = "container:Teaching.xcodeproj">
+               BuildableName = "studyBuddyTests.xctest"
+               BlueprintName = "studyBuddyTests"
+               ReferencedContainer = "container:studyBuddy.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Teaching.app"
-            BlueprintName = "Teaching"
-            ReferencedContainer = "container:Teaching.xcodeproj">
+            BuildableName = "studyBuddy.app"
+            BlueprintName = "studyBuddy"
+            ReferencedContainer = "container:studyBuddy.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Teaching.app"
-            BlueprintName = "Teaching"
-            ReferencedContainer = "container:Teaching.xcodeproj">
+            BuildableName = "studyBuddy.app"
+            BlueprintName = "studyBuddy"
+            ReferencedContainer = "container:studyBuddy.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
@@ -83,7 +83,6 @@
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Release"
-      customArchiveName = "Teaching"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

@@ -18,6 +18,7 @@ import {
   InputToolbar,
 } from 'react-native-gifted-chat';
 import LottieView from 'lottie-react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 const io = require('socket.io-client');
 import api from '../services/api.services';
 import {
@@ -375,6 +376,7 @@ export default function ChatScreen() {
       />
     </View>
   ) : (
+    <SafeAreaProvider>
     <View style={{flex: 1, paddingBottom: 4}}>
       <View
         style={{
@@ -541,6 +543,7 @@ export default function ChatScreen() {
         />
       </View>
     </View>
+    </SafeAreaProvider>
   );
 }
 const styles = StyleSheet.create({
