@@ -81,14 +81,14 @@ export default function MessagesScreen() {
                   //console.log(resp.data.meta.result);
                   const mes = resp.data.meta.result.concat(resp1.data);
                   console.log('GROUP MESSAGES');
-                  console.log(
-                    moment(mes[0].lastMessageAt).valueOf(),
+                  // console.log(
+                  //   moment(mes[0].lastMessageAt).valueOf(),
 
-                    mes[0].message,
-                    moment(mes[1].lastMessageAt).valueOf(),
+                  //   mes[0].message,
+                  //   moment(mes[1].lastMessageAt).valueOf(),
 
-                    mes[1].message,
-                  );
+                  //   mes[1].message,
+                  // );
                   TimSort.sort(mes, function (a, b) {
                     return (
                       moment(b.lastMessageAt).valueOf() -
