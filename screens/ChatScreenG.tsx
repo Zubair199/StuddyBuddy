@@ -20,6 +20,7 @@ import {
 // import io from "socket.io-client";
 const io = require('socket.io-client');
 import api from "../services/api.services";
+import LottieView from 'lottie-react-native';
 import { useIsFocused, useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import { ChatScreenParamList } from "../types";
 import { AuthContext } from "../utils/AuthContext";
@@ -47,7 +48,7 @@ export default function ChatScreen() {
     rejectUnauthorized: false,
     jsonp: false,
   });
-
+  const [loader, setLoader] = React.useState(false);
   let userother1 = ""
   const empyString = ""
   const routes = useRoute<RouteProp<ChatScreenParamList, "ChatScreen">>();
@@ -82,7 +83,7 @@ export default function ChatScreen() {
   };
 
   React.useEffect(() => {
-
+    setLoader(true);
     console.log("HERE BRO")
     // networkAsync();
     // storeLocalData("@chatId", chatId);
@@ -128,7 +129,7 @@ export default function ChatScreen() {
 
         }
 
-
+        setLoader(false);
 
       }
     });
@@ -314,6 +315,14 @@ export default function ChatScreen() {
 
 
   return (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+    <LottieView
+      source={require('../assets/images/Gifs/study.json')}
+      autoPlay
+      loop
+    />
+  </View>
+) : (
     <View style={{ flex: 1, paddingBottom: 4 }}>
       <View style={{ flexDirection: "row", height: 50, backgroundColor: "#3878ee", justifyContent: "flex-start" }}>
         <View style={{ flexDirection: 'row', marginTop: 9 }}>
@@ -355,6 +364,7 @@ export default function ChatScreen() {
         }}
       />
     </View>
+)
   );
 }
 const styles = StyleSheet.create({

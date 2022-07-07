@@ -338,13 +338,8 @@ export default function ChatScreen() {
   }
   // function that capitilizes first letter
   function capitalizes(str: string) {
-    //console.log(str.charAt(0)+str.substr(1,str.length-1))
-    return str.charAt(0).toUpperCase() + str.substr(1, str.length - 1);
-  }
-  function lowercase(str: string) {
-    //console.log(str.charAt(0)+str.substr(1,str.length-1))
-    return str.charAt(0).toLowerCase() + str.substr(1, str.length - 1);
-  }
+    //consol
+
 
   // function onAvatarPressed(otherUser: any) {
   //   navigation.navigate("ViewProfileScreen", { id: otherUser._id });
