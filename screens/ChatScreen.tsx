@@ -39,6 +39,7 @@ import {
   Platform,
   Image,
   StyleSheet,
+  SafeAreaView,
 } from 'react-native';
 import {Menu, MenuDivider, MenuItem} from 'react-native-material-menu';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -376,8 +377,8 @@ export default function ChatScreen() {
       />
     </View>
   ) : (
-    <SafeAreaProvider>
-    <View style={{flex: 1, paddingBottom: 4}}>
+    <SafeAreaView style={{flex: 1, paddingBottom: 4}}>
+  
       <View
         style={{
           flexDirection: 'row',
@@ -542,8 +543,8 @@ export default function ChatScreen() {
           }}
         />
       </View>
-    </View>
-    </SafeAreaProvider>
+   
+    </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
