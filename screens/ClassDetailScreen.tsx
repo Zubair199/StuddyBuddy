@@ -241,7 +241,7 @@ export default function ClassDetailScreen({ route }) {
       if (resp) {
         const newChatInfo = resp.data;
         if (newChatInfo && newChatInfo.data.chatId) {
-          navigation.navigate("ChatScreenG", { chatId: newChatInfo.data.chatId, textMes: "", classID: classID });
+          navigation.navigate("ChatScreenG", { chatId: newChatInfo.data.chatId, textMes: "", classID: classID ,groupU:grUsers});
         }
       }
     }).catch(e => { console.log(e) });

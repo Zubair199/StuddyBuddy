@@ -18,6 +18,7 @@ import {
   getLocalData,
   checkNetwork,
 } from '../utils/HelperFunctions';
+import {AuthContext} from '../utils/AuthContext';
 import MainLayout from './MainLayout';
 import {Divider} from 'native-base';
 
@@ -26,7 +27,7 @@ export default function MessagesScreen() {
   const [messagesList, setMessagesList] = React.useState<any>();
   const [loader, setLoader] = React.useState(false);
   const isFocused = useIsFocused();
-
+  const {userToken, userType} = React.useContext(AuthContext);
   function onClose() {
     navigation.navigate('HomeScreen');
   }
@@ -36,6 +37,7 @@ export default function MessagesScreen() {
     isEnabledChat: boolean,
     isBanned: boolean,
     group: Boolean,
+    groupUsers: Array<String>,
   ) {
     let unreadCount = parseInt(await getLocalData('@unread_message_count'));
     if (unreadCount > 0) {
@@ -47,12 +49,14 @@ export default function MessagesScreen() {
         chatId: chatId,
         isEnabledChat: isEnabledChat,
         isBanned: isBanned,
+        groupU: groupUsers,
       });
     } else {
       navigation.navigate('ChatScreen', {
         chatId: chatId,
         isEnabledChat: isEnabledChat,
         isBanned: isBanned,
+        history: 'M',
       });
     }
   }
@@ -67,6 +71,7 @@ export default function MessagesScreen() {
 
   React.useEffect(() => {
     //  networkAsync()
+
     setLoader(true);
     let isCancelled = false;
     const fetchMessages = async () => {
@@ -154,14 +159,19 @@ export default function MessagesScreen() {
           <ScrollView style={styles.scrollView}>
             {messagesList.map((message: any, index: number) => {
               console.log('--------------------------------------------');
-              console.log(message.message);
+              console.log(message.isGroupRead, userToken);
+
               console.log('--------------------------------------------');
               return (
                 <View key={index}>
                   <View
                     key={index}
                     style={
-                      message.isRead
+                      message.isGroupRead
+                        ? message.isGroupRead.includes(userToken)
+                          ? styles.messageBoxWrapperRead
+                          : styles.messageBoxWrapperNew
+                        : message.isRead
                         ? styles.messageBoxWrapperRead
                         : styles.messageBoxWrapperNew
                     }>
@@ -173,6 +183,7 @@ export default function MessagesScreen() {
                           message.isEnabledChat,
                           message.isBanned,
                           message.isGroupChat,
+                          message.groupUsers,
                         )
                       }
                       style={styles.messageBox}>
@@ -181,11 +192,22 @@ export default function MessagesScreen() {
                         style={styles.messageImage}
                       />
                       <View style={styles.messageInfo}>
-                        {message.isRead === false && (
-                          <Image
-                            style={styles.newMessageIcon}
-                            source={require('../assets/images/icons/new-message.png')}
-                          />
+                        {message.isGroupRead ? (
+                          message.isGroupRead.includes(userToken) ? (
+                            <></>
+                          ) : (
+                            <Image
+                              style={styles.newMessageIcon}
+                              source={require('../assets/images/icons/new-message.png')}
+                            />
+                          )
+                        ) : (
+                          !message.isRead && (
+                            <Image
+                              style={styles.newMessageIcon}
+                              source={require('../assets/images/icons/new-message.png')}
+                            />
+                          )
                         )}
                         <Text style={styles.messageDate}>
                           {moment().diff(message.lastMessageAt, 'hours') < 24

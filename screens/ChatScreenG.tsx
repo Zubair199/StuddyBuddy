@@ -67,6 +67,7 @@ export default function ChatScreen() {
   const routes = useRoute<RouteProp<ChatScreenParamList, 'ChatScreen'>>();
   const chatId = routes.params === undefined ? null : routes.params.chatId;
   const classId = routes.params === undefined ? null : routes.params.classID;
+  const groupU = routes.params === undefined ? null : routes.params.groupU;
   const isEnabledChat =
     routes.params === undefined ? null : routes.params.isEnabledChat;
   const isBanned = routes.params === undefined ? null : routes.params.isBanned;
@@ -84,7 +85,11 @@ export default function ChatScreen() {
   // }
 
   const previousScreen = () => {
-    socketIo.emit('leaveChat', {chatId: chatId, userId: userToken});
+    socketIo.emit('leaveChat', {
+      chatId: chatId,
+      userId: userToken,
+      group: true,
+    });
     console.log(classId);
     if (classId) {
       navigation.navigate('ClassDetails', {classID: classId});
@@ -102,7 +107,7 @@ export default function ChatScreen() {
     let chats: IMessage[] = [];
     //Join to chat room
 
-    socketIo.emit('joinChat', {chatId: chatId, userId: userToken});
+    socketIo.emit('joinChat', {chatId: chatId, userId: userToken, group: true});
     //Handle received messages
     socketIo.on('messageReceive', async (data: Object) => {
       const newMsg = data.data;
@@ -167,6 +172,8 @@ export default function ChatScreen() {
     let requestData = {
       chatId: chatId,
       text: currentMessage.text,
+      flag: true,
+      groupUsers: groupU,
     };
     api.createNewMessage(requestData).then(resp => {
       if (resp) {
