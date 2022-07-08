@@ -177,7 +177,18 @@ export default function AddExamQuestions({ route }) {
                     <Input variant="outline" placeholder="Answer 4" defaultValue={answer4} onChangeText={(text) => setAnswer4(text)} />
                 </View>
                 <View style={{ marginVertical: 10 }}>
-                    <Input variant="outline" placeholder="Enter Answer" defaultValue={answer} onChangeText={(text) => setAnswer(text)} />
+                    {/* <Input variant="outline" placeholder="Enter Answer" defaultValue={answer} onChangeText={(text) => setAnswer(text)} /> */}
+                    <Select accessibilityLabel="Choose Right Answer"
+                        placeholder="Choose Right Answer"
+                        onValueChange={itemValue => {
+                            setAnswer(itemValue)
+                        }}
+                    >
+                        <Select.Item label={answer1} value={answer1} />
+                        <Select.Item label={answer2} value={answer2} />
+                        <Select.Item label={answer3} value={answer3} />
+                        <Select.Item label={answer4} value={answer4} />
+                    </Select>
                 </View>
 
                 <View style={{ marginVertical: 20, flexDirection: "row", justifyContent: "space-between" }}>

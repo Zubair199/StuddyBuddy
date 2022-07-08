@@ -241,7 +241,7 @@ export default function ClassDetailScreen({ route }) {
       if (resp) {
         const newChatInfo = resp.data;
         if (newChatInfo && newChatInfo.data.chatId) {
-          navigation.navigate("ChatScreenG", { chatId: newChatInfo.data.chatId, textMes: "", classID: classID });
+          navigation.navigate("ChatScreenG", { chatId: newChatInfo.data.chatId, textMes: "", classID: classID ,groupU:grUsers});
         }
       }
     }).catch(e => { console.log(e) });
@@ -293,7 +293,7 @@ export default function ClassDetailScreen({ route }) {
                 </ImageBackground>
                 {/* header ends here */}
 
-               
+
 
                 <View style={styles.joinBox}>
                   <Text style={styles.cost}>
@@ -302,8 +302,8 @@ export default function ClassDetailScreen({ route }) {
                   </Text>
                 </View>
                 {
-                  userType.toLowerCase() === "teacher" &&
-                  <View style={styles.joinBox}>
+                  (userType.toLowerCase() === "teacher" && _class.status.toLowerCase() === "approved") &&
+                  < View style={styles.joinBox}>
                     <TouchableOpacity style={{ marginTop: 5 }}
                       onPress={() => groupChat()}>
                       <Icon color={'black'} name="message1" size={25} />
@@ -558,7 +558,7 @@ export default function ClassDetailScreen({ route }) {
 
         }
 
-      </View>
+      </View >
 
     )
   }

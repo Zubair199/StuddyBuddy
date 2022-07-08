@@ -26,6 +26,7 @@ import {
   useRoute,
   RouteProp,
   useNavigation,
+  ParamListBase,
 } from '@react-navigation/native';
 import {ChatScreenParamList} from '../types';
 import {AuthContext} from '../utils/AuthContext';
@@ -43,8 +44,8 @@ import {
 } from 'react-native';
 import {Menu, MenuDivider, MenuItem} from 'react-native-material-menu';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {BorderlessButton, ScrollView} from 'react-native-gesture-handler';
 
+import {BackHandler} from 'react-native';
 export const useUserAuth = () => React.useContext(AuthContext);
 
 export default function ChatScreen() {
@@ -69,6 +70,7 @@ export default function ChatScreen() {
   const empyString = '';
   const routes = useRoute<RouteProp<ChatScreenParamList, 'ChatScreen'>>();
   const chatId = routes.params === undefined ? null : routes.params.chatId;
+  const history = routes.params === undefined ? null : routes.params.history;
   const isEnabledChat =
     routes.params === undefined ? null : routes.params.isEnabledChat;
   const isBanned = routes.params === undefined ? null : routes.params.isBanned;
@@ -77,17 +79,42 @@ export default function ChatScreen() {
 
   const {userToken} = useUserAuth()!;
 
-  // async function networkAsync() {
-  //   let network = await checkNetwork();
-  //   if (!network) {
-  //     Alert.alert("Error", "Please Connect To Internet");
-  //     return;
-  //   }
-  // }
+  function useGoBackHandler<
+    ParamList extends ParamListBase,
+    RouteName extends keyof ParamList & string,
+  >(
+    onGoBackCallback: () => boolean | null | undefined,
+    deps?: React.DependencyList,
+  ) {
+    React.useEffect(() => {
+      BackHandler.addEventListener('hardwareBackPress', onGoBackCallback);
+      navigation.addListener('gestureEnd', onGoBackCallback);
+
+      return () => {
+        BackHandler.removeEventListener('hardwareBackPress', onGoBackCallback);
+        navigation.removeListener('gestureEnd', onGoBackCallback);
+      };
+    }, [navigation, onGoBackCallback, deps]);
+  }
+
+  useGoBackHandler(() => {
+    console.log(
+      'Android hardware back button pressed and iOS back gesture ended',
+    );
+    socketIo.emit('leaveChat', {chatId: chatId, userId: userToken});
+    if (history == 'N') {
+      console.log('here in N');
+      navigation.navigate('NetworkScreen');
+    } else navigation.navigate('Messages');
+    return true;
+  }, []);
 
   const previousScreen = () => {
     socketIo.emit('leaveChat', {chatId: chatId, userId: userToken});
-    navigation.navigate('NetworkScreen');
+    if (history == 'N') {
+      console.log('here in N');
+      navigation.navigate('NetworkScreen');
+    } else navigation.navigate('Messages');
   };
 
   React.useEffect(() => {
@@ -175,6 +202,8 @@ export default function ChatScreen() {
   const onSend = React.useCallback((messages = [], blockerI, blocksI) => {
     // networkAsync();
     console.log(messages[0]);
+    console.log('sending chat info ');
+
     console.log('tracler paksdpaksdpkapsdkpaksdkaskkkkkkkkkkkkkkkkkkkkkkkkkkk');
     const currentMessage = messages[0];
     console.log(blockerI + 'blocker');
@@ -554,7 +583,7 @@ const styles = StyleSheet.create({
     paddingRight: 15,
     alignSelf: 'center',
   },
-  backIconIPhone: {
+  setLoaderPhone: {
     height: 17,
     width: 10,
   },

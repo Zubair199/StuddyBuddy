@@ -24,7 +24,9 @@ import genericStyle from '../assets/styles/styleSheet';
 import { AUTH, AUTHENTICATIONS } from '../services/api.constants';
 import { ThemeContext } from '../context/ThemeContext';
 import { Checkbox } from 'native-base';
+
 const useUserAuth = () => React.useContext(AuthContext);
+import Icon from 'react-native-vector-icons/AntDesign';
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -34,6 +36,8 @@ export default function LoginScreen() {
   const [showSpinner, setShowSpinner] = useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [rememberMe, setRememberMe] = React.useState(false);
+  const [visible, setVisible] = React.useState(false);
+
   const { currentScreen, setCurrentScreen } = React.useContext(ThemeContext);
 
   const { setUserToken, setUserName, setUserEmail, setGuestView, userToken, setUserType } =
@@ -395,19 +399,27 @@ export default function LoginScreen() {
           </View>
 
           <View style={styles.passwordSection}>
-            <TextInput
-              testID="inputPassword"
-              secureTextEntry={secure}
-              ref={ref}
-              visible-password={true}
-              style={styles.passwordInputBox}
-              placeholder="Password"
-              placeholderTextColor="#3878ee"
-              onChangeText={text => setPassword(text)}
-              editable={showSpinner ? false : true}
-              maxLength={40}
-              underlineColorAndroid="transparent"
-            />
+            <View style={{ width: '90%' }}>
+              <TextInput
+                testID="inputPassword"
+                secureTextEntry={secure}
+                ref={ref}
+                visible-password={true}
+                style={styles.passwordInputBox}
+                placeholder="Password"
+                placeholderTextColor="#3878ee"
+                onChangeText={text => setPassword(text)}
+                editable={showSpinner ? false : true}
+                maxLength={40}
+                underlineColorAndroid="transparent"
+
+              />
+            </View>
+            <View >
+              <TouchableOpacity onPress={() => { setSecure(!secure) }}>
+                <Icon name="eye" size={20} />
+              </TouchableOpacity>
+            </View>
           </View>
           <View style={{ flexDirection: "row", marginTop: 20 }}>
             <Checkbox accessibilityLabel="Remember Me" value={rememberMe} onChange={() => setRememberMe(!rememberMe)} />
