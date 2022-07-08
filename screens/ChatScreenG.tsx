@@ -26,6 +26,7 @@ import {
   useRoute,
   RouteProp,
   useNavigation,
+  ParamListBase,
 } from '@react-navigation/native';
 import {ChatScreenParamList} from '../types';
 import {AuthContext} from '../utils/AuthContext';
@@ -40,10 +41,7 @@ import {
   Image,
   StyleSheet,
 } from 'react-native';
-import {Menu, MenuDivider, MenuItem} from 'react-native-material-menu';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import {BorderlessButton, ScrollView} from 'react-native-gesture-handler';
-
+import {BackHandler} from 'react-native';
 export const useUserAuth = () => React.useContext(AuthContext);
 
 export default function ChatScreen() {
@@ -73,7 +71,6 @@ export default function ChatScreen() {
   const isBanned = routes.params === undefined ? null : routes.params.isBanned;
   const initialText = routes.params === undefined ? '' : routes.params.textMes;
   const [visible, setVisible] = React.useState(false);
-
   const {userToken} = useUserAuth()!;
 
   // async function networkAsync() {
@@ -83,6 +80,41 @@ export default function ChatScreen() {
   //     return;
   //   }
   // }
+  function useGoBackHandler<
+    ParamList extends ParamListBase,
+    RouteName extends keyof ParamList & string,
+  >(
+    onGoBackCallback: () => boolean | null | undefined,
+    deps?: React.DependencyList,
+  ) {
+    React.useEffect(() => {
+      BackHandler.addEventListener('hardwareBackPress', onGoBackCallback);
+      navigation.addListener('gestureEnd', onGoBackCallback);
+
+      return () => {
+        BackHandler.removeEventListener('hardwareBackPress', onGoBackCallback);
+        navigation.removeListener('gestureEnd', onGoBackCallback);
+      };
+    }, [navigation, onGoBackCallback, deps]);
+  }
+
+  useGoBackHandler(() => {
+    console.log(
+      'Android hardware back button pressed and iOS back gesture ended',
+    );
+    socketIo.emit('leaveChat', {
+      chatId: chatId,
+      userId: userToken,
+      group: true,
+    });
+    console.log(classId);
+    if (classId) {
+      navigation.navigate('ClassDetails', {classID: classId});
+    } else {
+      navigation.navigate('Messages');
+    }
+    return true;
+  }, []);
 
   const previousScreen = () => {
     socketIo.emit('leaveChat', {
