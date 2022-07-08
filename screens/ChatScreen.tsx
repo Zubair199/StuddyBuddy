@@ -44,7 +44,7 @@ import {
 } from 'react-native';
 import {Menu, MenuDivider, MenuItem} from 'react-native-material-menu';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {BackHandler} from 'react-native';
 export const useUserAuth = () => React.useContext(AuthContext);
 
