@@ -1,8 +1,8 @@
 module.exports = {
 
     AUTHENTICATIONS: {
-        API_URL: "http://192.168.100.26:5000",
-        CHAT_SERVER_URL: 'http://192.168.100.26:5000',
+        API_URL: "http://44.207.4.39:5000",
+        CHAT_SERVER_URL: 'http://44.207.4.39:5000',
     },
 
     NOTIFICATION: {
