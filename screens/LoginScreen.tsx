@@ -95,7 +95,7 @@ export default function LoginScreen() {
                       setIsLoading(false);
                     } else {
                       setIsLoading(false);
-                      Alert.alert('Alert', 'Email not verified! Kindly check you email to verify your account.');
+                      Alert.alert('Alert', 'Email not verified! Kindly check your email to verify your account.');
                     }
                   }
                   else {
@@ -198,7 +198,7 @@ export default function LoginScreen() {
             }
             else {
               setIsLoading(false);
-              Alert.alert('Alert', 'Email not verified! Kindly check you email to verify your account.')
+              Alert.alert('Alert', 'Email not verified! Kindly check your email to verify your account.')
               navigation.navigate('AccountVerify', {
                 email: email,
                 password: password,

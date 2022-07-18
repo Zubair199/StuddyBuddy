@@ -21,7 +21,7 @@ import {
 } from 'react-native-confirmation-code-field';
 import { logError } from '../utils/HelperFunctions';
 import genericStyle from '../assets/styles/styleSheet';
-import { AUTH, AUTHENTICATIONS } from '../services/api.constants';
+import { AUTH, AUTHENTICATIONS, GENERAL } from '../services/api.constants';
 
 const CELL_COUNT = 6;
 export default function AccountVerificationScreen() {
@@ -35,6 +35,34 @@ export default function AccountVerificationScreen() {
     value,
     setValue,
   });
+
+  const [allSkills, setAllSkills] = useState([]);
+  const [allLocations, setAllLocations] = useState([]);
+  const [allSubjects, setAllSubjects] = useState([]);
+
+  React.useEffect(() => {
+    try {
+      fetch(AUTHENTICATIONS.API_URL + GENERAL.SITE_CONTENTS)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          console.log(responseJson)
+          setAllSkills(responseJson.skills)
+          setAllLocations(responseJson.locations)
+          setAllSubjects(responseJson.subjects)
+        })
+        .catch((err: any) => {
+          console.log(err)
+          console.log(err.response)
+          Alert.alert('Alert', "Registration Failed. Try Again!");
+          setShowSpinner(false);
+        })
+    }
+    catch (exception) {
+      console.log('exception ', exception)
+      Alert.alert('Alert', "Registration Failed. Try Again!");
+      setShowSpinner(false);
+    }
+  }, [])
 
   const onPressVerifyBtn = () => {
     if (value.trim().length == 0) {
@@ -50,54 +78,7 @@ export default function AccountVerificationScreen() {
       verificationToken: value,
     });
 
-    // api.verifyAccount(verifyRequest).then(verifyResponse => {
-    //   if (verifyResponse.success) {
-    //     let allSkill: any = [];
-    //     let allGenres: any = [];
-    //     let allLocations: any = [];
 
-    //     api.getSiteContents('skills,genre,location').then(response => {
-    //       if (response && response.success) {
-    //         allSkill = response['meta'].result.filter(
-    //           (item: any) => item.contentType === 'skills',
-    //         );
-    //         allGenres = response['meta'].result.filter(
-    //           (item: any) => item.contentType === 'genre',
-    //         );
-    //         allLocations = response['meta'].result.filter(
-    //           (item: any) => item.contentType === 'location',
-    //         );
-
-    //         navigation.navigate('ProfileSetup', {
-    //           email: verifyResponse.email,
-    //           allSkills: allSkill,
-    //           allGenres: allGenres,
-    //           allLocations: allLocations,
-    //           skills: [],
-    //           genres: [],
-    //           locations: [],
-    //         });
-    //       } else {
-    //         let description = 'error occurred while fetching skills';
-    //         let error = response.message
-    //           ? Error(response.message)
-    //           : Error("Couldn't fetch skills");
-    //         logError(description, error, 'ProfileScreen');
-    //       }
-    //     });
-    //     setShowSpinner(false);
-    //   } else {
-    //     let messageText = '';
-    //     if (verifyResponse.message) {
-    //       messageText = verifyResponse.message;
-    //     } else if (verifyResponse.errors && verifyResponse.errors.message) {
-    //       messageText = verifyResponse.errors.message;
-    //     }
-    //     Alert.alert('Alert', messageText);
-    //     setShowSpinner(false);
-    //     return;
-    //   }
-    // });
     try {
       let requestObj = {
         method: 'POST',
@@ -114,13 +95,14 @@ export default function AccountVerificationScreen() {
           if (responseJson.isActive) {
             setShowSpinner(false);
             Alert.alert('Alert', responseJson.message);
+
             navigation.navigate("ProfileSetup", {
-              email: responseJson.email,
-              allSkills: [],
-              allGenres: [],
-              allLocations: [],
+              email: routeParams.email,
+              allSkills: allSkills,
+              allSubjects: allSubjects,
+              allLocations: allLocations,
               skills: [],
-              genres: [],
+              subjects: [],
               locations: [],
             });
 

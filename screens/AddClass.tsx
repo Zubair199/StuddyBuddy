@@ -42,6 +42,7 @@ export default function AddClassScreen() {
 
   const [open, setOpen] = React.useState(false)
   const [open1, setOpen1] = React.useState(false)
+  const [open2, setOpen2] = React.useState(false)
   const [_date, _setDate] = React.useState('')
   const [selectedLanguage, setSelectedLanguage] = React.useState();
   const [response, setResponse] = React.useState<any>(null);
@@ -54,6 +55,8 @@ export default function AddClassScreen() {
   function openDatePicker1() {
     setOpen1(true)
   }
+
+  let [_startdate_, _setStartdate_] = React.useState(new Date())
 
   let [_startdate, _setStartdate] = React.useState(new Date())
   let [_enddate, _setEnddate] = React.useState(new Date())
@@ -82,6 +85,8 @@ export default function AddClassScreen() {
   let [minDate, setMinDate] = React.useState("")
   let [maxDate, setMaxDate] = React.useState("")
   const [markedDates, setMarkedDates] = React.useState(null)
+
+
   React.useEffect(() => {
     setMinDate(formatDate(new Date()))
     createCalendar(date.getFullYear(), currentMonth);
@@ -511,6 +516,40 @@ export default function AddClassScreen() {
                   <Select.Item label="Intermediate" value="Intermediate" />
                   <Select.Item label="Advanced" value="Advanced" />
                 </Select>
+              </View>
+              <View style={{ marginVertical: 10 }}>
+                <View style={{ flexDirection: 'row' }}>
+                  <Input
+                    w={'88%'}
+                    editable={false}
+                    variant="outline"
+                    defaultValue={_startdate_.toString()}
+                    placeholder="Start Date"
+                  />
+                  <IconButton
+                    icon={
+                      <Icon
+                        name="calendar"
+                        style={{ marginRight: 15 }}
+                        size={25}
+                        onPress={() => { console.log("preess"); setOpen2(true) }}
+                      />
+                    }
+                  />
+                </View>
+                <DatePicker
+                  modal
+                  open={open2}
+                  date={_startdate}
+                  onConfirm={(text) => {
+                    _setStartdate_(text)
+                    setMinDate(formatDate(new Date(text)))
+                    setOpen2(false)
+                  }}
+                  onCancel={() => {
+                    setOpen2(false)
+                  }}
+                />
               </View>
               <View style={{ marginVertical: 10 }}>
                 <Select accessibilityLabel="Choose Class Duration" selectedValue={classDuration}

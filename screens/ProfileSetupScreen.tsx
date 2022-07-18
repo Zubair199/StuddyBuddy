@@ -22,6 +22,7 @@ import { EditProfileParamList } from '../types';
 import { AuthContext } from '../utils/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import genericStyle from '../assets/styles/styleSheet';
+import { AUTH, AUTHENTICATIONS } from '../services/api.constants';
 
 interface IPROPS {
   email: String;
@@ -39,10 +40,10 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
   const [fullName, setFullName] = useState('');
   const [pastExperience, setPastExperience] = useState('');
 
-  const [genres, setGenres] = useState(route.params.genres);
+  const [genres, setGenres] = useState(route.params.subjects);
   const [genreModal, setGenreModal] = useState(false);
-  const [queryGenre, setQueryGenre] = React.useState(route.params.allGenres);
-  const [allGenres, setAllGenres] = React.useState(route.params.allGenres);
+  const [queryGenre, setQueryGenre] = React.useState(route.params.allSubjects);
+  const [allGenres, setAllGenres] = React.useState(route.params.allSubjects);
 
   const [skills, setSkills] = useState(route.params.skills);
   const [skillsModal, setSkillsModal] = useState(false);
@@ -65,6 +66,28 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
   const handleBack = () => {
     navigation.navigate('Login');
   };
+
+  const [user, setUser] = useState("")
+  React.useEffect(() => {
+    try {
+      fetch(AUTHENTICATIONS.API_URL + AUTH.GET_USER_BY_EMAIL + route.params.email)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          console.log(responseJson)
+          setUser(responseJson.user)
+        })
+        .catch((err: any) => {
+          console.log(err)
+          console.log(err.response)
+          Alert.alert('Alert', "Something went wrong. Try again in few minutes.");
+        })
+    }
+    catch (exception) {
+      console.log('exception ', exception)
+      Alert.alert('Alert', "Something went wrong. Try again in few minutes.");
+    }
+  }, [])
+
   const onPressNextBtn = () => {
     if (!email && fullName.trim().length == 0) {
       Alert.alert('Alert', 'Full name cannot be empty!');
@@ -84,79 +107,112 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
     }
 
     let profileUpdateRequest: any = JSON.stringify({
-      email: email,
+      user: user,
+      certifications: "N/A",
       skills: skills,
-      genres: genres,
+      subjects: genres,
       locations: locations,
       pastExperience: pastExperience,
     });
-    api.updateProfile(profileUpdateRequest).then((profileResponse: any) => {
-      if (profileResponse) {
-        if (profileResponse.success) {
-          if (profileResponse.status == 'pending') {
+
+    try {
+      let requestObj = {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: profileUpdateRequest
+      }
+      fetch(AUTHENTICATIONS.API_URL + AUTH.PROFILE, requestObj)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          console.log(responseJson)
+          if (responseJson.data.status.toLowerCase() == 'pending') {
             navigation.navigate('Login');
             Alert.alert(
               'Success',
               'Your account is created and sent for admin approval. Once approved you can login!',
             );
-          } else if (profileResponse.status == 'approved') {
-            let loginRequest: any = JSON.stringify({
-              email: email,
-              password: route.params.password,
-              notificationToken: '',
-              os: Platform.OS,
-            });
+          }
+        })
+        .catch((err: any) => {
+          console.log(err)
+          console.log(err.response)
+          Alert.alert('Alert', "Registration Failed. Try Again!");
+        })
+    }
+    catch (exception) {
+      console.log('exception ', exception)
+      Alert.alert('Alert', "Registration Failed. Try Again!");
+    }
+    // api.updateProfile(profileUpdateRequest).then((profileResponse: any) => {
+    //   if (profileResponse) {
+    //     if (profileResponse.success) {
+    //       if (profileResponse.status == 'pending') {
+    //         navigation.navigate('Login');
+    //         Alert.alert(
+    //           'Success',
+    //           'Your account is created and sent for admin approval. Once approved you can login!',
+    //         );
+    //       } else if (profileResponse.status == 'approved') {
+    //         let loginRequest: any = JSON.stringify({
+    //           email: email,
+    //           password: route.params.password,
+    //           notificationToken: '',
+    //           os: Platform.OS,
+    //         });
 
-            api.userLogin(loginRequest).then((loginResponse: any) => {
-              if (loginResponse) {
-                if (loginResponse.success) {
-                  if (
-                    loginResponse.profile.emailVerified &&
-                    loginResponse.profile.profileCreated
-                  ) {
-                    if (
-                      !loginResponse.profile.isBanned &&
-                      !loginResponse.profile.isAdmin
-                    ) {
-                      (async () => {
-                        await AsyncStorage.setItem(
-                          'userId',
-                          loginResponse.profile._id,
-                        );
-                        await AsyncStorage.setItem(
-                          'password',
-                          route.params.password,
-                        );
-                        await AsyncStorage.setItem(
-                          'email',
-                          loginResponse.profile.email,
-                        );
-                      })();
-                      setUserName(loginResponse.profile.fullName);
-                      setUserEmail(loginResponse.profile.email);
-                      setUserToken(loginResponse.profile._id);
-                    } else {
-                      Alert.alert(
-                        'Alert',
-                        'Sorry, You not allowed to access system!',
-                      );
-                    }
-                  }
-                }
-              }
-            });
-          }
-        } else {
-          let messagetext = '';
-          if (profileResponse.message) {
-            messagetext = profileResponse.message;
-          } else if (profileResponse.errors && profileResponse.errors.message) {
-            messagetext = profileResponse.errors.message;
-          }
-          Alert.alert('Alert', messagetext);
-        }
-      }
-    });
+    //         api.userLogin(loginRequest).then((loginResponse: any) => {
+    //           if (loginResponse) {
+    //             if (loginResponse.success) {
+    //               if (
+    //                 loginResponse.profile.emailVerified &&
+    //                 loginResponse.profile.profileCreated
+    //               ) {
+    //                 if (
+    //                   !loginResponse.profile.isBanned &&
+    //                   !loginResponse.profile.isAdmin
+    //                 ) {
+    //                   (async () => {
+    //                     await AsyncStorage.setItem(
+    //                       'userId',
+    //                       loginResponse.profile._id,
+    //                     );
+    //                     await AsyncStorage.setItem(
+    //                       'password',
+    //                       route.params.password,
+    //                     );
+    //                     await AsyncStorage.setItem(
+    //                       'email',
+    //                       loginResponse.profile.email,
+    //                     );
+    //                   })();
+    //                   setUserName(loginResponse.profile.fullName);
+    //                   setUserEmail(loginResponse.profile.email);
+    //                   setUserToken(loginResponse.profile._id);
+    //                 } else {
+    //                   Alert.alert(
+    //                     'Alert',
+    //                     'Sorry, You not allowed to access system!',
+    //                   );
+    //                 }
+    //               }
+    //             }
+    //           }
+    //         });
+    //       }
+    //     } else {
+    //       let messagetext = '';
+    //       if (profileResponse.message) {
+    //         messagetext = profileResponse.message;
+    //       } else if (profileResponse.errors && profileResponse.errors.message) {
+    //         messagetext = profileResponse.errors.message;
+    //       }
+    //       Alert.alert('Alert', messagetext);
+    //     }
+    //   }
+    // });
   };
   function searchLocation(text: string) {
     var result: any = [];
@@ -265,7 +321,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
   function cancelGenre() {
     setGenres(route.params.skills);
     setGenreModal(false);
-    setQueryGenre(route.params.allGenres);
+    setQueryGenre(route.params.allSubjects);
   }
   function saveGenre() {
     if (route.params.genres == genres) {
@@ -273,7 +329,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
       return;
     }
     setGenreModal(false);
-    setQueryGenre(route.params.allGenres);
+    setQueryGenre(route.params.allSubjects);
   }
   function searchSkill(text: string) {
     var result: any = [];

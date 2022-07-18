@@ -11,7 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 export default function AddAssignmentQuestions({ route }) {
     const navigation = useNavigation();
 
-    const assignmentID = "62c4dc6c1fa6451e8c678365";
+    const { assignmentID } = route.params;
     let [loader, setLoader] = React.useState(true)
 
     let [data, setData] = React.useState([])
@@ -179,17 +179,21 @@ export default function AddAssignmentQuestions({ route }) {
                 </View>
                 <View style={{ marginVertical: 10 }}>
                     {/* <Input variant="outline" placeholder="Enter Answer" defaultValue={answer} onChangeText={(text) => setAnswer(text)} /> */}
-                    <Select accessibilityLabel="Choose Right Answer"
-                        placeholder="Choose Right Answer"
-                        onValueChange={itemValue => {
-                            setAnswer(itemValue)
-                        }}
-                    >
-                        <Select.Item label={answer1} value={answer1} />
-                        <Select.Item label={answer2} value={answer2} />
-                        <Select.Item label={answer3} value={answer3} />
-                        <Select.Item label={answer4} value={answer4} />
-                    </Select>
+                    {
+                        (answer1 !== "" && answer2 !== "" && answer3 !== "" && answer4 !== "")
+                        &&
+                        <Select accessibilityLabel="Choose Right Answer"
+                            placeholder="Choose Right Answer"
+                            onValueChange={itemValue => {
+                                setAnswer(itemValue)
+                            }}
+                        >
+                            <Select.Item label={answer1} value={answer1} />
+                            <Select.Item label={answer2} value={answer2} />
+                            <Select.Item label={answer3} value={answer3} />
+                            <Select.Item label={answer4} value={answer4} />
+                        </Select>
+                    }
                 </View>
 
                 <View style={{ marginVertical: 20, flexDirection: "row", justifyContent: "space-between" }}>

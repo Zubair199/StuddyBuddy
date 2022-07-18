@@ -29,7 +29,9 @@ module.exports = {
         VERIFY: "/api/auth/verify",
         EMAIL_RESET_PASSWORD: "/api/auth/resetPassword",
         USERS: "/api/users",
-        SELF: "/api/getself"
+        SELF: "/api/getself",
+        PROFILE: "/api/auth/profile",
+        GET_USER_BY_EMAIL: "/api/auth/getUserByEmail/",
     },
     CLASS: {
         CREATE: "/api/class",

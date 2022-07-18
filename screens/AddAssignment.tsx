@@ -93,7 +93,7 @@ export default function AddAssignmentScreen() {
         fetch(AUTHENTICATIONS.API_URL + ASSIGNMENT.CREATE, requestObj)
           .then((response) => response.json())
           .then((responseJson) => {
-            console.log(response)
+            console.log('assignement response=> ',responseJson)
             navigation.navigate('AddAssignmentQuestions', { assignmentID: responseJson.assignmentID })
           })
           .catch((err: any) => {

@@ -342,7 +342,7 @@ export default function NotificationsScreen(dataType: dataTypes) {
         {notifications.length === 0 ? (
           <View style={styles.contentBox}>
             <Text style={styles.emptySearchText}>
-              NO NOTIFICATIONS RECEIVED YET
+              NO NOTIFICATION RECEIVED YET
             </Text>
           </View>
         ) :
@@ -415,7 +415,7 @@ export default function NotificationsScreen(dataType: dataTypes) {
                 ) : notifications.length === 0 ? (
                   <View style={styles.contentBox}>
                     <Text style={styles.emptySearchText}>
-                      No Notifications Received Yet
+                      No Notification Received Yet
                     </Text>
                   </View>
                 ) : (
@@ -520,7 +520,7 @@ export default function NotificationsScreen(dataType: dataTypes) {
                 {notifications.length === 0 && (
                   <View style={styles.contentBox}>
                     <Text style={styles.emptySearchText}>
-                      No Notifications Received Yet
+                      No Notification Received Yet
                     </Text>
                   </View>
                 )}
