@@ -1,6 +1,6 @@
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import * as React from 'react';
-import { useState } from 'react';
+import {useState} from 'react';
 import {
   Alert,
   Share,
@@ -16,13 +16,15 @@ import {
   Modal,
   Platform,
 } from 'react-native';
-import { Avatar, BottomSheet, CheckBox } from 'react-native-elements';
+import {Avatar, BottomSheet, CheckBox} from 'react-native-elements';
 import api from '../constants/api';
-import { EditProfileParamList } from '../types';
-import { AuthContext } from '../utils/AuthContext';
+import {EditProfileParamList} from '../types';
+import {AuthContext} from '../utils/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import genericStyle from '../assets/styles/styleSheet';
-import { AUTH, AUTHENTICATIONS } from '../services/api.constants';
+import {AUTH, AUTHENTICATIONS} from '../services/api.constants';
+import * as ImagePicker from 'react-native-image-picker';
+import RNFetchBlob from 'rn-fetch-blob';
 
 interface IPROPS {
   email: String;
@@ -59,7 +61,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
     route.params.allLocations,
   );
 
-  const { setUserToken, setUserName, setUserEmail, setGuestView, userToken } =
+  const {setUserToken, setUserName, setUserEmail, setGuestView, userToken} =
     useUserAuth()!;
 
   const navigation = useNavigation();
@@ -67,27 +69,48 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
     navigation.navigate('Login');
   };
 
-  const [user, setUser] = useState("")
+  const [user, setUser] = useState('');
+
+  const [videoResponse, setVideoResponse] = useState(null);
+
   React.useEffect(() => {
     try {
-      fetch(AUTHENTICATIONS.API_URL + AUTH.GET_USER_BY_EMAIL + route.params.email)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          console.log(responseJson)
-          setUser(responseJson.user)
+      fetch(
+        AUTHENTICATIONS.API_URL + AUTH.GET_USER_BY_EMAIL + route.params.email,
+      )
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log(responseJson);
+          setUser(responseJson.user);
         })
         .catch((err: any) => {
-          console.log(err)
-          console.log(err.response)
-          Alert.alert('Alert', "Something went wrong. Try again in few minutes.");
-        })
+          console.log(err);
+          console.log(err.response);
+          Alert.alert(
+            'Alert',
+            'Something went wrong. Try again in few minutes.',
+          );
+        });
+    } catch (exception) {
+      console.log('exception ', exception);
+      Alert.alert('Alert', 'Something went wrong. Try again in few minutes.');
     }
-    catch (exception) {
-      console.log('exception ', exception)
-      Alert.alert('Alert', "Something went wrong. Try again in few minutes.");
-    }
-  }, [])
-
+  }, []);
+  const selectVideo = async () => {
+    ImagePicker.launchImageLibrary(
+      {mediaType: 'video', includeBase64: true},
+      response => {
+        console.log(response);
+        if (response.didCancel) {
+          Alert.alert('Alert', 'No Video Selected!');
+        }
+        if (!response.didCancel) {
+          console.log(response.assets[0]);
+          setVideoResponse(response.assets[0]);
+        }
+      },
+    );
+  };
   const onPressNextBtn = () => {
     if (!email && fullName.trim().length == 0) {
       Alert.alert('Alert', 'Full name cannot be empty!');
@@ -104,11 +127,14 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
     } else if (skills.length < 1) {
       Alert.alert('Alert', 'Skill cannot be empty!');
       return;
+    } else if (videoResponse === null) {
+      Alert.alert('Alert', 'Video cannot be empty!');
+      return;
     }
 
     let profileUpdateRequest: any = JSON.stringify({
       user: user,
-      certifications: "N/A",
+      certifications: 'N/A',
       skills: skills,
       subjects: genres,
       locations: locations,
@@ -120,31 +146,62 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
         method: 'POST',
         headers: {
           Accept: 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: profileUpdateRequest
-      }
+        body: profileUpdateRequest,
+      };
+
       fetch(AUTHENTICATIONS.API_URL + AUTH.PROFILE, requestObj)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          console.log(responseJson)
-          if (responseJson.data.status.toLowerCase() == 'pending') {
-            navigation.navigate('Login');
-            Alert.alert(
-              'Success',
-              'Your account is created and sent for admin approval. Once approved you can login!',
-            );
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log(responseJson);
+          let res = responseJson;
+          if (res !== null) {
+            RNFetchBlob.fetch(
+              'PUT',
+              AUTHENTICATIONS.API_URL +
+                AUTH.PROFILE_VIDEO +
+                user +
+                '/' +
+                responseJson.data._id,
+              {'Content-Type': 'multipart/form-data'},
+              [
+                {
+                  name: 'video',
+                  filename:
+                    videoResponse.fileName +
+                    '.' +
+                    videoResponse.type.split('/')[1],
+                  type: 'video/mp4',
+                  data: RNFetchBlob.wrap(videoResponse.uri),
+                },
+              ],
+            )
+              .then(response => response.json())
+              .then(responseJ => {
+                if (res.data.status.toLowerCase() == 'pending') {
+                  navigation.navigate('Login');
+                  Alert.alert(
+                    'Success',
+                    'Your account is created and sent for admin approval. Once approved you can login!',
+                  );
+                }
+              })
+              .catch((err: any) => {
+                console.log(err);
+                console.log(err.response);
+                Alert.alert('Alert', 'Registration Failed. Try Again!');
+              });
           }
         })
         .catch((err: any) => {
-          console.log(err)
-          console.log(err.response)
-          Alert.alert('Alert', "Registration Failed. Try Again!");
-        })
-    }
-    catch (exception) {
-      console.log('exception ', exception)
-      Alert.alert('Alert', "Registration Failed. Try Again!");
+          console.log(err);
+          console.log(err.response);
+          Alert.alert('Alert', 'Registration Failed. Try Again!');
+        });
+    } catch (exception) {
+      console.log('exception ', exception);
+      Alert.alert('Alert', 'Registration Failed. Try Again!');
     }
     // api.updateProfile(profileUpdateRequest).then((profileResponse: any) => {
     //   if (profileResponse) {
@@ -214,6 +271,12 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
     //   }
     // });
   };
+
+  /**
+   * send feed details to server
+   */
+  const uploadVideo = async () => {};
+
   function searchLocation(text: string) {
     var result: any = [];
     if (text === '') {
@@ -389,7 +452,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
     setQuery(route.params.allSkills);
   }
 
-  React.useEffect(() => { }, []);
+  React.useEffect(() => {}, []);
 
   React.useEffect(() => {
     const backAction = () => {
@@ -409,13 +472,13 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.body}>
-          <View style={{ alignItems: 'center', marginBottom: 10 }}>
+          <View style={{alignItems: 'center', marginBottom: 10}}>
             <Avatar
               rounded
               title="P"
               activeOpacity={0.7}
               size="xlarge"
-              onPress={() => { }}
+              onPress={() => {}}
               source={{
                 uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
               }}
@@ -424,11 +487,11 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
             <View
               style={[
                 styles.textBoxContainer,
-                { marginTop: 35, alignItems: 'center' },
+                {marginTop: 35, alignItems: 'center'},
               ]}>
               {email ? (
                 <Text
-                  style={{ fontSize: 15, color: '#3878ee', fontWeight: 'bold' }}>
+                  style={{fontSize: 15, color: '#3878ee', fontWeight: 'bold'}}>
                   {email}
                 </Text>
               ) : (
@@ -443,7 +506,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
               )}
             </View>
 
-            <View style={[styles.textBoxContainer, { height: 100 }]}>
+            <View style={[styles.textBoxContainer, {height: 100}]}>
               <TextInput
                 style={genericStyle.textBox}
                 autoCapitalize="words"
@@ -509,7 +572,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
               ))}
               <TouchableOpacity
                 onPress={() => setGenreModal(true)}
-                style={[genericStyle.locationAddRemove, { width: 150 }]}>
+                style={[genericStyle.locationAddRemove, {width: 150}]}>
                 <Image
                   source={require('../assets/images/icons/add-button.png')}
                   style={styles.addIcon}
@@ -537,7 +600,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
               ))}
               <TouchableOpacity
                 onPress={() => setSkillsModal(true)}
-                style={[styles.locationAddRemove, { width: 150 }]}>
+                style={[styles.locationAddRemove, {width: 150}]}>
                 <Image
                   source={require('../assets/images/icons/add-button.png')}
                   style={styles.addIcon}
@@ -546,25 +609,39 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
               </TouchableOpacity>
             </View>
           </View>
+
           <View style={styles.selectBox}>
+            <Text style={genericStyle.subHeading}>Video</Text>
+            <View style={genericStyle.locationEditBox}>
+              <TouchableOpacity
+                onPress={() => selectVideo()}
+                style={[styles.locationAddRemove, {width: 150}]}>
+                <Image
+                  source={require('../assets/images/icons/add-button.png')}
+                  style={styles.addIcon}
+                />
+                <Text style={styles.addRemoveBoxText}>Upload Video</Text>
+              </TouchableOpacity>
+            </View>
           </View>
+          <View style={styles.selectBox}></View>
 
           <TouchableOpacity
             onPress={onPressNextBtn}
-            style={[genericStyle.loginBtn, { marginTop: 25 }]}>
+            style={[genericStyle.loginBtn, {marginTop: 25}]}>
             <Text style={genericStyle.loginBtnText}>Submit Request</Text>
           </TouchableOpacity>
 
           <View style={styles.goBackView}>
             <TouchableOpacity onPress={handleBack}>
-              <View style={{ width: 'auto', alignSelf: 'center' }}>
+              <View style={{width: 'auto', alignSelf: 'center'}}>
                 <Text style={styles.goBackText}>Go back</Text>
                 <View style={genericStyle.underline} />
               </View>
             </TouchableOpacity>
           </View>
 
-          <View style={{ marginTop: 50 }} />
+          <View style={{marginTop: 50}} />
         </View>
       </ScrollView>
 
@@ -600,7 +677,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
             </TouchableOpacity>
           </View>
 
-          <View style={{ marginTop: 20 }}>
+          <View style={{marginTop: 20}}>
             <View>
               {query.length < 1 ? (
                 <View
@@ -668,7 +745,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
             </TouchableOpacity>
           </View>
 
-          <View style={{ marginTop: 20 }}>
+          <View style={{marginTop: 20}}>
             <View>
               {queryGenre.length < 1 ? (
                 <View
@@ -737,7 +814,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
             </TouchableOpacity>
           </View>
 
-          <View style={{ marginTop: 20 }}>
+          <View style={{marginTop: 20}}>
             <View>
               {queryLocations.length < 1 ? (
                 <View
@@ -821,7 +898,7 @@ const styles = StyleSheet.create({
     width: '100%',
     fontSize: 18,
   },
-  addRemoveBoxText: { paddingLeft: 15, color: '#3878ee' },
+  addRemoveBoxText: {paddingLeft: 15, color: '#3878ee'},
   textBox: {
     height: '100%',
     width: 300,

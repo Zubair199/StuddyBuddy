@@ -1,8 +1,13 @@
 module.exports = {
 
     AUTHENTICATIONS: {
-        API_URL: "http://192.168.43.122:5000",
-        CHAT_SERVER_URL: 'http://192.168.43.122:5000',
+        // Saims
+        // API_URL: "http://192.168.43.122:5000",
+        // CHAT_SERVER_URL: 'http://192.168.43.122:5000',
+
+        // Zubairs
+        API_URL: "http://192.168.100.26:5000",
+        CHAT_SERVER_URL: 'http://192.168.100.26:5000',
     },
 
     NOTIFICATION: {
@@ -31,6 +36,7 @@ module.exports = {
         USERS: "/api/users",
         SELF: "/api/getself",
         PROFILE: "/api/auth/profile",
+        PROFILE_VIDEO: "/api/auth/profile/video/",
         GET_USER_BY_EMAIL: "/api/auth/getUserByEmail/",
     },
     CLASS: {

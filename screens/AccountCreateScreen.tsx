@@ -10,8 +10,8 @@ import {
   Text,
 } from 'react-native';
 
-import { useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import {useState} from 'react';
+import {useNavigation} from '@react-navigation/native';
 import {
   isValidEmail,
   isValidPassword,
@@ -19,9 +19,9 @@ import {
 } from '../utils/HelperFunctions';
 import api from '../constants/api';
 import genericStyle from '../assets/styles/styleSheet';
-import { RadioGroup } from 'react-native-radio-buttons-group';
-import { AUTH, AUTHENTICATIONS } from '../services/api.constants';
-import { Radio } from 'native-base';
+import {RadioGroup} from 'react-native-radio-buttons-group';
+import {AUTH, AUTHENTICATIONS} from '../services/api.constants';
+import {Radio} from 'native-base';
 
 /**
  * Accounts create
@@ -37,29 +37,30 @@ export default function AccountCreateScreen() {
   const [showSpinner, setShowSpinner] = useState(false);
   const [secure, setSecure] = useState(true);
   const [confirmSecure, setConfirmSecure] = useState(true);
-  const radioButtonsData = [{
-    id: '1', // acts as primary key, should be unique and non-empty string
-    label: 'Teacher',
-    value: '0'
-  }, {
-    id: '2',
-    label: 'Student',
-    value: '1'
-  }]
+  const radioButtonsData = [
+    {
+      id: '1', // acts as primary key, should be unique and non-empty string
+      label: 'Teacher',
+      value: '0',
+    },
+    {
+      id: '2',
+      label: 'Student',
+      value: '1',
+    },
+  ];
 
-  const [radioButtons, setRadioButtons] = React.useState(radioButtonsData)
-  const [role, setRole] = React.useState('0')
+  const [radioButtons, setRadioButtons] = React.useState(radioButtonsData);
+  const [role, setRole] = React.useState('0');
 
   function onPressRadioButton(radioButtonsArray) {
     setRole(radioButtonsArray);
-    console.log(radioButtonsArray)
+    console.log(radioButtonsArray);
   }
-
 
   function handleBack() {
     navigation.navigate('Login');
   }
-
 
   const onPressNextBtn = () => {
     if (fullName.trim().length == 0) {
@@ -102,7 +103,7 @@ export default function AccountCreateScreen() {
       username: fullName,
       email: email,
       password: password,
-      role: role
+      role: role,
     });
 
     //   api.collaboratorSignUp(signUpRequest).then(signUpResponse => {
@@ -129,32 +130,30 @@ export default function AccountCreateScreen() {
         method: 'POST',
         headers: {
           Accept: 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: signUpRequest
-      }
+        body: signUpRequest,
+      };
       fetch(AUTHENTICATIONS.API_URL + AUTH.SIGNUP, requestObj)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          console.log(responseJson)
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log(responseJson);
           setShowSpinner(false);
           Alert.alert('Alert', responseJson.message);
-          navigation.navigate("AccountVerify", { email: email });
+          navigation.navigate('AccountVerify', {email: email});
         })
         .catch((err: any) => {
-          console.log(err)
-          console.log(err.response)
-          Alert.alert('Alert', "Registration Failed. Try Again!");
+          console.log(err);
+          console.log(err.response);
+          Alert.alert('Alert', 'Registration Failed. Try Again!');
           setShowSpinner(false);
-        })
-    }
-    catch (exception) {
-      console.log('exception ', exception)
-      Alert.alert('Alert', "Registration Failed. Try Again!");
+        });
+    } catch (exception) {
+      console.log('exception ', exception);
+      Alert.alert('Alert', 'Registration Failed. Try Again!');
       setShowSpinner(false);
     }
   };
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -163,7 +162,7 @@ export default function AccountCreateScreen() {
           <View
             style={{
               marginTop: 8,
-              height: 50,
+              height: 60,
             }}>
             {/* <RadioGroup
               radioButtons={radioButtons}
@@ -174,11 +173,10 @@ export default function AccountCreateScreen() {
             <Radio.Group
               name="myRadioGroup"
               value={role}
-              onChange={(nextValue) => {
-                console.log(nextValue)
+              onChange={nextValue => {
+                console.log(nextValue);
                 setRole(nextValue);
-              }}
-            >
+              }}>
               <Radio value="1" my="1">
                 Student
               </Radio>
@@ -192,7 +190,6 @@ export default function AccountCreateScreen() {
               marginTop: 8,
               height: 50,
             }}>
-
             <TextInput
               style={genericStyle.textBox}
               autoCapitalize="words"
@@ -242,7 +239,7 @@ export default function AccountCreateScreen() {
 
           <TouchableOpacity
             onPress={onPressNextBtn}
-            style={[genericStyle.loginBtn, { marginTop: 55 }]}>
+            style={[genericStyle.loginBtn, {marginTop: 55}]}>
             <Text style={genericStyle.loginBtnText}>Register</Text>
           </TouchableOpacity>
           <View style={styles.goBackView}>
