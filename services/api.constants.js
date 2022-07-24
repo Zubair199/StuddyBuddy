@@ -1,6 +1,11 @@
 module.exports = {
 
     AUTHENTICATIONS: {
+        // Saims
+        // API_URL: "http://192.168.43.122:5000",
+        // CHAT_SERVER_URL: 'http://192.168.43.122:5000',
+
+        // Zubairs
         API_URL: "http://44.207.4.39:5000",
         CHAT_SERVER_URL: 'http://44.207.4.39:5000',
     },
@@ -29,7 +34,10 @@ module.exports = {
         VERIFY: "/api/auth/verify",
         EMAIL_RESET_PASSWORD: "/api/auth/resetPassword",
         USERS: "/api/users",
-        SELF: "/api/getself"
+        SELF: "/api/getself",
+        PROFILE: "/api/auth/profile",
+        PROFILE_VIDEO: "/api/auth/profile/video/",
+        GET_USER_BY_EMAIL: "/api/auth/getUserByEmail/",
     },
     CLASS: {
         CREATE: "/api/class",

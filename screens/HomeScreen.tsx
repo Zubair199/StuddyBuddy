@@ -16,6 +16,7 @@ import TeacherClassSlider from '../components/TeacherClassSlider';
 import MainLayout from './MainLayout';
 import { AuthContext } from '../utils/AuthContext';
 import TeacherAssignmentSlider from '../components/TeacherAssignmentSlider';
+import TeacherExamSlider from '../components/TeacherExamSlider';
 
 export default function HomeScreen() {
   const { userToken, userType } = React.useContext(AuthContext);
@@ -126,10 +127,7 @@ export default function HomeScreen() {
               <View style={{ marginVertical: 10 }}>
                 <TouchableOpacity style={{ flexDirection: 'row', justifyContent: "space-between" }}
                   onPress={() =>
-                    navigation.reset({
-                      index: 0,
-                      routes: [{ name: 'AddClass' }],
-                    })
+                    navigation.navigate('AddClass')
                   }
                 >
                   <Text style={styles.title}>
@@ -144,10 +142,7 @@ export default function HomeScreen() {
               <View style={{ marginVertical: 10 }}>
                 <TouchableOpacity style={{ flexDirection: 'row', justifyContent: "space-between" }}
                   onPress={() =>
-                    navigation.reset({
-                      index: 0,
-                      routes: [{ name: 'AddAssignment' }],
-                    })
+                    navigation.navigate('AddAssignment')
                   }
                 >
                   <Text style={styles.title}>
@@ -162,10 +157,7 @@ export default function HomeScreen() {
               <View style={{ marginVertical: 10 }}>
                 <TouchableOpacity style={{ flexDirection: 'row', justifyContent: "space-between" }}
                   onPress={() =>
-                    navigation.reset({
-                      index: 0,
-                      routes: [{ name: 'AddExam' }],
-                    })
+                    navigation.navigate('AddExam')
                   }
                 >
                   <Text style={styles.title}>
@@ -216,8 +208,13 @@ export default function HomeScreen() {
                 <TeacherAssignmentSlider data={assignments} categoryText={"My Assignments"} screen={"AssignmentDetails"} />
             }
           </View>
-          <View style={{ marginVertical: 10 }}>
-            <ExamSlider data={exams} categoryText={"My Exams"} screen={"ExamDetails"} />
+          <View style={{ marginVertical: 10, paddingBottom: 10 }}>
+            {
+              userType.toLowerCase() === "user" ?
+                <ExamSlider data={exams} categoryText={"My Exams"} screen={"ExamDetails"} />
+                :
+                <TeacherExamSlider data={exams} categoryText={"My Exams"} screen={"ExamDetails"} />
+            }
           </View>
         </ScrollView>
         {/* <FAB title={<Icon name="plus" size={20} color={'white'} style={{fontWeight: 'bold'}}/>} color='#3878ee' placement='right' style={{ marginBottom: '25%' }} onPress={()=>{toggleModal()}}/> */}

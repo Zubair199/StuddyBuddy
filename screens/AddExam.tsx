@@ -95,7 +95,7 @@ export default function AddExamScreen() {
         fetch(AUTHENTICATIONS.API_URL + EXAM.CREATE, requestObj)
           .then((response) => response.json())
           .then((responseJson) => {
-            console.log(responseJson)
+            console.log('exam responseJson => ', responseJson)
             navigation.navigate('AddExamQuestions', { examID: responseJson.examID })
           })
           .catch((err: any) => {

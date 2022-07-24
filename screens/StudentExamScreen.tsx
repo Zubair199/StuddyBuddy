@@ -37,10 +37,7 @@ export default function StudentExamScreen({ route }) {
         <View style={styles.container}>
             <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15, }}>
                 <TouchableOpacity style={{ marginTop: 5 }}
-                    onPress={() => navigation.reset({
-                        index: 0,
-                        routes: [{ name: 'Classes' }],
-                    })}>
+                    onPress={() => navigation.navigate('Classes')}>
                     <Icon color={'black'} name="leftcircleo" size={25} />
                 </TouchableOpacity>
                 <Text style={styles.title}>Assignment Details</Text>
@@ -110,7 +107,7 @@ export default function StudentExamScreen({ route }) {
                         </View>
                     ))}
                     <View style={{ marginVertical: 10, marginBottom: 40 }}>
-                        <Button title={"Submit"} onPress={() => {console.log('submitted')}} />
+                        <Button title={"Submit"} onPress={() => { console.log('submitted') }} />
                     </View>
                 </ScrollView>
             }

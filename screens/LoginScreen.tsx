@@ -13,56 +13,83 @@ import {
   Image,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ThemeProvider, useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
-import { isValidEmail, logError } from '../utils/HelperFunctions';
-import { AuthContext } from '../utils/AuthContext';
+import {ThemeProvider, useNavigation} from '@react-navigation/native';
+import {useState} from 'react';
+import {isValidEmail, logError} from '../utils/HelperFunctions';
+import {AuthContext} from '../utils/AuthContext';
 import api from '../constants/api';
 import Spinner from 'react-native-loading-spinner-overlay';
 import CONSTANTS from '../constants/common';
 import genericStyle from '../assets/styles/styleSheet';
-import { AUTH, AUTHENTICATIONS } from '../services/api.constants';
-import { ThemeContext } from '../context/ThemeContext';
-import { Checkbox } from 'native-base';
+import {AUTH, AUTHENTICATIONS, GENERAL} from '../services/api.constants';
+import {ThemeContext} from '../context/ThemeContext';
+import {Checkbox} from 'native-base';
 
 const useUserAuth = () => React.useContext(AuthContext);
 import Icon from 'react-native-vector-icons/AntDesign';
 
 export default function LoginScreen() {
   const navigation = useNavigation();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [secure, setSecure] = useState(true);
   const [showSpinner, setShowSpinner] = useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [rememberMe, setRememberMe] = React.useState(false);
   const [visible, setVisible] = React.useState(false);
 
-  const { currentScreen, setCurrentScreen } = React.useContext(ThemeContext);
+  const {currentScreen, setCurrentScreen} = React.useContext(ThemeContext);
 
-  const { setUserToken, setUserName, setUserEmail, setGuestView, userToken, setUserType } =
-    useUserAuth()!;
+  const {
+    setUserToken,
+    setUserName,
+    setUserEmail,
+    setGuestView,
+    userToken,
+    setUserType,
+  } = useUserAuth()!;
 
   let notificationToken: any = '';
 
   const ref: any = React.useRef();
+  const [allSkills, setAllSkills] = useState([]);
+  const [allLocations, setAllLocations] = useState([]);
+  const [allSubjects, setAllSubjects] = useState([]);
 
   React.useEffect(() => {
-    setCurrentScreen("HomeScreen");
-
+    setCurrentScreen('HomeScreen');
+    try {
+      fetch(AUTHENTICATIONS.API_URL + GENERAL.SITE_CONTENTS)
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log(responseJson);
+          setAllSkills(responseJson.skills);
+          setAllLocations(responseJson.locations);
+          setAllSubjects(responseJson.subjects);
+        })
+        .catch((err: any) => {
+          console.log(err);
+          console.log(err.response);
+          Alert.alert('Alert', 'Registration Failed. Try Again!');
+          setShowSpinner(false);
+        });
+    } catch (exception) {
+      console.log('exception ', exception);
+      Alert.alert('Alert', 'Registration Failed. Try Again!');
+      setShowSpinner(false);
+    }
     (async () => {
-
       let _remeberMe = await AsyncStorage.getItem('rememberMe');
       let _password = await AsyncStorage.getItem('password');
-      let _email = await AsyncStorage.getItem(
-        'email'
-      );
-      console.log("========" + _remeberMe)
+      let _email = await AsyncStorage.getItem('email');
+      console.log('========' + _remeberMe);
       if (_remeberMe !== null) {
-
-        if ((_email !== null || _email !== "") && (_password !== null || _password !== "")) {
-          setEmail(_email)
-          setPassword(_password)
+        if (
+          (_email !== null || _email !== '') &&
+          (_password !== null || _password !== '')
+        ) {
+          setEmail(_email);
+          setPassword(_password);
           let loginRequest: any = JSON.stringify({
             username: _email,
             password: _password,
@@ -76,29 +103,34 @@ export default function LoginScreen() {
               method: 'POST',
               headers: {
                 Accept: 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
               },
-              body: loginRequest
-            }
+              body: loginRequest,
+            };
             fetch(AUTHENTICATIONS.API_URL + AUTH.SIGNIN, requestObj)
-              .then((response) => response.json())
-              .then((responseJson) => {
-                console.log(responseJson)
+              .then(response => response.json())
+              .then(responseJson => {
+                console.log(responseJson);
                 if (responseJson && responseJson.user !== null) {
                   if (responseJson.user.isActive) {
-                    if (responseJson.user.emailVerified && responseJson.user.profileCreated) {
+                    if (
+                      responseJson.user.emailVerified &&
+                      responseJson.user.profileCreated
+                    ) {
                       setUserName(responseJson.user.username);
                       setUserEmail(responseJson.user.email);
                       setUserToken(responseJson.user._id);
-                      setUserType(responseJson.user.roles.name.toLowerCase())
+                      setUserType(responseJson.user.roles.name.toLowerCase());
                       setGuestView(false);
                       setIsLoading(false);
                     } else {
                       setIsLoading(false);
-                      Alert.alert('Alert', 'Email not verified! Kindly check you email to verify your account.');
+                      Alert.alert(
+                        'Alert',
+                        'Email not verified! Kindly check your email to verify your account.',
+                      );
                     }
-                  }
-                  else {
+                  } else {
                     setIsLoading(false);
                     Alert.alert('Alert', 'User is inactive.');
                   }
@@ -106,24 +138,20 @@ export default function LoginScreen() {
                 setIsLoading(false);
               })
               .catch((err: any) => {
-                console.log(err)
-                console.log(err.response)
+                console.log(err);
+                console.log(err.response);
                 setIsLoading(false);
-              })
-          }
-
-          catch (exception) {
+              });
+          } catch (exception) {
             setIsLoading(false);
-            console.log('exception ', exception)
+            console.log('exception ', exception);
           }
         }
-      }
-      else {
+      } else {
         setIsLoading(false);
       }
     })();
-
-  }, [])
+  }, []);
   const onPressLoginBtn = () => {
     if (email.trim().length == 0) {
       Alert.alert('Alert', 'Email and password cannot be empty.');
@@ -149,76 +177,86 @@ export default function LoginScreen() {
         method: 'POST',
         headers: {
           Accept: 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: loginRequest
-      }
+        body: loginRequest,
+      };
       fetch(AUTHENTICATIONS.API_URL + AUTH.SIGNIN, requestObj)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          console.log(responseJson)
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log(responseJson);
           if (responseJson && responseJson.user !== null) {
             if (responseJson.user.isActive && responseJson.user.emailVerified) {
               if (responseJson.user.profileCreated) {
-                setUserName(responseJson.user.username);
-                setUserEmail(responseJson.user.email);
-                setUserToken(responseJson.user._id);
-                setUserType(responseJson.user.roles.name.toLowerCase())
-                setGuestView(false);
-                setIsLoading(false);
-                setEmail("")
-                setPassword("")
-                if (rememberMe) {
-                  (async () => {
-                    await AsyncStorage.setItem('rememberMe', "yes");
-                    await AsyncStorage.setItem('userId', responseJson.user._id);
-                    await AsyncStorage.setItem('password', password);
-                    await AsyncStorage.setItem(
-                      'email',
-                      responseJson.user.email,
-                    );
-                  })();
+                if (responseJson.profile.status.toLowerCase() === 'pending') {
+                  Alert.alert(
+                    'Alert',
+                    'Your account is under observation you will soon get confirmation email!',
+                  );
+                  setIsLoading(false);
+                } else {
+                  setUserName(responseJson.user.username);
+                  setUserEmail(responseJson.user.email);
+                  setUserToken(responseJson.user._id);
+                  setUserType(responseJson.user.roles.name.toLowerCase());
+                  setGuestView(false);
+                  setIsLoading(false);
+                  setEmail('');
+                  setPassword('');
+                  if (rememberMe) {
+                    (async () => {
+                      await AsyncStorage.setItem('rememberMe', 'yes');
+                      await AsyncStorage.setItem(
+                        'userId',
+                        responseJson.user._id,
+                      );
+                      await AsyncStorage.setItem('password', password);
+                      await AsyncStorage.setItem(
+                        'email',
+                        responseJson.user.email,
+                      );
+                    })();
+                  }
                 }
-              }
-              else {
-                setEmail("")
-                setPassword("")
+              } else {
+                setEmail('');
+                setPassword('');
                 setIsLoading(false);
                 navigation.navigate('ProfileSetup', {
                   email: email,
                   password: password,
-                  allSkills: [],
-                  allGenres: [],
-                  allLocations: [],
+                  allSkills: allSkills,
+                  allSubjects: allSubjects,
+                  allLocations: allLocations,
                   skills: [],
-                  genres: [],
+                  subjects: [],
                   locations: [],
                 });
               }
-            }
-            else {
+            } else {
               setIsLoading(false);
-              Alert.alert('Alert', 'Email not verified! Kindly check you email to verify your account.')
+              Alert.alert(
+                'Alert',
+                'Email not verified! Kindly check your email to verify your account.',
+              );
               navigation.navigate('AccountVerify', {
                 email: email,
                 password: password,
-              })
+              });
             }
-          }
-          else {
+          } else {
             setIsLoading(false);
             Alert.alert('Alert', responseJson.msg);
           }
         })
         .catch((err: any) => {
-          console.log(err)
-          console.log(err.response)
+          console.log(err);
+          console.log(err.response);
           setIsLoading(false);
-        })
-    }
-    catch (exception) {
+        });
+    } catch (exception) {
       setIsLoading(false);
-      console.log('exception ', exception)
+      console.log('exception ', exception);
     }
     // api.userLogin(loginRequest).then((loginResponse: any) => {
     //   if (loginResponse) {
@@ -328,42 +366,7 @@ export default function LoginScreen() {
   };
 
   const onPressBrowseGalleryBtn = () => {
-    let loginRequest: any = JSON.stringify({
-      email: CONSTANTS.VALUES.GUEST_ACCOUNT_EMAIL,
-      isGuest: true,
-      password: CONSTANTS.VALUES.GUEST_ACCOUNT_PASSWORD,
-      notificationToken: notificationToken,
-      os: Platform.OS,
-    });
-
-    setIsLoading(true);
-    api.userLogin(loginRequest).then((loginResponse: any) => {
-      if (loginResponse) {
-        console.log('--------loginResponse: ', loginResponse);
-        if (loginResponse.success) {
-          if (loginResponse.profile.isGuest && !loginResponse.profile.isAdmin) {
-            setIsLoading(false);
-
-            (async () => {
-              await AsyncStorage.setItem('userId', loginResponse.profile._id);
-              await AsyncStorage.setItem('password', password);
-              await AsyncStorage.setItem('email', loginResponse.profile.email);
-            })();
-            // setUserName(loginResponse.profile.fullName);
-            // setUserEmail(loginResponse.profile.email);
-            // setUserToken(loginResponse.profile._id);
-            navigation.navigate('Guest');
-            setGuestView(true);
-          }
-        } else {
-          setIsLoading(false);
-          Alert.alert('Error', 'Please try again some error occured!');
-        }
-      } else {
-        setIsLoading(false);
-        Alert.alert('Error', 'Please try again some error occured!');
-      }
-    });
+    navigation.navigate('Guest');
   };
 
   /* ==================================== JSX Code Starts From Here ===================== */
@@ -375,15 +378,15 @@ export default function LoginScreen() {
         textContent={'Loading...'}
         textStyle={styles.spinnerTextStyle}
       />
-      <View style={{ flexDirection: 'column' }}>
+      <View style={{flexDirection: 'column'}}>
         <View style={styles.header}>
           <Image
             source={require('../assets/images/login_log.png')}
-            style={{ width: 164.62, height: 165.69 }}
+            style={{width: 164.62, height: 165.69}}
           />
         </View>
 
-        <View style={{ padding: 15 }}>
+        <View style={{padding: 15}}>
           <View style={styles.inputTextContainer}>
             <TextInput
               testID="inputEmail"
@@ -399,7 +402,7 @@ export default function LoginScreen() {
           </View>
 
           <View style={styles.passwordSection}>
-            <View style={{ width: '90%' }}>
+            <View style={{width: '90%'}}>
               <TextInput
                 testID="inputPassword"
                 secureTextEntry={secure}
@@ -412,20 +415,25 @@ export default function LoginScreen() {
                 editable={showSpinner ? false : true}
                 maxLength={40}
                 underlineColorAndroid="transparent"
-
               />
             </View>
-            <View >
-              <TouchableOpacity onPress={() => { setSecure(!secure) }}>
+            <View>
+              <TouchableOpacity
+                onPress={() => {
+                  setSecure(!secure);
+                }}>
                 <Icon name="eye" size={20} />
               </TouchableOpacity>
             </View>
           </View>
-          <View style={{ flexDirection: "row", marginTop: 20 }}>
-            <Checkbox accessibilityLabel="Remember Me" value={rememberMe} onChange={() => setRememberMe(!rememberMe)} />
-            <Text style={{ marginLeft: 15, color: "#3878ee" }}>Remeber Me</Text>
+          <View style={{flexDirection: 'row', marginTop: 20}}>
+            <Checkbox
+              accessibilityLabel="Remember Me"
+              value={rememberMe}
+              onChange={() => setRememberMe(!rememberMe)}
+            />
+            <Text style={{marginLeft: 15, color: '#3878ee'}}>Remeber Me</Text>
           </View>
-
         </View>
 
         <View
@@ -446,7 +454,7 @@ export default function LoginScreen() {
             <TouchableOpacity onPress={onPressCreateAccountBtn}>
               <Text style={styles.createBtnText}>
                 Create an{' '}
-                <Text style={[styles.createBtnText, { fontWeight: 'bold' }]}>
+                <Text style={[styles.createBtnText, {fontWeight: 'bold'}]}>
                   account
                 </Text>
               </Text>
@@ -464,7 +472,7 @@ export default function LoginScreen() {
                 marginTop: 40,
               },
             ]}>
-            <Text style={[genericStyle.loginBtnText, { color: '#3878ee' }]}>
+            <Text style={[genericStyle.loginBtnText, {color: '#3878ee'}]}>
               Continue As Guest{' '}
             </Text>
           </TouchableOpacity>
