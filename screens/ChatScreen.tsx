@@ -18,7 +18,7 @@ import {
   InputToolbar,
 } from 'react-native-gifted-chat';
 import LottieView from 'lottie-react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 const io = require('socket.io-client');
 import api from '../services/api.services';
 import {
@@ -44,7 +44,6 @@ import {
 } from 'react-native';
 import {Menu, MenuDivider, MenuItem} from 'react-native-material-menu';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import {BackHandler} from 'react-native';
 export const useUserAuth = () => React.useContext(AuthContext);
 
@@ -419,7 +418,7 @@ export default function ChatScreen() {
           <Image
             source={require('../assets/images/icons/angle-left-white.png')}
             style={
-              Platform.OS == 'ios' ? styles.backIconIPhone : styles.backIcon
+              Platform.OS == 'ios' ? styles.backIcon : styles.backIcon
             }
           />
         </TouchableOpacity>

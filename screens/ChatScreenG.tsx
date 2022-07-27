@@ -42,7 +42,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import {BackHandler} from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 export const useUserAuth = () => React.useContext(AuthContext);
 
 export default function ChatScreen() {
@@ -61,7 +61,6 @@ export default function ChatScreen() {
     rejectUnauthorized: false,
     jsonp: false,
   });
-  const [loader, setLoader] = React.useState(false);
   let userother1 = '';
   const empyString = '';
   const routes = useRoute<RouteProp<ChatScreenParamList, 'ChatScreen'>>();
@@ -377,8 +376,8 @@ export default function ChatScreen() {
         />
       </View>
     ) : (
-      <SafeAreaProvider>
-    <View style={{ flex: 1, paddingBottom: 4 }}>
+      <SafeAreaView style={{ flex: 1, paddingBottom: 4 }}>
+   
       <View style={{ flexDirection: "row", height: 50, backgroundColor: "#3878ee", justifyContent: "flex-start" }}>
         <View style={{ flexDirection: 'row', marginTop: 9 }}>
           <TouchableOpacity onPress={() => { previousScreen() }} style={styles.titleIconBox}>
@@ -456,8 +455,8 @@ export default function ChatScreen() {
           _id: userToken,
         }}
       />
-    </View>
-    </SafeAreaProvider>
+   
+    </SafeAreaView>
     )
   );
 }
