@@ -16,10 +16,7 @@ export default function AssignmentScreen() {
     <View style={styles.container}>
       <View style={{ flexDirection: 'row', paddingLeft: 15, marginTop: 15 }}>
         <TouchableOpacity style={{ marginTop: 5 }}
-          onPress={() => navigation.reset({
-            index: 0,
-            routes: [{ name: 'AssignmentDetails' }],
-          })}>
+          onPress={() => navigation.navigate('AssignmentDetails')}>
           <Icon color={'black'} name="leftcircleo" size={25} />
         </TouchableOpacity>
         <Text style={styles.title}>Assignment Questions</Text>
@@ -27,9 +24,9 @@ export default function AssignmentScreen() {
       <ScrollView style={{ marginBottom: '25%', padding: 15 }}>
         {
           [0, 1, 2, 3, 4].map((item, index) => (
-            <View key={index} style={{marginVertical: 10}}>
+            <View key={index} style={{ marginVertical: 10 }}>
               <View>
-                <Text style={{ fontSize: 20, marginLeft: 15 }}>Q{index+1}: What's pencil made of?</Text>
+                <Text style={{ fontSize: 20, marginLeft: 15 }}>Q{index + 1}: What's pencil made of?</Text>
               </View>
               <View style={{ marginVertical: 15 }}>
                 <CheckBox

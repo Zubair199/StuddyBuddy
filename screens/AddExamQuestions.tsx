@@ -1,7 +1,7 @@
 import { Alert, StyleSheet, Text, Touchable, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { ScrollView } from 'react-native-gesture-handler'
-import { Divider, Input, TextArea } from 'native-base';
+import { Divider, Input, Select, TextArea } from 'native-base';
 import { Button } from 'react-native-elements';
 import { AUTHENTICATIONS, EXAM } from '../services/api.constants';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
@@ -178,17 +178,21 @@ export default function AddExamQuestions({ route }) {
                 </View>
                 <View style={{ marginVertical: 10 }}>
                     {/* <Input variant="outline" placeholder="Enter Answer" defaultValue={answer} onChangeText={(text) => setAnswer(text)} /> */}
-                    <Select accessibilityLabel="Choose Right Answer"
-                        placeholder="Choose Right Answer"
-                        onValueChange={itemValue => {
-                            setAnswer(itemValue)
-                        }}
-                    >
-                        <Select.Item label={answer1} value={answer1} />
-                        <Select.Item label={answer2} value={answer2} />
-                        <Select.Item label={answer3} value={answer3} />
-                        <Select.Item label={answer4} value={answer4} />
-                    </Select>
+                    {
+                        (answer1 !== "" && answer2 !== "" && answer3 !== "" && answer4 !== "")
+                        &&
+                        <Select accessibilityLabel="Choose Right Answer"
+                            placeholder="Choose Right Answer"
+                            onValueChange={itemValue => {
+                                setAnswer(itemValue)
+                            }}
+                        >
+                            <Select.Item label={answer1} value={answer1} />
+                            <Select.Item label={answer2} value={answer2} />
+                            <Select.Item label={answer3} value={answer3} />
+                            <Select.Item label={answer4} value={answer4} />
+                        </Select>
+                    }
                 </View>
 
                 <View style={{ marginVertical: 20, flexDirection: "row", justifyContent: "space-between" }}>

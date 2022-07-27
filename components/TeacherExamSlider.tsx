@@ -41,17 +41,11 @@ export default function TeacherExamSlider(props: Iprops) {
                       </View>
                       <View style={styles.classBox}>
                         <TouchableOpacity
-                          // onPress={
-                          //   () => navigation.reset({
-                          //     index: 0,
-                          //     routes: [{ name: props.screen, params: { assignmentID: item._id } }],
-                          //   })
-                          // }
                           onPress={() => {
                             item.status.toLowerCase() === "started" ?
-                              navigation.navigate('ExamStartScreen', { examID: item.exam._id, studentExamID: item._id })
+                              navigation.navigate('ExamStartScreen', { examID: item._id, studentExamID: item._id })
                               :
-                              navigation.navigate(props.screen, { examID: item.exam._id })
+                              navigation.navigate(props.screen, { examID: item._id })
                           }}
                           style={{
                             width: "100%",
@@ -60,13 +54,6 @@ export default function TeacherExamSlider(props: Iprops) {
                           }}
                         >
                           <View style={styles.levelBox}>
-                            {/* <View
-                          style={styles.levelIntermediate}
-                        >
-                        </View>
-                        <Text style={styles.classBoxText}>
-                          Intermediate
-                        </Text> */}
 
                           </View>
                           <Text style={styles.classBoxName}>
@@ -79,13 +66,13 @@ export default function TeacherExamSlider(props: Iprops) {
                             {/* Tuesday 12:00 - 13:00 */}
                           </Text>
                           <Text style={styles.classBoxInstructor}>
-                            {item.exam.title}
+                            {item.title}
                           </Text>
                           <Text style={styles.classBoxInstructor}>
                             {item.status}
                           </Text>
                           <Text style={styles.classBoxInstructor}>
-                            {item.exam.startdate}
+                            {item.startdate}
                           </Text>
                         </TouchableOpacity>
                       </View>

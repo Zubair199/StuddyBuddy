@@ -39,10 +39,7 @@ export default function StudentAssignmentScreen({ route }) {
         <View style={styles.container}>
             <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15, }}>
                 <TouchableOpacity style={{ marginTop: 5 }}
-                    onPress={() => navigation.reset({
-                        index: 0,
-                        routes: [{ name: 'Classes' }],
-                    })}>
+                    onPress={() => navigation.navigate('Classes')}>
                     <Icon color={'black'} name="leftcircleo" size={25} />
                 </TouchableOpacity>
                 <Text style={styles.title}>Exam Questions</Text>

@@ -33,6 +33,15 @@ module.exports = {
     CREATE_TOPIC: '/api/class/topic',
     CREATE_ANNOUNCEMENT: '/api/class/announcement',
     GET_ALL_ACTIVE_CLASSES_BY_TEACHER_ID: '/api/class/teacher/active/',
+    AUTHENTICATIONS: {
+      // Saims
+      // API_URL: "http://192.168.43.122:5000",
+      // CHAT_SERVER_URL: 'http://192.168.43.122:5000',
+
+      // Zubairs
+      API_URL: 'http://192.168.100.26:5000',
+      CHAT_SERVER_URL: 'http://192.168.100.26:5000',
+    },
 
     GET_ALL_ACTIVE_UPCOMING_CLASSES_BY_TEACHER_ID:
       '/api/class/teacher/upcoming/active/',
@@ -40,8 +49,26 @@ module.exports = {
     GET_ALL_CLASSES_BY_TEACHER_ID: '/api/class/teacher/',
     GET_CLASS_BY_CLASS_ID: '/api/class/',
     GET_TEACHER_SCHEDULE: '/api/class/teacher/scehdule',
-
-    GET_TEACHER_SEARCH: '/api/class/teacher/search/',
+  },
+  GENERAL: {
+    SITE_CONTENTS: '/api/sitecontents',
+  },
+  AUTH: {
+    SIGNUP: '/api/auth/signup',
+    SIGNIN: '/api/auth/signin',
+    VERIFY: '/api/auth/verify',
+    EMAIL_RESET_PASSWORD: '/api/auth/resetPassword',
+    USERS: '/api/users',
+    SELF: '/api/getself',
+    PROFILE: '/api/auth/profile',
+    PROFILE_VIDEO: '/api/auth/profile/video/',
+    GET_USER_BY_EMAIL: '/api/auth/getUserByEmail/',
+  },
+  CLASS: {
+    CREATE: '/api/class',
+    CREATE_TOPIC: '/api/class/topic',
+    CREATE_ANNOUNCEMENT: '/api/class/announcement',
+    GET_ALL_ACTIVE_CLASSES_BY_TEACHER_ID: '/api/class/teacher/active/',
 
     GET_ALL_ACTIVE_CLASSES: '/api/classes/active',
 

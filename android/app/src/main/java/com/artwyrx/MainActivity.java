@@ -1,6 +1,8 @@
 package com.teaching;
 import android.os.Bundle;
 import com.facebook.react.ReactActivity;
+import com.rnfs.RNFSPackage; // <------- add package
+
 public class MainActivity extends ReactActivity {
 
   /**
