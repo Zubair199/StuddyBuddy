@@ -6,8 +6,8 @@ module.exports = {
         // CHAT_SERVER_URL: 'http://192.168.43.122:5000',
 
         // Zubairs
-        API_URL: "http://192.168.100.26:5000",
-        CHAT_SERVER_URL: 'http://192.168.100.26:5000',
+        API_URL: "http://192.168.1.2:5000",
+        CHAT_SERVER_URL: 'http://192.168.1.2:5000',
     },
 
     NOTIFICATION: {
@@ -84,7 +84,7 @@ module.exports = {
     EXAM: {
         CREATE: "/api/exam",
         CREATE_QUESTIONS: "/api/exam/question",
-        GET_ALL_ACTIVE_EXAMS_BY_TEACHER_ID: "/api/exam/teacher/active/",
+        GET_ALL_ACTIVE_EXAMS_BY_TEACHER_ID: "/api/exam/active/teacher/",
         GET_ALL_EXAMS_BY_TEACHER_ID: '/api/exam/teacher/',
         GET_EXAM_BY_EXAM_ID: '/api/exam/',
         GET_EXAM_QUESTIONS_BY_EXAM_ID: '/api/exam/question/',
@@ -96,7 +96,7 @@ module.exports = {
         CREATE: "/api/assignment",
         CREATE_QUESTIONS: "/api/assignment/question",
 
-        GET_ALL_ACTIVE_ASSIGNMENTS_BY_TEACHER_ID: "/api/assignment/teacher/active/",
+        GET_ALL_ACTIVE_ASSIGNMENTS_BY_TEACHER_ID: "/api/assignment/active/teacher/",
 
         GET_ALL_ASSIGNMENTS_BY_TEACHER_ID: '/api/assignment/teacher/',
 
