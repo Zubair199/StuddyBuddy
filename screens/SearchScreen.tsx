@@ -13,12 +13,12 @@ import {
 } from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {AUTHENTICATIONS, CLASS} from '../services/api.constants';
+import {AUTHENTICATIONS, CLASS, GENERAL} from '../services/api.constants';
 import {AuthContext} from '../utils/AuthContext';
 import MainLayout from './MainLayout';
 import {Button} from 'react-native-elements';
 import {RadioButton} from 'react-native-paper';
-import {Radio, Select} from 'native-base';
+import {Divider, Radio, Select} from 'native-base';
 
 export default function SearchScreen() {
   const isFocused = useIsFocused();
@@ -32,6 +32,8 @@ export default function SearchScreen() {
   const [groupList, setGroupList] = React.useState<any>();
 
   const [classes, setClasses] = React.useState([]);
+  const [users, setUsers] = React.useState([]);
+
   const [search, setSearch] = React.useState([]);
   const [status, setStatus] = React.useState('approved');
 
@@ -44,15 +46,30 @@ export default function SearchScreen() {
   let [subjects, setSubjects] = React.useState([]);
   let [level, setLevel] = React.useState('');
   let [hireFlag, setHireFlag] = React.useState('');
+  let [name, setName] = React.useState('');
+
+  let [view, setView] = React.useState('students');
 
   const [isModal, setIsModal] = React.useState(false);
   function toggleModal() {
     console.log('modal');
     setIsModal(!isModal);
+    clearStates();
   }
 
+  function clearStates() {
+    setClassDuration('');
+    setSubject('');
+    setSubjectID('');
+    setName('');
+    setLevel('');
+    setHireFlag('');
+    setValue('students');
+  }
   React.useEffect(() => {
     console.log(user);
+    setClasses([]);
+    setUsers([]);
     // studentApiCall()
     fetch(AUTHENTICATIONS.API_URL + CLASS.SUBJECTS)
       .then(response => response.json())
@@ -72,15 +89,16 @@ export default function SearchScreen() {
     try {
       fetch(
         AUTHENTICATIONS.API_URL +
-          CLASS.GET_TEACHER_SEARCH +
-          user +
-          '/' +
-          status,
+          GENERAL.TEACHER_SEARCH +
+          'name=' +
+          name +
+          '&hire=' +
+          hireFlag,
       )
         .then(response => response.json())
         .then(responseJson => {
-          console.log('classes ', responseJson.data);
-          setClasses(responseJson.data);
+          console.log('teachers ', responseJson);
+          setUsers(responseJson.users);
         })
         .catch(err => {
           console.log(err);
@@ -91,17 +109,11 @@ export default function SearchScreen() {
   }
   function studentApiCall() {
     try {
-      fetch(
-        AUTHENTICATIONS.API_URL +
-          CLASS.GET_TEACHER_SEARCH +
-          user +
-          '/' +
-          status,
-      )
+      fetch(AUTHENTICATIONS.API_URL + GENERAL.USER_SEARCH + name)
         .then(response => response.json())
         .then(responseJson => {
-          console.log('classes ', responseJson.data);
-          setClasses(responseJson.data);
+          console.log('students ', responseJson);
+          setUsers(responseJson.users);
         })
         .catch(err => {
           console.log(err);
@@ -110,17 +122,160 @@ export default function SearchScreen() {
       console.log(err);
     }
   }
-  function searchClasses(text) {
-    let backup = classes;
-    let backup1 = classes;
-    backup = backup.filter(val => {
-      return val.name.toString().toLowerCase().includes(text.toLowerCase());
-    });
-    console.log(backup.length);
-    if (backup.length !== 0) {
-      setClasses(backup);
+  function classesApiCall() {
+    try {
+      fetch(
+        AUTHENTICATIONS.API_URL +
+          GENERAL.CLASS_SEARCH +
+          'name=' +
+          name +
+          '&' +
+          'subject=' +
+          subjectID +
+          '&' +
+          'level=' +
+          level +
+          '&' +
+          'duration=' +
+          classDuration,
+      )
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log('classes ', responseJson);
+          setClasses(responseJson.classes);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  function filter() {
+    if (value === 'students') {
+      studentApiCall();
+    } else if (value === 'teachers') {
+      teacherApiCall();
+    } else if (value === 'classes') {
+      classesApiCall();
+    }
+    toggleModal();
+  }
+
+  function getView() {
+    if (view === 'students' || view === 'teachers') {
+      return (
+        <>
+          {!users || users.length == 0 ? (
+            <View style={styles.contentBox}>
+              <Text style={styles.emptySearchText}>No Item Has Been Found</Text>
+            </View>
+          ) : (
+            <ScrollView
+              style={styles.scrollView}
+              showsVerticalScrollIndicator={false}>
+              <View>
+                {users.map((item, index) => {
+                  return (
+                    <TouchableOpacity key={index} onPress={() => {}}>
+                      <View
+                        style={{
+                          padding: 15,
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                        }}>
+                        <View>
+                          <View>
+                            <Text>{item.username}</Text>
+                            <View>
+                              <Text>{item.roles.name}</Text>
+                            </View>
+                          </View>
+                        </View>
+                        <View>
+                          {/* <TouchableOpacity onPress={() => {handleChat(item._id,)}}> */}
+                          <TouchableOpacity onPress={() => {}}>
+                            <Icon name="message1" size={25} />
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                      <Divider />
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </ScrollView>
+          )}
+        </>
+      );
     } else {
-      setClasses(backup1);
+      return (
+        <>
+          {!classes || classes.length == 0 ? (
+            <View style={styles.contentBox}>
+              <Text style={styles.emptySearchText}>No Item Has Been Found</Text>
+            </View>
+          ) : (
+            <ScrollView
+              style={styles.scrollView}
+              showsVerticalScrollIndicator={false}>
+              <View>
+                {classes.map(classItem => (
+                  <TouchableOpacity
+                    style={styles.groupBox}
+                    key={classItem._id}
+                    onPress={() => {
+                      navigation.navigate('ClassDetails', {
+                        classID: classItem._id,
+                      });
+                    }}>
+                    <Image
+                      source={require('../assets/images/bg.jpg')}
+                      style={styles.classImg}
+                    />
+                    <View style={styles.classInfo}>
+                      <View style={styles.levelBox}>
+                        <View style={styles.levelIntermediate}></View>
+                        <Text style={styles.levelText}>{classItem.level}</Text>
+                      </View>
+                      <View
+                        style={{
+                          flexWrap: 'wrap',
+                          flexDirection: 'row',
+                          width: '80%',
+                        }}>
+                        <Text style={styles.className}>{classItem.name}</Text>
+                      </View>
+                      <View style={{flexDirection: 'row'}}>
+                        <Text style={styles.studio}>
+                          {classItem.Teacher.username}
+                        </Text>
+                        {/* <View style={styles.dot}></View>
+                    <Text style={styles.studio}>{classItem.studio}</Text> */}
+                      </View>
+                      {/* <Text style={styles.dayTime}>
+                        Monday &nbsp; 12:00 &nbsp;-&nbsp; 14:00
+                      </Text> */}
+                      {/* {classItem.myJoinStatus &&
+                    classItem.myJoinStatus === "pending" && ( */}
+                      <Text style={styles.statusMsg}>{classItem.status}</Text>
+                      {/* )}
+                  {classItem.status &&
+                    !classItem.myJoinStatus &&
+                    classItem.status === "pending" && (
+                      <Text style={styles.statusMsg}>
+                        Waiting For Admin Approval
+                      </Text>
+                    )} */}
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+          )}
+        </>
+      );
     }
   }
 
@@ -179,6 +334,7 @@ export default function SearchScreen() {
                   value={value}
                   onChange={nextValue => {
                     setValue(nextValue);
+                    setView(nextValue);
                   }}>
                   <Radio value="students" my="1">
                     Students
@@ -194,6 +350,7 @@ export default function SearchScreen() {
               <View style={{marginVertical: 10}}>
                 <TextInput
                   placeholder="Enter Name"
+                  onChangeText={text => setName(text)}
                   style={{
                     borderWidth: 1,
                     borderColor: 'lightgray',
@@ -279,6 +436,7 @@ export default function SearchScreen() {
             </View>
             <View style={{height: '10%'}}>
               <Button
+                onPress={() => filter()}
                 buttonStyle={{width: '100%'}}
                 containerStyle={{width: '100%'}}
                 title="Search"
@@ -287,68 +445,7 @@ export default function SearchScreen() {
           </View>
         </Modal>
 
-        {!classes || classes.length == 0 ? (
-          <View style={styles.contentBox}>
-            <Text style={styles.emptySearchText}>No Class Has Been Found</Text>
-          </View>
-        ) : (
-          <ScrollView
-            style={styles.scrollView}
-            showsVerticalScrollIndicator={false}>
-            <View>
-              {classes.map(classItem => (
-                <TouchableOpacity
-                  style={styles.groupBox}
-                  key={classItem}
-                  onPress={() => {
-                    navigation.navigate('ClassDetails', {
-                      classID: classItem._id,
-                    });
-                  }}>
-                  <Image
-                    source={require('../assets/images/bg.jpg')}
-                    style={styles.classImg}
-                  />
-                  <View style={styles.classInfo}>
-                    <View style={styles.levelBox}>
-                      <View style={styles.levelIntermediate}></View>
-                      <Text style={styles.levelText}>{classItem.level}</Text>
-                    </View>
-                    <View
-                      style={{
-                        flexWrap: 'wrap',
-                        flexDirection: 'row',
-                        width: '80%',
-                      }}>
-                      <Text style={styles.className}>{classItem.name}</Text>
-                    </View>
-                    <View style={{flexDirection: 'row'}}>
-                      <Text style={styles.studio}>
-                        {classItem.teacher.username}
-                      </Text>
-                      {/* <View style={styles.dot}></View>
-                    <Text style={styles.studio}>{classItem.studio}</Text> */}
-                    </View>
-                    <Text style={styles.dayTime}>
-                      Monday &nbsp; 12:00 &nbsp;-&nbsp; 14:00
-                    </Text>
-                    {/* {classItem.myJoinStatus &&
-                    classItem.myJoinStatus === "pending" && ( */}
-                    <Text style={styles.statusMsg}>{classItem.status}</Text>
-                    {/* )}
-                  {classItem.status &&
-                    !classItem.myJoinStatus &&
-                    classItem.status === "pending" && (
-                      <Text style={styles.statusMsg}>
-                        Waiting For Admin Approval
-                      </Text>
-                    )} */}
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </ScrollView>
-        )}
+        {getView()}
       </SafeAreaView>
     );
   }
@@ -364,7 +461,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     // marginTop: 10,
-    marginBottom: '28%',
+    marginBottom: '5%',
   },
 
   closeIconBox: {

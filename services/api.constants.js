@@ -6,8 +6,8 @@ module.exports = {
         // CHAT_SERVER_URL: 'http://192.168.43.122:5000',
 
         // Zubairs
-        API_URL: "http://192.168.1.2:5000",
-        CHAT_SERVER_URL: 'http://192.168.1.2:5000',
+        API_URL: "http://192.168.1.6:5000",
+        CHAT_SERVER_URL: 'http://192.168.1.6:5000',
     },
 
     NOTIFICATION: {
@@ -26,7 +26,12 @@ module.exports = {
 
     },
     GENERAL: {
-        SITE_CONTENTS: "/api/sitecontents"
+
+        SITE_CONTENTS: "/api/sitecontents",
+        USER_SEARCH: "/api/user/search/",
+        TEACHER_SEARCH: "/api/teacher/search/",
+        CLASS_SEARCH: "/api/class/search/"
+
     },
     AUTH: {
         SIGNUP: "/api/auth/signup",
@@ -80,6 +85,9 @@ module.exports = {
         GET_TOPIC_ANNOUNCEMENT_BY_SCHEDULE_ID: "/api/class/topics/announcements/",
 
         JOINED_STUDENTS: "/api/class/students/",
+
+
+        SEARCH: "/api/class/search/"
     },
     EXAM: {
         CREATE: "/api/exam",
