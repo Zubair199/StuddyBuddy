@@ -155,44 +155,80 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
         .then(response => response.json())
         .then(responseJson => {
           console.log(responseJson);
-          let res = responseJson;
-          if (res !== null) {
-            RNFetchBlob.fetch(
-              'PUT',
-              AUTHENTICATIONS.API_URL +
-                AUTH.PROFILE_VIDEO +
-                user +
-                '/' +
-                responseJson.data._id,
-              {'Content-Type': 'multipart/form-data'},
-              [
-                {
-                  name: 'video',
-                  filename:
-                    videoResponse.fileName +
-                    '.' +
-                    videoResponse.type.split('/')[1],
-                  type: 'video/mp4',
-                  data: RNFetchBlob.wrap(videoResponse.uri),
-                },
-              ],
-            )
-              .then(response => response.json())
-              .then(responseJ => {
-                if (res.data.status.toLowerCase() == 'pending') {
-                  navigation.navigate('Login');
-                  Alert.alert(
-                    'Success',
-                    'Your account is created and sent for admin approval. Once approved you can login!',
-                  );
-                }
-              })
-              .catch((err: any) => {
-                console.log(err);
-                console.log(err.response);
-                Alert.alert('Alert', 'Registration Failed. Try Again!');
-              });
-          }
+          // let res = responseJson;
+          // if (res !== null) {
+          //   RNFetchBlob.fetch(
+          //     'PUT',
+          //     AUTHENTICATIONS.API_URL +
+          //       AUTH.PROFILE_VIDEO +
+          //       user +
+          //       '/' +
+          //       responseJson.data._id,
+          //     {'Content-Type': 'multipart/form-data'},
+          //     [
+          //       {
+          //         name: 'video',
+          //         filename:
+          //           videoResponse.fileName +
+          //           '.' +
+          //           videoResponse.type.split('/')[1],
+          //         type: 'video/mp4',
+          //         data: RNFetchBlob.wrap(videoResponse.uri),
+          //       },
+          //     ],
+          //   )
+          //     .then(response => response.json())
+          //     .then(responseJ => {
+          //       if (res.data.status.toLowerCase() == 'pending') {
+          //         navigation.navigate('Login');
+          //         Alert.alert(          // let res = responseJson;
+          // if (res !== null) {
+          //   RNFetchBlob.fetch(
+          //     'PUT',
+          //     AUTHENTICATIONS.API_URL +
+          //       AUTH.PROFILE_VIDEO +
+          //       user +
+          //       '/' +
+          //       responseJson.data._id,
+          //     {'Content-Type': 'multipart/form-data'},
+          //     [
+          //       {
+          //         name: 'video',
+          //         filename:
+          //           videoResponse.fileName +
+          //           '.' +
+          //           videoResponse.type.split('/')[1],
+          //         type: 'video/mp4',
+          //         data: RNFetchBlob.wrap(videoResponse.uri),
+          //       },
+          //     ],
+          //   )
+          //     .then(response => response.json())
+          //     .then(responseJ => {
+          //       if (res.data.status.toLowerCase() == 'pending') {
+          //         navigation.navigate('Login');
+          //         Alert.alert(
+          //           'Success',
+          //           'Your account is created and sent for admin approval. Once approved you can login!',
+          //         );
+          //       }
+          //     })
+          //     .catch((err: any) => {
+          //       console.log(err);
+          //       console.log(err.response);
+          //       Alert.alert('Alert', 'Registration Failed. Try Again!');
+          //     })
+          //           'Success',
+          //           'Your account is created and sent for admin approval. Once approved you can login!',
+          //         );
+          //       }
+          //     })
+          //     .catch((err: any) => {
+          //       console.log(err);
+          //       console.log(err.response);
+          //       Alert.alert('Alert', 'Registration Failed. Try Again!');
+          //     });
+          // }
         })
         .catch((err: any) => {
           console.log(err);

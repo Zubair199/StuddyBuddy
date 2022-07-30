@@ -18,7 +18,7 @@ import MenuNavigator from '../navigation/MenuNavigation';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import AccountCreateScreen from '../screens/AccountCreateScreen';
 import AccountVerificationScreen from '../screens/AccountVerificationScreen';
-// import ProfileSetupScreen from '../screens/ProfileSetupScreen';
+import ProfileSetupScreen from '../screens/ProfileSetupScreen';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import GuestArtsScreen from '../screens/GuestArtsScreen';
 import {useNavigation} from '@react-navigation/native';
@@ -137,11 +137,11 @@ function RootNavigator() {
                   component={AccountVerificationScreen}
                   options={headerFixed}
                 />
-                {/* <Stack.Screen
+                <Stack.Screen
                   name="ProfileSetup"
                   component={ProfileSetupScreen}
                   options={headerFixed}
-                /> */}
+                />
                 <Stack.Screen
                   name="Guest"
                   component={GuestArtsScreen}
