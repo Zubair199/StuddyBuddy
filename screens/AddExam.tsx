@@ -130,7 +130,7 @@ export default function AddExamScreen() {
   }
   else {
     return (
-      <View style={{ backgroundColor: "white", flex: 1 }}>
+      <SafeAreaView style={{ backgroundColor: "white", flex: 1 }}>
         <ScrollView style={{ padding: 15 }}>
           <View style={{ flexDirection: "row" }}>
             <View style={{ paddingTop: 29, marginRight: 70 }}>
@@ -297,7 +297,8 @@ export default function AddExamScreen() {
             <Button title={"Next"} onPress={() => AddExam()} />
           </View>
         </ScrollView>
-      </View>
+      
+      </SafeAreaView>
     )
   }
 }
