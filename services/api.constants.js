@@ -6,8 +6,8 @@ module.exports = {
         // CHAT_SERVER_URL: 'http://192.168.43.122:5000',
 
         // Zubairs
-        API_URL: "http://192.168.1.6:5000",
-        CHAT_SERVER_URL: 'http://192.168.1.6:5000',
+        API_URL: "http://192.168.100.26:5000",
+        CHAT_SERVER_URL: 'http://192.168.100.26:5000',
     },
 
     NOTIFICATION: {
@@ -34,14 +34,19 @@ module.exports = {
 
     },
     AUTH: {
+
         SIGNUP: "/api/auth/signup",
         SIGNIN: "/api/auth/signin",
+
         VERIFY: "/api/auth/verify",
         EMAIL_RESET_PASSWORD: "/api/auth/resetPassword",
         USERS: "/api/users",
         SELF: "/api/getself",
+
         PROFILE: "/api/auth/profile",
-        PROFILE_VIDEO: "/api/auth/profile/video/",
+        GET_PROFILE: "/api/auth/profile/",
+        EDIT_PROFILE: "/api/auth/updateprofile/",
+
         GET_USER_BY_EMAIL: "/api/auth/getUserByEmail/",
     },
     CLASS: {

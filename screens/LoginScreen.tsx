@@ -56,7 +56,13 @@ export default function LoginScreen() {
   const [allLocations, setAllLocations] = useState([]);
   const [allSubjects, setAllSubjects] = useState([]);
 
+  function clearStates() {
+    setPassword('');
+    setEmail('');
+  }
+
   React.useEffect(() => {
+    clearStates();
     setCurrentScreen('HomeScreen');
     try {
       fetch(AUTHENTICATIONS.API_URL + GENERAL.SITE_CONTENTS)
@@ -193,6 +199,7 @@ export default function LoginScreen() {
                     'Alert',
                     'Your account is under observation you will soon get confirmation email!',
                   );
+                  clearStates();
                   setIsLoading(false);
                 } else {
                   setUserName(responseJson.user.username);
@@ -258,103 +265,6 @@ export default function LoginScreen() {
       setIsLoading(false);
       console.log('exception ', exception);
     }
-    // api.userLogin(loginRequest).then((loginResponse: any) => {
-    //   if (loginResponse) {
-    //     if (loginResponse.success) {
-    //       if (
-    //         loginResponse.profile.emailVerified &&
-    //         loginResponse.profile.profileCreated
-    //       ) {
-    //         if (
-    //           !loginResponse.profile.isBanned &&
-    //           !loginResponse.profile.isAdmin
-    //         ) {
-    //           setIsLoading(false);
-
-    //           (async () => {
-    //             await AsyncStorage.setItem('userId', loginResponse.profile._id);
-    //             await AsyncStorage.setItem('password', password);
-    //             await AsyncStorage.setItem(
-    //               'email',
-    //               loginResponse.profile.email,
-    //             );
-    //           })();
-    //           setUserName(loginResponse.profile.fullName);
-    //           setUserEmail(loginResponse.profile.email);
-    //           setUserToken(loginResponse.profile._id);
-    //           setGuestView(false);
-    //         } else {
-    //           Alert.alert('Alert', 'Sorry, You not allowed to access system!');
-    //           setIsLoading(false);
-    //         }
-    //       } else {
-    //         Alert.alert('Alert', 'Email not verified!');
-    //         setIsLoading(false);
-    //         navigation.navigate('AccountVerify', {
-    //           email: email,
-    //           password: password,
-    //         });
-    //       }
-    //     } else {
-    //       if (loginResponse.isVerifyPending) {
-    //         setIsLoading(false);
-    //         navigation.navigate('AccountVerify', {
-    //           email: email,
-    //           password: password,
-    //         });
-    //       } else if (loginResponse.isProfileSetupPending) {
-    //         let allSkill: any = [];
-    //         let allGenres: any = [];
-    //         let allLocations: any = [];
-
-    //         api
-    //           .getSiteContents('skills,genre,location')
-    //           .then(response => {
-    //             if (response && response.success) {
-    //               allSkill = response['meta'].result.filter(
-    //                 (item: any) => item.contentType === 'skills',
-    //               );
-    //               allGenres = response['meta'].result.filter(
-    //                 (item: any) => item.contentType === 'genre',
-    //               );
-    //               allLocations = response['meta'].result.filter(
-    //                 (item: any) => item.contentType === 'location',
-    //               );
-
-    //               navigation.navigate('ProfileSetup', {
-    //                 email: email,
-    //                 password: password,
-    //                 allSkills: allSkill,
-    //                 allGenres: allGenres,
-    //                 allLocations: allLocations,
-    //                 skills: [],
-    //                 genres: [],
-    //                 locations: [],
-    //               });
-    //             } else {
-    //               let description = 'error occurred while fetching skills';
-    //               let error = response.message
-    //                 ? Error(response.message)
-    //                 : Error("Couldn't fetch skills");
-    //               logError(description, error, 'ProfileScreen');
-    //             }
-    //           })
-    //           .then(() => setIsLoading(false));
-    //       } else {
-    //         let messagetext = '';
-    //         if (loginResponse.message) {
-    //           messagetext = loginResponse.message;
-    //         } else if (loginResponse.errors && loginResponse.errors.message) {
-    //           messagetext = loginResponse.errors.message;
-    //         }
-    //         Alert.alert('Alert', messagetext);
-    //         setIsLoading(false);
-    //       }
-    //     }
-    //   } else {
-    //     setIsLoading(false);
-    //   }
-    // });
   };
 
   const onPressForgotPwdBtn = () => {
@@ -388,23 +298,42 @@ export default function LoginScreen() {
 
         <View style={{padding: 15}}>
           <View style={styles.inputTextContainer}>
-            <TextInput
-              testID="inputEmail"
+            {/* <TextInput
               keyboardType="email-address"
               autoCapitalize="none"
               style={genericStyle.textBox}
               placeholder="Email"
               placeholderTextColor="#3878ee"
               onChangeText={text => setEmail(text)}
-              editable={showSpinner ? false : true}
               maxLength={40}
+            /> */}
+            <TextInput
+              keyboardType="email-address"
+              autoCapitalize="none"
+              style={genericStyle.textBox}
+              placeholderTextColor="#3878ee"
+              onChangeText={text => setEmail(text)}
+              maxLength={40}
+              placeholder="Email"
+              value={email}
             />
           </View>
 
           <View style={styles.passwordSection}>
             <View style={{width: '90%'}}>
               <TextInput
-                testID="inputPassword"
+                secureTextEntry={secure}
+                visible-password={true}
+                style={styles.passwordInputBox}
+                placeholder="Password"
+                placeholderTextColor="#3878ee"
+                onChangeText={text => setPassword(text)}
+                value={password}
+                maxLength={40}
+                underlineColorAndroid="transparent"
+              />
+
+              {/* <TextInput
                 secureTextEntry={secure}
                 ref={ref}
                 visible-password={true}
@@ -412,10 +341,9 @@ export default function LoginScreen() {
                 placeholder="Password"
                 placeholderTextColor="#3878ee"
                 onChangeText={text => setPassword(text)}
-                editable={showSpinner ? false : true}
                 maxLength={40}
                 underlineColorAndroid="transparent"
-              />
+              /> */}
             </View>
             <View>
               <TouchableOpacity
@@ -432,7 +360,7 @@ export default function LoginScreen() {
               value={rememberMe}
               onChange={() => setRememberMe(!rememberMe)}
             />
-            <Text style={{marginLeft: 15, color: '#3878ee'}}>Remeber Me</Text>
+            <Text style={{marginLeft: 15, color: '#3878ee'}}>Remember Me</Text>
           </View>
         </View>
 
