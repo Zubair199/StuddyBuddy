@@ -24,7 +24,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import genericStyle from '../assets/styles/styleSheet';
 import {AUTH, AUTHENTICATIONS} from '../services/api.constants';
 import * as ImagePicker from 'react-native-image-picker';
-import RNFetchBlob from 'rn-fetch-blob';
+
 import axios from 'axios';
 
 interface IPROPS {

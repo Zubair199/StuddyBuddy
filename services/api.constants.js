@@ -48,6 +48,9 @@ module.exports = {
         EDIT_PROFILE: "/api/auth/updateprofile/",
 
         GET_USER_BY_EMAIL: "/api/auth/getUserByEmail/",
+        GET_USER_BY_ID: "/api/auth/getUser/",
+        EDIT_USER: "/api/auth/updateuser/",
+
     },
     CLASS: {
         CREATE: "/api/class",
