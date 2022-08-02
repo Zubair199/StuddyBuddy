@@ -1,16 +1,16 @@
 import * as React from 'react';
-import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SettingsScreen from '../screens/SettingsScreen';
 import PaymentsScreen from '../screens/PaymentsScreen';
 import ChatScreen from '../screens/ChatScreen';
 import ChatScreenG from '../screens/ChatScreenG';
 import MessagesScreen from '../screens/MessagesScreen';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import HomeScreen from '../screens/HomeScreen';
-import { useNavigation } from '@react-navigation/native';
-import { Image } from 'react-native-elements/dist/image/Image';
+import {useNavigation} from '@react-navigation/native';
+import {Image} from 'react-native-elements/dist/image/Image';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ClassDetailScreen from '../screens/ClassDetailScreen';
 import AssignmentDetailScreen from '../screens/AssignmentDetailScreen';
@@ -32,11 +32,11 @@ import StudentAssignmentScreen from '../screens/StudentAssignmentScreen';
 import AssignmentStartScreen from '../screens/AssignmentStartScreen';
 import ExamStartScreen from '../screens/ExamStartScreen';
 import NetworkScreen from '../screens/NetworkScreen';
+import EditProfileScreen from '../screens/EditProfileScreen';
 
 const BottomTab = createBottomTabNavigator();
 
 const RootStack = createNativeStackNavigator();
-
 
 const MenuNavigation = () => {
   const navigation = useNavigation();
@@ -280,8 +280,8 @@ const topTab = createMaterialTopTabNavigator();
 //   };
 // };
 
-const HomeStackScreen = ({ navigation, route }: any) => {
-  const mainHeader = { headerShown: false }
+const HomeStackScreen = ({navigation, route}: any) => {
+  const mainHeader = {headerShown: false};
   return (
     <HomeStack.Navigator
       initialRouteName="HomeScreen"
@@ -293,7 +293,7 @@ const HomeStackScreen = ({ navigation, route }: any) => {
         options={mainHeader}
         component={HomeScreen}
       />
-     
+
       <HomeStack.Screen
         name="NetworkScreen"
         options={mainHeader}
@@ -394,12 +394,12 @@ const HomeStackScreen = ({ navigation, route }: any) => {
         options={mainHeader}
         component={MessagesScreen}
       />
-       <HomeStack.Screen
+      <HomeStack.Screen
         name="ChatScreen"
         options={mainHeader}
         component={ChatScreen}
       />
-       <HomeStack.Screen
+      <HomeStack.Screen
         name="ChatScreenG"
         options={mainHeader}
         component={ChatScreenG}
@@ -414,6 +414,7 @@ const HomeStackScreen = ({ navigation, route }: any) => {
         options={mainHeader}
         component={ProfileScreen}
       />
+      <HomeStack.Screen name="EditProfile" component={EditProfileScreen} />
     </HomeStack.Navigator>
   );
 };
@@ -427,17 +428,17 @@ const PaymentStackScreen = () => (
   </PaymentStack.Navigator>
 );
 const MessagesStackScreen = () => {
-  const mainHeader = { headerShown: false }
-  return(
-  <MessagesStack.Navigator screenOptions={{headerShown: false}}>
-    <MessagesStack.Screen
-      name="Messages"
-      options={mainHeader}
-      component={MessagesScreen}
-    />
-  </MessagesStack.Navigator>
-)
-  }
+  const mainHeader = {headerShown: false};
+  return (
+    <MessagesStack.Navigator screenOptions={{headerShown: false}}>
+      <MessagesStack.Screen
+        name="Messages"
+        options={mainHeader}
+        component={MessagesScreen}
+      />
+    </MessagesStack.Navigator>
+  );
+};
 const SettingsStackScreen = () => (
   <SettingsStack.Navigator screenOptions={{}}>
     <SettingsStack.Screen
@@ -475,7 +476,7 @@ const styles = StyleSheet.create({
     top: 5,
     right: 15,
   },
-  backArrow: { marginTop: 0, tintColor: '#ffffff', height: 35, width: 35 },
+  backArrow: {marginTop: 0, tintColor: '#ffffff', height: 35, width: 35},
   backArrowContainer: {
     justifyContent: 'center',
     height: Platform.OS === 'ios' ? 45 : 70,

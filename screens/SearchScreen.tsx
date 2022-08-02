@@ -1,91 +1,281 @@
-
-import { useIsFocused, useNavigation } from "@react-navigation/native";
-import * as React from "react";
+import {useIsFocused, useNavigation} from '@react-navigation/native';
+import * as React from 'react';
 import {
   Alert,
-  Button,
   Image,
   SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
+  Modal,
   View,
-} from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+} from 'react-native';
+import {ScrollView} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { AUTHENTICATIONS, CLASS } from "../services/api.constants";
-import { AuthContext } from "../utils/AuthContext";
-import MainLayout from "./MainLayout";
+import {AUTHENTICATIONS, CLASS, GENERAL} from '../services/api.constants';
+import {AuthContext} from '../utils/AuthContext';
+import MainLayout from './MainLayout';
+import {Button} from 'react-native-elements';
+import {RadioButton} from 'react-native-paper';
+import {Divider, Radio, Select} from 'native-base';
 
 export default function SearchScreen() {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
   // const onClose = () => navigation.navigate("ClassesScreen");
-  const { userToken } = React.useContext(AuthContext);
+  const {userToken} = React.useContext(AuthContext);
 
   const [loader, setLoader] = React.useState(false);
   const [data, setData] = React.useState<any>();
   // const [grouped, setGrouped] = React.useState<any>();
   const [groupList, setGroupList] = React.useState<any>();
 
-  const [classes, setClasses] = React.useState([])
-  const [search, setSearch] = React.useState([])
-  const [status, setStatus] = React.useState("approved")
+  const [classes, setClasses] = React.useState([]);
+  const [users, setUsers] = React.useState([]);
 
-  let [user, setUser] = React.useState(userToken)
+  const [search, setSearch] = React.useState([]);
+  const [status, setStatus] = React.useState('approved');
 
+  let [user, setUser] = React.useState(userToken);
+
+  const [value, setValue] = React.useState('students');
+  let [classDuration, setClassDuration] = React.useState('');
+  let [subject, setSubject] = React.useState('');
+  let [subjectID, setSubjectID] = React.useState('');
+  let [subjects, setSubjects] = React.useState([]);
+  let [level, setLevel] = React.useState('');
+  let [hireFlag, setHireFlag] = React.useState('');
+  let [name, setName] = React.useState('');
+
+  let [view, setView] = React.useState('students');
+
+  const [isModal, setIsModal] = React.useState(false);
+  function toggleModal() {
+    console.log('modal');
+    setIsModal(!isModal);
+    clearStates();
+  }
+
+  function clearStates() {
+    setClassDuration('');
+    setSubject('');
+    setSubjectID('');
+    setName('');
+    setLevel('');
+    setHireFlag('');
+    setValue('students');
+  }
   React.useEffect(() => {
-    console.log(user)
+    console.log(user);
+    setClasses([]);
+    setUsers([]);
     // studentApiCall()
-  }, [])
+    fetch(AUTHENTICATIONS.API_URL + CLASS.SUBJECTS)
+      .then(response => response.json())
+      .then(responseJson => {
+        console.log(responseJson.data);
+        setSubjects(responseJson.data);
+
+        // Alert.alert(responseJson.data.message)
+      })
+      .catch((err: any) => {
+        console.log(err);
+        console.log(err.response);
+      });
+  }, []);
 
   function teacherApiCall() {
     try {
-      fetch(AUTHENTICATIONS.API_URL + CLASS.GET_TEACHER_SEARCH + user + '/' + status)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          console.log('classes ', responseJson.data)
-          setClasses(responseJson.data)
+      fetch(
+        AUTHENTICATIONS.API_URL +
+          GENERAL.TEACHER_SEARCH +
+          'name=' +
+          name +
+          '&hire=' +
+          hireFlag,
+      )
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log('teachers ', responseJson);
+          setUsers(responseJson.users);
         })
         .catch(err => {
-          console.log(err)
-        })
+          console.log(err);
+        });
+    } catch (err) {
+      console.log(err);
     }
-    catch (err) {
-      console.log(err)
-    }
-
   }
   function studentApiCall() {
     try {
-      fetch(AUTHENTICATIONS.API_URL + CLASS.GET_TEACHER_SEARCH + user + '/' + status)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          console.log('classes ', responseJson.data)
-          setClasses(responseJson.data)
+      fetch(AUTHENTICATIONS.API_URL + GENERAL.USER_SEARCH + name)
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log('students ', responseJson);
+          setUsers(responseJson.users);
         })
         .catch(err => {
-          console.log(err)
-        })
+          console.log(err);
+        });
+    } catch (err) {
+      console.log(err);
     }
-    catch (err) {
-      console.log(err)
-    }
-
   }
-  function searchClasses(text) {
-    let backup = classes;
-    let backup1 = classes;
-    backup = backup.filter(val => {
-      return val.name.toString().toLowerCase().includes(text.toLowerCase())
-    })
-    console.log(backup.length)
-    if (backup.length !== 0) {
-      setClasses(backup)
+  function classesApiCall() {
+    try {
+      fetch(
+        AUTHENTICATIONS.API_URL +
+          GENERAL.CLASS_SEARCH +
+          'name=' +
+          name +
+          '&' +
+          'subject=' +
+          subjectID +
+          '&' +
+          'level=' +
+          level +
+          '&' +
+          'duration=' +
+          classDuration,
+      )
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log('classes ', responseJson);
+          setClasses(responseJson.classes);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    } catch (err) {
+      console.log(err);
     }
-    else {
-      setClasses(backup1)
+  }
+
+  function filter() {
+    if (value === 'students') {
+      studentApiCall();
+    } else if (value === 'teachers') {
+      teacherApiCall();
+    } else if (value === 'classes') {
+      classesApiCall();
+    }
+    toggleModal();
+  }
+
+  function getView() {
+    if (view === 'students' || view === 'teachers') {
+      return (
+        <>
+          {!users || users.length == 0 ? (
+            <View style={styles.contentBox}>
+              <Text style={styles.emptySearchText}>No Item Has Been Found</Text>
+            </View>
+          ) : (
+            <ScrollView
+              style={styles.scrollView}
+              showsVerticalScrollIndicator={false}>
+              <View>
+                {users.map((item, index) => {
+                  return (
+                    <TouchableOpacity key={index} onPress={() => {}}>
+                      <View
+                        style={{
+                          padding: 15,
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                        }}>
+                        <View>
+                          <View>
+                            <Text>{item.username}</Text>
+                            <View>
+                              <Text>{item.roles.name}</Text>
+                            </View>
+                          </View>
+                        </View>
+                        <View>
+                          {/* <TouchableOpacity onPress={() => {handleChat(item._id,)}}> */}
+                          <TouchableOpacity onPress={() => {}}>
+                            <Icon name="message1" size={25} />
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                      <Divider />
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </ScrollView>
+          )}
+        </>
+      );
+    } else {
+      return (
+        <>
+          {!classes || classes.length == 0 ? (
+            <View style={styles.contentBox}>
+              <Text style={styles.emptySearchText}>No Item Has Been Found</Text>
+            </View>
+          ) : (
+            <ScrollView
+              style={styles.scrollView}
+              showsVerticalScrollIndicator={false}>
+              <View>
+                {classes.map(classItem => (
+                  <TouchableOpacity
+                    style={styles.groupBox}
+                    key={classItem._id}
+                    onPress={() => {
+                      navigation.navigate('ClassDetails', {
+                        classID: classItem._id,
+                      });
+                    }}>
+                    <Image
+                      source={require('../assets/images/bg.jpg')}
+                      style={styles.classImg}
+                    />
+                    <View style={styles.classInfo}>
+                      <View style={styles.levelBox}>
+                        <View style={styles.levelIntermediate}></View>
+                        <Text style={styles.levelText}>{classItem.level}</Text>
+                      </View>
+                      <View
+                        style={{
+                          flexWrap: 'wrap',
+                          flexDirection: 'row',
+                          width: '80%',
+                        }}>
+                        <Text style={styles.className}>{classItem.name}</Text>
+                      </View>
+                      <View style={{flexDirection: 'row'}}>
+                        <Text style={styles.studio}>
+                          {classItem.Teacher.username}
+                        </Text>
+                        {/* <View style={styles.dot}></View>
+                    <Text style={styles.studio}>{classItem.studio}</Text> */}
+                      </View>
+                      {/* <Text style={styles.dayTime}>
+                        Monday &nbsp; 12:00 &nbsp;-&nbsp; 14:00
+                      </Text> */}
+                      {/* {classItem.myJoinStatus &&
+                    classItem.myJoinStatus === "pending" && ( */}
+                      <Text style={styles.statusMsg}>{classItem.status}</Text>
+                      {/* )}
+                  {classItem.status &&
+                    !classItem.myJoinStatus &&
+                    classItem.status === "pending" && (
+                      <Text style={styles.statusMsg}>
+                        Waiting For Admin Approval
+                      </Text>
+                    )} */}
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+          )}
+        </>
+      );
     }
   }
 
@@ -100,111 +290,183 @@ export default function SearchScreen() {
           />
         </TouchableOpacity>
       </View> */}
-        <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: "center", marginTop: 15 }}>
-          <TextInput
-            placeholder='Search...' style={{
-              width: '100%', borderWidth: 1,
-              borderColor: 'lightgray', borderRadius: 10, height: 40
-            }}
-            onChangeText={(text) => { console.log(text) }}
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            marginTop: 15,
+          }}>
+          <Button
+            onPress={() => toggleModal()}
+            buttonStyle={{width: '100%'}}
+            containerStyle={{width: '100%'}}
+            iconRight
+            icon={<Icon name="filter" size={15} color="white" />}
+            title="Filter"
           />
-          <TouchableOpacity>
-            <Icon name="search1" size={20} style={{ marginLeft: -35 }} />
-          </TouchableOpacity>
         </View>
 
-        {!classes || classes.length == 0 ? (
-          <View style={styles.contentBox}>
-            <Text style={styles.emptySearchText}>
-              No Class Has Been Found
-            </Text>
-          </View>
-        ) : (
-          <ScrollView
-            style={styles.scrollView}
-            showsVerticalScrollIndicator={false}
-          >
-            <View >
-              {classes.map((classItem) => (
-                <TouchableOpacity
-                  style={styles.groupBox}
-                  key={classItem}
-                  onPress={() => {
-                    navigation.navigate('ClassDetails', { classID: classItem._id })
-                  }}
-                >
-                  <Image source={require("../assets/images/bg.jpg")}
-                    style={styles.classImg}
-                  />
-                  <View style={styles.classInfo}>
-                    <View style={styles.levelBox}>
-                      <View
-                        style={
-                          styles.levelIntermediate
-                        }
-                      ></View>
-                      <Text style={styles.levelText}>{classItem.level}</Text>
-                    </View>
-                    <View
-                      style={{
-                        flexWrap: "wrap",
-                        flexDirection: "row",
-                        width: "80%",
-                      }}
-                    >
-                      <Text style={styles.className}>{classItem.name}</Text>
-                    </View>
-                    <View style={{ flexDirection: "row" }}>
-                      <Text style={styles.studio}>{classItem.teacher.username}</Text>
-                      {/* <View style={styles.dot}></View>
-                    <Text style={styles.studio}>{classItem.studio}</Text> */}
-                    </View>
-                    <Text style={styles.dayTime}>
-                      Monday &nbsp;
-                      12:00 &nbsp;-&nbsp; 14:00
-                    </Text>
-                    {/* {classItem.myJoinStatus &&
-                    classItem.myJoinStatus === "pending" && ( */}
-                    <Text style={styles.statusMsg}>
-                      {classItem.status}
-                    </Text>
-                    {/* )}
-                  {classItem.status &&
-                    !classItem.myJoinStatus &&
-                    classItem.status === "pending" && (
-                      <Text style={styles.statusMsg}>
-                        Waiting For Admin Approval
-                      </Text>
-                    )} */}
-                  </View>
-                </TouchableOpacity>
-              ))}
+        <Modal
+          animationType="slide"
+          visible={isModal}
+          onRequestClose={() => {
+            toggleModal();
+          }}>
+          <View style={{flex: 1, backgroundColor: '#ffffff', padding: 15}}>
+            <View style={{flexDirection: 'row-reverse'}}>
+              <TouchableOpacity
+                onPress={() => {
+                  toggleModal();
+                }}>
+                <Icon name="close" size={25} />
+              </TouchableOpacity>
             </View>
-          </ScrollView>
-        )}
+            <View style={{height: '90%'}}>
+              <View style={{marginVertical: 10}}>
+                <Radio.Group
+                  direction={'row'}
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}
+                  name="myRadioGroup"
+                  value={value}
+                  onChange={nextValue => {
+                    setValue(nextValue);
+                    setView(nextValue);
+                  }}>
+                  <Radio value="students" my="1">
+                    Students
+                  </Radio>
+                  <Radio value="teachers" my="1">
+                    Teachers
+                  </Radio>
+                  <Radio value="classes" my="1">
+                    Classes
+                  </Radio>
+                </Radio.Group>
+              </View>
+              <View style={{marginVertical: 10}}>
+                <TextInput
+                  placeholder="Enter Name"
+                  onChangeText={text => setName(text)}
+                  style={{
+                    borderWidth: 1,
+                    borderColor: 'lightgray',
+                    borderRadius: 5,
+                    height: 43,
+                  }}
+                />
+              </View>
+              {value === 'classes' && (
+                <View>
+                  <View style={{marginVertical: 10}}>
+                    <Select
+                      accessibilityLabel="Choose Subject"
+                      selectedValue={subjectID}
+                      placeholder="Choose Subject"
+                      onValueChange={itemValue => {
+                        setSubjectID(itemValue);
+                        console.log(
+                          subjects.filter(item => item._id === itemValue)[0]
+                            .name,
+                        );
+                        setSubject(
+                          subjects.filter(item => item._id === itemValue)[0]
+                            .name,
+                        );
+                      }}>
+                      {subjects.map((item, index) => {
+                        return (
+                          <Select.Item
+                            label={item.name}
+                            key={index}
+                            value={item._id}
+                          />
+                        );
+                      })}
+                    </Select>
+                  </View>
+                  <View style={{marginVertical: 10}}>
+                    <Select
+                      accessibilityLabel="Choose Level"
+                      selectedValue={level}
+                      placeholder="Choose Level"
+                      onValueChange={itemValue => setLevel(itemValue)}>
+                      <Select.Item label="Beginner" value="Beginner" />
+                      <Select.Item label="Intermediate" value="Intermediate" />
+                      <Select.Item label="Advanced" value="Advanced" />
+                    </Select>
+                  </View>
+                  <View style={{marginVertical: 10}}>
+                    <Select
+                      accessibilityLabel="Choose Class Duration"
+                      selectedValue={classDuration}
+                      placeholder="Choose Class Duration"
+                      onValueChange={itemValue => {
+                        setClassDuration(itemValue);
+                      }}>
+                      <Select.Item label="1 month" value="1" />
+                      <Select.Item label="2 month" value="2" />
+                      <Select.Item label="3 month" value="3" />
+                      <Select.Item label="4 month" value="4" />
+                      <Select.Item label="5 month" value="5" />
+                      <Select.Item label="6 month" value="6" />
+                    </Select>
+                  </View>
+                </View>
+              )}
+              {value === 'teachers' && (
+                <View>
+                  <View style={{marginVertical: 10}}>
+                    <Select
+                      accessibilityLabel="Available to hire"
+                      selectedValue={hireFlag}
+                      onValueChange={itemValue => {
+                        setHireFlag(itemValue);
+                      }}
+                      placeholder="Available to hire">
+                      <Select.Item label="Yes" value="1" />
+                      <Select.Item label="No" value="0" />
+                    </Select>
+                  </View>
+                </View>
+              )}
+            </View>
+            <View style={{height: '10%'}}>
+              <Button
+                onPress={() => filter()}
+                buttonStyle={{width: '100%'}}
+                containerStyle={{width: '100%'}}
+                title="Search"
+              />
+            </View>
+          </View>
+        </Modal>
+
+        {getView()}
       </SafeAreaView>
     );
   }
-  return (
-    <MainLayout Component={component()} />
-  )
+  return <MainLayout Component={component()} />;
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     paddingHorizontal: 15,
     paddingBottom: 10,
   },
   scrollView: {
     // marginTop: 10,
-    marginBottom: '28%',
+    marginBottom: '5%',
   },
 
   closeIconBox: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
   closeIcon: {
     width: 14,
@@ -214,31 +476,31 @@ const styles = StyleSheet.create({
 
   title: {
     fontSize: 30,
-    textTransform: "uppercase",
-    textAlign: "center",
-    fontFamily: "roboto-light",
+    textTransform: 'uppercase',
+    textAlign: 'center',
+    fontFamily: 'roboto-light',
     marginTop: 20,
-    fontWeight: "300",
+    fontWeight: '300',
   },
 
   levelIntermediate: {
     width: 4,
     height: 13,
-    backgroundColor: "#FFEB00",
+    backgroundColor: '#FFEB00',
     marginTop: 2,
   },
 
   groupTitle: {
     fontSize: 20,
-    textTransform: "uppercase",
+    textTransform: 'uppercase',
     marginTop: 25,
-    fontWeight: "300",
+    fontWeight: '300',
   },
 
   groupBox: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginTop: 20,
-    alignItems: "center",
+    alignItems: 'center',
   },
 
   classImg: {
@@ -253,38 +515,38 @@ const styles = StyleSheet.create({
   },
 
   levelBox: {
-    flexDirection: "row",
+    flexDirection: 'row',
   },
 
   levelAdvance: {
     width: 4,
     height: 14,
-    backgroundColor: "#FF6565",
+    backgroundColor: '#FF6565',
     marginTop: 4,
   },
 
   levelBeginner: {
     width: 4,
     height: 14,
-    backgroundColor: "#01C75D",
+    backgroundColor: '#01C75D',
     marginTop: 4,
   },
 
   levelText: {
     fontSize: 14,
     marginLeft: 5,
-    textTransform: "uppercase",
+    textTransform: 'uppercase',
   },
 
   className: {
     fontSize: 16,
-    fontFamily: "roboto-regular",
+    fontFamily: 'roboto-regular',
     marginTop: 5,
   },
   dot: {
     height: 3,
     width: 3,
-    backgroundColor: "black",
+    backgroundColor: 'black',
     borderRadius: 100,
     margin: 5,
     marginTop: 10,
@@ -292,28 +554,28 @@ const styles = StyleSheet.create({
 
   studio: {
     fontSize: 14,
-    fontWeight: "300",
+    fontWeight: '300',
   },
 
   dayTime: {
     fontSize: 14,
-    fontWeight: "200",
+    fontWeight: '200',
   },
   statusMsg: {
     fontSize: 14,
-    fontWeight: "200",
+    fontWeight: '200',
   },
   contentBox: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   emptySearchText: {
     fontSize: 24,
-    fontFamily: "roboto-regular",
-    color: "#949599",
-    textTransform: "uppercase",
-    textAlign: "center",
+    fontFamily: 'roboto-regular',
+    color: '#949599',
+    textTransform: 'uppercase',
+    textAlign: 'center',
   },
 });

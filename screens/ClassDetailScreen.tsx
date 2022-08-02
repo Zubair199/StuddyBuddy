@@ -1,151 +1,170 @@
-import { useIsFocused } from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
 import * as React from 'react';
-import { Alert, ImageBackground, Linking, Modal, SafeAreaView, ScrollView, StyleSheet, Touchable, TouchableOpacity, TouchableOpacityBase, View } from 'react-native';
-import { Button, Divider, Text } from 'react-native-elements';
+import {
+  Alert,
+  ImageBackground,
+  Linking,
+  Modal,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Touchable,
+  TouchableOpacity,
+  TouchableOpacityBase,
+  View,
+} from 'react-native';
+import {Button, Divider, Text} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { useNavigation } from '@react-navigation/native';
-import { AUTHENTICATIONS, CLASS } from '../services/api.constants';
+import {useNavigation} from '@react-navigation/native';
+import {AUTHENTICATIONS, CLASS} from '../services/api.constants';
 import MainLayout from './MainLayout';
-import { AuthContext } from '../utils/AuthContext';
+import {AuthContext} from '../utils/AuthContext';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import { Select, Input, TextArea, IconButton } from "native-base";
-import api from "../services/api.services";
-export default function ClassDetailScreen({ route }) {
-  const { classID } = route.params
+import {Select, Input, TextArea, IconButton} from 'native-base';
+import api from '../services/api.services';
+export default function ClassDetailScreen({route}) {
+  const {classID} = route.params;
   const navigation = useNavigation();
   const isFocused = useIsFocused();
-  const { userToken, userType } = React.useContext(AuthContext);
-  let [user, setUser] = React.useState(userToken)
+  const {userToken, userType} = React.useContext(AuthContext);
+  let [user, setUser] = React.useState(userToken);
 
+  const [_class, setClass] = React.useState(null);
+  const [schedule, setSchedule] = React.useState([]);
+  const [topics, setTopics] = React.useState([]);
+  const [announcements, setAnnouncements] = React.useState([]);
 
-  const [_class, setClass] = React.useState(null)
-  const [schedule, setSchedule] = React.useState([])
-  const [topics, setTopics] = React.useState([])
-  const [announcements, setAnnouncements] = React.useState([])
+  const [teacher, setTeacher] = React.useState(null);
+  const [isJoined, setIsJoined] = React.useState(false);
 
+  const [description, setDescription] = React.useState('');
+  const [scheduleID, setScheduleID] = React.useState('');
 
-  const [teacher, setTeacher] = React.useState(null)
-  const [isJoined, setIsJoined] = React.useState(false)
-
-  const [description, setDescription] = React.useState("")
-  const [scheduleID, setScheduleID] = React.useState("")
-
-  const [studentIds, setStudentIds] = React.useState([])
-  const [teacherId, setTeacherId] = React.useState([])
+  const [studentIds, setStudentIds] = React.useState([]);
+  const [teacherId, setTeacherId] = React.useState([]);
+  const [chatFlag, setChatFlag] = React.useState(false);
 
   React.useEffect(() => {
-    console.log(user)
+    console.log(user);
     fetch(AUTHENTICATIONS.API_URL + CLASS.JOINED_STUDENTS + classID)
-      .then((response) => response.json())
-      .then((responseJson) => {
-        console.log('JOINED_STUDENTS : = ', responseJson)
-        setStudentIds(responseJson.students)
-        setTeacherId(responseJson.teacher)
+      .then(response => response.json())
+      .then(responseJson => {
+        console.log('JOINED_STUDENTS : = ', responseJson);
+        setStudentIds(responseJson.students);
+        setTeacherId(responseJson.teacher);
       })
       .catch(err => {
-        console.log(err)
-      })
-    if (userType.toLowerCase() === "user") {
+        console.log(err);
+      });
+    if (userType.toLowerCase() === 'user') {
       studentApiCall();
+    } else {
+      teacherApiCall();
     }
-    else {
-      teacherApiCall()
-    }
-  }, [])
+  }, []);
 
   function teacherApiCall() {
     fetch(AUTHENTICATIONS.API_URL + CLASS.GET_CLASS_BY_CLASS_ID + classID)
-      .then((response) => response.json())
-      .then((responseJson) => {
-        console.log('details classes ', responseJson.schedules)
-        setClass(responseJson.classes)
-        setTeacher(responseJson.classes.Teacher)
-        setSchedule(responseJson.schedules)
+      .then(response => response.json())
+      .then(responseJson => {
+        console.log('details classes ', responseJson.schedules);
+        setClass(responseJson.classes);
+        setTeacher(responseJson.classes.Teacher);
+        setSchedule(responseJson.schedules);
         console.log(responseJson.classes.schedules);
-
       })
       .catch(err => {
-        console.log(err)
-      })
+        console.log(err);
+      });
   }
+
   function apiCall() {
     fetch(AUTHENTICATIONS.API_URL + CLASS.GET_CLASS_BY_CLASS_ID + classID)
-      .then((response) => response.json())
-      .then((responseJson) => {
-        console.log('classes ', responseJson.schedules)
-        setClass(responseJson.classes)
-        setTeacher(responseJson.classes.Teacher)
-        setSchedule(responseJson.schedules)
+      .then(response => response.json())
+      .then(responseJson => {
+        console.log('classes ', responseJson.schedules);
+        setClass(responseJson.classes);
+        setTeacher(responseJson.classes.Teacher);
+        setSchedule(responseJson.schedules);
       })
       .catch(err => {
-        console.log(err)
-      })
+        console.log(err);
+      });
   }
+
   function studentApiCall() {
     fetch(AUTHENTICATIONS.API_URL + CLASS.GET_JOINED_CLASS_BY_ID + classID)
-      .then((response) => response.json())
-      .then((responseJson) => {
-        console.log('classes ', responseJson.data)
-        if (responseJson.data === null) {
-          apiCall()
-        }
-        else {
-          setClass(responseJson.data.Class)
-          setIsJoined(responseJson.data.isJoined)
-          setTeacher(responseJson.data.Teacher)
+      .then(response => response.json())
+      .then(responseJson => {
+        console.log('classes ', responseJson);
+        if (responseJson.classes) {
+          setIsJoined(responseJson.studentClass.isJoined);
+          setClass(responseJson.classes);
+          setTeacher(responseJson.classes.Teacher);
+          setSchedule(responseJson.schedules);
+          let date = formatDate(new Date());
+          console.log(date);
+          responseJson.schedules.forEach(schedule => {
+            console.log('schedule => ', schedule.startdate);
+            if (date === schedule.startdate) {
+              setChatFlag(true);
+            }
+          });
+        } else {
+          apiCall();
         }
       })
       .catch(err => {
-        console.log(err)
-      })
+        console.log(err);
+      });
   }
+
   function joinClass(props) {
     const body = {
       Teacher: props.Teacher._id,
       Student: user,
-      Class: props._id
-    }
-    console.log(body)
+      Class: props._id,
+    };
+    console.log(body);
     try {
       let requestObj = {
         method: 'POST',
         headers: {
           Accept: 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(body)
-      }
+        body: JSON.stringify(body),
+      };
       fetch(AUTHENTICATIONS.API_URL + CLASS.JOIN_CLASS, requestObj)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          console.log(responseJson)
-          Alert.alert(responseJson.message)
-          studentApiCall()
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log(responseJson);
+          Alert.alert(responseJson.message);
+          studentApiCall();
         })
         .catch((err: any) => {
-          console.log(err)
-          console.log(err.response)
-        })
-    }
-    catch (exception) {
-      console.log('exception ', exception)
+          console.log(err);
+          console.log(err.response);
+        });
+    } catch (exception) {
+      console.log('exception ', exception);
     }
   }
+
   function formatDate(date) {
     var d = new Date(date),
       month = '' + (d.getMonth() + 1),
       day = '' + d.getDate(),
       year = d.getFullYear();
 
-    if (month.length < 2)
-      month = '0' + month;
-    if (day.length < 2)
-      day = '0' + day;
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
 
     return [year, month, day].join('-');
   }
+
   function formatTime(d) {
-    var date = new Date(d)
+    var date = new Date(d);
     var hours = date.getHours();
     var minutes = date.getMinutes();
     var ampm = hours >= 12 ? 'pm' : 'am';
@@ -155,48 +174,51 @@ export default function ClassDetailScreen({ route }) {
     var strTime = hours + ':' + minutes + ' ' + ampm;
     return strTime;
   }
-  const [subjectText, setSubjectText] = React.useState("")
-  const [isModal, setIsModal] = React.useState(false)
+
+  const [subjectText, setSubjectText] = React.useState('');
+  const [isModal, setIsModal] = React.useState(false);
   function toggleModal() {
-    console.log("modal")
-    setIsModal(!isModal)
+    console.log('modal');
+    setIsModal(!isModal);
   }
-  function apiCallTopicAnnouncement(id) {
 
-  }
+  function apiCallTopicAnnouncement(id) {}
+
   function setPropertySubjectText(x, id) {
-    if (x === "view") {
-      apiCallTopicAnnouncement(id)
-      fetch(AUTHENTICATIONS.API_URL + CLASS.GET_TOPIC_ANNOUNCEMENT_BY_SCHEDULE_ID + id)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          console.log('json ', responseJson)
-          setTopics(responseJson.topics)
-          setAnnouncements(responseJson.announcements)
-
+    if (x === 'view') {
+      apiCallTopicAnnouncement(id);
+      fetch(
+        AUTHENTICATIONS.API_URL +
+          CLASS.GET_TOPIC_ANNOUNCEMENT_BY_SCHEDULE_ID +
+          id,
+      )
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log('json ', responseJson);
+          setTopics(responseJson.topics);
+          setAnnouncements(responseJson.announcements);
         })
         .catch(err => {
-          console.log(err)
-        })
+          console.log(err);
+        });
     }
-    setSubjectText(x)
-    setScheduleID(id)
-    toggleModal()
+    setSubjectText(x);
+    setScheduleID(id);
+    toggleModal();
   }
-  function addTA() {
-    if (description !== "") {
 
+  function addTA() {
+    if (description !== '') {
       const body = {
         ClassSchedule: scheduleID,
         description: description,
-      }
-      console.log(body)
-      let endpoint = ''
-      if (subjectText.toLocaleLowerCase() === "topic") {
-        endpoint = CLASS.CREATE_TOPIC
-      }
-      else {
-        endpoint = CLASS.CREATE_ANNOUNCEMENT
+      };
+      console.log(body);
+      let endpoint = '';
+      if (subjectText.toLocaleLowerCase() === 'topic') {
+        endpoint = CLASS.CREATE_TOPIC;
+      } else {
+        endpoint = CLASS.CREATE_ANNOUNCEMENT;
       }
       console.log(endpoint);
 
@@ -205,37 +227,35 @@ export default function ClassDetailScreen({ route }) {
           method: 'POST',
           headers: {
             Accept: 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify(body)
-        }
+          body: JSON.stringify(body),
+        };
         fetch(AUTHENTICATIONS.API_URL + endpoint, requestObj)
-          .then((response) => response.json())
-          .then((responseJson) => {
-            console.log(responseJson)
-            toggleModal()
-            Alert.alert(responseJson.message)
+          .then(response => response.json())
+          .then(responseJson => {
+            console.log(responseJson);
+            toggleModal();
+            Alert.alert(responseJson.message);
           })
           .catch((err: any) => {
-            console.log(err)
-            console.log(err.response)
-          })
+            console.log(err);
+            console.log(err.response);
+          });
+      } catch (exception) {
+        console.log('exception ', exception);
       }
-      catch (exception) {
-        console.log('exception ', exception)
-      }
-    }
-    else {
-      Alert.alert("All Fields are required.")
+    } else {
+      Alert.alert('All Fields are required.');
     }
   }
 
   function groupChat() {
-    console.log(studentIds, teacherId)
-    const grUsers = studentIds.concat(teacherId)
-    console.log(grUsers, classID)
+    console.log(studentIds, teacherId);
+    const grUsers = studentIds.concat(teacherId);
+    console.log(grUsers, classID);
 
-    const requestData = { classId: classID, groupUsers: grUsers, flag: true };
+    const requestData = {classId: classID, groupUsers: grUsers, flag: true};
 
     api.createNewMessage(requestData).then((resp) => {
       if (resp) {
@@ -243,34 +263,34 @@ export default function ClassDetailScreen({ route }) {
         if (newChatInfo && newChatInfo.data.chatId) {
           navigation.navigate("ChatScreenG", { chatId: newChatInfo.data.chatId, textMes: "", classID: classID ,groupU:grUsers});
         }
-      }
-    }).catch(e => { console.log(e) });
-
+      })
+      .catch(e => {
+        console.log(e);
+      });
   }
 
   function component() {
     return (
       <View style={styles.container}>
-        <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15 }}>
-          <TouchableOpacity style={{ marginTop: 5 }}
+        <View
+          style={{flexDirection: 'row', paddingLeft: 15, marginVertical: 15}}>
+          <TouchableOpacity
+            style={{marginTop: 5}}
             onPress={() => navigation.goBack()}>
             <Icon color={'black'} name="leftcircleo" size={25} />
           </TouchableOpacity>
           <Text style={styles.title}>Class Details</Text>
         </View>
-        {
-          (_class !== null && teacher !== null)
-          &&
-          <ScrollView style={{ marginBottom: "5%", padding: 15 }}>
-            <View >
+        {_class !== null && teacher !== null && (
+          <ScrollView style={{marginBottom: '5%', padding: 15}}>
+            <View>
               {/* header starts here */}
-              <View style={{ marginTop: 10 }}>
+              <View style={{marginTop: 10}}>
                 <ImageBackground
-                  resizeMode='cover'
-                  source={require("../assets/images/bg.jpg")}
+                  resizeMode="cover"
+                  source={require('../assets/images/bg.jpg')}
                   style={styles.classBoxImage}
-                  imageStyle={{ borderRadius: 5 }}
-                >
+                  imageStyle={{borderRadius: 5}}>
                   <View style={styles.overlay}>
                     <View style={styles.levelBox}>
                       <View style={styles.levelIntermediate}></View>
@@ -293,39 +313,32 @@ export default function ClassDetailScreen({ route }) {
                 </ImageBackground>
                 {/* header ends here */}
 
-
-
                 <View style={styles.joinBox}>
                   <Text style={styles.cost}>
                     Cost: &#36;{_class.price}
                     {/* Max. Students : {_class.maxStudents} */}
                   </Text>
                 </View>
-                {
-                  (userType.toLowerCase() === "teacher" && _class.status.toLowerCase() === "approved") &&
-                  < View style={styles.joinBox}>
-                    <TouchableOpacity style={{ marginTop: 5 }}
-                      onPress={() => groupChat()}>
-                      <Icon color={'black'} name="message1" size={25} />
-                    </TouchableOpacity>
-                  </View>
-                }
-                {
-                  (
-                    userType.toLowerCase() === "user"
-                    &&
-                    isJoined
-                  )
-                  &&
+                {userType.toLowerCase() === 'teacher' &&
+                  _class.status.toLowerCase() === 'approved' && (
+                    <View style={styles.joinBox}>
+                      <TouchableOpacity
+                        style={{marginTop: 5}}
+                        onPress={() => groupChat()}>
+                        <Icon color={'black'} name="message1" size={25} />
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                {userType.toLowerCase() === 'user' && isJoined && (
                   <View style={styles.joinBox}>
-                    <TouchableOpacity style={{ marginTop: 5 }}
+                    <TouchableOpacity
+                      style={{marginTop: 5}}
                       onPress={() => groupChat()}>
                       <Icon color={'black'} name="message1" size={25} />
                     </TouchableOpacity>
                   </View>
-                }
+                )}
                 {/* price ends here */}
-
 
                 {/* Class Location Starts here */}
                 {/* <View>
@@ -334,16 +347,15 @@ export default function ClassDetailScreen({ route }) {
               </View> */}
                 {/* Class Location ends here */}
 
-
                 {/* Language section starts here */}
                 <View style={styles.languageBoxLanguage}>
                   <View style={styles.languageWithIcon}>
-                    <Text style={styles.languageAttributesHeading}>Languages</Text>
+                    <Text style={styles.languageAttributesHeading}>
+                      Languages
+                    </Text>
                   </View>
                   <View style={styles.language}>
-                    <View
-                      style={{ flexDirection: "row" }}
-                    >
+                    <View style={{flexDirection: 'row'}}>
                       <Text style={styles.languageText}>{_class.language}</Text>
                     </View>
                   </View>
@@ -354,126 +366,158 @@ export default function ClassDetailScreen({ route }) {
                   visible={isModal}
                   onRequestClose={() => {
                     toggleModal();
-                  }}
-                >
-                  <View style={{ flex: 1, backgroundColor: '#ffffff', padding: 15 }}>
-                    <View style={{ flexDirection: "row-reverse" }}>
+                  }}>
+                  <View
+                    style={{flex: 1, backgroundColor: '#ffffff', padding: 15}}>
+                    <View style={{flexDirection: 'row-reverse'}}>
                       <TouchableOpacity
-                        onPress={
-                          () => { toggleModal(); }
-                        }
-                      >
-                        <Icon name='close' size={25} />
+                        onPress={() => {
+                          toggleModal();
+                        }}>
+                        <Icon name="close" size={25} />
                       </TouchableOpacity>
                     </View>
-                    <View style={{ flexDirection: 'row', marginVertical: 15, justifyContent: "center" }}>
-                      {
-                        subjectText !== "view" ?
-                          <Text style={styles.title}>Add {subjectText}</Text>
-                          :
-                          <Text style={styles.title}>Details</Text>
-                      }
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        marginVertical: 15,
+                        justifyContent: 'center',
+                      }}>
+                      {subjectText !== 'view' ? (
+                        <Text style={styles.title}>Add {subjectText}</Text>
+                      ) : (
+                        <Text style={styles.title}>Details</Text>
+                      )}
                     </View>
                     <View>
-                      <ScrollView >
-                        {
-                          subjectText !== "view" ?
-                            <View>
-                              <View style={{ marginVertical: 10 }}>
-                                <Input variant="outline" placeholder="Description"
-                                  onChangeText={(text) => { setDescription(text) }} />
-                              </View>
-
-                              <View style={{ marginVertical: 10, marginBottom: 40 }}>
-                                <Button title={"Submit"} onPress={() => { addTA() }} />
-                              </View>
+                      <ScrollView>
+                        {subjectText !== 'view' ? (
+                          <View>
+                            <View style={{marginVertical: 10}}>
+                              <Input
+                                variant="outline"
+                                placeholder="Description"
+                                onChangeText={text => {
+                                  setDescription(text);
+                                }}
+                              />
                             </View>
-                            :
-                            <View>
-                              <View style={styles.languageBoxLanguage}>
-                                <View style={styles.languageWithIcon}>
-                                  <Text style={styles.languageAttributesHeading}>Topics</Text>
-                                </View>
-                                {
-                                  topics.length > 0 &&
-                                  topics.map((item, index) => {
-                                    return (
-                                      <View style={{ marginVertical: 5 }}>
-                                        <Text>{index + 1} {"- "} {item.description}</Text>
-                                      </View>
-                                    )
-                                  })
-                                }
-                              </View>
 
-                              <View style={styles.languageBoxLanguage}>
-                                <View style={styles.languageWithIcon}>
-                                  <Text style={styles.languageAttributesHeading}>Announcements</Text>
-                                </View>
-                                {
-                                  announcements.length > 0 &&
-                                  announcements.map((item, index) => {
-                                    return (
-                                      <View style={{ marginVertical: 5 }}>
-                                        <Text>{index + 1} {"- "} {item.description}</Text>
-                                      </View>
-                                    )
-                                  })
-                                }
-                              </View>
+                            <View
+                              style={{marginVertical: 10, marginBottom: 40}}>
+                              <Button
+                                title={'Submit'}
+                                onPress={() => {
+                                  addTA();
+                                }}
+                              />
                             </View>
-                        }
+                          </View>
+                        ) : (
+                          <View>
+                            <View style={styles.languageBoxLanguage}>
+                              <View style={styles.languageWithIcon}>
+                                <Text style={styles.languageAttributesHeading}>
+                                  Topics
+                                </Text>
+                              </View>
+                              {topics.length > 0 &&
+                                topics.map((item, index) => {
+                                  return (
+                                    <View style={{marginVertical: 5}}>
+                                      <Text>
+                                        {index + 1} {'- '} {item.description}
+                                      </Text>
+                                    </View>
+                                  );
+                                })}
+                            </View>
 
-
-
+                            <View style={styles.languageBoxLanguage}>
+                              <View style={styles.languageWithIcon}>
+                                <Text style={styles.languageAttributesHeading}>
+                                  Announcements
+                                </Text>
+                              </View>
+                              {announcements.length > 0 &&
+                                announcements.map((item, index) => {
+                                  return (
+                                    <View style={{marginVertical: 5}}>
+                                      <Text>
+                                        {index + 1} {'- '} {item.description}
+                                      </Text>
+                                    </View>
+                                  );
+                                })}
+                            </View>
+                          </View>
+                        )}
                       </ScrollView>
                     </View>
                   </View>
                 </Modal>
                 <View style={styles.languageBoxLanguage}>
                   <View style={styles.languageWithIcon}>
-                    <Text style={styles.languageAttributesHeading}>SCHEDULE</Text>
+                    <Text style={styles.languageAttributesHeading}>
+                      SCHEDULE
+                    </Text>
                   </View>
-                  <View style={{ marginBottom: 25 }}>
-                    {
-                      schedule.map((item, index) => {
-                        return (
-                          <View key={index} style={{ marginVertical: 20 }}>
-                            <View style={{ flexDirection: "row" }}>
-                              <Text>Start Date: {" "}{formatDate(item.startdate)}{" "}</Text>
-                              <Text>{formatTime(item.startdate)}</Text>
-                            </View>
-                            <View style={{ flexDirection: "row" }}>
-                              <Text>End Date: {" "}{formatDate(item.enddate)}{" "}</Text>
-                              <Text>{formatTime(item.enddate)}</Text>
-                            </View>
-                            {/* <View>
+                  <View style={{marginBottom: 25}}>
+                    {schedule.map((item, index) => {
+                      return (
+                        <View key={index} style={{marginVertical: 20}}>
+                          <View style={{flexDirection: 'row'}}>
+                            <Text>
+                              Start Date: {formatDate(item.startdate)}{' '}
+                            </Text>
+                            <Text>{formatTime(item.startdate)}</Text>
+                          </View>
+                          <View style={{flexDirection: 'row'}}>
+                            <Text>End Date: {formatDate(item.enddate)} </Text>
+                            <Text>{formatTime(item.enddate)}</Text>
+                          </View>
+                          {/* <View>
                               <Text>Max. Students:{" "} {item.maxStudents}</Text>
                             </View> */}
-                            <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 15 }}>
-                              <Divider orientation="vertical" width={3} />
-                              <TouchableOpacity style={{ flexDirection: "row" }} onPress={() => setPropertySubjectText("view", item._id)}>
-                                <Text >View Details</Text>
-                              </TouchableOpacity>
-                              <Divider orientation="vertical" width={3} />
-                              <TouchableOpacity style={{ flexDirection: "row" }} onPress={() => { setPropertySubjectText("Topic", item._id) }}>
-                                <Text>Add Topic</Text>
-                                {/* <Icon name="plus" size={20} /> */}
-                              </TouchableOpacity>
-                              <Divider orientation="vertical" width={3} />
-                              <TouchableOpacity style={{ flexDirection: "row" }} onPress={() => { setPropertySubjectText("Announement", item._id) }}>
-                                <Text>Add Announcement</Text>
-                                {/* <Icon name="plus" size={20} /> */}
-                              </TouchableOpacity>
-                              <Divider orientation="vertical" width={3} />
-                            </View>
-                            <Divider width={1} />
-
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              justifyContent: 'space-between',
+                              marginVertical: 15,
+                            }}>
+                            <Divider orientation="vertical" width={3} />
+                            <TouchableOpacity
+                              style={{flexDirection: 'row'}}
+                              onPress={() =>
+                                setPropertySubjectText('view', item._id)
+                              }>
+                              <Text>View Details</Text>
+                            </TouchableOpacity>
+                            <Divider orientation="vertical" width={3} />
+                            <TouchableOpacity
+                              style={{flexDirection: 'row'}}
+                              onPress={() => {
+                                setPropertySubjectText('Topic', item._id);
+                              }}>
+                              <Text>Add Topic</Text>
+                              {/* <Icon name="plus" size={20} /> */}
+                            </TouchableOpacity>
+                            <Divider orientation="vertical" width={3} />
+                            <TouchableOpacity
+                              style={{flexDirection: 'row'}}
+                              onPress={() => {
+                                setPropertySubjectText('Announement', item._id);
+                              }}>
+                              <Text>Add Announcement</Text>
+                              {/* <Icon name="plus" size={20} /> */}
+                            </TouchableOpacity>
+                            <Divider orientation="vertical" width={3} />
                           </View>
-                        )
-                      })
-                    }
-                    <View style={{ marginBottom: 20 }} />
+                          <Divider width={1} />
+                        </View>
+                      );
+                    })}
+                    <View style={{marginBottom: 20}} />
                   </View>
                 </View>
                 {/* Language section ends here */}
@@ -508,8 +552,7 @@ export default function ClassDetailScreen({ route }) {
                 {/* Schedule ends here */}
 
                 {/* classes starts here */}
-                {
-        /*classData.documents.length === 0 ? null : (
+                {/*classData.documents.length === 0 ? null : (
         //   <>
         //     <Text style={styles.heading}>Instructor Uploads</Text>
         //     <View style={{ height: 180 }}>
@@ -551,40 +594,36 @@ export default function ClassDetailScreen({ route }) {
                 {/* <Text style={styles.heading}>Students Enrolled</Text>
               <Text style={styles.text}>{5}</Text> */}
                 {/* Enrolled Students ends here */}
-
               </View>
             </View>
           </ScrollView>
-
-        }
-
-      </View >
-
-    )
+        )}
+      </View>
+    );
   }
+
   function studentComponent() {
     return (
       <View style={styles.container}>
-        <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15 }}>
-          <TouchableOpacity style={{ marginTop: 5 }}
+        <View
+          style={{flexDirection: 'row', paddingLeft: 15, marginVertical: 15}}>
+          <TouchableOpacity
+            style={{marginTop: 5}}
             onPress={() => navigation.goBack()}>
             <Icon color={'black'} name="leftcircleo" size={25} />
           </TouchableOpacity>
           <Text style={styles.title}>Class Details</Text>
         </View>
-        {
-          (_class !== null && teacher !== null)
-          &&
-          <ScrollView style={{ marginBottom: "5%", padding: 15 }}>
-            <View >
+        {_class !== null && teacher !== null && (
+          <ScrollView style={{marginBottom: '5%', padding: 15}}>
+            <View>
               {/* header starts here */}
-              <View style={{ marginTop: 10 }}>
+              <View style={{marginTop: 10}}>
                 <ImageBackground
-                  resizeMode='cover'
-                  source={require("../assets/images/bg.jpg")}
+                  resizeMode="cover"
+                  source={require('../assets/images/bg.jpg')}
                   style={styles.classBoxImage}
-                  imageStyle={{ borderRadius: 5 }}
-                >
+                  imageStyle={{borderRadius: 5}}>
                   <View style={styles.overlay}>
                     <View style={styles.levelBox}>
                       <View style={styles.levelIntermediate}></View>
@@ -609,69 +648,58 @@ export default function ClassDetailScreen({ route }) {
 
                 {/* price tags start here */}
                 {/* this will be render if student has not already joined the class */}
-                {
-                  (
-                    userType.toLowerCase() === "user"
-                    &&
-                    !isJoined
-                  )
-                  &&
+                {userType.toLowerCase() === 'user' && !isJoined && (
                   <View style={styles.joinBox}>
-                    <TouchableOpacity onPress={() => { joinClass(_class) }} style={{ backgroundColor: '#4B5F79', padding: 10, borderRadius: 5, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                      <Text style={{ fontSize: 18, fontWeight: '300', color: "white" }}>Join Class</Text>
+                    <TouchableOpacity
+                      onPress={() => {
+                        joinClass(_class);
+                      }}
+                      style={{
+                        backgroundColor: '#4B5F79',
+                        padding: 10,
+                        borderRadius: 5,
+                        width: '100%',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          fontWeight: '300',
+                          color: 'white',
+                        }}>
+                        Join Class
+                      </Text>
                     </TouchableOpacity>
                   </View>
-                }
+                )}
 
                 <View style={styles.joinBox}>
+                  <Text style={styles.cost}>Cost: &#36;{_class.price}</Text>
+                </View>
+                <View style={styles.joinBox}>
                   <Text style={styles.cost}>
-                    Cost: &#36;{12}
-                    {/* Max. Students : {_class.maxStudents} */}
+                    Max. Students : {_class.maxStudents}
                   </Text>
                 </View>
-                {
-                  userType.toLowerCase() === "teacher" &&
+
+                {userType.toLowerCase() === 'user' && isJoined && chatFlag && (
                   <View style={styles.joinBox}>
-                    <TouchableOpacity style={{ marginTop: 5 }}
+                    <TouchableOpacity
+                      style={{marginTop: 5}}
                       onPress={() => groupChat()}>
                       <Icon color={'black'} name="message1" size={25} />
                     </TouchableOpacity>
                   </View>
-                }
-                {
-                  (
-                    userType.toLowerCase() === "user"
-                    &&
-                    isJoined
-                  )
-                  &&
-                  <View style={styles.joinBox}>
-                    <TouchableOpacity style={{ marginTop: 5 }}
-                      onPress={() => groupChat()}>
-                      <Icon color={'black'} name="message1" size={25} />
-                    </TouchableOpacity>
-                  </View>
-                }
-                {/* price ends here */}
-
-
-                {/* Class Location Starts here */}
-                {/* <View>
-                <Text style={styles.heading}>Class Location</Text>
-                <Text style={styles.text}>CR 4 EE Building</Text>
-              </View> */}
-                {/* Class Location ends here */}
-
-
-                {/* Language section starts here */}
+                )}
                 <View style={styles.languageBoxLanguage}>
                   <View style={styles.languageWithIcon}>
-                    <Text style={styles.languageAttributesHeading}>Languages</Text>
+                    <Text style={styles.languageAttributesHeading}>
+                      Languages
+                    </Text>
                   </View>
                   <View style={styles.language}>
-                    <View
-                      style={{ flexDirection: "row" }}
-                    >
+                    <View style={{flexDirection: 'row'}}>
                       <Text style={styles.languageText}>{_class.language}</Text>
                     </View>
                   </View>
@@ -682,126 +710,158 @@ export default function ClassDetailScreen({ route }) {
                   visible={isModal}
                   onRequestClose={() => {
                     toggleModal();
-                  }}
-                >
-                  <View style={{ flex: 1, backgroundColor: '#ffffff', padding: 15 }}>
-                    <View style={{ flexDirection: "row-reverse" }}>
+                  }}>
+                  <View
+                    style={{flex: 1, backgroundColor: '#ffffff', padding: 15}}>
+                    <View style={{flexDirection: 'row-reverse'}}>
                       <TouchableOpacity
-                        onPress={
-                          () => { toggleModal(); }
-                        }
-                      >
-                        <Icon name='close' size={25} />
+                        onPress={() => {
+                          toggleModal();
+                        }}>
+                        <Icon name="close" size={25} />
                       </TouchableOpacity>
                     </View>
-                    <View style={{ flexDirection: 'row', marginVertical: 15, justifyContent: "center" }}>
-                      {
-                        subjectText !== "view" ?
-                          <Text style={styles.title}>Add {subjectText}</Text>
-                          :
-                          <Text style={styles.title}>Details</Text>
-                      }
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        marginVertical: 15,
+                        justifyContent: 'center',
+                      }}>
+                      {subjectText !== 'view' ? (
+                        <Text style={styles.title}>Add {subjectText}</Text>
+                      ) : (
+                        <Text style={styles.title}>Details</Text>
+                      )}
                     </View>
                     <View>
-                      <ScrollView >
-                        {
-                          subjectText !== "view" ?
-                            <View>
-                              <View style={{ marginVertical: 10 }}>
-                                <Input variant="outline" placeholder="Description"
-                                  onChangeText={(text) => { setDescription(text) }} />
-                              </View>
-
-                              <View style={{ marginVertical: 10, marginBottom: 40 }}>
-                                <Button title={"Submit"} onPress={() => { addTA() }} />
-                              </View>
+                      <ScrollView>
+                        {subjectText !== 'view' ? (
+                          <View>
+                            <View style={{marginVertical: 10}}>
+                              <Input
+                                variant="outline"
+                                placeholder="Description"
+                                onChangeText={text => {
+                                  setDescription(text);
+                                }}
+                              />
                             </View>
-                            :
-                            <View>
-                              <View style={styles.languageBoxLanguage}>
-                                <View style={styles.languageWithIcon}>
-                                  <Text style={styles.languageAttributesHeading}>Topics</Text>
-                                </View>
-                                {
-                                  topics.length > 0 &&
-                                  topics.map((item, index) => {
-                                    return (
-                                      <View style={{ marginVertical: 5 }}>
-                                        <Text>{index + 1} {"- "} {item.description}</Text>
-                                      </View>
-                                    )
-                                  })
-                                }
-                              </View>
 
-                              <View style={styles.languageBoxLanguage}>
-                                <View style={styles.languageWithIcon}>
-                                  <Text style={styles.languageAttributesHeading}>Announcements</Text>
-                                </View>
-                                {
-                                  announcements.length > 0 &&
-                                  announcements.map((item, index) => {
-                                    return (
-                                      <View style={{ marginVertical: 5 }}>
-                                        <Text>{index + 1} {"- "} {item.description}</Text>
-                                      </View>
-                                    )
-                                  })
-                                }
-                              </View>
+                            <View
+                              style={{marginVertical: 10, marginBottom: 40}}>
+                              <Button
+                                title={'Submit'}
+                                onPress={() => {
+                                  addTA();
+                                }}
+                              />
                             </View>
-                        }
+                          </View>
+                        ) : (
+                          <View>
+                            <View style={styles.languageBoxLanguage}>
+                              <View style={styles.languageWithIcon}>
+                                <Text style={styles.languageAttributesHeading}>
+                                  Topics
+                                </Text>
+                              </View>
+                              {topics.length > 0 &&
+                                topics.map((item, index) => {
+                                  return (
+                                    <View style={{marginVertical: 5}}>
+                                      <Text>
+                                        {index + 1} {'- '} {item.description}
+                                      </Text>
+                                    </View>
+                                  );
+                                })}
+                            </View>
 
-
-
+                            <View style={styles.languageBoxLanguage}>
+                              <View style={styles.languageWithIcon}>
+                                <Text style={styles.languageAttributesHeading}>
+                                  Announcements
+                                </Text>
+                              </View>
+                              {announcements.length > 0 &&
+                                announcements.map((item, index) => {
+                                  return (
+                                    <View style={{marginVertical: 5}}>
+                                      <Text>
+                                        {index + 1} {'- '} {item.description}
+                                      </Text>
+                                    </View>
+                                  );
+                                })}
+                            </View>
+                          </View>
+                        )}
                       </ScrollView>
                     </View>
                   </View>
                 </Modal>
                 <View style={styles.languageBoxLanguage}>
                   <View style={styles.languageWithIcon}>
-                    <Text style={styles.languageAttributesHeading}>SCHEDULE</Text>
+                    <Text style={styles.languageAttributesHeading}>
+                      SCHEDULE
+                    </Text>
                   </View>
-                  <View style={{ marginBottom: 25 }}>
-                    {
-                      schedule.map((item, index) => {
-                        return (
-                          <View key={index} style={{ marginVertical: 20 }}>
-                            <View style={{ flexDirection: "row" }}>
-                              <Text>Start Date: {" "}{formatDate(item.startdate)}{" "}</Text>
-                              <Text>{formatTime(item.startdate)}</Text>
-                            </View>
-                            <View style={{ flexDirection: "row" }}>
-                              <Text>End Date: {" "}{formatDate(item.enddate)}{" "}</Text>
-                              <Text>{formatTime(item.enddate)}</Text>
-                            </View>
-                            <View>
-                              <Text>Max. Students:{" "} {item.maxStudents}</Text>
-                            </View>
-                            <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 15 }}>
-                              <Divider orientation="vertical" width={3} />
-                              <TouchableOpacity style={{ flexDirection: "row" }} onPress={() => setPropertySubjectText("view", item._id)}>
-                                <Text >View Details</Text>
-                              </TouchableOpacity>
-                              <Divider orientation="vertical" width={3} />
-                              <TouchableOpacity style={{ flexDirection: "row" }} onPress={() => { setPropertySubjectText("Topic", item._id) }}>
-                                <Text>Add Topic</Text>
-                                {/* <Icon name="plus" size={20} /> */}
-                              </TouchableOpacity>
-                              <Divider orientation="vertical" width={3} />
-                              <TouchableOpacity style={{ flexDirection: "row" }} onPress={() => { setPropertySubjectText("Announement", item._id) }}>
-                                <Text>Add Announcement</Text>
-                                {/* <Icon name="plus" size={20} /> */}
-                              </TouchableOpacity>
-                              <Divider orientation="vertical" width={3} />
-                            </View>
-                            <Divider width={1} />
-
+                  <View style={{marginBottom: 25}}>
+                    {schedule.map((item, index) => {
+                      return (
+                        <View key={index} style={{marginVertical: 20}}>
+                          <View style={{flexDirection: 'row'}}>
+                            <Text>
+                              Start Date: {formatDate(item.startdate)}{' '}
+                            </Text>
+                            <Text>{formatTime(item.startdate)}</Text>
                           </View>
-                        )
-                      })
-                    }
-                    <View style={{ marginBottom: 20 }} />
+                          <View style={{flexDirection: 'row'}}>
+                            <Text>End Date: {formatDate(item.enddate)} </Text>
+                            <Text>{formatTime(item.enddate)}</Text>
+                          </View>
+                          <View>
+                            <Text>Max. Students: {item.maxStudents}</Text>
+                          </View>
+                          <View
+                            style={{
+                              marginVertical: 15,
+                            }}>
+                            <Divider width={1} />
+                            <TouchableOpacity
+                              style={{
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                marginTop: 10,
+                              }}
+                              onPress={() =>
+                                setPropertySubjectText('view', item._id)
+                              }>
+                              <Text>View Details</Text>
+                            </TouchableOpacity>
+                            {/* <Divider orientation="vertical" width={3} />
+                            <TouchableOpacity
+                              style={{flexDirection: 'row'}}
+                              onPress={() => {
+                                setPropertySubjectText('Topic', item._id);
+                              }}>
+                              <Text>Add Topic</Text>
+                            </TouchableOpacity>
+                            <Divider orientation="vertical" width={3} />
+                            <TouchableOpacity
+                              style={{flexDirection: 'row'}}
+                              onPress={() => {
+                                setPropertySubjectText('Announement', item._id);
+                              }}>
+                              <Text>Add Announcement</Text>
+                            </TouchableOpacity>
+                            <Divider orientation="vertical" width={3} /> */}
+                          </View>
+                          <Divider width={1} />
+                        </View>
+                      );
+                    })}
+                    <View style={{marginBottom: 20}} />
                   </View>
                 </View>
                 {/* Language section ends here */}
@@ -836,8 +896,7 @@ export default function ClassDetailScreen({ route }) {
                 {/* Schedule ends here */}
 
                 {/* classes starts here */}
-                {
-        /*classData.documents.length === 0 ? null : (
+                {/*classData.documents.length === 0 ? null : (
         //   <>
         //     <Text style={styles.heading}>Instructor Uploads</Text>
         //     <View style={{ height: 180 }}>
@@ -879,33 +938,29 @@ export default function ClassDetailScreen({ route }) {
                 {/* <Text style={styles.heading}>Students Enrolled</Text>
               <Text style={styles.text}>{5}</Text> */}
                 {/* Enrolled Students ends here */}
-
               </View>
             </View>
           </ScrollView>
-
-        }
-
+        )}
       </View>
-
-    )
+    );
   }
+
   return (
     <>
-      {
-        userType.toLowerCase() === "user" ?
-          <MainLayout Component={studentComponent()} />
-          :
-          <MainLayout Component={component()} />
-      }
+      {userType.toLowerCase() === 'user' ? (
+        <MainLayout Component={studentComponent()} />
+      ) : (
+        <MainLayout Component={component()} />
+      )}
     </>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#ffffff",
-    flex: 1
+    backgroundColor: '#ffffff',
+    flex: 1,
   },
   bannerImage: {
     width: 129,
@@ -913,29 +968,29 @@ const styles = StyleSheet.create({
   },
 
   promoDisplayView: {
-    width: "100%",
+    width: '100%',
     marginTop: 30,
     borderRadius: 3,
     height: 110,
-    borderColor: "#949599",
-    backgroundColor: "#FFFFFF",
+    borderColor: '#949599',
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
     padding: 2,
   },
   title: {
     fontSize: 25,
     marginLeft: 15,
-    textTransform: "uppercase",
-    fontFamily: "roboto-light",
+    textTransform: 'uppercase',
+    fontFamily: 'roboto-light',
   },
   titleIconBox: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
     marginTop: 20,
   },
   promoNameText: {
     fontSize: 15,
-    fontFamily: "roboto-regular"
+    fontFamily: 'roboto-regular',
   },
   backIcon: {
     marginTop: 35,
@@ -949,78 +1004,78 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.3)",
+    backgroundColor: 'rgba(0,0,0,0.3)',
     borderRadius: 5,
-    justifyContent: "flex-end",
+    justifyContent: 'flex-end',
     padding: 10,
   },
   classBoxText: {
     marginLeft: 7,
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     fontSize: 13,
-    textTransform: "uppercase",
+    textTransform: 'uppercase',
   },
   levelBox: {
-    flexDirection: "row",
+    flexDirection: 'row',
     // position: "absolute",
     // bottom: 90,
     // left: 14,
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
   },
 
   levelAdvance: {
     width: 4,
     height: 13,
-    backgroundColor: "#FF6565",
+    backgroundColor: '#FF6565',
     marginTop: 2,
   },
 
   levelBeginner: {
     width: 4,
     height: 13,
-    backgroundColor: "#01C75D",
+    backgroundColor: '#01C75D',
     marginTop: 2,
   },
 
   levelIntermediate: {
     width: 4,
     height: 13,
-    backgroundColor: "#FFEB00",
+    backgroundColor: '#FFEB00',
     marginTop: 2,
   },
   classBoxName: {
     // position: "absolute",
     // bottom: 62,
     // left: 14,
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     fontSize: 18,
-    fontFamily: "roboto-regular",
+    fontFamily: 'roboto-regular',
   },
   classBoxInstructor: {
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     fontSize: 15,
-    textTransform: "capitalize"
+    textTransform: 'capitalize',
   },
   classBoxDate: {
     // position: "absolute",
     // bottom: 23,
     // left: 14,
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     fontSize: 15,
   },
   classBoxViews: {
     // position: "absolute",
     // bottom: 65,
     // right: 14,
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     fontSize: 15,
-    fontFamily: "roboto-regular",
+    fontFamily: 'roboto-regular',
   },
   classBoxSubscribers: {
     // position: "absolute",
     // bottom: 25,
     // right: 14,
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     fontSize: 18,
   },
   classBoxSubscribersIcon: {
@@ -1031,7 +1086,7 @@ const styles = StyleSheet.create({
     height: 38,
   },
   heartIcon: {
-    position: "absolute",
+    position: 'absolute',
     top: 10,
     right: 10,
     height: 20,
@@ -1040,7 +1095,7 @@ const styles = StyleSheet.create({
 
   profileBox: {
     marginTop: 20,
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   profilePic: {
     width: 95,
@@ -1050,41 +1105,41 @@ const styles = StyleSheet.create({
 
   info: {
     marginLeft: 20,
-    position: "relative",
+    position: 'relative',
   },
 
   name: {
     fontSize: 18,
-    color: "#4B5F79",
-    width: "100%",
-    textTransform: "uppercase",
-    fontFamily: "roboto-light",
+    color: '#4B5F79',
+    width: '100%',
+    textTransform: 'uppercase',
+    fontFamily: 'roboto-light',
   },
   languageBox: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    width: "95%",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    width: '95%',
     marginTop: 7,
   },
 
   languageHeader: {
     fontSize: 14,
-    fontFamily: "roboto-regular",
+    fontFamily: 'roboto-regular',
   },
 
   dot: {
     height: 3,
     width: 3,
-    backgroundColor: "black",
+    backgroundColor: 'black',
     borderRadius: 50,
     margin: 5,
     marginTop: 10,
   },
 
   actionBox: {
-    width: "100%",
-    justifyContent: "space-around",
-    flexDirection: "row",
+    width: '100%',
+    justifyContent: 'space-around',
+    flexDirection: 'row',
     flex: 1,
   },
 
@@ -1094,44 +1149,44 @@ const styles = StyleSheet.create({
   },
 
   joinBox: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: 20,
-    alignItems: "center",
+    alignItems: 'center',
   },
 
   cost: {
-    fontFamily: "roboto-bold",
+    fontFamily: 'roboto-bold',
     fontSize: 18,
-    color: "#4B5F79",
+    color: '#4B5F79',
   },
 
   joinClassBtn: {
     height: 34,
-    backgroundColor: "#4B5F79",
+    backgroundColor: '#4B5F79',
     borderRadius: 3,
     width: 113,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 0,
   },
 
   joinText: {
-    fontFamily: "roboto-light",
+    fontFamily: 'roboto-light',
     fontSize: 15,
-    color: "#FFFFFF",
-    textTransform: "uppercase",
+    color: '#FFFFFF',
+    textTransform: 'uppercase',
   },
 
   heading: {
     fontSize: 20,
-    fontFamily: "roboto-light",
+    fontFamily: 'roboto-light',
     marginTop: 40,
-    textTransform: "uppercase",
+    textTransform: 'uppercase',
   },
   text: {
     fontSize: 15,
-    fontFamily: "roboto-light",
+    fontFamily: 'roboto-light',
     marginTop: 5,
   },
 
@@ -1141,56 +1196,56 @@ const styles = StyleSheet.create({
   },
 
   classBoxWrapper: {
-    height: "100%",
+    height: '100%',
     width: 225,
-    overflow: "hidden",
+    overflow: 'hidden',
     // marginBottom: 22,
     borderRadius: 5,
     marginRight: 15,
   },
 
   uploadBoxImage: {
-    width: "100%",
-    height: "100%",
-    position: "relative",
+    width: '100%',
+    height: '100%',
+    position: 'relative',
   },
 
   uploadBox: {
-    position: "absolute",
-    backgroundColor: "transparent",
+    position: 'absolute',
+    backgroundColor: 'transparent',
     left: 15,
     bottom: 10,
   },
 
   uploadName: {
-    color: "#ffffff",
-    fontFamily: "roboto-regular",
+    color: '#ffffff',
+    fontFamily: 'roboto-regular',
     fontSize: 16,
   },
   uploadDate: {
-    color: "#FFFFFF",
-    fontFamily: "roboto-light",
+    color: '#FFFFFF',
+    fontFamily: 'roboto-light',
     fontSize: 14,
   },
 
   removeBtn: {
     padding: 10,
-    borderColor: "#4B5F79",
+    borderColor: '#4B5F79',
     borderRadius: 7,
     borderWidth: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginTop: 20,
     height: 44,
     marginBottom: 20,
   },
 
   removeText: {
-    color: "#4B5F79",
-    fontFamily: "roboto-light",
+    color: '#4B5F79',
+    fontFamily: 'roboto-light',
     fontSize: 16,
-    textTransform: "uppercase",
+    textTransform: 'uppercase',
   },
 
   removeIcon: {
@@ -1203,31 +1258,31 @@ const styles = StyleSheet.create({
     // borderColor: "#4B5F79",
     borderRadius: 7,
     // borderWidth: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 20,
     height: 44,
     marginBottom: 20,
-    backgroundColor: "#FF6565",
+    backgroundColor: '#FF6565',
   },
   reportText: {
-    color: "#ffffff",
-    fontFamily: "roboto-regular",
+    color: '#ffffff',
+    fontFamily: 'roboto-regular',
     fontSize: 16,
-    textTransform: "uppercase",
+    textTransform: 'uppercase',
   },
 
   reasonBox: {
     // marginTop: 10,
     // marginBottom: 10,
-    width: "100%",
+    width: '100%',
     borderRadius: 5,
-    borderColor: "#949599",
-    backgroundColor: "#FFFFFF",
+    borderColor: '#949599',
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
     padding: 8,
-    fontFamily: "roboto-light",
+    fontFamily: 'roboto-light',
     fontSize: 16,
     height: 100,
   },
@@ -1236,29 +1291,29 @@ const styles = StyleSheet.create({
   },
 
   languageWithIcon: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 
   languageAttributesHeading: {
-    textTransform: "uppercase",
+    textTransform: 'uppercase',
     fontSize: 20,
-    fontWeight: "200",
-    fontFamily: "roboto-light",
+    fontWeight: '200',
+    fontFamily: 'roboto-light',
   },
   language: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     marginTop: 10,
   },
   languageText: {
     fontSize: 15,
-    fontFamily: "roboto-light",
+    fontFamily: 'roboto-light',
   },
   dotLanguage: {
     height: 3,
     width: 3,
-    backgroundColor: "black",
+    backgroundColor: 'black',
     borderRadius: 100,
     margin: 5,
     marginTop: 10,

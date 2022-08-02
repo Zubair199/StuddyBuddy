@@ -26,18 +26,31 @@ module.exports = {
 
     },
     GENERAL: {
-        SITE_CONTENTS: "/api/sitecontents"
+
+        SITE_CONTENTS: "/api/sitecontents",
+        USER_SEARCH: "/api/user/search/",
+        TEACHER_SEARCH: "/api/teacher/search/",
+        CLASS_SEARCH: "/api/class/search/"
+
     },
     AUTH: {
+
         SIGNUP: "/api/auth/signup",
         SIGNIN: "/api/auth/signin",
+
         VERIFY: "/api/auth/verify",
         EMAIL_RESET_PASSWORD: "/api/auth/resetPassword",
         USERS: "/api/users",
         SELF: "/api/getself",
+
         PROFILE: "/api/auth/profile",
-        PROFILE_VIDEO: "/api/auth/profile/video/",
+        GET_PROFILE: "/api/auth/profile/",
+        EDIT_PROFILE: "/api/auth/updateprofile/",
+
         GET_USER_BY_EMAIL: "/api/auth/getUserByEmail/",
+        GET_USER_BY_ID: "/api/auth/getUser/",
+        EDIT_USER: "/api/auth/updateuser/",
+
     },
     CLASS: {
         CREATE: "/api/class",
@@ -80,11 +93,14 @@ module.exports = {
         GET_TOPIC_ANNOUNCEMENT_BY_SCHEDULE_ID: "/api/class/topics/announcements/",
 
         JOINED_STUDENTS: "/api/class/students/",
+
+
+        SEARCH: "/api/class/search/"
     },
     EXAM: {
         CREATE: "/api/exam",
         CREATE_QUESTIONS: "/api/exam/question",
-        GET_ALL_ACTIVE_EXAMS_BY_TEACHER_ID: "/api/exam/teacher/active/",
+        GET_ALL_ACTIVE_EXAMS_BY_TEACHER_ID: "/api/exam/active/teacher/",
         GET_ALL_EXAMS_BY_TEACHER_ID: '/api/exam/teacher/',
         GET_EXAM_BY_EXAM_ID: '/api/exam/',
         GET_EXAM_QUESTIONS_BY_EXAM_ID: '/api/exam/question/',
@@ -96,7 +112,7 @@ module.exports = {
         CREATE: "/api/assignment",
         CREATE_QUESTIONS: "/api/assignment/question",
 
-        GET_ALL_ACTIVE_ASSIGNMENTS_BY_TEACHER_ID: "/api/assignment/teacher/active/",
+        GET_ALL_ACTIVE_ASSIGNMENTS_BY_TEACHER_ID: "/api/assignment/active/teacher/",
 
         GET_ALL_ASSIGNMENTS_BY_TEACHER_ID: '/api/assignment/teacher/',
 
