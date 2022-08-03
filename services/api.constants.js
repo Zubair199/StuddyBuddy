@@ -40,7 +40,7 @@ module.exports = {
 
         VERIFY: "/api/auth/verify",
         EMAIL_RESET_PASSWORD: "/api/auth/resetPassword",
-        USERS: "/api/users",
+        USERS: "/api/getUsers",
         SELF: "/api/getself",
 
         PROFILE: "/api/auth/profile",
@@ -126,5 +126,14 @@ module.exports = {
 
 
     },
+
+    STRIPE: {
+        CREATE_CARD: "/api/card",
+        CARD_DETAILS: "/api/card/",
+        UPDATE_CARD: "/api/card/",
+        CREATE_PAYMENT: "",
+        PK_TEST: "pk_test_51LPq5PHMIjurc2gOdoR79YKnciMMUVfCBBXP0LYaZxIoNW1dFRhGreSkRu34TUMeZ7pZ9mTQrLAkPvPzYPr8gKKa00GuhqeZH9",
+        SK_TEST: "sk_test_51LPq5PHMIjurc2gOXufycmqFoQc1Rk0B14OkDwNE3l3013yAdL1WUk1idTNBAi5nVF4bOZGtflpzTp0PdkXCURKU00azCFptoj",
+    }
 };
 

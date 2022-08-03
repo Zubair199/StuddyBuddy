@@ -62,6 +62,14 @@ export default function AccountCreateScreen() {
     navigation.navigate('Login');
   }
 
+  function clearState() {
+    setFullName('');
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
+    setRole('0');
+  }
+
   const onPressNextBtn = () => {
     if (fullName.trim().length == 0) {
       Alert.alert('Alert', 'Enter full name');
@@ -140,7 +148,10 @@ export default function AccountCreateScreen() {
           console.log(responseJson);
           setShowSpinner(false);
           Alert.alert('Alert', responseJson.message);
-          navigation.navigate('AccountVerify', {email: email});
+          if (responseJson.success) {
+            clearState();
+            navigation.navigate('AccountVerify', {email: email});
+          }
         })
         .catch((err: any) => {
           console.log(err);

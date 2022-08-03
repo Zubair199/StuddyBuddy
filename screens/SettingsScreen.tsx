@@ -11,6 +11,7 @@ import {
   Alert,
   TextInput,
   Switch,
+  Modal,
 } from 'react-native';
 import {useUserAuth} from '../navigation';
 import genericStyle from '../assets/styles/styleSheet';
@@ -18,9 +19,12 @@ import {useNavigation, useRoute, RouteProp} from '@react-navigation/native';
 import MainLayout from './MainLayout';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ThemeContext} from 'react-native-elements';
-import {Button} from 'native-base';
-import {AUTH, AUTHENTICATIONS} from '../services/api.constants';
+import {Button, Input} from 'native-base';
+import {AUTH, AUTHENTICATIONS, STRIPE} from '../services/api.constants';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {CardField, useStripe} from '@stripe/stripe-react-native';
+import Icon from 'react-native-vector-icons/AntDesign';
+
 export default function SettingsScreen() {
   const {
     setUserToken,
@@ -104,6 +108,15 @@ export default function SettingsScreen() {
   let [emailEditable, setEmailEditable] = React.useState(false);
   let [passwordEditable, setPasswordEditable] = React.useState(false);
 
+  let [cardEditable, setCardEditable] = React.useState(false);
+
+  let [cardNumber, setCardNumber] = React.useState('');
+  let [expiryMonth, setExpiryMonth] = React.useState('');
+  let [cvc, setCVC] = React.useState('');
+
+  let [cardInfo, setCardInfo] = React.useState(null);
+  const {confirmPayment} = useStripe();
+
   function getData() {
     try {
       fetch(AUTHENTICATIONS.API_URL + AUTH.GET_USER_BY_ID + user)
@@ -117,6 +130,20 @@ export default function SettingsScreen() {
               setEmail(responseJson.user.email);
             }
           }
+        })
+        .catch((err: any) => {
+          console.log(err);
+          console.log(err.response);
+          Alert.alert(
+            'Alert',
+            'Something went wrong. Try again in few minutes.',
+          );
+        });
+      fetch(AUTHENTICATIONS.API_URL + STRIPE.CARD_DETAILS + user)
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log('card details => ', responseJson);
+          setCardInfo(responseJson.data);
         })
         .catch((err: any) => {
           console.log(err);
@@ -239,9 +266,155 @@ export default function SettingsScreen() {
       Alert.alert('Alert', 'Password and confrim password cannot be empty.');
     }
   }
+  const [isModal, setIsModal] = React.useState(false);
+  function toggleModal() {
+    console.log('modal');
+    setIsModal(!isModal);
+  }
+
+  function submitCard() {
+    let obj = {
+      user: user,
+      expiryMonth: expiryMonth,
+      cvc: cvc,
+      cardNumber: cardNumber,
+    };
+    console.log(obj);
+    try {
+      let requestObj = {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(obj),
+      };
+
+      fetch(AUTHENTICATIONS.API_URL + STRIPE.CREATE_CARD, requestObj)
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log(responseJson);
+          Alert.alert('Alert', responseJson.message);
+          setCardNumber('');
+          setCVC('');
+          setExpiryMonth('');
+          getData();
+          toggleModal();
+        })
+        .catch((err: any) => {
+          console.log(err);
+          console.log(err.response);
+          Alert.alert('Alert', 'Something went wrong.');
+        });
+    } catch (exception) {
+      console.log('exception ', exception);
+      Alert.alert('Alert', 'Something went wrong.');
+    }
+  }
+
+  function updateCard(id) {
+    let obj = {
+      user: user,
+      expiryMonth: expiryMonth,
+      cvc: cvc,
+      cardNumber: cardNumber,
+    };
+    console.log(obj);
+    try {
+      let requestObj = {
+        method: 'PUT',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(obj),
+      };
+
+      fetch(AUTHENTICATIONS.API_URL + STRIPE.UPDATE_CARD + id, requestObj)
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log(responseJson);
+          Alert.alert('Alert', responseJson.message);
+          setCardNumber('');
+          setCVC('');
+          setExpiryMonth('');
+          getData();
+          setCardEditable(!cardEditable);
+        })
+        .catch((err: any) => {
+          console.log(err);
+          console.log(err.response);
+          Alert.alert('Alert', 'Something went wrong.');
+        });
+    } catch (exception) {
+      console.log('exception ', exception);
+      Alert.alert('Alert', 'Something went wrong.');
+    }
+  }
+  function handleCardNumber(text) {
+    console.log(text);
+  }
+
   function compenent() {
     return (
       <SafeAreaView style={styles.container}>
+        <Modal
+          animationType="slide"
+          visible={isModal}
+          onRequestClose={() => {
+            toggleModal();
+          }}>
+          <View style={{flex: 1, backgroundColor: '#ffffff', padding: 15}}>
+            <View style={{flexDirection: 'row-reverse'}}>
+              <TouchableOpacity
+                onPress={() => {
+                  toggleModal();
+                }}>
+                <Icon name="close" size={25} />
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                marginVertical: 15,
+                justifyContent: 'center',
+              }}>
+              <Text style={styles.title}>Add Card Details</Text>
+            </View>
+            <View>
+              <Input
+                variant="outline"
+                placeholder="Card Number"
+                maxLength={16}
+                onChangeText={text => setCardNumber(text)}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                marginVertical: 10,
+                justifyContent: 'space-between',
+              }}>
+              <Input
+                variant="outline"
+                placeholder="MM/YY"
+                w={'48%'}
+                onChangeText={text => setExpiryMonth(text)}
+                maxLength={5}
+              />
+              <Input
+                variant="outline"
+                placeholder="CVC"
+                w={'48%'}
+                maxLength={3}
+                onChangeText={text => setCVC(text)}
+              />
+            </View>
+            <View>
+              <Button onPress={() => submitCard()}>Submit</Button>
+            </View>
+          </View>
+        </Modal>
         <View style={{}}>
           <ScrollView style={styles.scrollView}>
             <Text style={styles.title}>Settings</Text>
@@ -440,13 +613,126 @@ export default function SettingsScreen() {
             </View>
 
             <View>
-              <Text style={styles.accountHeading}>
-                Credit/Debit Card Information
-              </Text>
-              <View style={styles.horizontalSeparator} />
-              <View style={styles.groupBox}>
-                <Button onPress={() => {}}>Add Card Information</Button>
+              <View
+                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                <Text style={styles.accountHeading}>Card Information</Text>
+                <View style={{marginTop: 25}}>
+                  {cardInfo !== null && cardEditable ? (
+                    <View style={{flexDirection: 'row'}}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          updateCard(cardInfo._id);
+                        }}>
+                        <FontAwesome
+                          name="check"
+                          style={styles.check}
+                          size={20}
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setCardEditable(!cardEditable);
+                        }}>
+                        <FontAwesome
+                          name="times"
+                          style={styles.times}
+                          size={20}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <TouchableOpacity
+                      onPress={() => {
+                        setCardEditable(!cardEditable);
+                      }}>
+                      <Image
+                        style={styles.pencilIcon}
+                        source={require('../assets/images/icons/pencil.png')}
+                      />
+                    </TouchableOpacity>
+                  )}
+                </View>
               </View>
+              <View style={styles.horizontalSeparator} />
+              {cardInfo !== null ? (
+                <>
+                  <View style={styles.groupBox}>
+                    <View style={styles.labelBox}>
+                      <Text style={styles.label}>Card Number</Text>
+                      <View style={styles.iconInputBox}>
+                        {cardEditable ? (
+                          <TextInput
+                            defaultValue={cardInfo.cardNumber}
+                            editable={true}
+                            maxLength={16}
+                            placeholder={'Card Number'}
+                            onChangeText={text => {
+                              setCardNumber(text);
+                            }}
+                          />
+                        ) : (
+                          <TextInput
+                            value={cardInfo.cardNumber}
+                            editable={false}
+                          />
+                        )}
+                      </View>
+                    </View>
+                  </View>
+                  <View style={styles.groupBox}>
+                    <View style={styles.labelBox}>
+                      <Text style={styles.label}>Expiry Month</Text>
+                      <View style={styles.iconInputBox}>
+                        {cardEditable ? (
+                          <TextInput
+                            defaultValue={cardInfo.expiryMonth}
+                            editable={true}
+                            maxLength={5}
+                            placeholder={'MM/YY'}
+                            onChangeText={text => {
+                              setExpiryMonth(text);
+                            }}
+                          />
+                        ) : (
+                          <TextInput
+                            value={cardInfo.expiryMonth}
+                            editable={false}
+                          />
+                        )}
+                      </View>
+                    </View>
+                  </View>
+                  <View style={styles.groupBox}>
+                    <View style={styles.labelBox}>
+                      <Text style={styles.label}>CVC</Text>
+                      <View style={styles.iconInputBox}>
+                        {cardEditable ? (
+                          <TextInput
+                            defaultValue={cardInfo.cvc}
+                            editable={true}
+                            maxLength={3}
+                            placeholder={'CVC'}
+                            onChangeText={text => {
+                              setCVC(text);
+                            }}
+                          />
+                        ) : (
+                          <TextInput value={cardInfo.cvc} editable={false} />
+                        )}
+                      </View>
+                    </View>
+                  </View>
+                </>
+              ) : (
+                <View style={styles.groupBox}>
+                  <Button
+                    onPress={() => {
+                      toggleModal();
+                    }}>
+                    Add Card Information
+                  </Button>
+                </View>
+              )}
             </View>
 
             <View>

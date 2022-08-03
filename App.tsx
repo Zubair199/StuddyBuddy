@@ -13,7 +13,8 @@ import {NativeBaseProvider, extendTheme} from 'native-base';
 import {StatusBar, useColorScheme} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {ThemeProvider} from './context/ThemeContext';
-
+import {StripeProvider} from '@stripe/stripe-react-native';
+import {STRIPE} from './services/api.constants';
 const App: () => Node = () => {
   const theme = extendTheme({
     components: {
@@ -33,14 +34,18 @@ const App: () => Node = () => {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider>
-      <NativeBaseProvider theme={theme}>
-        <SafeAreaProvider>
-          <Navigation colorScheme={colorScheme} />
-          <StatusBar />
-        </SafeAreaProvider>
-      </NativeBaseProvider>
-    </ThemeProvider>
+    <StripeProvider
+      publishableKey={STRIPE.PK_TEST}
+      merchantIdentifier="merchant.identifier">
+      <ThemeProvider>
+        <NativeBaseProvider theme={theme}>
+          <SafeAreaProvider>
+            <Navigation colorScheme={colorScheme} />
+            <StatusBar />
+          </SafeAreaProvider>
+        </NativeBaseProvider>
+      </ThemeProvider>
+    </StripeProvider>
   );
 };
 
