@@ -61,8 +61,17 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
     route.params.allLocations,
   );
 
-  const {setUserToken, setUserName, setUserEmail, setGuestView, userToken} =
-    useUserAuth()!;
+  const {
+    setUserToken,
+    setUserName,
+    setUserEmail,
+    setGuestView,
+    userToken,
+    userType,
+  } = useUserAuth()!;
+
+  let isStudent = userType == 'user';
+  let isTeacher = userType == 'teacher';
 
   let [user, setUser] = React.useState(userToken);
 
@@ -442,7 +451,9 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
               <TextInput
                 style={genericStyle.textBox}
                 autoCapitalize="words"
-                placeholder="Past Experience/Clients"
+                placeholder={
+                  isTeacher ? 'Past Experience/Clients' : 'Past Education'
+                }
                 placeholderTextColor="#3878ee"
                 multiline={true}
                 onChangeText={text => setPastExperience(text)}

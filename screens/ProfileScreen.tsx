@@ -42,7 +42,7 @@ export default function ProfileScreen(dataType: dataTypes) {
   const navigation = useNavigation();
   // const onClose = () => navigation.navigate("ClassesScreen");
   const {userType, userToken} = useUserAuth();
-  let isStudent = userType == 'student';
+  let isStudent = userType == 'user';
   let isTeacher = userType == 'teacher';
   const isFocused = useIsFocused();
 
@@ -112,7 +112,12 @@ export default function ProfileScreen(dataType: dataTypes) {
         .then(responseJson => {
           console.log('profgile =>', responseJson);
           if (responseJson.profile) {
-            setImage(responseJson.profile.image);
+            if (!responseJson.profile.image) {
+              setImage('');
+            } else {
+              setImage(responseJson.profile.image);
+            }
+
             setSkills(responseJson.profile.skills);
             setCertifications(responseJson.profile.certifications);
             setExperience(responseJson.profile.pastExperience);
@@ -226,7 +231,7 @@ export default function ProfileScreen(dataType: dataTypes) {
                 ))}
               </View>
             </View>
-            {!isStudent && (
+            {isTeacher && (
               <View style={styles.textContent}>
                 <Text style={styles.contentTitle}>Certifications</Text>
                 {certifications ? (
@@ -239,7 +244,9 @@ export default function ProfileScreen(dataType: dataTypes) {
               </View>
             )}
             <View style={styles.textContent}>
-              <Text style={styles.contentTitle}>Past Experience</Text>
+              <Text style={styles.contentTitle}>
+                {isTeacher ? 'Past Experience' : 'Past Education'}
+              </Text>
               {experience ? (
                 <Text style={styles.actualText}>{experience}</Text>
               ) : (
@@ -247,67 +254,34 @@ export default function ProfileScreen(dataType: dataTypes) {
                   Your Past Experience Here
                 </Text>
               )}
+              <View style={styles.lineStyle} />
             </View>
 
-            {/* Divider */}
-            <View style={styles.lineStyle} />
-            {/* Following loads friends slider */}
-            {/* <UserListComponent userId={undefined} headerText="Friends" listType="friends" /> */}
+            {isTeacher && (
+              <>
+                <View style={styles.lineStyle} />
 
-            {/* {isTeacher && (
-                    <>
-                        <View style={styles.lineStyle} /> */}
-            {/* Following loads mentor list */}
-            {/* <UserListComponent userId={undefined} headerText="Mentors" listType="mentor" /> */}
-            {/* </>
-                )} */}
-
-            <View style={styles.lineStyle} />
-            {/* <View style={{ marginTop: 20 }}>
-                    <ChallengeSlider
-                        categoryText="Shared Challenges"
-                        searchEmpty={emptySearch}
-                        isGlobal={false}
-                        isShare={false}
-                        isProfile={true}
-                    />
-                </View> */}
-
-            {/* Toggle button for available options starts here */}
-            {isStudent ? null : (
-              <View style={styles.switchBoxWarpper}>
-                <Text style={styles.switchBoxLebel}>
-                  Mark as available to hire.
-                </Text>
-                <TouchableOpacity>
-                  {toggle ? (
-                    <Image
-                      style={styles.toggleOn}
-                      source={require('../assets/images/icons/toggle.png')}
-                    />
-                  ) : (
-                    <Image
-                      style={styles.toggleOn}
-                      source={require('../assets/images/icons/Toggle-off.png')}
-                    />
-                  )}
-                </TouchableOpacity>
-              </View>
+                <View style={styles.switchBoxWarpper}>
+                  <Text style={styles.switchBoxLebel}>
+                    Mark as available to hire.
+                  </Text>
+                  <TouchableOpacity>
+                    {toggle ? (
+                      <Image
+                        style={styles.toggleOn}
+                        source={require('../assets/images/icons/toggle.png')}
+                      />
+                    ) : (
+                      <Image
+                        style={styles.toggleOn}
+                        source={require('../assets/images/icons/Toggle-off.png')}
+                      />
+                    )}
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.lineStyle} />
+              </>
             )}
-            {/* Toggle button for available options ends here */}
-
-            {/* <StudentContactComponent
-                    parentEditing={editing}
-                    editEnable={() => setEditing(true)}
-                    editDisable={() => setEditing(false)}
-                    loadingTrue={() => setLoader(true)}
-                    loadingFalse={() => setLoader(false)}
-                    data={self}
-                    reRun={() => setReRun(!reRun)}
-                /> */}
-
-            {/* Divider */}
-            <View style={styles.lineStyle} />
 
             {/* {!isStudent && (
                     <SubscribersListComponent subscribersList={fakeSubscribers} />

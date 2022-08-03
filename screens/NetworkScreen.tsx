@@ -21,8 +21,6 @@ export default function NetworkScreen() {
   const {userToken, userType} = React.useContext(AuthContext);
 
   const navigation = useNavigation();
-  let isStudent = userType == 'user';
-  let isTeacher = userType == 'teacher';
   const isFocused = useIsFocused();
 
   let [user, setUser] = React.useState(userToken);
@@ -49,6 +47,7 @@ export default function NetworkScreen() {
   const [loader, setLoader] = React.useState(false);
   const [reRun, setReRun] = React.useState(false);
   const [editProfile, setEditProfile] = React.useState(false);
+  const [experience, setExperience] = React.useState('');
   const [certifications, setCertifications] = React.useState('');
   const [friendList, setFriendList] = React.useState<Array<object>>([]);
   const [mentorList, setMentorList] = React.useState<Array<object>>([]);
@@ -59,6 +58,10 @@ export default function NetworkScreen() {
   const [pageLoader, setPageLoader] = React.useState(false);
   const [emptySearch, setEmptySearch] = React.useState(false);
   const [temp, setTemp] = React.useState('');
+
+  const [isStudent, setIsStudent] = React.useState(false);
+  const [isTeacher, setIsTeacher] = React.useState(false);
+
   const [inputBio, setInputBio] = React.useState({
     style: styles.disableInput,
     editable: false,
@@ -67,23 +70,41 @@ export default function NetworkScreen() {
 
   React.useEffect(() => {
     //console.log("NetworkScreen", userType)
-    setLoader(true);
     apiCall();
   }, [isFocused]);
   function apiCall() {
     fetch(AUTHENTICATIONS.API_URL + AUTH.USERS)
       .then(response => response.json())
       .then(responseJson => {
-        //console.log('users ', responseJson.data)
-        setUsers(responseJson.data.filter(item => item._id !== user));
+        console.log('users ', responseJson.users);
+        let x = responseJson.users.filter(item => item._id !== user);
+        let y = x.filter(item => item.roles.name !== 'admin');
+        console.log(y);
+        setUsers(y);
         setUserProfiles(responseJson.profiles);
-        setLoader(false);
       })
       .catch(err => {
         console.log(err);
       });
   }
   function handleChat(classId, group) {
+    console.log(group);
+    // if(group === true){
+    //     const requestData = {classId:"62ba40cc2c9acbf79d1b1326" ,flag:group,groupUsers:["62bb70317d78ecbb83bcb7d1","6295cc2b7d505307388d58fd","62a1af738c535a276ca3c3ef"] };
+
+    //     api.createNewMessage(requestData).then((resp) => {
+
+    //       if (resp) {
+    //         const newChatInfo = resp.data;
+    //         if (newChatInfo && newChatInfo.data.chatId) {
+
+    //              navigation.navigate("ChatScreen", { chatId: newChatInfo.data.chatId, textMes: "",classId });
+    //         }
+
+    //       }
+    //     }).catch(e=>{console.log(e)});
+    // }
+    // else{
     console.log('here in one to one');
     const requestData = {toUser: classId};
     console.log(classId);
@@ -114,14 +135,22 @@ export default function NetworkScreen() {
     console.log('modal');
     setIsModal(!isModal);
   }
-  function getProfileData(id) {
-    let result = userProfiles.filter(item => item.User === id);
-    // console.log(result);
+  function getProfileData(id, item) {
+    let result = userProfiles.filter(item => item.user === id);
+
+    console.log(result);
     if (result.length > 0) {
       setProfile(result[0]);
       setSkills(result[0].skills);
       setCertifications(result[0].certifications);
       setPastExperience(result[0].pastExperience);
+      if (result[0].image) {
+        setImage(result[0].image);
+      }
+      setIsStudent(item.roles.name === 'user');
+      setIsTeacher(item.roles.name === 'teacher');
+      console.log(isStudent);
+      console.log(isTeacher);
     } else {
       setProfile(null);
       setSkills([]);
@@ -161,19 +190,27 @@ export default function NetworkScreen() {
               }}>
               <Text style={styles.title}>Profile Details</Text>
             </View>
-            <View>
+            <SafeAreaView style={styles.container}>
               <ScrollView
                 style={styles.scrollView}
                 keyboardShouldPersistTaps={'handled'}>
+                {/* <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" /> */}
                 <View style={styles.basicInfo}>
+                  {/* instructor name and image will be replaced by api's data on integration of apis */}
                   <View style={styles.profileImageBox}>
-                    <TouchableOpacity onPress={() => setImageModal(true)}>
+                    {/* {imageLoader && <Image
+                  style={{width:100, height:54}}
+                  source={require('../assets/images/Deep-Move-Spinner-v3.gif')}
+                />} */}
+                    <TouchableOpacity>
                       <Image
                         style={styles.profileImage}
+                        // onLoadStart={()=>setImageLoader(true)}
+                        // onLoadEnd={()=>setImageLoader(false)}
                         source={
                           image === ''
                             ? require('../assets/images/user.png')
-                            : {uri: image}
+                            : {uri: AUTHENTICATIONS.API_URL + image}
                         }
                       />
                     </TouchableOpacity>
@@ -225,7 +262,7 @@ export default function NetworkScreen() {
                     ))}
                   </View>
                 </View>
-                {!isStudent && (
+                {isTeacher && (
                   <View style={styles.textContent}>
                     <Text style={styles.contentTitle}>Certifications</Text>
                     {certifications ? (
@@ -238,39 +275,92 @@ export default function NetworkScreen() {
                   </View>
                 )}
                 <View style={styles.textContent}>
-                  <Text style={styles.contentTitle}>Bio</Text>
-                  {inputBio.bio ? (
-                    <Text style={styles.actualText}>{inputBio.bio}</Text>
+                  <Text style={styles.contentTitle}>
+                    {isTeacher ? 'Past Experience' : 'Past Education'}
+                  </Text>
+                  {experience ? (
+                    <Text style={styles.actualText}>{experience}</Text>
                   ) : (
-                    <Text style={styles.placeholder}>Your Short Bio Here</Text>
+                    <Text style={styles.placeholder}>
+                      Your Past Experience Here
+                    </Text>
                   )}
+                  <View style={styles.lineStyle} />
                 </View>
 
-                <View style={styles.lineStyle} />
+                {isTeacher && (
+                  <>
+                    <View style={styles.lineStyle} />
 
-                {/* Toggle button for available options starts here */}
-                {isStudent ? null : (
-                  <View style={styles.switchBoxWarpper}>
-                    <Text style={styles.switchBoxLebel}>
-                      Mark as available to hire.
-                    </Text>
-                    <TouchableOpacity>
-                      {toggle ? (
-                        <Image
-                          style={styles.toggleOn}
-                          source={require('../assets/images/icons/toggle.png')}
-                        />
-                      ) : (
-                        <Image
-                          style={styles.toggleOn}
-                          source={require('../assets/images/icons/Toggle-off.png')}
-                        />
-                      )}
-                    </TouchableOpacity>
-                  </View>
+                    <View style={styles.switchBoxWarpper}>
+                      <Text style={styles.switchBoxLebel}>
+                        Mark as available to hire.
+                      </Text>
+                      <TouchableOpacity>
+                        {toggle ? (
+                          <Image
+                            style={styles.toggleOn}
+                            source={require('../assets/images/icons/toggle.png')}
+                          />
+                        ) : (
+                          <Image
+                            style={styles.toggleOn}
+                            source={require('../assets/images/icons/Toggle-off.png')}
+                          />
+                        )}
+                      </TouchableOpacity>
+                    </View>
+                    <View style={styles.lineStyle} />
+                  </>
                 )}
+
+                {/* {!isStudent && (
+                    <SubscribersListComponent subscribersList={fakeSubscribers} />
+                )} */}
+
+                {/* image modal starts here */}
+                <Modal
+                  animationType="slide"
+                  transparent={true}
+                  visible={imageModal}
+                  onRequestClose={() => setImageModal(false)}>
+                  <View style={styles.centeredView}>
+                    <TouchableOpacity
+                      style={{
+                        position: 'absolute',
+                        width: '100%',
+                        height: '100%',
+                      }}
+                      onPress={() => setImageModal(false)}></TouchableOpacity>
+                    <View style={styles.modalView}>
+                      <TouchableOpacity style={styles.imageModal}>
+                        <Icon name="camera" size={30} />
+                        <Text>Take Picture</Text>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity style={styles.imageModal}>
+                        <Icon name="upload" size={30} />
+                        <Text>Upload Picture</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </Modal>
+
+                {/* {editProfile && <EditProfileModal
+                    editProfileModal={editProfile}
+                    closeEditModal={() => setEditProfile(false)}
+                    isStudent={isStudent}
+                    allSkills={allSkills}
+                    skills={skills}
+                    certifications={certifications}
+                    bio={inputBio.bio}
+                    social={self}
+                    loadingTrue={() => setLoader(true)}
+                    loadingFalse={() => setLoader(false)}
+                    reRun={() => setReRun(!reRun)}
+                />} */}
               </ScrollView>
-            </View>
+            </SafeAreaView>
           </View>
         </Modal>
         <ScrollView>
@@ -281,7 +371,7 @@ export default function NetworkScreen() {
                 key={index}
                 onPress={() => {
                   toggleModal();
-                  getProfileData(item._id);
+                  getProfileData(item._id, item);
                 }}>
                 <View
                   style={{

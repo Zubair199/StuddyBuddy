@@ -62,8 +62,14 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
     route.params.allLocations,
   );
 
-  const {setUserToken, setUserName, setUserEmail, setGuestView, userToken} =
-    useUserAuth()!;
+  const {
+    setUserToken,
+    setUserName,
+    setUserEmail,
+    setGuestView,
+    setUserType,
+    userToken,
+  } = useUserAuth()!;
 
   const navigation = useNavigation();
   const handleBack = () => {
@@ -71,12 +77,15 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
   };
 
   const [user, setUser] = useState('');
+  const [userRole, setUserRole] = useState('');
 
   const [videoResponse, setVideoResponse] = useState(null);
   const [image, setImage] = useState(null);
   const [imageName, setImageName] = useState(
     'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
   );
+  let isStudent = false;
+  let isTeacher = false;
 
   React.useEffect(() => {
     try {
@@ -86,7 +95,16 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
         .then(response => response.json())
         .then(responseJson => {
           console.log(responseJson);
-          setUser(responseJson.user);
+          setUser(responseJson.user._id);
+          setUserRole(responseJson.user.roles.name);
+          if (responseJson.user.roles.name === 'user') {
+            isStudent = true;
+            isTeacher = false;
+          }
+          if (responseJson.user.roles.name === 'teacher') {
+            isStudent = false;
+            isTeacher = true;
+          }
         })
         .catch((err: any) => {
           console.log(err);
@@ -132,14 +150,10 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
     } else if (skills.length < 1) {
       Alert.alert('Alert', 'Skill cannot be empty!');
       return;
-    } else if (videoResponse === null) {
+    } else if (isTeacher && videoResponse === null) {
       Alert.alert('Alert', 'Video cannot be empty!');
       return;
-    } else if (image === null) {
-      Alert.alert('Alert', 'Image cannot be empty!');
-      return;
     }
-
     let profileUpdateRequest: any = JSON.stringify({
       user: user,
       certifications: 'N/A',
@@ -157,17 +171,20 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
     formData.append('subjects', JSON.stringify(genres));
     formData.append('locations', JSON.stringify(locations));
     formData.append('pastExperience', pastExperience);
-    formData.append('video', {
-      name: videoResponse.fileName,
-      uri: videoResponse.uri,
-      type: videoResponse.type,
-    });
-    formData.append('image', {
-      name: image.fileName,
-      uri: image.uri,
-      type: image.type,
-    });
-
+    if (videoResponse !== null) {
+      formData.append('video', {
+        name: videoResponse.fileName,
+        uri: videoResponse.uri,
+        type: videoResponse.type,
+      });
+    }
+    if (image !== null) {
+      formData.append('image', {
+        name: image.fileName,
+        uri: image.uri,
+        type: image.type,
+      });
+    }
     try {
       let requestObj = {
         method: 'POST',
@@ -184,11 +201,19 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
           let res = responseJson;
 
           if (res !== null) {
-            navigation.navigate('Login');
-            Alert.alert(
-              'Success',
-              'Your account is created and sent for admin approval. Once approved you can login!',
-            );
+            if (res.success) {
+              setUserName(responseJson.user.username);
+              setUserEmail(responseJson.user.email);
+              setUserToken(responseJson.user._id);
+              setUserType(responseJson.user.roles.name.toLowerCase());
+              setGuestView(false);
+            } else {
+              navigation.navigate('Login');
+              Alert.alert(
+                'Success',
+                'Your account is created and sent for admin approval. Once approved you can login!',
+              );
+            }
           }
         })
         .catch((err: any) => {
@@ -432,7 +457,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
           <View style={{alignItems: 'center', marginBottom: 10}}>
             <Avatar
               rounded
-              title="P"
+              title={'P'}
               activeOpacity={0.7}
               size="xlarge"
               onPress={() => {
@@ -469,7 +494,9 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
               <TextInput
                 style={genericStyle.textBox}
                 autoCapitalize="words"
-                placeholder="Past Experience/Clients"
+                placeholder={
+                  isTeacher ? 'Past Experience/Clients' : 'Past Education'
+                }
                 placeholderTextColor="#3878ee"
                 multiline={true}
                 onChangeText={text => setPastExperience(text)}
@@ -569,25 +596,28 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
             </View>
           </View>
 
-          <View style={styles.selectBox}>
-            <Text style={genericStyle.subHeading}>Video</Text>
-            <View style={genericStyle.locationEditBox}>
-              <TouchableOpacity
-                onPress={() => selectVideo()}
-                style={[styles.locationAddRemove, {width: 150}]}>
-                <Image
-                  source={require('../assets/images/icons/add-button.png')}
-                  style={styles.addIcon}
-                />
-                <Text style={styles.addRemoveBoxText}>Upload Video</Text>
-              </TouchableOpacity>
-            </View>
-            <Text style={genericStyle.subHeading}>
-              {videoResponse && videoResponse.fileName}
-            </Text>
-          </View>
-          <View style={styles.selectBox}></View>
-
+          {isTeacher && (
+            <>
+              <View style={styles.selectBox}>
+                <Text style={genericStyle.subHeading}>Video</Text>
+                <View style={genericStyle.locationEditBox}>
+                  <TouchableOpacity
+                    onPress={() => selectVideo()}
+                    style={[styles.locationAddRemove, {width: 150}]}>
+                    <Image
+                      source={require('../assets/images/icons/add-button.png')}
+                      style={styles.addIcon}
+                    />
+                    <Text style={styles.addRemoveBoxText}>Upload Video</Text>
+                  </TouchableOpacity>
+                </View>
+                <Text style={genericStyle.subHeading}>
+                  {videoResponse && videoResponse.fileName}
+                </Text>
+              </View>
+              <View style={styles.selectBox}></View>
+            </>
+          )}
           <TouchableOpacity
             onPress={onPressNextBtn}
             style={[genericStyle.loginBtn, {marginTop: 25}]}>
