@@ -13,20 +13,28 @@ import {
   TouchableOpacityBase,
   View,
 } from 'react-native';
-import {Button, Divider, Text} from 'react-native-elements';
+import {Divider, Text} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useNavigation} from '@react-navigation/native';
-import {AUTHENTICATIONS, CLASS} from '../services/api.constants';
+import {AUTHENTICATIONS, CLASS, STRIPE} from '../services/api.constants';
 import MainLayout from './MainLayout';
 import {AuthContext} from '../utils/AuthContext';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import {Select, Input, TextArea, IconButton} from 'native-base';
+import {Select, Input, TextArea, Button} from 'native-base';
 import api from '../services/api.services';
+
+import {
+  CardField,
+  useConfirmPayment,
+  useStripe,
+} from '@stripe/stripe-react-native';
+import {TextInput} from '../components/Themed';
+
 export default function ClassDetailScreen({route}) {
   const {classID} = route.params;
   const navigation = useNavigation();
   const isFocused = useIsFocused();
-  const {userToken, userType} = React.useContext(AuthContext);
+  const {userToken, userType, userEmail} = React.useContext(AuthContext);
   let [user, setUser] = React.useState(userToken);
 
   const [_class, setClass] = React.useState(null);
@@ -43,6 +51,10 @@ export default function ClassDetailScreen({route}) {
   const [studentIds, setStudentIds] = React.useState([]);
   const [teacherId, setTeacherId] = React.useState([]);
   const [chatFlag, setChatFlag] = React.useState(false);
+
+  const [cardDetails, setCardDetails] = React.useState(null);
+
+  const {confirmPayment} = useStripe();
 
   React.useEffect(() => {
     console.log(user);
@@ -182,6 +194,12 @@ export default function ClassDetailScreen({route}) {
     setIsModal(!isModal);
   }
 
+  const [isModal1, setIsModal1] = React.useState(false);
+  function toggleModal1() {
+    console.log('modal1');
+    setIsModal1(!isModal1);
+  }
+
   function apiCallTopicAnnouncement(id) {}
 
   function setPropertySubjectText(x, id) {
@@ -275,6 +293,57 @@ export default function ClassDetailScreen({route}) {
         console.log(e);
       });
   }
+
+  async function makePayment() {
+    console.log('make payment');
+    console.log(cardDetails);
+    if (cardDetails !== null) {
+      if (cardDetails.complete) {
+      }
+    }
+  }
+
+  let [cardNumber, setCardNumber] = React.useState('');
+  let [expiryMonth, setExpiryMonth] = React.useState('');
+  let [cvc, setCVC] = React.useState('');
+
+  const handleChangeCard = value => {
+    //if(value.length>16) return
+
+    var v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    var matches = v.match(/\d{4,16}/g);
+    var match = (matches && matches[0]) || '';
+    var parts = [];
+
+    for (let i = 0, len = match.length; i < len; i += 4) {
+      parts.push(match.substring(i, i + 4));
+    }
+
+    if (parts.length) {
+      value = parts.join(' ');
+    } /*else {
+        return value
+    }*/
+
+    setCardNumber(value);
+  };
+
+  const handleChangeCVV = text => {
+    if (text.length > 3) return;
+    setCVC(text);
+  };
+
+  const handleChangeDate = text => {
+    if (text.length > 5) return;
+
+    if (text.length == 2 && expiryMonth.length == 1) {
+      text += '/';
+    } else if (text.length == 2 && expiryMonth.length == 3) {
+      text = text.substring(0, text.length - 1);
+    }
+
+    setExpiryMonth(text);
+  };
 
   function component() {
     return (
@@ -651,15 +720,81 @@ export default function ClassDetailScreen({route}) {
                     </Text>
                   </View>
                 </ImageBackground>
-                {/* header ends here */}
 
-                {/* price tags start here */}
-                {/* this will be render if student has not already joined the class */}
+                <Modal
+                  animationType="slide"
+                  visible={isModal1}
+                  onRequestClose={() => {
+                    toggleModal1();
+                  }}>
+                  <View
+                    style={{flex: 1, backgroundColor: '#ffffff', padding: 15}}>
+                    <View style={{flexDirection: 'row-reverse'}}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          toggleModal1();
+                        }}>
+                        <Icon name="close" size={25} />
+                      </TouchableOpacity>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        marginVertical: 15,
+                        justifyContent: 'center',
+                      }}>
+                      <Text style={styles.title}>Make Payment</Text>
+                    </View>
+                    <View>
+                      <View>
+                        <Input
+                          variant="outline"
+                          placeholder="Card Number"
+                          maxLength={19}
+                          value={cardNumber}
+                          onChangeText={text => handleChangeCard(text)}
+                        />
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          marginVertical: 10,
+                          justifyContent: 'space-between',
+                        }}>
+                        <Input
+                          variant="outline"
+                          placeholder="MM/YY"
+                          w={'48%'}
+                          onChangeText={text => handleChangeDate(text)}
+                          maxLength={5}
+                          value={expiryMonth}
+                        />
+                        <Input
+                          variant="outline"
+                          placeholder="CVC"
+                          w={'48%'}
+                          maxLength={3}
+                          value={cvc}
+                          onChangeText={text => handleChangeCVV(text)}
+                        />
+                      </View>
+                      <Button
+                        onPress={() => {
+                          makePayment();
+                        }}>
+                        Submit
+                      </Button>
+                    </View>
+                  </View>
+                </Modal>
                 {userType.toLowerCase() === 'user' && !isJoined && (
                   <View style={styles.joinBox}>
                     <TouchableOpacity
                       onPress={() => {
-                        joinClass(_class);
+                        navigation.navigate('ClassPayScreen', {
+                          classID: _class._id,
+                        });
+                        // joinClass(_class);
                       }}
                       style={{
                         backgroundColor: '#4B5F79',
@@ -871,80 +1006,6 @@ export default function ClassDetailScreen({route}) {
                     <View style={{marginBottom: 20}} />
                   </View>
                 </View>
-                {/* Language section ends here */}
-
-                {/* Announcements Starts here */}
-                {/* <Text style={styles.heading}>Announcements</Text>
-              <Text style={styles.text}>class announcements</Text> */}
-                {/* Announcements ends here */}
-
-                {/* Topics & Instructions Starts here */}
-                {/* <Text style={styles.heading}>Topics and Instructions</Text>
-              <Text style={styles.text}>class topics</Text> */}
-                {/* Topics & Instructions ends here */}
-
-                {/* connectivity link for enrolled students Starts here */}
-                {/* <Text style={styles.heading}>Pre Recorded Class Link</Text> */}
-                {/* <Text style={styles.heading}>Class Link</Text>
-
-              <TouchableOpacity
-                onPress={() => Linking.openURL("https://www.google.com/")}
-              >
-                <Text style={styles.text}>connectivityLink</Text>
-              </TouchableOpacity> */}
-                {/* connectivity link for enrolled students ends here */}
-
-                {/* Schedule Starts here */}
-                {/* <Text style={styles.heading}>Schedule</Text>
-              <Text style={styles.text}>
-                Day: Tuesday
-                Time: 12:00 - 13:00
-              </Text> */}
-                {/* Schedule ends here */}
-
-                {/* classes starts here */}
-                {/*classData.documents.length === 0 ? null : (
-        //   <>
-        //     <Text style={styles.heading}>Instructor Uploads</Text>
-        //     <View style={{ height: 180 }}>
-        //       <ScrollView style={styles.scrollView} horizontal={true}>
-        //         {classData.documents.map((upload: any, index: number) => (
-        //           <TouchableOpacity
-        //             key={index}
-        //             style={styles.classBoxWrapper}
-        //             onPress={() => Linking.openURL(upload)}
-        //           >
-        //             <ImageBackground
-        //               source={
-        //                 upload
-        //                   .substring(upload.lastIndexOf(".") + 1)
-        //                   .toLowerCase() == "pdf"
-        //                   ? require("../assets/images/icons/document.png")
-        //                   : { uri: upload }
-        //               }
-        //               style={styles.uploadBoxImage}
-        //             >
-        //               <View style={styles.overlay}>
-        //                 <View style={styles.uploadBox}>
-        //                   <Text style={styles.uploadName}>{upload.name}</Text>
-        //                   <Text style={styles.uploadDate}>Uploaded Today</Text>
-        //                 </View>
-        //               </View>
-        //             </ImageBackground>
-        //           </TouchableOpacity>
-        //         ))}
-        //       </ScrollView>
-        //     </View>
-        //   </>
-        // )
-        */}
-
-                {/* classes ends here */}
-
-                {/* Enrolled Students Starts here */}
-                {/* <Text style={styles.heading}>Students Enrolled</Text>
-              <Text style={styles.text}>{5}</Text> */}
-                {/* Enrolled Students ends here */}
               </View>
             </View>
           </ScrollView>

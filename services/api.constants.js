@@ -6,8 +6,8 @@ module.exports = {
         // CHAT_SERVER_URL: 'http://192.168.43.122:5000',
 
         // Zubairs
-        API_URL: "http://192.168.100.26:5000",
-        CHAT_SERVER_URL: 'http://192.168.100.26:5000',
+        API_URL: "http://192.168.1.3:5000",
+        CHAT_SERVER_URL: 'http://192.168.1.3:5000',
     },
 
     NOTIFICATION: {
@@ -131,7 +131,10 @@ module.exports = {
         CREATE_CARD: "/api/card",
         CARD_DETAILS: "/api/card/",
         UPDATE_CARD: "/api/card/",
-        CREATE_PAYMENT: "",
+
+        CREATE_PAYMENT: "/api/payment",
+        GET_PAYMENT_INTENT: "/api/paymentIntent",
+
         PK_TEST: "pk_test_51LPq5PHMIjurc2gOdoR79YKnciMMUVfCBBXP0LYaZxIoNW1dFRhGreSkRu34TUMeZ7pZ9mTQrLAkPvPzYPr8gKKa00GuhqeZH9",
         SK_TEST: "sk_test_51LPq5PHMIjurc2gOXufycmqFoQc1Rk0B14OkDwNE3l3013yAdL1WUk1idTNBAi5nVF4bOZGtflpzTp0PdkXCURKU00azCFptoj",
     }
