@@ -28,6 +28,7 @@ import {
 } from '@react-navigation/native';
 import {AuthContext} from '../utils/AuthContext';
 import WebView from 'react-native-webview';
+import {AUTHENTICATIONS, STRIPE} from '../services/api.constants';
 
 export default function ClassPayScreen({route}) {
   const useUserAuth = () => React.useContext(AuthContext);
@@ -36,6 +37,32 @@ export default function ClassPayScreen({route}) {
   const isFocused = useIsFocused();
 
   const {classID} = route.params;
+
+  const [uri, setURI] = React.useState('');
+  // React.useEffect(() => {
+  //   try {
+  //     let requestObj = {
+  //       method: 'POST',
+  //       headers: {
+  //         Accept: 'application/json',
+  //         'Content-Type': 'application/json',
+  //       },
+  //     };
+  //     fetch(AUTHENTICATIONS.API_URL + '/create-checkout-session', requestObj)
+  //       .then(response => response.json())
+  //       .then(responseJson => {
+  //         console.log('responseJson => ', responseJson);
+  //         setURI(responseJson.url);
+  //       })
+  //       .catch((err: any) => {
+  //         console.log(err);
+  //         console.log(err.response);
+  //       });
+  //   } catch (exception) {
+  //     console.log('exception ', exception);
+  //   }
+  // }, []);
+
   let webview = null;
 
   const [loader, setLoader] = React.useState(true);
@@ -72,7 +99,7 @@ export default function ClassPayScreen({route}) {
           }, 1000);
         }}
         source={{
-          uri: 'https://buy.stripe.com/test_4gw16VaRuf5i5sQ144',
+          uri: AUTHENTICATIONS.API_URL + STRIPE.STRIPE_PAYMENT,
         }}
       />
       {/* </View> */}

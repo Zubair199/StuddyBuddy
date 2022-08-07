@@ -89,6 +89,7 @@ export default function LoginScreen() {
       let _password = await AsyncStorage.getItem('password');
       let _email = await AsyncStorage.getItem('email');
       console.log('========' + _remeberMe);
+      console.log('========' + _password);
       if (_remeberMe !== null) {
         if (
           (_email !== null || _email !== '') &&
