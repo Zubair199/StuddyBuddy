@@ -49,6 +49,9 @@ export default function ClassDetailScreen({ route }) {
   const [studentIds, setStudentIds] = React.useState([]);
   const [teacherId, setTeacherId] = React.useState([]);
   const [chatFlag, setChatFlag] = React.useState(false);
+  const [isDispute, setIsDispute] = React.useState(false);
+
+  const [subscription, setSubcription] = React.useState(null);
 
   const [cardDetails, setCardDetails] = React.useState(null);
 
@@ -116,12 +119,14 @@ export default function ClassDetailScreen({ route }) {
     fetch(AUTHENTICATIONS.API_URL + CLASS.GET_JOINED_CLASS_BY_ID + classID)
       .then(response => response.json())
       .then(responseJson => {
-        console.log('classes ', responseJson);
+        console.log('classes ', responseJson.subscription);
         if (responseJson.classes) {
           setIsJoined(responseJson.studentClass.isJoined);
           setClass(responseJson.classes);
           setTeacher(responseJson.classes.Teacher);
           setSchedule(responseJson.schedules);
+          setSubcription(responseJson.subscription)
+          setIsDispute(responseJson.dispute)
           let date = formatDate(new Date());
           console.log(date);
           responseJson.schedules.forEach(schedule => {
@@ -130,6 +135,7 @@ export default function ClassDetailScreen({ route }) {
               setChatFlag(true);
             }
           });
+
         } else {
           apiCall();
         }
@@ -353,6 +359,44 @@ export default function ClassDetailScreen({ route }) {
     setExpiryMonth(text);
   };
 
+  function dispute(data, sub) {
+    console.log(data)
+    if (data && sub) {
+      const body = {
+        user: userToken,
+        subscription: sub.subscription.id,
+        class: data._id
+      };
+      console.log(body);
+
+      try {
+        let requestObj = {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body),
+        };
+        fetch(AUTHENTICATIONS.API_URL + STRIPE.CREATE_DISPUTE, requestObj)
+          .then(response => response.json())
+          .then(responseJson => {
+            console.log(responseJson);
+            Alert.alert(responseJson.message);
+          })
+          .catch((err: any) => {
+            console.log(err);
+            console.log(err.response);
+            Alert.alert('Something went wrong');
+          });
+      } catch (exception) {
+        console.log('exception ', exception);
+        Alert.alert('Something went wrong');
+      }
+    } else {
+      Alert.alert('Something went wrong');
+    }
+  }
   function component() {
     return (
       <View style={styles.container}>
@@ -795,7 +839,7 @@ export default function ClassDetailScreen({ route }) {
                     </View>
                   </View>
                 </Modal>
-                {userType.toLowerCase() === 'user' && !isJoined && (
+                {(userType.toLowerCase() === 'user' && !isJoined) ? (
                   <View style={styles.joinBox}>
                     <TouchableOpacity
                       onPress={() => {
@@ -826,7 +870,44 @@ export default function ClassDetailScreen({ route }) {
                       </Text>
                     </TouchableOpacity>
                   </View>
-                )}
+                )
+                  :
+                  (isDispute ?
+                    <View style={styles.joinBox}>
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          fontWeight: '300',
+                          color: 'black',
+                        }}>
+                        Dispute has been sent to Admin.
+                      </Text>
+                    </View>
+                    :
+                    <View style={styles.joinBox}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          dispute(_class, subscription)
+                        }}
+                        style={{
+                          backgroundColor: '#4B5F79',
+                          padding: 10,
+                          borderRadius: 5,
+                          width: '100%',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            fontWeight: '300',
+                            color: 'white',
+                          }}>
+                          Dispute
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
 
                 <View style={styles.joinBox}>
                   <Text style={styles.cost}>Cost: &#36;{_class.price}</Text>

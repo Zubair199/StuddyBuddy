@@ -313,12 +313,12 @@ const HomeStackScreen = ({navigation, route}: any) => {
       />
       <HomeStack.Screen
         name="ClassPayScreen"
-        options={mainHeader}
+        // options={mainHeader}
         component={ClassPayScreen}
       />
       <HomeStack.Screen
         name="PlatformPayScreen"
-        options={mainHeader}
+        // options={mainHeader}
         component={PlatformPayScreen}
       />
       <HomeStack.Screen

@@ -2,8 +2,8 @@ module.exports = {
 
     AUTHENTICATIONS: {
         // Saims
-        API_URL: "http://192.168.43.122:5000",
-        CHAT_SERVER_URL: 'http://192.168.43.122:5000',
+        API_URL: "http://192.168.8.102:5000",
+        CHAT_SERVER_URL: 'http://192.168.8.102:5000',
 
         // Zubairs
         // API_URL: "http://192.168.100.63:5000",
@@ -137,6 +137,10 @@ module.exports = {
 
         PLATFORM_CHECHKOUT: "/api/platform/checkout-session/",
         CLASS_CHECHKOUT: "/api/class/checkout-session/",
+
+        CREATE_DISPUTE: "/api/dispute",
+
+        GET_SUBSCRIPTION_BY_CLASS: "/api/subscription/",
 
         GET_SUBSCRIPTIONS: "/api/sessions/",
 
