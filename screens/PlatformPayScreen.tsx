@@ -11,7 +11,7 @@ Description: Pay for class
 * ========================================================================================== */
 
 import * as React from 'react';
-import {View} from '../components/Themed';
+import { View } from '../components/Themed';
 import {
   Image,
   Text,
@@ -19,36 +19,28 @@ import {
   TouchableOpacity,
   Platform,
 } from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native-gesture-handler';
 import {
   useNavigation,
   useIsFocused,
   useRoute,
   RouteProp,
 } from '@react-navigation/native';
-import {AuthContext} from '../utils/AuthContext';
+import { AuthContext } from '../utils/AuthContext';
 import WebView from 'react-native-webview';
-import {AUTHENTICATIONS, STRIPE} from '../services/api.constants';
+import { AUTHENTICATIONS, STRIPE } from '../services/api.constants';
 
-export default function PlatformPayScreen({route}) {
+export default function PlatformPayScreen({ route }) {
   const useUserAuth = () => React.useContext(AuthContext);
-  const {userToken} = useUserAuth()!;
+  const { userToken } = useUserAuth()!;
 
   const isFocused = useIsFocused();
 
-  const {classID} = route.params;
 
   const [uri, setURI] = React.useState('');
   // React.useEffect(() => {
   //   try {
-  //     let requestObj = {
-  //       method: 'POST',
-  //       headers: {
-  //         Accept: 'application/json',
-  //         'Content-Type': 'application/json',
-  //       },
-  //     };
-  //     fetch(AUTHENTICATIONS.API_URL + '/create-checkout-session', requestObj)
+  //     fetch(AUTHENTICATIONS.API_URL + STRIPE.PLATFORM_CHECHKOUT + userToken)
   //       .then(response => response.json())
   //       .then(responseJson => {
   //         console.log('responseJson => ', responseJson);
@@ -84,7 +76,7 @@ export default function PlatformPayScreen({route}) {
         ref={ref => {
           webview = ref;
         }}
-        style={{width: '100%', height: 1000}}
+        style={{ width: '100%', height: 1000 }}
         scalesPageToFit={true}
         startInLoadingState={true}
         domStorageEnabled={true}
@@ -92,14 +84,14 @@ export default function PlatformPayScreen({route}) {
         saveFormDataDisabled={false}
         originWhitelist={['*']}
         allowFileAccess
-        onMessage={event => {}}
+        onMessage={event => { }}
         onLoadEnd={() => {
           setTimeout(function () {
             setLoader(false);
           }, 1000);
         }}
         source={{
-          uri: AUTHENTICATIONS.API_URL + STRIPE.STRIPE_PAYMENT,
+          uri: AUTHENTICATIONS.API_URL + STRIPE.PLATFORM_CHECHKOUT + userToken
         }}
       />
       {/* </View> */}

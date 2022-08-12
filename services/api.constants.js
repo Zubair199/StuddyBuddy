@@ -2,8 +2,8 @@ module.exports = {
 
     AUTHENTICATIONS: {
         // Saims
-        API_URL: "http://192.168.8.100:5000",
-        CHAT_SERVER_URL: 'http://192.168.8.100:5000',
+        API_URL: "http://192.168.43.122:5000",
+        CHAT_SERVER_URL: 'http://192.168.43.122:5000',
 
         // Zubairs
         // API_URL: "http://192.168.100.63:5000",
@@ -134,6 +134,11 @@ module.exports = {
         STRIPE_PAYMENT: "/stripe/index.html",
         CREATE_PAYMENT: "/api/payment",
         GET_PAYMENT_INTENT: "/api/paymentIntent",
+
+        PLATFORM_CHECHKOUT: "/api/platform/checkout-session/",
+        CLASS_CHECHKOUT: "/api/class/checkout-session/",
+
+        GET_SUBSCRIPTIONS: "/api/sessions/",
 
         PK_TEST: "pk_test_51LPq5PHMIjurc2gOdoR79YKnciMMUVfCBBXP0LYaZxIoNW1dFRhGreSkRu34TUMeZ7pZ9mTQrLAkPvPzYPr8gKKa00GuhqeZH9",
         SK_TEST: "sk_test_51LPq5PHMIjurc2gOXufycmqFoQc1Rk0B14OkDwNE3l3013yAdL1WUk1idTNBAi5nVF4bOZGtflpzTp0PdkXCURKU00azCFptoj",

@@ -1,4 +1,4 @@
-import {createContext} from 'react';
+import { createContext } from 'react';
 
 type AuthContextType = {
   userToken: string;
@@ -10,7 +10,7 @@ type AuthContextType = {
   userType: string;
   setUserType: (value: string) => void;
   guestView: boolean;
-  setGuestView: (value: boolean) => void;  
+  setGuestView: (value: boolean) => void;
 };
 
 export const AuthContext = createContext<AuthContextType | undefined>(

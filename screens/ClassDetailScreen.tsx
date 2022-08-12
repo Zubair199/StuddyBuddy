@@ -1,4 +1,4 @@
-import {useIsFocused} from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
 import {
   Alert,
@@ -13,23 +13,23 @@ import {
   TouchableOpacityBase,
   View,
 } from 'react-native';
-import {Divider, Text} from 'react-native-elements';
+import { Divider, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {useNavigation} from '@react-navigation/native';
-import {AUTHENTICATIONS, CLASS, STRIPE} from '../services/api.constants';
+import { useNavigation } from '@react-navigation/native';
+import { AUTH, AUTHENTICATIONS, CLASS, STRIPE } from '../services/api.constants';
 import MainLayout from './MainLayout';
-import {AuthContext} from '../utils/AuthContext';
+import { AuthContext } from '../utils/AuthContext';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import {Select, Input, TextArea, Button} from 'native-base';
+import { Select, Input, TextArea, Button } from 'native-base';
 import api from '../services/api.services';
 
-import {TextInput} from '../components/Themed';
+import { TextInput } from '../components/Themed';
 
-export default function ClassDetailScreen({route}) {
-  const {classID} = route.params;
+export default function ClassDetailScreen({ route }) {
+  const { classID } = route.params;
   const navigation = useNavigation();
   const isFocused = useIsFocused();
-  const {userToken, userType, userEmail} = React.useContext(AuthContext);
+  const { userToken, userType, userEmail } = React.useContext(AuthContext);
   let [user, setUser] = React.useState(userToken);
 
   const [_class, setClass] = React.useState(null);
@@ -39,6 +39,9 @@ export default function ClassDetailScreen({route}) {
 
   const [teacher, setTeacher] = React.useState(null);
   const [isJoined, setIsJoined] = React.useState(false);
+
+  const [isPlatformPaid, setIsPlatformPaid] = React.useState(false);
+
 
   const [description, setDescription] = React.useState('');
   const [scheduleID, setScheduleID] = React.useState('');
@@ -51,13 +54,24 @@ export default function ClassDetailScreen({route}) {
 
 
   React.useEffect(() => {
-    console.log(user);
+    console.log(user, isPlatformPaid);
     fetch(AUTHENTICATIONS.API_URL + CLASS.JOINED_STUDENTS + classID)
       .then(response => response.json())
       .then(responseJson => {
         console.log('JOINED_STUDENTS : = ', responseJson);
         setStudentIds(responseJson.students);
         setTeacherId(responseJson.teacher);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    fetch(AUTHENTICATIONS.API_URL + AUTH.GET_USER_BY_ID + user)
+      .then(response => response.json())
+      .then(responseJson => {
+        console.log('JOINED_STUDENTS : = ', responseJson);
+        if (responseJson && responseJson.user) {
+          setIsPlatformPaid(responseJson.user.isPlatformPaid);
+        }
       })
       .catch(err => {
         console.log(err);
@@ -194,15 +208,15 @@ export default function ClassDetailScreen({route}) {
     setIsModal1(!isModal1);
   }
 
-  function apiCallTopicAnnouncement(id) {}
+  function apiCallTopicAnnouncement(id) { }
 
   function setPropertySubjectText(x, id) {
     if (x === 'view') {
       apiCallTopicAnnouncement(id);
       fetch(
         AUTHENTICATIONS.API_URL +
-          CLASS.GET_TOPIC_ANNOUNCEMENT_BY_SCHEDULE_ID +
-          id,
+        CLASS.GET_TOPIC_ANNOUNCEMENT_BY_SCHEDULE_ID +
+        id,
       )
         .then(response => response.json())
         .then(responseJson => {
@@ -267,7 +281,7 @@ export default function ClassDetailScreen({route}) {
     const grUsers = studentIds.concat(teacherId);
     console.log(grUsers, classID);
 
-    const requestData = {classId: classID, groupUsers: grUsers, flag: true};
+    const requestData = { classId: classID, groupUsers: grUsers, flag: true };
 
     api
       .createNewMessage(requestData)
@@ -343,24 +357,24 @@ export default function ClassDetailScreen({route}) {
     return (
       <View style={styles.container}>
         <View
-          style={{flexDirection: 'row', paddingLeft: 15, marginVertical: 15}}>
+          style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15 }}>
           <TouchableOpacity
-            style={{marginTop: 5}}
+            style={{ marginTop: 5 }}
             onPress={() => navigation.goBack()}>
             <Icon color={'black'} name="leftcircleo" size={25} />
           </TouchableOpacity>
           <Text style={styles.title}>Class Details</Text>
         </View>
         {_class !== null && teacher !== null && (
-          <ScrollView style={{marginBottom: '5%', padding: 15}}>
+          <ScrollView style={{ marginBottom: '5%', padding: 15 }}>
             <View>
               {/* header starts here */}
-              <View style={{marginTop: 10}}>
+              <View style={{ marginTop: 10 }}>
                 <ImageBackground
                   resizeMode="cover"
                   source={require('../assets/images/bg.jpg')}
                   style={styles.classBoxImage}
-                  imageStyle={{borderRadius: 5}}>
+                  imageStyle={{ borderRadius: 5 }}>
                   <View style={styles.overlay}>
                     <View style={styles.levelBox}>
                       <View style={styles.levelIntermediate}></View>
@@ -393,7 +407,7 @@ export default function ClassDetailScreen({route}) {
                   _class.status.toLowerCase() === 'approved' && (
                     <View style={styles.joinBox}>
                       <TouchableOpacity
-                        style={{marginTop: 5}}
+                        style={{ marginTop: 5 }}
                         onPress={() => groupChat()}>
                         <Icon color={'black'} name="message1" size={25} />
                       </TouchableOpacity>
@@ -402,7 +416,7 @@ export default function ClassDetailScreen({route}) {
                 {userType.toLowerCase() === 'user' && isJoined && (
                   <View style={styles.joinBox}>
                     <TouchableOpacity
-                      style={{marginTop: 5}}
+                      style={{ marginTop: 5 }}
                       onPress={() => groupChat()}>
                       <Icon color={'black'} name="message1" size={25} />
                     </TouchableOpacity>
@@ -425,7 +439,7 @@ export default function ClassDetailScreen({route}) {
                     </Text>
                   </View>
                   <View style={styles.language}>
-                    <View style={{flexDirection: 'row'}}>
+                    <View style={{ flexDirection: 'row' }}>
                       <Text style={styles.languageText}>{_class.language}</Text>
                     </View>
                   </View>
@@ -438,8 +452,8 @@ export default function ClassDetailScreen({route}) {
                     toggleModal();
                   }}>
                   <View
-                    style={{flex: 1, backgroundColor: '#ffffff', padding: 15}}>
-                    <View style={{flexDirection: 'row-reverse'}}>
+                    style={{ flex: 1, backgroundColor: '#ffffff', padding: 15 }}>
+                    <View style={{ flexDirection: 'row-reverse' }}>
                       <TouchableOpacity
                         onPress={() => {
                           toggleModal();
@@ -463,7 +477,7 @@ export default function ClassDetailScreen({route}) {
                       <ScrollView>
                         {subjectText !== 'view' ? (
                           <View>
-                            <View style={{marginVertical: 10}}>
+                            <View style={{ marginVertical: 10 }}>
                               <Input
                                 variant="outline"
                                 placeholder="Description"
@@ -474,7 +488,7 @@ export default function ClassDetailScreen({route}) {
                             </View>
 
                             <View
-                              style={{marginVertical: 10, marginBottom: 40}}>
+                              style={{ marginVertical: 10, marginBottom: 40 }}>
                               <Button
                                 title={'Submit'}
                                 onPress={() => {
@@ -494,7 +508,7 @@ export default function ClassDetailScreen({route}) {
                               {topics.length > 0 &&
                                 topics.map((item, index) => {
                                   return (
-                                    <View style={{marginVertical: 5}}>
+                                    <View style={{ marginVertical: 5 }}>
                                       <Text>
                                         {index + 1} {'- '} {item.description}
                                       </Text>
@@ -512,7 +526,7 @@ export default function ClassDetailScreen({route}) {
                               {announcements.length > 0 &&
                                 announcements.map((item, index) => {
                                   return (
-                                    <View style={{marginVertical: 5}}>
+                                    <View style={{ marginVertical: 5 }}>
                                       <Text>
                                         {index + 1} {'- '} {item.description}
                                       </Text>
@@ -532,17 +546,17 @@ export default function ClassDetailScreen({route}) {
                       SCHEDULE
                     </Text>
                   </View>
-                  <View style={{marginBottom: 25}}>
+                  <View style={{ marginBottom: 25 }}>
                     {schedule.map((item, index) => {
                       return (
-                        <View key={index} style={{marginVertical: 20}}>
-                          <View style={{flexDirection: 'row'}}>
+                        <View key={index} style={{ marginVertical: 20 }}>
+                          <View style={{ flexDirection: 'row' }}>
                             <Text>
                               Start Date: {formatDate(item.startdate)}{' '}
                             </Text>
                             <Text>{formatTime(item.startdate)}</Text>
                           </View>
-                          <View style={{flexDirection: 'row'}}>
+                          <View style={{ flexDirection: 'row' }}>
                             <Text>End Date: {formatDate(item.enddate)} </Text>
                             <Text>{formatTime(item.enddate)}</Text>
                           </View>
@@ -557,7 +571,7 @@ export default function ClassDetailScreen({route}) {
                             }}>
                             <Divider orientation="vertical" width={3} />
                             <TouchableOpacity
-                              style={{flexDirection: 'row'}}
+                              style={{ flexDirection: 'row' }}
                               onPress={() =>
                                 setPropertySubjectText('view', item._id)
                               }>
@@ -565,7 +579,7 @@ export default function ClassDetailScreen({route}) {
                             </TouchableOpacity>
                             <Divider orientation="vertical" width={3} />
                             <TouchableOpacity
-                              style={{flexDirection: 'row'}}
+                              style={{ flexDirection: 'row' }}
                               onPress={() => {
                                 setPropertySubjectText('Topic', item._id);
                               }}>
@@ -574,7 +588,7 @@ export default function ClassDetailScreen({route}) {
                             </TouchableOpacity>
                             <Divider orientation="vertical" width={3} />
                             <TouchableOpacity
-                              style={{flexDirection: 'row'}}
+                              style={{ flexDirection: 'row' }}
                               onPress={() => {
                                 setPropertySubjectText('Announement', item._id);
                               }}>
@@ -587,7 +601,7 @@ export default function ClassDetailScreen({route}) {
                         </View>
                       );
                     })}
-                    <View style={{marginBottom: 20}} />
+                    <View style={{ marginBottom: 20 }} />
                   </View>
                 </View>
                 {/* Language section ends here */}
@@ -676,24 +690,24 @@ export default function ClassDetailScreen({route}) {
     return (
       <View style={styles.container}>
         <View
-          style={{flexDirection: 'row', paddingLeft: 15, marginVertical: 15}}>
+          style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15 }}>
           <TouchableOpacity
-            style={{marginTop: 5}}
+            style={{ marginTop: 5 }}
             onPress={() => navigation.goBack()}>
             <Icon color={'black'} name="leftcircleo" size={25} />
           </TouchableOpacity>
           <Text style={styles.title}>Class Details</Text>
         </View>
         {_class !== null && teacher !== null && (
-          <ScrollView style={{marginBottom: '5%', padding: 15}}>
+          <ScrollView style={{ marginBottom: '5%', padding: 15 }}>
             <View>
               {/* header starts here */}
-              <View style={{marginTop: 10}}>
+              <View style={{ marginTop: 10 }}>
                 <ImageBackground
                   resizeMode="cover"
                   source={require('../assets/images/bg.jpg')}
                   style={styles.classBoxImage}
-                  imageStyle={{borderRadius: 5}}>
+                  imageStyle={{ borderRadius: 5 }}>
                   <View style={styles.overlay}>
                     <View style={styles.levelBox}>
                       <View style={styles.levelIntermediate}></View>
@@ -722,8 +736,8 @@ export default function ClassDetailScreen({route}) {
                     toggleModal1();
                   }}>
                   <View
-                    style={{flex: 1, backgroundColor: '#ffffff', padding: 15}}>
-                    <View style={{flexDirection: 'row-reverse'}}>
+                    style={{ flex: 1, backgroundColor: '#ffffff', padding: 15 }}>
+                    <View style={{ flexDirection: 'row-reverse' }}>
                       <TouchableOpacity
                         onPress={() => {
                           toggleModal1();
@@ -785,9 +799,13 @@ export default function ClassDetailScreen({route}) {
                   <View style={styles.joinBox}>
                     <TouchableOpacity
                       onPress={() => {
-                        navigation.navigate('ClassPayScreen', {
-                          classID: _class._id,
-                        });
+                        isPlatformPaid ?
+                          navigation.navigate('ClassPayScreen', {
+                            classID: _class._id,
+                            teacherID: _class.Teacher._id
+                          })
+                          :
+                          navigation.navigate('PlatformPayScreen')
                         // joinClass(_class);
                       }}
                       style={{
@@ -822,7 +840,7 @@ export default function ClassDetailScreen({route}) {
                 {userType.toLowerCase() === 'user' && isJoined && chatFlag && (
                   <View style={styles.joinBox}>
                     <TouchableOpacity
-                      style={{marginTop: 5}}
+                      style={{ marginTop: 5 }}
                       onPress={() => groupChat()}>
                       <Icon color={'black'} name="message1" size={25} />
                     </TouchableOpacity>
@@ -835,7 +853,7 @@ export default function ClassDetailScreen({route}) {
                     </Text>
                   </View>
                   <View style={styles.language}>
-                    <View style={{flexDirection: 'row'}}>
+                    <View style={{ flexDirection: 'row' }}>
                       <Text style={styles.languageText}>{_class.language}</Text>
                     </View>
                   </View>
@@ -848,8 +866,8 @@ export default function ClassDetailScreen({route}) {
                     toggleModal();
                   }}>
                   <View
-                    style={{flex: 1, backgroundColor: '#ffffff', padding: 15}}>
-                    <View style={{flexDirection: 'row-reverse'}}>
+                    style={{ flex: 1, backgroundColor: '#ffffff', padding: 15 }}>
+                    <View style={{ flexDirection: 'row-reverse' }}>
                       <TouchableOpacity
                         onPress={() => {
                           toggleModal();
@@ -873,7 +891,7 @@ export default function ClassDetailScreen({route}) {
                       <ScrollView>
                         {subjectText !== 'view' ? (
                           <View>
-                            <View style={{marginVertical: 10}}>
+                            <View style={{ marginVertical: 10 }}>
                               <Input
                                 variant="outline"
                                 placeholder="Description"
@@ -884,7 +902,7 @@ export default function ClassDetailScreen({route}) {
                             </View>
 
                             <View
-                              style={{marginVertical: 10, marginBottom: 40}}>
+                              style={{ marginVertical: 10, marginBottom: 40 }}>
                               <Button
                                 title={'Submit'}
                                 onPress={() => {
@@ -904,7 +922,7 @@ export default function ClassDetailScreen({route}) {
                               {topics.length > 0 &&
                                 topics.map((item, index) => {
                                   return (
-                                    <View style={{marginVertical: 5}}>
+                                    <View style={{ marginVertical: 5 }}>
                                       <Text>
                                         {index + 1} {'- '} {item.description}
                                       </Text>
@@ -922,7 +940,7 @@ export default function ClassDetailScreen({route}) {
                               {announcements.length > 0 &&
                                 announcements.map((item, index) => {
                                   return (
-                                    <View style={{marginVertical: 5}}>
+                                    <View style={{ marginVertical: 5 }}>
                                       <Text>
                                         {index + 1} {'- '} {item.description}
                                       </Text>
@@ -942,17 +960,17 @@ export default function ClassDetailScreen({route}) {
                       SCHEDULE
                     </Text>
                   </View>
-                  <View style={{marginBottom: 25}}>
+                  <View style={{ marginBottom: 25 }}>
                     {schedule.map((item, index) => {
                       return (
-                        <View key={index} style={{marginVertical: 20}}>
-                          <View style={{flexDirection: 'row'}}>
+                        <View key={index} style={{ marginVertical: 20 }}>
+                          <View style={{ flexDirection: 'row' }}>
                             <Text>
                               Start Date: {formatDate(item.startdate)}{' '}
                             </Text>
                             <Text>{formatTime(item.startdate)}</Text>
                           </View>
-                          <View style={{flexDirection: 'row'}}>
+                          <View style={{ flexDirection: 'row' }}>
                             <Text>End Date: {formatDate(item.enddate)} </Text>
                             <Text>{formatTime(item.enddate)}</Text>
                           </View>
@@ -997,7 +1015,7 @@ export default function ClassDetailScreen({route}) {
                         </View>
                       );
                     })}
-                    <View style={{marginBottom: 20}} />
+                    <View style={{ marginBottom: 20 }} />
                   </View>
                 </View>
               </View>
