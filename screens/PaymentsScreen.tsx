@@ -49,9 +49,9 @@ export default function PaymentsScreen() {
               if (subscription) {
                 let _class = subscription.class;
                 let sub = subscription.subscription
-                let startDate = new Date(sub.start_date).toString()
+                let startDate = new Date(sub.start_date*1000).toString()
                 console.log(sub.start_date, startDate)
-                let endDate = new Date(sub.current_period_end).toString()
+                let endDate = new Date(sub.current_period_end*1000).toString()
                 return (
                   <View key={index} style={{ marginBottom: 20 }}>
                     <Text>Class: {_class.name}</Text>
