@@ -34,6 +34,7 @@ import ExamStartScreen from '../screens/ExamStartScreen';
 import NetworkScreen from '../screens/NetworkScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import ClassPayScreen from '../screens/ClassPayScreen';
+import PlatformPayScreen from '../screens/PlatformPayScreen';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -314,6 +315,11 @@ const HomeStackScreen = ({navigation, route}: any) => {
         name="ClassPayScreen"
         options={mainHeader}
         component={ClassPayScreen}
+      />
+      <HomeStack.Screen
+        name="PlatformPayScreen"
+        options={mainHeader}
+        component={PlatformPayScreen}
       />
       <HomeStack.Screen
         name="AddClass"

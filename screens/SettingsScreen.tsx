@@ -22,7 +22,6 @@ import {ThemeContext} from 'react-native-elements';
 import {Button, Input} from 'native-base';
 import {AUTH, AUTHENTICATIONS, STRIPE} from '../services/api.constants';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {CardField, useStripe} from '@stripe/stripe-react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 
 export default function SettingsScreen() {
@@ -115,7 +114,6 @@ export default function SettingsScreen() {
   let [cvc, setCVC] = React.useState('');
 
   let [cardInfo, setCardInfo] = React.useState(null);
-  const {confirmPayment} = useStripe();
 
   function getData() {
     try {

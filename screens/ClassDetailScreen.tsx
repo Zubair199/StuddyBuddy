@@ -23,11 +23,6 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {Select, Input, TextArea, Button} from 'native-base';
 import api from '../services/api.services';
 
-import {
-  CardField,
-  useConfirmPayment,
-  useStripe,
-} from '@stripe/stripe-react-native';
 import {TextInput} from '../components/Themed';
 
 export default function ClassDetailScreen({route}) {
@@ -54,7 +49,6 @@ export default function ClassDetailScreen({route}) {
 
   const [cardDetails, setCardDetails] = React.useState(null);
 
-  const {confirmPayment} = useStripe();
 
   React.useEffect(() => {
     console.log(user);

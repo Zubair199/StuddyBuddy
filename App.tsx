@@ -8,19 +8,18 @@
 
 import React from 'react';
 import Navigation from './navigation';
-import {Node} from 'react';
-import {NativeBaseProvider, extendTheme} from 'native-base';
-import {StatusBar, useColorScheme} from 'react-native';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {ThemeProvider} from './context/ThemeContext';
-import {StripeProvider} from '@stripe/stripe-react-native';
-import {STRIPE} from './services/api.constants';
+import { Node } from 'react';
+import { NativeBaseProvider, extendTheme } from 'native-base';
+import { StatusBar, useColorScheme } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { ThemeProvider } from './context/ThemeContext';
+import { STRIPE } from './services/api.constants';
 const App: () => Node = () => {
   const theme = extendTheme({
     components: {
       Button: {
         variants: {
-          rounded: ({colorScheme}) => {
+          rounded: ({ colorScheme }) => {
             return {
               bg: `${colorScheme}.500`,
               rounded: 'full',
@@ -34,18 +33,14 @@ const App: () => Node = () => {
   const colorScheme = useColorScheme();
 
   return (
-    <StripeProvider
-      publishableKey={STRIPE.PK_TEST}
-      merchantIdentifier="merchant.identifier">
-      <ThemeProvider>
-        <NativeBaseProvider theme={theme}>
-          <SafeAreaProvider>
-            <Navigation colorScheme={colorScheme} />
-            <StatusBar />
-          </SafeAreaProvider>
-        </NativeBaseProvider>
-      </ThemeProvider>
-    </StripeProvider>
+    <ThemeProvider>
+      <NativeBaseProvider theme={theme}>
+        <SafeAreaProvider>
+          <Navigation colorScheme={colorScheme} />
+          <StatusBar />
+        </SafeAreaProvider>
+      </NativeBaseProvider>
+    </ThemeProvider>
   );
 };
 
