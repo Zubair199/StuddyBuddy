@@ -127,7 +127,9 @@ def nativeArchitectures = project.getProperties().get("reactNativeDebugArchitect
 
 android {
     ndkVersion rootProject.ext.ndkVersion
-
+    dexOptions {
+    jumboMode true
+  }
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
@@ -195,6 +197,7 @@ dependencies {
     implementation project(':react-native-fs')
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
     implementation(project(':stripe_stripe-react-native')) { exclude module: 'appcompat' }
+    compile project(':react-native-twilio-video-webrtc')
     implementation 'com.google.android.material:material:1.5.0'
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'
