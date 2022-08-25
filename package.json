@@ -21,7 +21,6 @@
         "@react-navigation/material-top-tabs": "^6.0.6",
         "@react-navigation/native": "^6.0.6",
         "@react-navigation/native-stack": "^6.2.5",
-        "@stripe/stripe-react-native": "^0.18.1",
         "abort-controller": "^3.0.0",
         "axios": "^0.27.2",
         "moment": "^2.29.1",
