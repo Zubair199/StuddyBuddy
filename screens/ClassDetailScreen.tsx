@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   TouchableOpacityBase,
   View,
+  TextInput,
   Button as NativeButton
 } from 'react-native';
 import { Divider, Text } from 'react-native-elements';
@@ -25,7 +26,6 @@ import { Select, Input, TextArea, Button } from 'native-base';
 import api from '../services/api.services';
 import { CardField, useStripe, useConfirmPayment } from '@stripe/stripe-react-native';
 
-import { TextInput } from '../components/Themed';
 
 export default function ClassDetailScreen({ route }) {
   const { classID } = route.params;
@@ -53,7 +53,7 @@ export default function ClassDetailScreen({ route }) {
   const [chatFlag, setChatFlag] = React.useState(false);
   const [isDispute, setIsDispute] = React.useState(false);
 
-  const [subscription, setSubcription] = React.useState(null);
+  const [paymentIntentID, setPaymentIntentId] = React.useState(null);
 
   const [cardDetails, setCardDetails] = React.useState(null);
 
@@ -121,13 +121,13 @@ export default function ClassDetailScreen({ route }) {
     fetch(AUTHENTICATIONS.API_URL + CLASS.GET_JOINED_CLASS_BY_ID + classID)
       .then(response => response.json())
       .then(responseJson => {
-        console.log('classes ', responseJson.subscription);
+        console.log('classes ', responseJson.paymentIntentId);
         if (responseJson.classes) {
           setIsJoined(responseJson.studentClass.isJoined);
           setClass(responseJson.classes);
           setTeacher(responseJson.classes.Teacher);
           setSchedule(responseJson.schedules);
-          setSubcription(responseJson.subscription)
+          setPaymentIntentId(responseJson.paymentIntentId)
           setIsDispute(responseJson.dispute)
           let date = formatDate(new Date());
           console.log(date);
@@ -205,6 +205,8 @@ export default function ClassDetailScreen({ route }) {
   }
 
   const [subjectText, setSubjectText] = React.useState('');
+  const [reason, setReason] = React.useState('');
+
   const [isModal, setIsModal] = React.useState(false);
   function toggleModal() {
     console.log('modal');
@@ -215,6 +217,13 @@ export default function ClassDetailScreen({ route }) {
   function toggleModal1() {
     console.log('modal1');
     setIsModal1(!isModal1);
+  }
+
+
+  const [isModal2, setIsModal2] = React.useState(false);
+  function toggleModal2() {
+    console.log('modal2');
+    setIsModal2(!isModal2);
   }
 
   function apiCallTopicAnnouncement(id) { }
@@ -312,13 +321,14 @@ export default function ClassDetailScreen({ route }) {
   }
 
 
-  function dispute(data, sub) {
-    console.log(data)
-    if (data && sub) {
+  function dispute() {
+    if (reason !== '') {
+
       const body = {
         user: userToken,
-        subscription: sub.subscription.id,
-        class: data._id
+        paymentIntentId: paymentIntentID,
+        class: _class._id,
+        description: reason
       };
       console.log(body);
 
@@ -336,6 +346,8 @@ export default function ClassDetailScreen({ route }) {
           .then(responseJson => {
             console.log(responseJson);
             Alert.alert(responseJson.message);
+            toggleModal2()
+            studentApiCall()
           })
           .catch((err: any) => {
             console.log(err);
@@ -346,8 +358,9 @@ export default function ClassDetailScreen({ route }) {
         console.log('exception ', exception);
         Alert.alert('Something went wrong');
       }
-    } else {
-      Alert.alert('Something went wrong');
+    }
+    else {
+      Alert.alert('Description is required.');
     }
   }
   const [loader, setLoader] = React.useState(true);
@@ -875,6 +888,69 @@ export default function ClassDetailScreen({ route }) {
                     </View>
                   </View>
                 </Modal>
+                <Modal
+                  animationType="slide"
+                  visible={isModal2}
+                  onRequestClose={() => {
+                    toggleModal2();
+                  }}>
+                  <View
+                    style={{ flex: 1, backgroundColor: '#ffffff', padding: 15 }}>
+                    <View style={{ flexDirection: 'row-reverse' }}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          toggleModal2();
+                        }}>
+                        <Icon name="close" size={25} />
+                      </TouchableOpacity>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        marginVertical: 15,
+                        justifyContent: 'center',
+                      }}>
+                      <Text style={styles.title}>Create Dispute</Text>
+                    </View>
+                    <View>
+                      <View>
+                        <TextInput
+                          autoCapitalize="words"
+                          placeholder={"Description"}
+                          style={{ borderColor: '#D6D6D6', borderRadius: 10, borderWidth: 1, textAlignVertical: 'top' }}
+                          multiline={true}
+                          maxLength={40}
+                          numberOfLines={4}
+                          scrollEnabled={false}
+                          onChangeText={(text) => setReason(text)}
+                        />
+                      </View>
+                      <View style={{ marginTop: 10 }}>
+                        <TouchableOpacity
+                          onPress={() => {
+                            dispute()
+                          }}
+                          style={{
+                            backgroundColor: '#4B5F79',
+                            padding: 10,
+                            borderRadius: 5,
+                            width: '100%',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}>
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              fontWeight: '300',
+                              color: 'white',
+                            }}>
+                            Submit
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
+                </Modal>
                 {(userType.toLowerCase() === 'user' && !isJoined) ? (
                   <View style={styles.joinBox}>
                     <TouchableOpacity
@@ -924,7 +1000,8 @@ export default function ClassDetailScreen({ route }) {
                     <View style={styles.joinBox}>
                       <TouchableOpacity
                         onPress={() => {
-                          dispute(_class, subscription)
+                          toggleModal2()
+                          // dispute(_class, subscription)
                         }}
                         style={{
                           backgroundColor: '#4B5F79',
