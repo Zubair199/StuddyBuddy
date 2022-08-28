@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   TouchableOpacityBase,
   View,
+  Button as NativeButton
 } from 'react-native';
 import { Divider, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -22,6 +23,7 @@ import { AuthContext } from '../utils/AuthContext';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { Select, Input, TextArea, Button } from 'native-base';
 import api from '../services/api.services';
+import { CardField, useStripe, useConfirmPayment } from '@stripe/stripe-react-native';
 
 import { TextInput } from '../components/Themed';
 
@@ -145,11 +147,11 @@ export default function ClassDetailScreen({ route }) {
       });
   }
 
-  function joinClass(props) {
+  function joinClass() {
     const body = {
-      Teacher: props.Teacher._id,
+      Teacher: _class.Teacher._id,
       Student: user,
-      Class: props._id,
+      Class: _class._id,
     };
     console.log(body);
     try {
@@ -167,6 +169,7 @@ export default function ClassDetailScreen({ route }) {
           console.log(responseJson);
           Alert.alert(responseJson.message);
           studentApiCall();
+          toggleModal1()
         })
         .catch((err: any) => {
           console.log(err);
@@ -308,56 +311,6 @@ export default function ClassDetailScreen({ route }) {
       });
   }
 
-  async function makePayment() {
-    console.log('make payment');
-    console.log(cardDetails);
-    if (cardDetails !== null) {
-      if (cardDetails.complete) {
-      }
-    }
-  }
-
-  let [cardNumber, setCardNumber] = React.useState('');
-  let [expiryMonth, setExpiryMonth] = React.useState('');
-  let [cvc, setCVC] = React.useState('');
-
-  const handleChangeCard = value => {
-    //if(value.length>16) return
-
-    var v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-    var matches = v.match(/\d{4,16}/g);
-    var match = (matches && matches[0]) || '';
-    var parts = [];
-
-    for (let i = 0, len = match.length; i < len; i += 4) {
-      parts.push(match.substring(i, i + 4));
-    }
-
-    if (parts.length) {
-      value = parts.join(' ');
-    } /*else {
-        return value
-    }*/
-
-    setCardNumber(value);
-  };
-
-  const handleChangeCVV = text => {
-    if (text.length > 3) return;
-    setCVC(text);
-  };
-
-  const handleChangeDate = text => {
-    if (text.length > 5) return;
-
-    if (text.length == 2 && expiryMonth.length == 1) {
-      text += '/';
-    } else if (text.length == 2 && expiryMonth.length == 3) {
-      text = text.substring(0, text.length - 1);
-    }
-
-    setExpiryMonth(text);
-  };
 
   function dispute(data, sub) {
     console.log(data)
@@ -397,6 +350,89 @@ export default function ClassDetailScreen({ route }) {
       Alert.alert('Something went wrong');
     }
   }
+  const [loader, setLoader] = React.useState(true);
+
+  const [card, setCard] = React.useState(null)
+  const fetchPaymentIntentClientSecret = async () => {
+    console.log(AUTHENTICATIONS.API_URL + STRIPE.CREATE_PAYMENT_INTENT_PLATFORM)
+    let url = ''
+    let body = {}
+    if (isPlatformPaid) {
+      url = AUTHENTICATIONS.API_URL + STRIPE.CREATE_PAYMENT_INTENT_CLASS
+      body = {
+        currency: 'usd',
+        user: user,
+        teacher: _class.Teacher._id,
+        class: _class._id
+      }
+    }
+    else {
+      url = AUTHENTICATIONS.API_URL + STRIPE.CREATE_PAYMENT_INTENT_PLATFORM
+      body = {
+        currency: 'usd',
+        user: user,
+      }
+    }
+    console.log(url, body)
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    const { clientSecret, paymentIntentId } = await response.json();
+    return { clientSecret, paymentIntentId };
+  };
+  const { confirmPayment, loading } = useConfirmPayment();
+  const handlePayPress = async () => {
+    try {
+
+      // Gather the customer's billing information (for example, email)
+      if (!card) {
+        Alert.alert("Error", "Card Details are required.")
+        return
+      }
+      else {
+
+        // Fetch the intent client secret from the backend
+        const { clientSecret, paymentIntentId } = await fetchPaymentIntentClientSecret();
+
+        // Confirm the payment with the card details
+        const { paymentIntent, error } = await confirmPayment(clientSecret, {
+          paymentMethodType: 'Card',
+          card
+        });
+
+        if (error) {
+          console.log('Payment confirmation error', error);
+          Alert.alert("Error", error.localizedMessage)
+        } else if (paymentIntent) {
+          console.log('Success from promise', paymentIntent);
+          if (isPlatformPaid) {
+            let paymentSuccess = await fetch(AUTHENTICATIONS.API_URL + STRIPE.SUCCESS_PAYMENT_INTENT_CLASS + user + "/" + _class._id + "/" + paymentIntentId)
+            const { message } = await paymentSuccess.json();
+            Alert.alert("Success", message)
+            joinClass()
+          }
+          else {
+            let paymentSuccess = await fetch(AUTHENTICATIONS.API_URL + STRIPE.SUCCESS_PAYMENT_INTENT_PLATFORM + user + "/" + paymentIntentId)
+            const { message } = await paymentSuccess.json();
+            studentApiCall()
+            toggleModal1()
+            Alert.alert("Success", message)
+          }
+        }
+      }
+    }
+    catch (e) {
+      console.log("pay")
+      Alert.alert("Error", "Something went wrong.")
+    }
+
+  };
+
+
   function component() {
     return (
       <View style={styles.container}>
@@ -799,43 +835,43 @@ export default function ClassDetailScreen({ route }) {
                     </View>
                     <View>
                       <View>
-                        <Input
-                          variant="outline"
-                          placeholder="Card Number"
-                          maxLength={19}
-                          value={cardNumber}
-                          onChangeText={text => handleChangeCard(text)}
+                        {
+                          isPlatformPaid ?
+                            <Text style={{ fontSize: 20 }}>Class Fee: $20.99</Text>
+                            :
+                            <Text style={{ fontSize: 20 }} >Platform Fee: $4.99</Text>
+                        }
+                      </View>
+                      <View>
+                        <CardField
+                          postalCodeEnabled={false}
+                          placeholders={{
+                            number: '4242 4242 4242 4242',
+                          }}
+                          cardStyle={{
+                            backgroundColor: '#FFFFFF',
+                            textColor: '#000000',
+                            borderColor: "#D6D6D6",
+                            borderWidth: 1,
+                            borderRadius: 10
+                          }}
+                          style={{
+                            width: '100%',
+                            height: 50,
+                            marginVertical: 30,
+                          }}
+                          onCardChange={(cardDetails) => {
+                            console.log('cardDetails', cardDetails);
+                            setCard(cardDetails)
+                          }}
+                          onFocus={(focusedField) => {
+                            console.log('focusField', focusedField);
+                          }}
                         />
                       </View>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          marginVertical: 10,
-                          justifyContent: 'space-between',
-                        }}>
-                        <Input
-                          variant="outline"
-                          placeholder="MM/YY"
-                          w={'48%'}
-                          onChangeText={text => handleChangeDate(text)}
-                          maxLength={5}
-                          value={expiryMonth}
-                        />
-                        <Input
-                          variant="outline"
-                          placeholder="CVC"
-                          w={'48%'}
-                          maxLength={3}
-                          value={cvc}
-                          onChangeText={text => handleChangeCVV(text)}
-                        />
+                      <View>
+                        <NativeButton onPress={handlePayPress} title="Pay" disabled={loading} />
                       </View>
-                      <Button
-                        onPress={() => {
-                          makePayment();
-                        }}>
-                        Submit
-                      </Button>
                     </View>
                   </View>
                 </Modal>
@@ -843,14 +879,15 @@ export default function ClassDetailScreen({ route }) {
                   <View style={styles.joinBox}>
                     <TouchableOpacity
                       onPress={() => {
-                        isPlatformPaid ?
-                          navigation.navigate('ClassPayScreen', {
-                            classID: _class._id,
-                            teacherID: _class.Teacher._id
-                          })
-                          :
-                          navigation.navigate('PlatformPayScreen')
+                        // isPlatformPaid ?
+                        //   navigation.navigate('ClassPayScreen', {
+                        //     classID: _class._id,
+                        //     teacherID: _class.Teacher._id
+                        //   })
+                        //   :
+                        //   navigation.navigate('PlatformPayScreen')
                         // joinClass(_class);
+                        toggleModal1()
                       }}
                       style={{
                         backgroundColor: '#4B5F79',
@@ -1101,9 +1138,10 @@ export default function ClassDetailScreen({ route }) {
                 </View>
               </View>
             </View>
-          </ScrollView>
-        )}
-      </View>
+          </ScrollView >
+        )
+        }
+      </View >
     );
   }
 

@@ -2,8 +2,8 @@ module.exports = {
 
     AUTHENTICATIONS: {
         // Saims
-        API_URL: "http://192.168.8.102:5000",
-        CHAT_SERVER_URL: 'http://192.168.8.102:5000',
+        API_URL: "http://192.168.10.3:5000",
+        CHAT_SERVER_URL: 'http://192.168.10.3:5000',
 
         // Zubairs
         // API_URL: "http://192.168.100.63:5000",
@@ -135,8 +135,12 @@ module.exports = {
         CREATE_PAYMENT: "/api/payment",
         GET_PAYMENT_INTENT: "/api/paymentIntent",
 
-        PLATFORM_CHECHKOUT: "/api/platform/checkout-session/",
-        CLASS_CHECHKOUT: "/api/class/checkout-session/",
+        CREATE_PAYMENT_INTENT_PLATFORM: "/api/platform/payment-intent",
+        CREATE_PAYMENT_INTENT_CLASS: "/api/class/payment-intent",
+
+        SUCCESS_PAYMENT_INTENT_PLATFORM: "/api/platform/payment-intent/",
+        SUCCESS_PAYMENT_INTENT_CLASS: "/api/class/payment-intent/",
+
 
         CREATE_DISPUTE: "/api/dispute",
 
@@ -144,8 +148,11 @@ module.exports = {
 
         GET_SUBSCRIPTIONS: "/api/sessions/",
 
-        PK_TEST: "pk_test_51LPq5PHMIjurc2gOdoR79YKnciMMUVfCBBXP0LYaZxIoNW1dFRhGreSkRu34TUMeZ7pZ9mTQrLAkPvPzYPr8gKKa00GuhqeZH9",
-        SK_TEST: "sk_test_51LPq5PHMIjurc2gOXufycmqFoQc1Rk0B14OkDwNE3l3013yAdL1WUk1idTNBAi5nVF4bOZGtflpzTp0PdkXCURKU00azCFptoj",
+        PK_TEST: 'pk_test_51IDNzKHDg6w3Pi8MAFLrKQDFEIgCPu1ZrdxL0DQx9msP4f3rW4DOEUgnyMXqlwT3fWwzU8893pXg90MQvKmLaBeF00mVMzxIDg',
+        SK_TEST: 'sk_test_51IDNzKHDg6w3Pi8MYwLJ24KHE2GcEu2Z9ZSei7oOYjOD8SLmGpOewDRpRc8PRhcgmAMhVClnA9kvk7BLcxqLoJVi00xCzQ6xPM'
+    
+        // PK_TEST: "pk_test_51LPq5PHMIjurc2gOdoR79YKnciMMUVfCBBXP0LYaZxIoNW1dFRhGreSkRu34TUMeZ7pZ9mTQrLAkPvPzYPr8gKKa00GuhqeZH9",
+        // SK_TEST: "sk_test_51LPq5PHMIjurc2gOXufycmqFoQc1Rk0B14OkDwNE3l3013yAdL1WUk1idTNBAi5nVF4bOZGtflpzTp0PdkXCURKU00azCFptoj",
     }
 };
 

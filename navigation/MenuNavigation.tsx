@@ -35,6 +35,7 @@ import NetworkScreen from '../screens/NetworkScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import ClassPayScreen from '../screens/ClassPayScreen';
 import PlatformPayScreen from '../screens/PlatformPayScreen';
+import ClassVideoScreen from '../screens/ClassVideoScreen';
 
 const BottomTab = createBottomTabNavigator();
 
