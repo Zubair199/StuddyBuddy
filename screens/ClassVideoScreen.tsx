@@ -1,6 +1,6 @@
 import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react'
-import  {useState, useEffect, useRef} from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ImageBackground, SafeAreaView, ScrollView, StyleSheet, Touchable, TouchableOpacity, TouchableOpacityBase, View, TextInput, Platform, PermissionsAndroid } from 'react-native';
 import { Text } from 'react-native-elements'
 import { FormControl, Modal, Button, Divider } from 'native-base';
@@ -19,12 +19,15 @@ export default function ClassVideoScreen() {
     const isFocused = useIsFocused();
     let [user, setUser] = React.useState(userToken)
 
+
+
     const [isAudioEnabled, setIsAudioEnabled] = useState(true);
     const [isVideoEnabled, setIsVideoEnabled] = useState(true);
     const [status, setStatus] = useState("disconnected");
     const [participants, setParticipants] = useState(new Map());
     const [videoTracks, setVideoTracks] = useState(new Map());
-    const [token, setToken] = useState("123");
+    const [token, setToken] = useState("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzJlNmEyZjhjOGUxNWE5ODg4OTJjMTkxOTA1YmUwODRkLTE2NjE3Njc2NTEiLCJncmFudHMiOnsiaWRlbnRpdHkiOiJqYWNrIiwidmlkZW8iOnsicm9vbSI6IlNoYWgifX0sImlhdCI6MTY2MTc2NzY1MSwiZXhwIjoxNjYxNzcxMjUxLCJpc3MiOiJTSzJlNmEyZjhjOGUxNWE5ODg4OTJjMTkxOTA1YmUwODRkIiwic3ViIjoiQUM4ZDgxNGMyOWUzYjZlZmI5Nzk5NjQ5MDFlZTk5OTkzMCJ9.5XqegDTCXEmTtMQbfxOy6peR75M1-XwwV0vblpC2_yU");
+    let [roomName, setRoomName] = React.useState('Shah')
     const twilioVideo = useRef(null);
 
     const _onConnectButtonPress = async () => {
@@ -32,7 +35,7 @@ export default function ClassVideoScreen() {
             await _requestAudioPermission();
             await _requestCameraPermission();
         }
-        twilioVideo.current.connect({ accessToken: token, enableNetworkQualityReporting: true, dominantSpeakerEnabled: true });
+        twilioVideo.current.connect({ accessToken: token, roomName: roomName, roomSid: 'RMe89cf4e6de40af82a229c18b6fb0eb60', enableNetworkQualityReporting: true, dominantSpeakerEnabled: true });
         setStatus("connecting");
     };
 

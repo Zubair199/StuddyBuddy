@@ -294,7 +294,7 @@ const HomeStackScreen = ({navigation, route}: any) => {
       <HomeStack.Screen
         name="HomeScreen"
         options={mainHeader}
-        component={HomeScreen}
+        component={ClassVideoScreen}
       />
 
       <HomeStack.Screen
