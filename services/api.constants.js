@@ -153,6 +153,11 @@ module.exports = {
     
         // PK_TEST: "pk_test_51LPq5PHMIjurc2gOdoR79YKnciMMUVfCBBXP0LYaZxIoNW1dFRhGreSkRu34TUMeZ7pZ9mTQrLAkPvPzYPr8gKKa00GuhqeZH9",
         // SK_TEST: "sk_test_51LPq5PHMIjurc2gOXufycmqFoQc1Rk0B14OkDwNE3l3013yAdL1WUk1idTNBAi5nVF4bOZGtflpzTp0PdkXCURKU00azCFptoj",
+    },
+    TWILIO:{
+        CREATE_ROOM: "/api/twilio/room",
+        GET_ROOM: "/api/twilio/room/",
+        GET_TOKEN : "/api/twilio/getToken/",
     }
 };
 

@@ -18,7 +18,7 @@ import {
 import { Divider, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
-import { AUTH, AUTHENTICATIONS, CLASS, STRIPE } from '../services/api.constants';
+import { AUTH, AUTHENTICATIONS, CLASS, STRIPE, TWILIO } from '../services/api.constants';
 import MainLayout from './MainLayout';
 import { AuthContext } from '../utils/AuthContext';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
@@ -57,6 +57,8 @@ export default function ClassDetailScreen({ route }) {
 
   const [cardDetails, setCardDetails] = React.useState(null);
 
+  const [room, setRoom] = React.useState(null)
+  const [roomName, setRoomName] = React.useState('')
 
   React.useEffect(() => {
     console.log(user, isPlatformPaid);
@@ -81,6 +83,7 @@ export default function ClassDetailScreen({ route }) {
       .catch(err => {
         console.log(err);
       });
+
     if (userType.toLowerCase() === 'user') {
       studentApiCall();
     } else {
@@ -92,17 +95,34 @@ export default function ClassDetailScreen({ route }) {
     fetch(AUTHENTICATIONS.API_URL + CLASS.GET_CLASS_BY_CLASS_ID + classID)
       .then(response => response.json())
       .then(responseJson => {
-        console.log('details classes ', responseJson.schedules);
+        // console.log('details classes ', responseJson.schedules);
         setClass(responseJson.classes);
         setTeacher(responseJson.classes.Teacher);
         setSchedule(responseJson.schedules);
-        console.log(responseJson.classes.schedules);
+        // console.log(responseJson.classes.schedules);
+        let d = new Date()
+        let _room = "SB-" + responseJson.classes.name + "(" + formatDate(d) + ")"
+        setRoomName(_room)
+        getRoom(_room)
       })
       .catch(err => {
         console.log(err);
       });
   }
 
+  function getRoom(payload) {
+    fetch(AUTHENTICATIONS.API_URL + TWILIO.GET_ROOM + payload)
+      .then(response => response.json())
+      .then(responseJson => {
+        console.log('ROOM : = ', responseJson);
+        if (responseJson && responseJson.room) {
+          setRoom(responseJson.room);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
   function apiCall() {
     fetch(AUTHENTICATIONS.API_URL + CLASS.GET_CLASS_BY_CLASS_ID + classID)
       .then(response => response.json())
@@ -129,6 +149,13 @@ export default function ClassDetailScreen({ route }) {
           setSchedule(responseJson.schedules);
           setPaymentIntentId(responseJson.paymentIntentId)
           setIsDispute(responseJson.dispute)
+
+          // console.log(responseJson.classes.schedules);
+          let d = new Date()
+          let _room = "SB-" + responseJson.classes.name + "(" + formatDate(d) + ")"
+          setRoomName(_room)
+          getRoom(_room)
+
           let date = formatDate(new Date());
           console.log(date);
           responseJson.schedules.forEach(schedule => {
@@ -445,6 +472,57 @@ export default function ClassDetailScreen({ route }) {
 
   };
 
+  function createRoom() {
+    try {
+      let d = new Date()
+      const body = {
+        user: userToken,
+        class: _class._id,
+        name: roomName
+      };
+      console.log(body)
+
+      let requestObj = {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      };
+      fetch(AUTHENTICATIONS.API_URL + TWILIO.CREATE_ROOM, requestObj)
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log(responseJson);
+          Alert.alert(responseJson.message);
+          toggleModal2()
+          teacherApiCall()
+        })
+        .catch((err: any) => {
+          console.log(err);
+          console.log(err.response);
+          Alert.alert('Something went wrong');
+        });
+    }
+    catch (e) {
+      console.log("pay")
+      Alert.alert("Error", "Something went wrong.")
+    }
+  }
+
+  function joinRoom() {
+    fetch(AUTHENTICATIONS.API_URL + TWILIO.GET_TOKEN + userToken + "/" + roomName)
+      .then(response => response.json())
+      .then(responseJson => {
+        console.log(responseJson)
+        if (responseJson && responseJson.token) {
+          navigation.navigate("ClassVideoScreen", { room: room.room, user: userToken, accessToken: responseJson.token })
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
 
   function component() {
     return (
@@ -495,6 +573,57 @@ export default function ClassDetailScreen({ route }) {
                     Cost: &#36;{_class.price}
                     {/* Max. Students : {_class.maxStudents} */}
                   </Text>
+                </View>
+                <View style={styles.joinBox}>
+                  {
+                    room !== null ?
+                      <TouchableOpacity
+                        onPress={() => {
+                          console.log('room join')
+                          joinRoom()
+                        }}
+                        style={{
+                          backgroundColor: '#4B5F79',
+                          padding: 10,
+                          borderRadius: 5,
+                          width: '100%',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            fontWeight: '300',
+                            color: 'white',
+                          }}>
+                          Join Room
+                        </Text>
+                      </TouchableOpacity>
+
+                      :
+                      <TouchableOpacity
+                        onPress={() => {
+                          createRoom()
+                        }}
+                        style={{
+                          backgroundColor: '#4B5F79',
+                          padding: 10,
+                          borderRadius: 5,
+                          width: '100%',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            fontWeight: '300',
+                            color: 'white',
+                          }}>
+                          Create Room
+                        </Text>
+                      </TouchableOpacity>
+
+                  }
                 </View>
                 {userType.toLowerCase() === 'teacher' &&
                   _class.status.toLowerCase() === 'approved' && (
@@ -951,6 +1080,34 @@ export default function ClassDetailScreen({ route }) {
                     </View>
                   </View>
                 </Modal>
+                {
+                  room !== null &&
+                  <View style={styles.joinBox}>
+
+                    <TouchableOpacity
+                      onPress={() => {
+                        console.log('room join')
+                        joinRoom()
+                      }}
+                      style={{
+                        backgroundColor: '#4B5F79',
+                        padding: 10,
+                        borderRadius: 5,
+                        width: '100%',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: 18,
+                          fontWeight: '300',
+                          color: 'white',
+                        }}>
+                        Join Room
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                }
                 {(userType.toLowerCase() === 'user' && !isJoined) ? (
                   <View style={styles.joinBox}>
                     <TouchableOpacity

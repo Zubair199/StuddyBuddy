@@ -1,206 +1,265 @@
-import { useIsFocused } from '@react-navigation/native';
-import * as React from 'react'
-import { useState, useEffect, useRef } from 'react';
-import { ImageBackground, SafeAreaView, ScrollView, StyleSheet, Touchable, TouchableOpacity, TouchableOpacityBase, View, TextInput, Platform, PermissionsAndroid } from 'react-native';
-import { Text } from 'react-native-elements'
-import { FormControl, Modal, Button, Divider } from 'native-base';
-import { ASSIGNMENT, AUTHENTICATIONS, CLASS, EXAM } from '../services/api.constants';
-import { AuthContext } from '../utils/AuthContext';
-
+import React, {
+    Component
+} from 'react';
 import {
-    TwilioVideo,
-    TwilioVideoLocalView,
-    TwilioVideoParticipantView
-} from 'react-native-twilio-video-webrtc'
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
+    Button,
+    TouchableOpacity,
+    PermissionsAndroid, TouchableHighlight
+} from 'react-native';
+import {
+    TwilioVideoLocalView, // to get local view 
+    TwilioVideoParticipantView, //to get participant view
+    TwilioVideo
+} from 'react-native-twilio-video-webrtc';
+// make sure you install vector icons and its dependencies
+import MIcon from 'react-native-vector-icons/MaterialIcons';
+import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { AUTHENTICATIONS, TWILIO } from '../services/api.constants';
 
-export default function ClassVideoScreen() {
-    const { userToken, userType } = React.useContext(AuthContext);
-
-    const isFocused = useIsFocused();
-    let [user, setUser] = React.useState(userToken)
-
-
-
-    const [isAudioEnabled, setIsAudioEnabled] = useState(true);
-    const [isVideoEnabled, setIsVideoEnabled] = useState(true);
-    const [status, setStatus] = useState("disconnected");
-    const [participants, setParticipants] = useState(new Map());
-    const [videoTracks, setVideoTracks] = useState(new Map());
-    const [token, setToken] = useState("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzJlNmEyZjhjOGUxNWE5ODg4OTJjMTkxOTA1YmUwODRkLTE2NjE3Njc2NTEiLCJncmFudHMiOnsiaWRlbnRpdHkiOiJqYWNrIiwidmlkZW8iOnsicm9vbSI6IlNoYWgifX0sImlhdCI6MTY2MTc2NzY1MSwiZXhwIjoxNjYxNzcxMjUxLCJpc3MiOiJTSzJlNmEyZjhjOGUxNWE5ODg4OTJjMTkxOTA1YmUwODRkIiwic3ViIjoiQUM4ZDgxNGMyOWUzYjZlZmI5Nzk5NjQ5MDFlZTk5OTkzMCJ9.5XqegDTCXEmTtMQbfxOy6peR75M1-XwwV0vblpC2_yU");
-    let [roomName, setRoomName] = React.useState('Shah')
-    const twilioVideo = useRef(null);
-
-    const _onConnectButtonPress = async () => {
-        if (Platform.OS === "android") {
-            await _requestAudioPermission();
-            await _requestCameraPermission();
-        }
-        twilioVideo.current.connect({ accessToken: token, roomName: roomName, roomSid: 'RMe89cf4e6de40af82a229c18b6fb0eb60', enableNetworkQualityReporting: true, dominantSpeakerEnabled: true });
-        setStatus("connecting");
-    };
-
-    const _onEndButtonPress = () => {
-        twilioVideo.current.disconnect();
-    };
-
-    const _onMuteButtonPress = () => {
-        twilioVideo.current
-            .setLocalAudioEnabled(!isAudioEnabled)
-            .then((isEnabled) => setIsAudioEnabled(isEnabled));
-    };
-
-    const _onFlipButtonPress = () => {
-        twilioVideo.current.flipCamera();
-    };
-
-    const _onRoomDidConnect = () => {
-        setStatus("connected");
-    };
-
-    const _onRoomDidDisconnect = ({ error }) => {
-        console.log("ERROR: ", error);
-
-        setStatus("disconnected");
-    };
-
-    const _onRoomDidFailToConnect = (error) => {
-        console.log("ERROR: ", error);
-
-        setStatus("disconnected");
-    };
-
-    const _onParticipantAddedVideoTrack = ({ participant, track }) => {
-        console.log("onParticipantAddedVideoTrack: ", participant, track);
-
-        setVideoTracks(
-            new Map([
-                ...videoTracks,
-                [
-                    track.trackSid,
-                    { participantSid: participant.sid, videoTrackSid: track.trackSid },
-                ],
-            ])
-        );
-    };
-
-    const _onParticipantRemovedVideoTrack = ({ participant, track }) => {
-        console.log("onParticipantRemovedVideoTrack: ", participant, track);
-
-        const newVideoTracks = new Map(videoTracks);
-        newVideoTracks.delete(track.trackSid);
-
-        setVideoTracks(newVideoTracks);
-    };
-
-    const _onNetworkLevelChanged = ({ participant, isLocalUser, quality }) => {
-        console.log("Participant", participant, "isLocalUser", isLocalUser, "quality", quality);
-    };
-
-    const _onDominantSpeakerDidChange = ({ roomName, roomSid, participant }) => {
-        console.log("onDominantSpeakerDidChange", `roomName: ${roomName}`, `roomSid: ${roomSid}`, "participant:", participant);
-    };
-
-    const _requestAudioPermission = () => {
-        return PermissionsAndroid.request(
+export async function GetAllPermissions() {
+    // it will ask the permission for user 
+    try {
+        // if (Platform.OS === "android") {
+        const userResponse = await PermissionsAndroid.requestMultiple([
+            PermissionsAndroid.PERMISSIONS.CAMERA,
             PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-            {
-                title: "Need permission to access microphone",
-                message:
-                    "To run this demo we need permission to access your microphone",
-                buttonNegative: "Cancel",
-                buttonPositive: "OK",
-            }
-        );
-    };
-
-    const _requestCameraPermission = () => {
-        return PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA, {
-            title: "Need permission to access camera",
-            message: "To run this demo we need permission to access your camera",
-            buttonNegative: "Cancel",
-            buttonPositive: "OK",
-        });
-    };
-
-    return (
-        <View style={styles.container}>
-            {status === "disconnected" && (
-                <View>
-                    <Text style={styles.welcome}>React Native Twilio Video</Text>
-                    <TextInput
-                        style={styles.input}
-                        autoCapitalize="none"
-                        value={token}
-                        onChangeText={(text) => setToken(text)}
-                    ></TextInput>
-                    <Button
-                        title="Connect"
-                        style={styles.button}
-                        onPress={_onConnectButtonPress}
-                    ></Button>
-                </View>
-            )}
-
-            {(status === "connected" || status === "connecting") && (
-                <View style={styles.callContainer}>
-                    {status === "connected" && (
-                        <View style={styles.remoteGrid}>
-                            {Array.from(videoTracks, ([trackSid, trackIdentifier]) => {
-                                return (
-                                    <TwilioVideoParticipantView
-                                        style={styles.remoteVideo}
-                                        key={trackSid}
-                                        trackIdentifier={trackIdentifier}
-                                    />
-                                );
-                            })}
-                        </View>
-                    )}
-                    <View style={styles.optionsContainer}>
-                        <TouchableOpacity
-                            style={styles.optionButton}
-                            onPress={_onEndButtonPress}
-                        >
-                            <Text style={{ fontSize: 12 }}>End</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.optionButton}
-                            onPress={_onMuteButtonPress}
-                        >
-                            <Text style={{ fontSize: 12 }}>
-                                {isAudioEnabled ? "Mute" : "Unmute"}
-                            </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.optionButton}
-                            onPress={_onFlipButtonPress}
-                        >
-                            <Text style={{ fontSize: 12 }}>Flip</Text>
-                        </TouchableOpacity>
-                        <TwilioVideoLocalView enabled={true} style={styles.localVideo} />
-                    </View>
-                </View>
-            )}
-
-            <TwilioVideo
-                ref={twilioVideo}
-                onRoomDidConnect={_onRoomDidConnect}
-                onRoomDidDisconnect={_onRoomDidDisconnect}
-                onRoomDidFailToConnect={_onRoomDidFailToConnect}
-                onParticipantAddedVideoTrack={_onParticipantAddedVideoTrack}
-                onParticipantRemovedVideoTrack={_onParticipantRemovedVideoTrack}
-                onNetworkQualityLevelsChanged={_onNetworkLevelChanged}
-                onDominantSpeakerDidChange={_onDominantSpeakerDidChange}
-            />
-        </View>
-    );
+            PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+        ]);
+        return userResponse;
+        // }
+    } catch (err) {
+        console.log(err);
+    }
+    return null;
 }
+export default class ClassVideoScreen extends Component {
+    state = {
+        isAudioEnabled: true,
+        isVideoEnabled: true,
+        isButtonDisplay: true,
+        status: 'disconnected',
+        participants: new Map(),
+        videoTracks: new Map(),
+        roomName: '',
+        token: '',
+        roomSid: '',
+        user: '',
+    }
 
+    componentDidMount() {
+        let { room, user, accessToken } = this.props.route.params
+        console.log(room, user, accessToken)
+        this.setState({
+            roomName: room.uniqueName,
+            token: accessToken,
+            user: user
+        })
+        GetAllPermissions();
+        // on start we are asking the permisions
+
+    }
+    _onConnectButtonPress = () => {
+        console.log("in on connect button preess");
+        this.refs.twilioVideo.connect({ roomName: this.state.roomName, accessToken: this.state.token })
+        this.setState({ status: 'connecting' })
+        console.log(this.state.status);
+    }
+    _onEndButtonPress = () => {
+        this.refs.twilioVideo.disconnect()
+    }
+    _onMuteButtonPress = () => {
+        // on cliking the mic button we are setting it to mute or viceversa
+        this.refs.twilioVideo.setLocalAudioEnabled(!this.state.isAudioEnabled)
+            .then(isEnabled => this.setState({ isAudioEnabled: isEnabled }))
+    }
+    _onFlipButtonPress = () => {
+        // switches between fronst camera and Rare camera
+        this.refs.twilioVideo.flipCamera()
+    }
+    _onRoomDidConnect = () => {
+        console.log("room did connected");
+        this.setState({ status: 'connected' })
+        // console.log("over");
+    }
+    _onRoomDidDisconnect = ({ roomName, error }) => {
+        console.log("ERROR: ", JSON.stringify(error))
+        console.log("disconnected")
+
+        this.setState({ status: 'disconnected' })
+    }
+    _onRoomDidFailToConnect = (error) => {
+        console.log("ERROR: ", JSON.stringify(error));
+        console.log("failed to connect");
+        this.setState({ status: 'disconnected' })
+    }
+    _onParticipantAddedVideoTrack = ({ participant, track }) => {
+        // call everytime a participant joins the same room
+        console.log("onParticipantAddedVideoTrack: ", participant, track)
+        this.setState({
+            videoTracks: new Map([
+                ...this.state.videoTracks,
+                [track.trackSid, { participantSid: participant.sid, videoTrackSid: track.trackSid }]
+            ]),
+        });
+
+        console.log("this.state.videoTracks", this.state.videoTracks);
+    }
+    _onParticipantRemovedVideoTrack = ({ participant, track }) => {
+        // gets called when a participant disconnects.
+        console.log("onParticipantRemovedVideoTrack: ", participant, track)
+        const videoTracks = this.state.videoTracks
+        videoTracks.delete(track.trackSid)
+        this.setState({ videoTracks: { ...videoTracks } })
+    }
+    render() {
+        return (
+            <View style={styles.container} >
+                {
+                    this.state.status === 'disconnected' &&
+                    <View>
+                        <Text style={styles.welcome}>
+                            React Native Twilio Video
+                        </Text>
+                        <View style={styles.spacing}>
+                            <Text style={styles.inputLabel}>Room Name</Text>
+                            <TextInput style={styles.inputBox}
+                                placeholder="Room Name"
+                                defaultValue={this.state.roomName}
+                                onChangeText={(text) => this.setState({ roomName: text })}
+                            />
+                        </View>
+                        <View style={styles.spacing}>
+                            <Text style={styles.inputLabel}>Token</Text>
+                            <TextInput style={styles.inputBox}
+                                placeholder="Token"
+                                defaultValue={this.state.token}
+                                onChangeText={(text) => this.setState({ token: text })}
+                            />
+                        </View>
+                        <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={this._onConnectButtonPress}>
+                            <Text style={styles.Buttontext}>Connect</Text>
+                        </TouchableHighlight>
+                    </View>
+                }
+                {
+                    (this.state.status === 'connected' || this.state.status === 'connecting') &&
+                    <View style={styles.callContainer}>
+                        {
+                            this.state.status === 'connected' &&
+                            <View style={styles.remoteGrid}>
+                                <TouchableOpacity style={styles.remoteVideo} onPress={() => { this.setState({ isButtonDisplay: !this.state.isButtonDisplay }) }} >
+                                    {
+                                        Array.from(this.state.videoTracks, ([trackSid, trackIdentifier]) => {
+                                            return (
+                                                <TwilioVideoParticipantView
+                                                    style={styles.remoteVideo}
+                                                    key={trackSid}
+                                                    trackIdentifier={trackIdentifier}
+                                                />
+                                            )
+                                        })
+                                    }
+                                </TouchableOpacity>
+                                <TwilioVideoLocalView
+                                    enabled={true}
+                                    style={this.state.isButtonDisplay ? styles.localVideoOnButtonEnabled : styles.localVideoOnButtonDisabled}
+                                />
+                            </View>
+                        }
+                        <View
+                            style={
+                                {
+                                    display: this.state.isButtonDisplay ? "flex" : "none",
+                                    position: "absolute",
+                                    left: 0,
+                                    bottom: 0,
+                                    right: 0,
+                                    height: 100,
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    justifyContent: "space-evenly",
+                                    // backgroundColor:"blue",
+                                    // zIndex: 2,
+                                    zIndex: this.state.isButtonDisplay ? 2 : 0,
+                                }
+                            } >
+                            <TouchableOpacity
+                                style={
+                                    {
+                                        display: this.state.isButtonDisplay ? "flex" : "none",
+                                        width: 60,
+                                        height: 60,
+                                        marginLeft: 10,
+                                        marginRight: 10,
+                                        borderRadius: 100 / 2,
+                                        backgroundColor: 'grey',
+                                        justifyContent: 'center',
+                                        alignItems: "center"
+                                    }
+                                }
+                                onPress={this._onMuteButtonPress}>
+                                < MIcon name={this.state.isAudioEnabled ? "mic" : "mic-off"} size={24} color='#fff' />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={
+                                    {
+                                        display: this.state.isButtonDisplay ? "flex" : "none",
+                                        width: 60,
+                                        height: 60,
+                                        marginLeft: 10,
+                                        marginRight: 10,
+                                        borderRadius: 100 / 2,
+                                        backgroundColor: 'grey',
+                                        justifyContent: 'center',
+                                        alignItems: "center"
+                                    }
+                                }
+                                onPress={this._onEndButtonPress}>
+                                {/* <Text style={{fontSize: 12}}>End</Text> */}
+                                < MIcon name="call-end" size={28} color='#fff' />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={
+                                    {
+                                        display: this.state.isButtonDisplay ? "flex" : "none",
+                                        width: 60,
+                                        height: 60,
+                                        marginLeft: 10,
+                                        marginRight: 10,
+                                        borderRadius: 100 / 2,
+                                        backgroundColor: 'grey',
+                                        justifyContent: 'center',
+                                        alignItems: "center"
+                                    }
+                                }
+                                onPress={this._onFlipButtonPress}>
+                                {/* <Text style={{fontSize: 12}}>Flip</Text> */}
+                                < MCIcon name="rotate-3d" size={28} color='#fff' />
+                            </TouchableOpacity>
+                        </View>
+
+                    </View>
+                }
+                <TwilioVideo
+                    ref="twilioVideo"
+                    onRoomDidConnect={this._onRoomDidConnect}
+                    onRoomDidDisconnect={this._onRoomDidDisconnect}
+                    onRoomDidFailToConnect={this._onRoomDidFailToConnect}
+                    onParticipantAddedVideoTrack={this._onParticipantAddedVideoTrack}
+                    onParticipantRemovedVideoTrack={this._onParticipantRemovedVideoTrack}
+                />
+            </View>
+        )
+    }
+}
 const styles = StyleSheet.create({
-
     container: {
         flex: 1,
-        backgroundColor: "white",
+        backgroundColor: 'white'
     },
     callContainer: {
         flex: 1,
@@ -209,12 +268,12 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         right: 0,
+        minHeight: "100%"
     },
     welcome: {
         fontSize: 30,
-        textAlign: "center",
-        paddingTop: 40,
-        color: "black"
+        textAlign: 'center',
+        paddingTop: 40
     },
     input: {
         height: 50,
@@ -222,31 +281,34 @@ const styles = StyleSheet.create({
         marginRight: 70,
         marginLeft: 70,
         marginTop: 50,
-        textAlign: "center",
-        backgroundColor: "white",
+        textAlign: 'center',
+        backgroundColor: 'white'
     },
     button: {
-        marginTop: 100,
+        marginTop: 100
     },
-    localVideo: {
-        flex: 1,
-        width: 150,
-        height: 250,
-        position: "absolute",
-        right: 10,
-        bottom: 10,
+    localVideoOnButtonEnabled: {
+        bottom: ("40%"),
+        width: "35%",
+        left: "64%",
+        height: "25%",
+        zIndex: 2,
+    },
+    localVideoOnButtonDisabled: {
+        bottom: ("30%"),
+        width: "35%",
+        left: "64%",
+        height: "25%",
+        zIndex: 2,
     },
     remoteGrid: {
         flex: 1,
-        flexDirection: "row",
-        flexWrap: "wrap",
+        flexDirection: "column",
     },
     remoteVideo: {
-        marginTop: 20,
-        marginLeft: 10,
-        marginRight: 10,
-        width: 100,
-        height: 120,
+        width: "100%",
+        height: "100%",
+        zIndex: 1,
     },
     optionsContainer: {
         position: "absolute",
@@ -254,9 +316,10 @@ const styles = StyleSheet.create({
         bottom: 0,
         right: 0,
         height: 100,
-        backgroundColor: "blue",
         flexDirection: "row",
         alignItems: "center",
+        justifyContent: "space-evenly",
+        zIndex: 2,
     },
     optionButton: {
         width: 60,
@@ -264,9 +327,42 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         marginRight: 10,
         borderRadius: 100 / 2,
-        backgroundColor: "grey",
-        justifyContent: "center",
-        alignItems: "center",
+        backgroundColor: 'grey',
+        justifyContent: 'center',
+        alignItems: "center"
     },
-
+    spacing: {
+        padding: 10
+    },
+    inputLabel: {
+        fontSize: 18
+    },
+    buttonContainer: {
+        height: 45,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 20,
+        width: '90%',
+        borderRadius: 30,
+    },
+    loginButton: {
+        backgroundColor: "#1E3378",
+        width: '90%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: 20,
+        marginTop: 10
+    },
+    Buttontext: {
+        color: 'white',
+        fontWeight: '500',
+        fontSize: 18
+    },
+    inputBox: {
+        borderBottomColor: '#cccccc',
+        fontSize: 16,
+        width: "95%",
+        borderBottomWidth: 1
+    },
 });

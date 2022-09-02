@@ -1,16 +1,16 @@
 import * as React from 'react';
-import {Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SettingsScreen from '../screens/SettingsScreen';
 import PaymentsScreen from '../screens/PaymentsScreen';
 import ChatScreen from '../screens/ChatScreen';
 import ChatScreenG from '../screens/ChatScreenG';
 import MessagesScreen from '../screens/MessagesScreen';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import HomeScreen from '../screens/HomeScreen';
-import {useNavigation} from '@react-navigation/native';
-import {Image} from 'react-native-elements/dist/image/Image';
+import { useNavigation } from '@react-navigation/native';
+import { Image } from 'react-native-elements/dist/image/Image';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ClassDetailScreen from '../screens/ClassDetailScreen';
 import AssignmentDetailScreen from '../screens/AssignmentDetailScreen';
@@ -283,8 +283,8 @@ const topTab = createMaterialTopTabNavigator();
 //   };
 // };
 
-const HomeStackScreen = ({navigation, route}: any) => {
-  const mainHeader = {headerShown: false};
+const HomeStackScreen = ({ navigation, route }: any) => {
+  const mainHeader = { headerShown: false };
   return (
     <HomeStack.Navigator
       initialRouteName="HomeScreen"
@@ -294,7 +294,7 @@ const HomeStackScreen = ({navigation, route}: any) => {
       <HomeStack.Screen
         name="HomeScreen"
         options={mainHeader}
-        component={ClassVideoScreen}
+        component={HomeScreen}
       />
 
       <HomeStack.Screen
@@ -321,6 +321,11 @@ const HomeStackScreen = ({navigation, route}: any) => {
         name="PlatformPayScreen"
         // options={mainHeader}
         component={PlatformPayScreen}
+      />
+      <HomeStack.Screen
+        name="ClassVideoScreen"
+        // options={mainHeader}
+        component={ClassVideoScreen}
       />
       <HomeStack.Screen
         name="AddClass"
@@ -441,9 +446,9 @@ const PaymentStackScreen = () => (
   </PaymentStack.Navigator>
 );
 const MessagesStackScreen = () => {
-  const mainHeader = {headerShown: false};
+  const mainHeader = { headerShown: false };
   return (
-    <MessagesStack.Navigator screenOptions={{headerShown: false}}>
+    <MessagesStack.Navigator screenOptions={{ headerShown: false }}>
       <MessagesStack.Screen
         name="Messages"
         options={mainHeader}
@@ -489,7 +494,7 @@ const styles = StyleSheet.create({
     top: 5,
     right: 15,
   },
-  backArrow: {marginTop: 0, tintColor: '#ffffff', height: 35, width: 35},
+  backArrow: { marginTop: 0, tintColor: '#ffffff', height: 35, width: 35 },
   backArrowContainer: {
     justifyContent: 'center',
     height: Platform.OS === 'ios' ? 45 : 70,
