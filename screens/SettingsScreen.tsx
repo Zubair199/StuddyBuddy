@@ -13,14 +13,14 @@ import {
   Switch,
   Modal,
 } from 'react-native';
-import {useUserAuth} from '../navigation';
+import { useUserAuth } from '../navigation';
 import genericStyle from '../assets/styles/styleSheet';
-import {useNavigation, useRoute, RouteProp} from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import MainLayout from './MainLayout';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ThemeContext} from 'react-native-elements';
-import {Button, Input} from 'native-base';
-import {AUTH, AUTHENTICATIONS, STRIPE} from '../services/api.constants';
+import { ThemeContext } from 'react-native-elements';
+import { Button, Input } from 'native-base';
+import { AUTH, AUTHENTICATIONS, STRIPE } from '../services/api.constants';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Icon from 'react-native-vector-icons/AntDesign';
 
@@ -33,7 +33,7 @@ export default function SettingsScreen() {
     userType,
     userToken,
   } = useUserAuth()!;
-  const {currentScreen, setCurrentScreen} = React.useContext(ThemeContext);
+  const { currentScreen, setCurrentScreen } = React.useContext(ThemeContext);
   const handleLogout = () => {
     (async () => {
       await AsyncStorage.setItem('userId', '');
@@ -62,7 +62,7 @@ export default function SettingsScreen() {
   const [selectedTimeZoneValue, setSelectedTimeZoneValue] =
     React.useState('SELECT TIMEZONE');
   const [allTimeZones, setAllTimeZones] = React.useState([
-    {label: '', value: ''},
+    { label: '', value: '' },
   ]);
   const [toggleProfilePrivacy, setProfilePrivacy] = React.useState(true);
   const [toggleChat, setToggleChat] = React.useState(true);
@@ -87,7 +87,7 @@ export default function SettingsScreen() {
           style: 'cancel',
         },
       ],
-      {cancelable: false},
+      { cancelable: false },
     );
   }
   const [isEnabled, setIsEnabled] = React.useState(false);
@@ -362,8 +362,8 @@ export default function SettingsScreen() {
           onRequestClose={() => {
             toggleModal();
           }}>
-          <View style={{flex: 1, backgroundColor: '#ffffff', padding: 15}}>
-            <View style={{flexDirection: 'row-reverse'}}>
+          <View style={{ flex: 1, backgroundColor: '#ffffff', padding: 15 }}>
+            <View style={{ flexDirection: 'row-reverse' }}>
               <TouchableOpacity
                 onPress={() => {
                   toggleModal();
@@ -609,137 +609,138 @@ export default function SettingsScreen() {
                 )}
               </View>
             </View>
-
-            <View>
-              <View
-                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text style={styles.accountHeading}>Card Information</Text>
-                <View style={{marginTop: 25}}>
-                  {cardInfo !== null && cardEditable ? (
-                    <View style={{flexDirection: 'row'}}>
-                      <TouchableOpacity
-                        onPress={() => {
-                          updateCard(cardInfo._id);
-                        }}>
-                        <FontAwesome
-                          name="check"
-                          style={styles.check}
-                          size={20}
-                        />
-                      </TouchableOpacity>
+            {
+              userType.toLowerCase() === 'teacher' &&
+              <View>
+                <View
+                  style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={styles.accountHeading}>Card Information</Text>
+                  <View style={{ marginTop: 25 }}>
+                    {cardInfo !== null && cardEditable ? (
+                      <View style={{ flexDirection: 'row' }}>
+                        <TouchableOpacity
+                          onPress={() => {
+                            updateCard(cardInfo._id);
+                          }}>
+                          <FontAwesome
+                            name="check"
+                            style={styles.check}
+                            size={20}
+                          />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() => {
+                            setCardEditable(!cardEditable);
+                          }}>
+                          <FontAwesome
+                            name="times"
+                            style={styles.times}
+                            size={20}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    ) : (
                       <TouchableOpacity
                         onPress={() => {
                           setCardEditable(!cardEditable);
                         }}>
-                        <FontAwesome
-                          name="times"
-                          style={styles.times}
-                          size={20}
+                        <Image
+                          style={styles.pencilIcon}
+                          source={require('../assets/images/icons/pencil.png')}
                         />
                       </TouchableOpacity>
+                    )}
+                  </View>
+                </View>
+                <View style={styles.horizontalSeparator} />
+                {cardInfo !== null ? (
+                  <>
+                    <View style={styles.groupBox}>
+                      <View style={styles.labelBox}>
+                        <Text style={styles.label}>Card Number</Text>
+                        <View style={styles.iconInputBox}>
+                          {cardEditable ? (
+                            <TextInput
+                              defaultValue={cardInfo.cardNumber}
+                              editable={true}
+                              maxLength={16}
+                              placeholder={'Card Number'}
+                              onChangeText={text => {
+                                setCardNumber(text);
+                              }}
+                            />
+                          ) : (
+                            <TextInput
+                              value={cardInfo.cardNumber}
+                              editable={false}
+                            />
+                          )}
+                        </View>
+                      </View>
                     </View>
-                  ) : (
-                    <TouchableOpacity
+                    <View style={styles.groupBox}>
+                      <View style={styles.labelBox}>
+                        <Text style={styles.label}>Expiry Month</Text>
+                        <View style={styles.iconInputBox}>
+                          {cardEditable ? (
+                            <TextInput
+                              defaultValue={cardInfo.expiryMonth}
+                              editable={true}
+                              maxLength={5}
+                              placeholder={'MM/YY'}
+                              onChangeText={text => {
+                                setExpiryMonth(text);
+                              }}
+                            />
+                          ) : (
+                            <TextInput
+                              value={cardInfo.expiryMonth}
+                              editable={false}
+                            />
+                          )}
+                        </View>
+                      </View>
+                    </View>
+                    <View style={styles.groupBox}>
+                      <View style={styles.labelBox}>
+                        <Text style={styles.label}>CVC</Text>
+                        <View style={styles.iconInputBox}>
+                          {cardEditable ? (
+                            <TextInput
+                              defaultValue={cardInfo.cvc}
+                              editable={true}
+                              maxLength={3}
+                              placeholder={'CVC'}
+                              onChangeText={text => {
+                                setCVC(text);
+                              }}
+                            />
+                          ) : (
+                            <TextInput value={cardInfo.cvc} editable={false} />
+                          )}
+                        </View>
+                      </View>
+                    </View>
+                  </>
+                ) : (
+                  <View style={styles.groupBox}>
+                    <Button
                       onPress={() => {
-                        setCardEditable(!cardEditable);
+                        toggleModal();
                       }}>
-                      <Image
-                        style={styles.pencilIcon}
-                        source={require('../assets/images/icons/pencil.png')}
-                      />
-                    </TouchableOpacity>
-                  )}
-                </View>
+                      Add Card Information
+                    </Button>
+                  </View>
+                )}
               </View>
-              <View style={styles.horizontalSeparator} />
-              {cardInfo !== null ? (
-                <>
-                  <View style={styles.groupBox}>
-                    <View style={styles.labelBox}>
-                      <Text style={styles.label}>Card Number</Text>
-                      <View style={styles.iconInputBox}>
-                        {cardEditable ? (
-                          <TextInput
-                            defaultValue={cardInfo.cardNumber}
-                            editable={true}
-                            maxLength={16}
-                            placeholder={'Card Number'}
-                            onChangeText={text => {
-                              setCardNumber(text);
-                            }}
-                          />
-                        ) : (
-                          <TextInput
-                            value={cardInfo.cardNumber}
-                            editable={false}
-                          />
-                        )}
-                      </View>
-                    </View>
-                  </View>
-                  <View style={styles.groupBox}>
-                    <View style={styles.labelBox}>
-                      <Text style={styles.label}>Expiry Month</Text>
-                      <View style={styles.iconInputBox}>
-                        {cardEditable ? (
-                          <TextInput
-                            defaultValue={cardInfo.expiryMonth}
-                            editable={true}
-                            maxLength={5}
-                            placeholder={'MM/YY'}
-                            onChangeText={text => {
-                              setExpiryMonth(text);
-                            }}
-                          />
-                        ) : (
-                          <TextInput
-                            value={cardInfo.expiryMonth}
-                            editable={false}
-                          />
-                        )}
-                      </View>
-                    </View>
-                  </View>
-                  <View style={styles.groupBox}>
-                    <View style={styles.labelBox}>
-                      <Text style={styles.label}>CVC</Text>
-                      <View style={styles.iconInputBox}>
-                        {cardEditable ? (
-                          <TextInput
-                            defaultValue={cardInfo.cvc}
-                            editable={true}
-                            maxLength={3}
-                            placeholder={'CVC'}
-                            onChangeText={text => {
-                              setCVC(text);
-                            }}
-                          />
-                        ) : (
-                          <TextInput value={cardInfo.cvc} editable={false} />
-                        )}
-                      </View>
-                    </View>
-                  </View>
-                </>
-              ) : (
-                <View style={styles.groupBox}>
-                  <Button
-                    onPress={() => {
-                      toggleModal();
-                    }}>
-                    Add Card Information
-                  </Button>
-                </View>
-              )}
-            </View>
-
+            }
             <View>
               <Text style={styles.accountHeading}>Privacy Settings</Text>
               <View style={styles.horizontalSeparator} />
               <View style={styles.groupBox}>
                 <Text style={styles.label}>Push Notifications</Text>
                 <Switch
-                  trackColor={{false: '#767577', true: '#81b0ff'}}
+                  trackColor={{ false: '#767577', true: '#81b0ff' }}
                   thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
                   ios_backgroundColor="#3e3e3e"
                   onValueChange={toggleSwitch}
@@ -902,10 +903,10 @@ export default function SettingsScreen() {
             </View>
 
             <View style={styles.horizontalSeparator} />
-            <View style={{marginTop: 30, backgroundColor: 'transparent'}}>
+            <View style={{ marginTop: 30, backgroundColor: 'transparent' }}>
               <View>
                 {/* You can read DeepMove's &nbsp; */}
-                <Text style={{textAlign: 'center'}}>
+                <Text style={{ textAlign: 'center' }}>
                   <Text
                     onPress={() => Linking.openURL('https://www.google.com/')}
                     style={{
@@ -924,7 +925,7 @@ export default function SettingsScreen() {
                     Privacy Policy
                   </Text>
                 </Text>
-                <Text style={{textAlign: 'center', marginTop: 5}}>
+                <Text style={{ textAlign: 'center', marginTop: 5 }}>
                   {/* Test Version {Platform.OS=='android'? appJson.expo.android.versionName : appJson.expo.ios.buildNumber}
                 {'\n'} */}
                   {'StudyBuddy Version ' +
