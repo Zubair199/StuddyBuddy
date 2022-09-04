@@ -92,7 +92,7 @@ export default function AccountVerificationScreen() {
         .then((response) => response.json())
         .then((responseJson) => {
           console.log(responseJson)
-          if (responseJson.isActive) {
+          if (responseJson && responseJson.isActive) {
             setShowSpinner(false);
             Alert.alert('Alert', responseJson.message);
 
@@ -107,17 +107,21 @@ export default function AccountVerificationScreen() {
             });
 
           }
+          else {
+            Alert.alert('Alert', responseJson.message);
+
+          }
         })
         .catch((err: any) => {
           console.log(err)
           console.log(err.response)
-          Alert.alert('Alert', "Registration Failed. Try Again!");
+          Alert.alert('Alert', "Something went wrong. Try Again!");
           setShowSpinner(false);
         })
     }
     catch (exception) {
       console.log('exception ', exception)
-      Alert.alert('Alert', "Registration Failed. Try Again!");
+      Alert.alert('Alert', "Something went wrong. Try Again!");
       setShowSpinner(false);
     }
   };

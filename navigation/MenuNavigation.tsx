@@ -36,6 +36,7 @@ import EditProfileScreen from '../screens/EditProfileScreen';
 import ClassPayScreen from '../screens/ClassPayScreen';
 import PlatformPayScreen from '../screens/PlatformPayScreen';
 import ClassVideoScreen from '../screens/ClassVideoScreen';
+import { useUserAuth } from './index';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -43,6 +44,14 @@ const RootStack = createNativeStackNavigator();
 
 const MenuNavigation = () => {
   const navigation = useNavigation();
+  const {
+    setUserToken,
+    setUserName,
+    setUserEmail,
+    setUserType,
+    userType,
+    userToken,
+  } = useUserAuth()!;
 
   const getCurrentScreenName = (state: any): any => {
     let screenName = '';
@@ -55,153 +64,11 @@ const MenuNavigation = () => {
     return screenName;
   };
 
+  React.useEffect(() => {
+    console.log(userType)
+  }, [])
   return (
     <HomeStackScreen />
-    // <BottomTab.Navigator
-    //   initialRouteName="Home"
-    //   screenOptions={{
-    //     headerStyle: {
-    //       backgroundColor: '#3878ee',
-    //     },
-    //     tabBarStyle: {
-    //       backgroundColor: '#3878ee',
-    //       height: Platform.OS === 'ios' ? 83 : 85,
-    //       position: 'absolute',
-    //       bottom: 15,
-    //       left: 20,
-    //       right: 20,
-    //       elevation: 0,
-    //       borderRadius: 15,
-    //     },
-    //     tabBarShowLabel: false,
-    //     tabBarLabelStyle: { fontSize: 15 },
-    //     headerShown: false,
-    //   }}>
-    //   <BottomTab.Screen
-    //     name="classes"
-    //     options={{
-    //       headerShown: false,
-    //       tabBarIcon: ({ focused }) => (
-    //         <View
-    //           style={{ alignItems: 'center', justifyContent: 'center', top: 3 }}>
-    //           <Image
-    //             style={[
-    //               styles.tabIcon,
-    //               {
-    //                 tintColor: focused ? '#ffbb74' : '#ffffff',
-    //               },
-    //             ]}
-    //             source={require('../assets/images/icons/briefcase.png')}
-    //           />
-    //           <Text
-    //             style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
-    //             Classes
-    //           </Text>
-    //         </View>
-    //       ),
-    //     }}
-    //     component={HomeStackScreen}
-    //   />
-    //   <BottomTab.Screen
-    //     name="Message"
-    //     options={{
-    //       tabBarIcon: ({ focused }) => (
-    //         <View
-    //           style={{ alignItems: 'center', justifyContent: 'center', top: 3 }}>
-    //           <Image
-    //             style={[
-    //               styles.tabIcon,
-    //               {
-    //                 tintColor: focused ? '#ffbb74' : '#ffffff',
-    //               },
-    //             ]}
-    //             source={require('../assets/images/icons/comment.png')}
-    //           />
-    //           <Text
-    //             style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
-    //             Message
-    //           </Text>
-    //         </View>
-    //       ),
-    //     }}
-    //     component={MessagesStackScreen}
-    //   />
-    //   <BottomTab.Screen
-    //     name="Payment"
-    //     options={{
-    //       headerShown: false,
-    //       tabBarIcon: ({ focused }) => (
-    //         <View
-    //           style={{ alignItems: 'center', justifyContent: 'center', top: 3 }}>
-    //           <Image
-    //             style={[
-    //               styles.tabIcon,
-    //               {
-    //                 tintColor: focused ? '#ffbb74' : '#ffffff',
-    //               },
-    //             ]}
-    //             source={require('../assets/images//icons/credit-card.png')}
-    //           />
-    //           <Text
-    //             style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
-    //             Payment
-    //           </Text>
-    //         </View>
-    //       ),
-    //     }}
-    //     component={PaymentStackScreen}
-    //   />
-    //   <BottomTab.Screen
-    //     name="Profile"
-    //     options={{
-    //       headerShown: false,
-    //       tabBarIcon: ({ focused }) => (
-    //         <View
-    //           style={{ alignItems: 'center', justifyContent: 'center', top: 3 }}>
-    //           <Image
-    //             style={[
-    //               styles.tabIcon,
-    //               {
-    //                 tintColor: focused ? '#ffbb74' : '#ffffff',
-    //               },
-    //             ]}
-    //             source={require('../assets/images/profile.png')}
-    //           />
-    //           <Text
-    //             style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
-    //             Profile
-    //           </Text>
-    //         </View>
-    //       ),
-    //     }}
-    //     component={ProfileStackScreen}
-    //   />
-    //   <BottomTab.Screen
-    //     name="Settings"
-    //     options={{
-    //       headerShown: false,
-    //       tabBarIcon: ({ focused }) => (
-    //         <View
-    //           style={{ alignItems: 'center', justifyContent: 'center', top: 3 }}>
-    //           <Image
-    //             style={[
-    //               styles.tabIcon,
-    //               {
-    //                 tintColor: focused ? '#ffbb74' : '#ffffff',
-    //               },
-    //             ]}
-    //             source={require('../assets/images/setting.png')}
-    //           />
-    //           <Text
-    //             style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
-    //             Settings
-    //           </Text>
-    //         </View>
-    //       ),
-    //     }}
-    //     component={SettingsStackScreen}
-    //   />
-    // </BottomTab.Navigator>
   );
 };
 

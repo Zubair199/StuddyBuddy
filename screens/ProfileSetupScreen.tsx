@@ -1,6 +1,6 @@
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import * as React from 'react';
-import {useState} from 'react';
+import { useState } from 'react';
 import {
   Alert,
   Share,
@@ -16,13 +16,13 @@ import {
   Modal,
   Platform,
 } from 'react-native';
-import {Avatar, BottomSheet, CheckBox} from 'react-native-elements';
+import { Avatar, BottomSheet, CheckBox } from 'react-native-elements';
 import api from '../constants/api';
-import {EditProfileParamList} from '../types';
-import {AuthContext} from '../utils/AuthContext';
+import { EditProfileParamList } from '../types';
+import { AuthContext } from '../utils/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import genericStyle from '../assets/styles/styleSheet';
-import {AUTH, AUTHENTICATIONS} from '../services/api.constants';
+import { AUTH, AUTHENTICATIONS } from '../services/api.constants';
 import * as ImagePicker from 'react-native-image-picker';
 
 import axios from 'axios';
@@ -79,13 +79,15 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
   const [user, setUser] = useState('');
   const [userRole, setUserRole] = useState('');
 
+  const [isStudent, setIsStudent] = useState(false);
+  const [isTeacher, setIsTeacher] = useState(false);
+
+
   const [videoResponse, setVideoResponse] = useState(null);
   const [image, setImage] = useState(null);
   const [imageName, setImageName] = useState(
     'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
   );
-  let isStudent = false;
-  let isTeacher = false;
 
   React.useEffect(() => {
     try {
@@ -98,12 +100,12 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
           setUser(responseJson.user._id);
           setUserRole(responseJson.user.roles.name);
           if (responseJson.user.roles.name === 'user') {
-            isStudent = true;
-            isTeacher = false;
+            setIsStudent(true);
+            setIsTeacher(false);
           }
           if (responseJson.user.roles.name === 'teacher') {
-            isStudent = false;
-            isTeacher = true;
+            setIsStudent(false);
+            setIsTeacher(true);
           }
         })
         .catch((err: any) => {
@@ -121,7 +123,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
   }, []);
   const selectVideo = async () => {
     ImagePicker.launchImageLibrary(
-      {mediaType: 'video', includeBase64: true},
+      { mediaType: 'video', includeBase64: true },
       response => {
         console.log(response);
         if (response.didCancel) {
@@ -198,23 +200,21 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
         .then(response => response.json())
         .then(responseJson => {
           console.log(responseJson);
-          let res = responseJson;
 
-          if (res !== null) {
-            if (res.success) {
-              setUserName(responseJson.user.username);
-              setUserEmail(responseJson.user.email);
-              setUserToken(responseJson.user._id);
-              setUserType(responseJson.user.roles.name.toLowerCase());
-              setGuestView(false);
-            } else {
-              navigation.navigate('Login');
-              Alert.alert(
-                'Success',
-                'Your account is created and sent for admin approval. Once approved you can login!',
-              );
-            }
+          if (responseJson && responseJson.success) {
+            setUserName(responseJson.user.username);
+            setUserEmail(responseJson.user.email);
+            setUserToken(responseJson.user._id);
+            setUserType(responseJson.user.roles.name.toLowerCase());
+            setGuestView(false);
+          } else {
+            navigation.navigate('Login');
+            Alert.alert(
+              'Success',
+              'Your account is created and sent for admin approval. Once approved you can login!',
+            );
           }
+
         })
         .catch((err: any) => {
           console.log(err);
@@ -434,7 +434,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
     setQuery(route.params.allSkills);
   }
 
-  React.useEffect(() => {}, []);
+  React.useEffect(() => { }, []);
 
   React.useEffect(() => {
     const backAction = () => {
@@ -454,7 +454,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.body}>
-          <View style={{alignItems: 'center', marginBottom: 10}}>
+          <View style={{ alignItems: 'center', marginBottom: 10 }}>
             <Avatar
               rounded
               title={'P'}
@@ -471,11 +471,11 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
             <View
               style={[
                 styles.textBoxContainer,
-                {marginTop: 35, alignItems: 'center'},
+                { marginTop: 35, alignItems: 'center' },
               ]}>
               {email ? (
                 <Text
-                  style={{fontSize: 15, color: '#3878ee', fontWeight: 'bold'}}>
+                  style={{ fontSize: 15, color: '#3878ee', fontWeight: 'bold' }}>
                   {email}
                 </Text>
               ) : (
@@ -490,7 +490,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
               )}
             </View>
 
-            <View style={[styles.textBoxContainer, {height: 100}]}>
+            <View style={[styles.textBoxContainer, { height: 100 }]}>
               <TextInput
                 style={genericStyle.textBox}
                 autoCapitalize="words"
@@ -558,7 +558,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
               ))}
               <TouchableOpacity
                 onPress={() => setGenreModal(true)}
-                style={[genericStyle.locationAddRemove, {width: 150}]}>
+                style={[genericStyle.locationAddRemove, { width: 150 }]}>
                 <Image
                   source={require('../assets/images/icons/add-button.png')}
                   style={styles.addIcon}
@@ -586,7 +586,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
               ))}
               <TouchableOpacity
                 onPress={() => setSkillsModal(true)}
-                style={[styles.locationAddRemove, {width: 150}]}>
+                style={[styles.locationAddRemove, { width: 150 }]}>
                 <Image
                   source={require('../assets/images/icons/add-button.png')}
                   style={styles.addIcon}
@@ -603,7 +603,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
                 <View style={genericStyle.locationEditBox}>
                   <TouchableOpacity
                     onPress={() => selectVideo()}
-                    style={[styles.locationAddRemove, {width: 150}]}>
+                    style={[styles.locationAddRemove, { width: 150 }]}>
                     <Image
                       source={require('../assets/images/icons/add-button.png')}
                       style={styles.addIcon}
@@ -620,20 +620,20 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
           )}
           <TouchableOpacity
             onPress={onPressNextBtn}
-            style={[genericStyle.loginBtn, {marginTop: 25}]}>
+            style={[genericStyle.loginBtn, { marginTop: 25 }]}>
             <Text style={genericStyle.loginBtnText}>Submit Request</Text>
           </TouchableOpacity>
 
           <View style={styles.goBackView}>
             <TouchableOpacity onPress={handleBack}>
-              <View style={{width: 'auto', alignSelf: 'center'}}>
+              <View style={{ width: 'auto', alignSelf: 'center' }}>
                 <Text style={styles.goBackText}>Go back</Text>
                 <View style={genericStyle.underline} />
               </View>
             </TouchableOpacity>
           </View>
 
-          <View style={{marginTop: 50}} />
+          <View style={{ marginTop: 50 }} />
         </View>
       </ScrollView>
 
@@ -669,7 +669,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
             </TouchableOpacity>
           </View>
 
-          <View style={{marginTop: 20}}>
+          <View style={{ marginTop: 20 }}>
             <View>
               {query.length < 1 ? (
                 <View
@@ -737,7 +737,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
             </TouchableOpacity>
           </View>
 
-          <View style={{marginTop: 20}}>
+          <View style={{ marginTop: 20 }}>
             <View>
               {queryGenre.length < 1 ? (
                 <View
@@ -806,7 +806,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
             </TouchableOpacity>
           </View>
 
-          <View style={{marginTop: 20}}>
+          <View style={{ marginTop: 20 }}>
             <View>
               {queryLocations.length < 1 ? (
                 <View
@@ -890,7 +890,7 @@ const styles = StyleSheet.create({
     width: '100%',
     fontSize: 18,
   },
-  addRemoveBoxText: {paddingLeft: 15, color: '#3878ee'},
+  addRemoveBoxText: { paddingLeft: 15, color: '#3878ee' },
   textBox: {
     height: '100%',
     width: 300,

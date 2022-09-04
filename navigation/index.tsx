@@ -140,7 +140,7 @@ function RootNavigator() {
                 <Stack.Screen
                   name="ProfileSetup"
                   component={ProfileSetupScreen}
-                  options={headerFixed}
+                  options={{headerShown: false}}
                 />
                 <Stack.Screen
                   name="Guest"

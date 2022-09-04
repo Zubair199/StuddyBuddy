@@ -1,6 +1,6 @@
 import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
-import { ImageBackground, SafeAreaView, ScrollView, StyleSheet, Touchable, TouchableOpacity, TouchableOpacityBase, View, TextInput } from 'react-native';
+import { ImageBackground, SafeAreaView, ScrollView, StyleSheet, Touchable, TouchableOpacity, TouchableOpacityBase, View, TextInput, Dimensions } from 'react-native';
 import { Text } from 'react-native-elements'
 import { useNavigation } from '@react-navigation/native';
 import ClassSlider from '../components/ClassSlider';
@@ -17,7 +17,10 @@ import MainLayout from './MainLayout';
 import { AuthContext } from '../utils/AuthContext';
 import TeacherAssignmentSlider from '../components/TeacherAssignmentSlider';
 import TeacherExamSlider from '../components/TeacherExamSlider';
-
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import { ThemeContext } from '../context/ThemeContext';
+const screenHeight = Dimensions.get('screen').height;
 export default function HomeScreen() {
   const { userToken, userType } = React.useContext(AuthContext);
 
@@ -29,6 +32,17 @@ export default function HomeScreen() {
   const [exams, setExams] = React.useState([])
   const [assignments, setAssignments] = React.useState([])
   let [user, setUser] = React.useState(userToken)
+
+  const {currentScreen, height, containerHeight} =
+  React.useContext(ThemeContext);
+  const controller = new AbortController();
+  const signal = controller.signal;
+  React.useEffect(() => {
+    return () => {
+      // cancel the request before component unmounts
+      controller.abort();
+    };
+  }, []);
 
   React.useEffect(() => {
     console.log("HomeScreen", userType)
@@ -224,11 +238,30 @@ export default function HomeScreen() {
   }
 
   return (
-    <MainLayout Component={component()} />
+    <SafeAreaView style={{flex: 1, backgroundColor: '#ffffff'}}>
+    <View style={{height: 50}}>
+      <Header />
+    </View>
+    <View style={styles.container}>
+      <View style={{height: containerHeight, backgroundColor: '#ffffff'}}>
+        {component()}
+      </View>
+    </View>
+    <View style={{height: 60}}>
+      <Footer />
+    </View>
+  </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    height: screenHeight - 110,
+    // paddingHorizontal: 15,
+    // paddingBottom: 10,
+  }, 
   fab: {
     position: 'absolute',
     margin: 16,
@@ -249,4 +282,5 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     textTransform: "uppercase",
   }
+
 })
