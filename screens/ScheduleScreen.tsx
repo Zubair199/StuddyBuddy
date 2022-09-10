@@ -101,11 +101,11 @@ export default function SchedulesScreen() {
         .then((response) => response.json())
         .then((responseJson) => {
           console.log('classes ', responseJson.classes)
-          console.log('schedule ', responseJson.schedule)
+          console.log('schedule ', responseJson.schedules)
           let _classes = []
           responseJson.classes.forEach(item => {
             let classScheule = responseJson.schedules.filter(schedule => schedule.Class === item._id)
-            // console.log("classScheule ", classScheule)
+            console.log("classScheule filter ", classScheule)
             if (classScheule.length > 0) {
               _classes.push({
                 class: item,

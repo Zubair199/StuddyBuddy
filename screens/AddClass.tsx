@@ -76,7 +76,7 @@ export default function AddClassScreen() {
   let [language, setLanguage] = React.useState("")
   let [classDuration, setClassDuration] = React.useState("")
   let [subjects, setSubjects] = React.useState([])
-  let [price, setPrice] = React.useState("")
+  let [price, setPrice] = React.useState("29.99")
 
   let [schedule, setSchedule] = React.useState([])
   let [step1Errors, setStep1Errors] = React.useState(false)

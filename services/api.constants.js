@@ -1,5 +1,7 @@
 module.exports = {
-
+    MESSAGE:{
+        EXCEPTION: 'Something went wrong. Try reloading the app!'
+    },
     AUTHENTICATIONS: {
         // Saims
         API_URL: "http://192.168.10.2:5000",
@@ -56,7 +58,7 @@ module.exports = {
         CREATE: "/api/class",
         CREATE_TOPIC: "/api/class/topic",
         CREATE_ANNOUNCEMENT: "/api/class/announcement",
-        GET_ALL_ACTIVE_CLASSES_BY_TEACHER_ID: "/api/class/teacher/active/",
+        GET_ALL_ACTIVE_CLASSES_BY_TEACHER_ID: "/api/class/active/",
 
         GET_ALL_ACTIVE_UPCOMING_CLASSES_BY_TEACHER_ID: "/api/class/teacher/upcoming/active/",
 

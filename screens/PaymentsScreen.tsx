@@ -36,15 +36,15 @@ export default function PaymentsScreen() {
 
   function showPaymentDetails(paymentDetail) {
     console.log(paymentDetail)
+    let _class = classList.find(item => item._id === paymentDetail.class)
+    console.log('_class', _class)
+    setClassDetails(_class)
     fetch(AUTHENTICATIONS.API_URL + STRIPE.GET_PAYMENT_DETAILS + userToken + '/' + paymentDetail.paymentIntentId)
       .then(response => response.json())
       .then(responseJson => {
-        console.log('PAYMENTS : = ', responseJson);
+        // console.log('PAYMENTS : = ', responseJson);
         setPayment(responseJson.payment)
 
-        let _class = classList.find(item => item._id === paymentDetail.class)
-        console.log(_class)
-        setClassDetails(_class)
         toggleModal()
       })
       .catch(err => {
@@ -138,13 +138,16 @@ export default function PaymentsScreen() {
               let _class = classList.find(item => item._id === classPay.class)
               if (_class) {
                 return (
-                  <View style={{
-                    marginVertical: 5,
-                    elevation: 4,
-                    borderRadius: 10,
-                    backgroundColor: "#fff",
-                    padding: 15
-                  }}>
+                  <View
+                    key={index}
+                    style={{
+                      marginVertical: 5,
+                      elevation: 4,
+                      borderRadius: 10,
+                      backgroundColor: "#fff",
+                      padding: 15
+                    }}
+                  >
                     <TouchableOpacity onPress={() => showPaymentDetails(classPay)}>
                       <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
                         <View>

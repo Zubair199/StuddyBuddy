@@ -36,7 +36,6 @@ import EditProfileScreen from '../screens/EditProfileScreen';
 import ClassPayScreen from '../screens/ClassPayScreen';
 import PlatformPayScreen from '../screens/PlatformPayScreen';
 import ClassVideoScreen from '../screens/ClassVideoScreen';
-import { useUserAuth } from './index';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -44,14 +43,7 @@ const RootStack = createNativeStackNavigator();
 
 const MenuNavigation = () => {
   const navigation = useNavigation();
-  const {
-    setUserToken,
-    setUserName,
-    setUserEmail,
-    setUserType,
-    userType,
-    userToken,
-  } = useUserAuth()!;
+
 
   const getCurrentScreenName = (state: any): any => {
     let screenName = '';
@@ -64,9 +56,7 @@ const MenuNavigation = () => {
     return screenName;
   };
 
-  React.useEffect(() => {
-    console.log(userType)
-  }, [])
+
   return (
     <HomeStackScreen />
   );

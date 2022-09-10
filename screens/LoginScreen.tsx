@@ -13,17 +13,17 @@ import {
   Image,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ThemeProvider, useNavigation} from '@react-navigation/native';
-import {useState} from 'react';
-import {isValidEmail, logError} from '../utils/HelperFunctions';
-import {AuthContext} from '../utils/AuthContext';
+import { ThemeProvider, useNavigation } from '@react-navigation/native';
+import { useState } from 'react';
+import { isValidEmail, logError } from '../utils/HelperFunctions';
+import { AuthContext } from '../utils/AuthContext';
 import api from '../constants/api';
 import Spinner from 'react-native-loading-spinner-overlay';
 import CONSTANTS from '../constants/common';
 import genericStyle from '../assets/styles/styleSheet';
-import {AUTH, AUTHENTICATIONS, GENERAL} from '../services/api.constants';
-import {ThemeContext} from '../context/ThemeContext';
-import {Checkbox} from 'native-base';
+import { AUTH, AUTHENTICATIONS, GENERAL, MESSAGE } from '../services/api.constants';
+import { ThemeContext } from '../context/ThemeContext';
+import { Checkbox } from 'native-base';
 
 const useUserAuth = () => React.useContext(AuthContext);
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -38,7 +38,7 @@ export default function LoginScreen() {
   const [rememberMe, setRememberMe] = React.useState(false);
   const [visible, setVisible] = React.useState(false);
 
-  const {currentScreen, setCurrentScreen} = React.useContext(ThemeContext);
+  const { currentScreen, setCurrentScreen } = React.useContext(ThemeContext);
 
   const {
     setUserToken,
@@ -76,12 +76,12 @@ export default function LoginScreen() {
         .catch((err: any) => {
           console.log(err);
           console.log(err.response);
-          Alert.alert('Alert', 'Registration Failed. Try Again!');
+          Alert.alert('Alert', MESSAGE.EXCEPTION);
           setShowSpinner(false);
         });
     } catch (exception) {
       console.log('exception ', exception);
-      Alert.alert('Alert', 'Registration Failed. Try Again!');
+      Alert.alert('Alert', MESSAGE.EXCEPTION);
       setShowSpinner(false);
     }
     (async () => {
@@ -148,10 +148,12 @@ export default function LoginScreen() {
                 console.log(err);
                 console.log(err.response);
                 setIsLoading(false);
+                Alert.alert('Alert', MESSAGE.EXCEPTION);
               });
           } catch (exception) {
             setIsLoading(false);
             console.log('exception ', exception);
+            Alert.alert('Alert', MESSAGE.EXCEPTION);
           }
         }
       } else {
@@ -261,10 +263,12 @@ export default function LoginScreen() {
           console.log(err);
           console.log(err.response);
           setIsLoading(false);
+          Alert.alert('Alert', MESSAGE.EXCEPTION);
         });
     } catch (exception) {
       setIsLoading(false);
       console.log('exception ', exception);
+      Alert.alert('Alert', MESSAGE.EXCEPTION);
     }
   };
 
@@ -289,15 +293,15 @@ export default function LoginScreen() {
         textContent={'Loading...'}
         textStyle={styles.spinnerTextStyle}
       />
-      <View style={{flexDirection: 'column'}}>
+      <View style={{ flexDirection: 'column' }}>
         <View style={styles.header}>
           <Image
             source={require('../assets/images/login_log.png')}
-            style={{width: 164.62, height: 165.69}}
+            style={{ width: 164.62, height: 165.69 }}
           />
         </View>
 
-        <View style={{padding: 15}}>
+        <View style={{ padding: 15 }}>
           <View style={styles.inputTextContainer}>
             {/* <TextInput
               keyboardType="email-address"
@@ -321,7 +325,7 @@ export default function LoginScreen() {
           </View>
 
           <View style={styles.passwordSection}>
-            <View style={{width: '90%'}}>
+            <View style={{ width: '90%' }}>
               <TextInput
                 secureTextEntry={secure}
                 visible-password={true}
@@ -355,13 +359,13 @@ export default function LoginScreen() {
               </TouchableOpacity>
             </View>
           </View>
-          <View style={{flexDirection: 'row', marginTop: 20}}>
+          <View style={{ flexDirection: 'row', marginTop: 20 }}>
             <Checkbox
               accessibilityLabel="Remember Me"
               value={rememberMe}
               onChange={() => setRememberMe(!rememberMe)}
             />
-            <Text style={{marginLeft: 15, color: '#3878ee'}}>Remember Me</Text>
+            <Text style={{ marginLeft: 15, color: '#3878ee' }}>Remember Me</Text>
           </View>
         </View>
 
@@ -383,7 +387,7 @@ export default function LoginScreen() {
             <TouchableOpacity onPress={onPressCreateAccountBtn}>
               <Text style={styles.createBtnText}>
                 Create an{' '}
-                <Text style={[styles.createBtnText, {fontWeight: 'bold'}]}>
+                <Text style={[styles.createBtnText, { fontWeight: 'bold' }]}>
                   account
                 </Text>
               </Text>
@@ -401,7 +405,7 @@ export default function LoginScreen() {
                 marginTop: 40,
               },
             ]}>
-            <Text style={[genericStyle.loginBtnText, {color: '#3878ee'}]}>
+            <Text style={[genericStyle.loginBtnText, { color: '#3878ee' }]}>
               Continue As Guest{' '}
             </Text>
           </TouchableOpacity>

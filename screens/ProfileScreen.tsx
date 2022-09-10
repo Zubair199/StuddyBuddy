@@ -98,7 +98,7 @@ export default function ProfileScreen(dataType: dataTypes) {
       fetch(AUTHENTICATIONS.API_URL + GENERAL.SITE_CONTENTS)
         .then(response => response.json())
         .then(responseJson => {
-          console.log(responseJson);
+          // console.log(responseJson);
           setAllSkills(responseJson.skills);
           setAllLocations(responseJson.locations);
           setAllSubjects(responseJson.subjects);

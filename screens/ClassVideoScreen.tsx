@@ -112,7 +112,7 @@ export default class ClassVideoScreen extends Component {
         // gets called when a participant disconnects.
         console.log("onParticipantRemovedVideoTrack: ", participant, track)
         const videoTracks = this.state.videoTracks
-        videoTracks.delete(track.trackSid)
+        // videoTracks.delete(track.trackSid)
         this.setState({ videoTracks: { ...videoTracks } })
     }
     render() {

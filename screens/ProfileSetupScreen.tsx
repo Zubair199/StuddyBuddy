@@ -211,7 +211,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
             navigation.navigate('Login');
             Alert.alert(
               'Success',
-              'Your account is created and sent for admin approval. Once approved you can login!',
+              "Your account is created and sent for admin approval. You'll get a response within 48 hours for approval.",
             );
           }
 

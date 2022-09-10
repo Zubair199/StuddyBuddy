@@ -108,7 +108,7 @@ export default function AddAssignmentQuestions({ route }) {
                         answer3: answer3,
                         answer4: answer4,
                         answer: answer,
-                        exam: exam,
+                        assignment: assignment,
                     })
                 }
                 else {
@@ -120,7 +120,7 @@ export default function AddAssignmentQuestions({ route }) {
                         answer3: answer3,
                         answer4: answer4,
                         answer: answer,
-                        exam: exam,
+                        assignment: assignment,
                     })
                 }
                 setData(arr)

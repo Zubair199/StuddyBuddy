@@ -112,7 +112,7 @@ export default function AddExamScreen() {
     fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES_BY_TEACHER_ID + user)
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log('classes ', responseJson.classes)
+        console.log('classes ', responseJson)
         setClasses(responseJson.classes)
         setLoader(false)
       })

@@ -21,9 +21,9 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { ThemeContext } from '../context/ThemeContext';
 const screenHeight = Dimensions.get('screen').height;
-export default function HomeScreen() {
+export default function HomeScreen({ route }) {
   const { userToken, userType } = React.useContext(AuthContext);
-
+  
   const isFocused = useIsFocused();
   const navigation = useNavigation();
   const [showModal, setShowModal] = React.useState(false);
@@ -33,8 +33,7 @@ export default function HomeScreen() {
   const [assignments, setAssignments] = React.useState([])
   let [user, setUser] = React.useState(userToken)
 
-  const {currentScreen, height, containerHeight} =
-  React.useContext(ThemeContext);
+  const { currentScreen, height, containerHeight } = React.useContext(ThemeContext);
   const controller = new AbortController();
   const signal = controller.signal;
   React.useEffect(() => {
@@ -52,7 +51,7 @@ export default function HomeScreen() {
     else {
       teacherApiCall()
     }
-  }, [isFocused])
+  }, [])
 
   function teacherApiCall() {
     fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_UPCOMING_CLASSES_BY_TEACHER_ID + user)
@@ -238,19 +237,19 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: '#ffffff'}}>
-    <View style={{height: 50}}>
-      <Header />
-    </View>
-    <View style={styles.container}>
-      <View style={{height: containerHeight, backgroundColor: '#ffffff'}}>
-        {component()}
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
+      <View style={{ height: 50 }}>
+        <Header />
       </View>
-    </View>
-    <View style={{height: 60}}>
-      <Footer />
-    </View>
-  </SafeAreaView>
+      <View style={styles.container}>
+        <View style={{ height: containerHeight, backgroundColor: '#ffffff' }}>
+          {component()}
+        </View>
+      </View>
+      <View style={{ height: 60 }}>
+        <Footer />
+      </View>
+    </SafeAreaView>
   )
 }
 
@@ -261,7 +260,7 @@ const styles = StyleSheet.create({
     height: screenHeight - 110,
     // paddingHorizontal: 15,
     // paddingBottom: 10,
-  }, 
+  },
   fab: {
     position: 'absolute',
     margin: 16,

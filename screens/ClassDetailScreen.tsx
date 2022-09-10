@@ -72,6 +72,18 @@ export default function ClassDetailScreen({ route }) {
       .catch(err => {
         console.log(err);
       });
+
+    getUser()
+    console.log(userType);
+
+    if (userType.toLowerCase() === 'user') {
+      studentApiCall();
+    } else {
+      teacherApiCall();
+    }
+  }, []);
+
+  function getUser() {
     fetch(AUTHENTICATIONS.API_URL + AUTH.GET_USER_BY_ID + user)
       .then(response => response.json())
       .then(responseJson => {
@@ -83,23 +95,17 @@ export default function ClassDetailScreen({ route }) {
       .catch(err => {
         console.log(err);
       });
-
-    if (userType.toLowerCase() === 'user') {
-      studentApiCall();
-    } else {
-      teacherApiCall();
-    }
-  }, []);
+  }
 
   function teacherApiCall() {
     fetch(AUTHENTICATIONS.API_URL + CLASS.GET_CLASS_BY_CLASS_ID + classID)
       .then(response => response.json())
       .then(responseJson => {
-        // console.log('details classes ', responseJson.schedules);
+        console.log('details classes ', responseJson);
         setClass(responseJson.classes);
         setTeacher(responseJson.classes.Teacher);
         setSchedule(responseJson.schedules);
-        // console.log(responseJson.classes.schedules);
+        console.log(responseJson.classes.schedules);
         let d = new Date()
         let _room = "SB-" + responseJson.classes.name + "(" + formatDate(d) + ")"
         setRoomName(_room)
@@ -459,6 +465,7 @@ export default function ClassDetailScreen({ route }) {
             let paymentSuccess = await fetch(AUTHENTICATIONS.API_URL + STRIPE.SUCCESS_PAYMENT_INTENT_PLATFORM + user + "/" + paymentIntentId)
             const { message } = await paymentSuccess.json();
             studentApiCall()
+            getUser()
             toggleModal1()
             Alert.alert("Success", message)
           }
@@ -711,12 +718,27 @@ export default function ClassDetailScreen({ route }) {
 
                             <View
                               style={{ marginVertical: 10, marginBottom: 40 }}>
-                              <Button
-                                title={'Submit'}
+                              <TouchableOpacity
                                 onPress={() => {
-                                  addTA();
+                                  addTA()
                                 }}
-                              />
+                                style={{
+                                  backgroundColor: '#4B5F79',
+                                  padding: 10,
+                                  borderRadius: 5,
+                                  width: '100%',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                }}>
+                                <Text
+                                  style={{
+                                    fontSize: 18,
+                                    fontWeight: '300',
+                                    color: 'white',
+                                  }}>
+                                  Submit
+                                </Text>
+                              </TouchableOpacity>
                             </View>
                           </View>
                         ) : (
@@ -730,7 +752,7 @@ export default function ClassDetailScreen({ route }) {
                               {topics.length > 0 &&
                                 topics.map((item, index) => {
                                   return (
-                                    <View style={{ marginVertical: 5 }}>
+                                    <View style={{ marginVertical: 5 }} key={index}>
                                       <Text>
                                         {index + 1} {'- '} {item.description}
                                       </Text>
@@ -748,7 +770,7 @@ export default function ClassDetailScreen({ route }) {
                               {announcements.length > 0 &&
                                 announcements.map((item, index) => {
                                   return (
-                                    <View style={{ marginVertical: 5 }}>
+                                    <View style={{ marginVertical: 5 }} key={index}>
                                       <Text>
                                         {index + 1} {'- '} {item.description}
                                       </Text>
@@ -979,7 +1001,7 @@ export default function ClassDetailScreen({ route }) {
                       <View>
                         {
                           isPlatformPaid ?
-                            <Text style={{ fontSize: 20 }}>Class Fee: $20.99</Text>
+                            <Text style={{ fontSize: 20 }}>Class Fee: ${_class.price}</Text>
                             :
                             <Text style={{ fontSize: 20 }} >Platform Fee: $4.99</Text>
                         }
@@ -1136,7 +1158,7 @@ export default function ClassDetailScreen({ route }) {
                           fontWeight: '300',
                           color: 'white',
                         }}>
-                        Join Class
+                        {isPlatformPaid ? "Join Class" : "Subscribe Now!"}
                       </Text>
                     </TouchableOpacity>
                   </View>
