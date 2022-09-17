@@ -27,6 +27,7 @@ import { Checkbox } from 'native-base';
 
 const useUserAuth = () => React.useContext(AuthContext);
 import Icon from 'react-native-vector-icons/AntDesign';
+import { app, grey } from '../constants/themeColors';
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -38,7 +39,7 @@ export default function LoginScreen() {
   const [rememberMe, setRememberMe] = React.useState(false);
   const [visible, setVisible] = React.useState(false);
 
-  const { currentScreen, setCurrentScreen } = React.useContext(ThemeContext);
+  const { currentScreen, setCurrentScreen, width, height, containerHeight } = React.useContext(ThemeContext);
 
   const {
     setUserToken,
@@ -284,6 +285,8 @@ export default function LoginScreen() {
     navigation.navigate('Guest');
   };
 
+  const [emailFocused, setEmailFocused] = useState(false)
+  const [passwordFocused, setPasswordFocused] = useState(false)
   /* ==================================== JSX Code Starts From Here ===================== */
   return (
     <SafeAreaView style={styles.container}>
@@ -296,59 +299,40 @@ export default function LoginScreen() {
       <View style={{ flexDirection: 'column' }}>
         <View style={styles.header}>
           <Image
-            source={require('../assets/images/login_log.png')}
-            style={{ width: 164.62, height: 165.69 }}
+            source={require('../assets/images/StuddyBuddy-logo.jpeg')}
+            style={{ width: width, height: height * 0.3 }}
           />
         </View>
 
         <View style={{ padding: 15 }}>
           <View style={styles.inputTextContainer}>
-            {/* <TextInput
-              keyboardType="email-address"
-              autoCapitalize="none"
-              style={genericStyle.textBox}
-              placeholder="Email"
-              placeholderTextColor="#3878ee"
-              onChangeText={text => setEmail(text)}
-              maxLength={40}
-            /> */}
             <TextInput
               keyboardType="email-address"
               autoCapitalize="none"
-              style={genericStyle.textBox}
-              placeholderTextColor="#3878ee"
+              style={emailFocused ? genericStyle.textBoxFocused : genericStyle.textBox}
+              placeholderTextColor="#adb5bd"
               onChangeText={text => setEmail(text)}
               maxLength={40}
               placeholder="Email"
               value={email}
+              onFocus={() => setEmailFocused(!emailFocused)}
             />
           </View>
 
-          <View style={styles.passwordSection}>
+          <View style={passwordFocused ? styles.passwordSectionFocused : styles.passwordSection}>
             <View style={{ width: '90%' }}>
               <TextInput
                 secureTextEntry={secure}
                 visible-password={true}
                 style={styles.passwordInputBox}
                 placeholder="Password"
-                placeholderTextColor="#3878ee"
+                placeholderTextColor="#adb5bd"
                 onChangeText={text => setPassword(text)}
                 value={password}
                 maxLength={40}
                 underlineColorAndroid="transparent"
+                onFocus={() => setPasswordFocused(!passwordFocused)}
               />
-
-              {/* <TextInput
-                secureTextEntry={secure}
-                ref={ref}
-                visible-password={true}
-                style={styles.passwordInputBox}
-                placeholder="Password"
-                placeholderTextColor="#3878ee"
-                onChangeText={text => setPassword(text)}
-                maxLength={40}
-                underlineColorAndroid="transparent"
-              /> */}
             </View>
             <View>
               <TouchableOpacity
@@ -359,13 +343,27 @@ export default function LoginScreen() {
               </TouchableOpacity>
             </View>
           </View>
-          <View style={{ flexDirection: 'row', marginTop: 20 }}>
-            <Checkbox
-              accessibilityLabel="Remember Me"
-              value={rememberMe}
-              onChange={() => setRememberMe(!rememberMe)}
-            />
-            <Text style={{ marginLeft: 15, color: '#3878ee' }}>Remember Me</Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20, marginLeft: 10 }}>
+            <View style={{flexDirection: 'row'}}>
+              <Checkbox
+                accessibilityLabel="Remember Me"
+                value={rememberMe}
+                _checked={{ bgColor: app.lightBlue, borderColor: app.lightBlue }}
+                onChange={() => setRememberMe(!rememberMe)}
+              />
+              <Text style={{ marginLeft: 15, color: grey[600] }}>Remember Me</Text>
+            </View>
+            <View>
+              <TouchableOpacity onPress={onPressCreateAccountBtn}>
+                <Text style={styles.createBtnText}>
+                  Create an{' '}
+                  <Text style={[styles.createBtnText, { fontWeight: 'bold' }]}>
+                    account
+                  </Text>
+                </Text>
+                {/* <View style={genericStyle.underline} /> */}
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
 
@@ -373,7 +371,7 @@ export default function LoginScreen() {
           style={{
             marginTop: 15,
             justifyContent: 'center',
-            paddingHorizontal: 30,
+            paddingHorizontal: 15,
           }}>
           <View style={genericStyle.loginButton}>
             <TouchableOpacity
@@ -383,17 +381,9 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.createBtn}>
-            <TouchableOpacity onPress={onPressCreateAccountBtn}>
-              <Text style={styles.createBtnText}>
-                Create an{' '}
-                <Text style={[styles.createBtnText, { fontWeight: 'bold' }]}>
-                  account
-                </Text>
-              </Text>
-              <View style={genericStyle.underline} />
-            </TouchableOpacity>
-          </View>
+          {/* <View style={styles.createBtn}>
+            <Text>OR</Text>
+          </View> */}
 
           <TouchableOpacity
             onPress={() => {
@@ -401,11 +391,8 @@ export default function LoginScreen() {
             }}
             style={[
               genericStyle.loginBtn,
-              {
-                marginTop: 40,
-              },
             ]}>
-            <Text style={[genericStyle.loginBtnText, { color: '#3878ee' }]}>
+            <Text style={[genericStyle.loginBtnText, { color: '#ffffff' }]}>
               Continue As Guest{' '}
             </Text>
           </TouchableOpacity>
@@ -489,8 +476,7 @@ const styles = StyleSheet.create({
   },
   createBtnText: {
     textAlign: 'center',
-    fontSize: 18,
-    color: '#3878ee',
+    color: grey[600],
   },
   pwdAndIcon: {
     backgroundColor: 'white',
@@ -499,18 +485,32 @@ const styles = StyleSheet.create({
     paddingRight: 50,
     marginRight: 15,
   },
-
+  passwordSectionFocused: {
+    flexDirection: 'row',
+    // justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    borderBottomColor: app.lightBlue,
+    borderTopColor: app.lightBlue,
+    borderRightColor: app.lightBlue,
+    borderLeftColor: app.lightBlue,
+    borderWidth: 1.5,
+    borderRadius: 25,
+    height: 50,
+    marginTop: 8,
+    width: '100%',
+  },
   passwordSection: {
     flexDirection: 'row',
     // justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#ffffff',
-    borderBottomColor: '#3878ee',
-    borderTopColor: '#ffffff',
-    borderRightColor: '#ffffff',
-    borderLeftColor: '#ffffff',
+    borderBottomColor: grey[500],
+    borderTopColor: grey[500],
+    borderRightColor: grey[500],
+    borderLeftColor: grey[500],
     borderWidth: 1.5,
-    borderRadius: 1,
+    borderRadius: 25,
     height: 50,
     marginTop: 8,
     width: '100%',
@@ -528,7 +528,8 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     borderWidth: 0,
     backgroundColor: '#ffffff',
-    color: '#424242',
+    color: app.lightBlue,
+    height: 40,
     fontFamily: 'System',
   },
 });

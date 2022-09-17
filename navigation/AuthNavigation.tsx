@@ -8,6 +8,8 @@ import AccountCreateScreen from '../screens/AccountCreateScreen';
 import AccountVerificationScreen from '../screens/AccountVerificationScreen';
 import ProfileSetupScreen from '../screens/ProfileSetupScreen';
 import GuestArtsScreen from '../screens/GuestArtsScreen';
+import { app } from '../constants/themeColors';
+import Icon from 'react-native-vector-icons/AntDesign';
 
 const AuthMenuNavigation = () => {
     const navigation = useNavigation();
@@ -36,22 +38,53 @@ const headerFixed = ({ navigation }: any): any => {
         headerLeft: () => (
             <TouchableOpacity
                 style={styles.backArrowContainer}
-                onPress={navigation.goBack}>
-                <Image
-                    style={styles.backArrow}
-                    source={require('../assets/images/icons/roundBack.png')}
-                />
+                onPress={() => navigation.goBack()}>
+
+                <Icon name="arrowleft" color={"#ffffff"} size={20} />
             </TouchableOpacity>
         ),
         headerStyle: {
-            backgroundColor: '#3878ee',
+            backgroundColor: app.lightBlue
         },
         headerShown: true,
         // title: "",
         headerTitleAlign: 'center',
         headerTitleStyle: {
             color: '#ffffff',
-            fontSize: 22,
+        },
+    };
+};
+const headerWithoutButton = ({ navigation }: any): any => {
+    return {
+        headerLeft: () => null,
+        headerStyle: {
+            backgroundColor: app.lightBlue
+        },
+        // title: "",
+        headerTitleAlign: 'center',
+        headerTitleStyle: {
+            color: '#ffffff',
+        },
+    };
+};
+const headerProfile = ({ navigation }: any): any => {
+    return {
+        headerLeft: () => (
+            <TouchableOpacity
+                style={styles.backArrowContainer}
+                onPress={() => navigation.navigate('Login')}>
+
+                <Icon name="arrowleft" color={"#ffffff"} size={20} />
+            </TouchableOpacity>
+        ),
+        headerStyle: {
+            backgroundColor: app.lightBlue
+        },
+        headerShown: true,
+        title: "Profile Creation",
+        headerTitleAlign: 'center',
+        headerTitleStyle: {
+            color: '#ffffff',
         },
     };
 };
@@ -68,7 +101,6 @@ const AuthStackScreen = ({ navigation, route }: any) => {
                 component={LoginScreen}
                 options={{ headerShown: false }}
             />
-
             <AuthStack.Screen
                 name="AccountCreate"
                 component={AccountCreateScreen}
@@ -77,38 +109,17 @@ const AuthStackScreen = ({ navigation, route }: any) => {
             <AuthStack.Screen
                 name="AccountVerify"
                 component={AccountVerificationScreen}
-                options={headerFixed}
+                options={headerWithoutButton}
             />
             <AuthStack.Screen
                 name="ProfileSetup"
                 component={ProfileSetupScreen}
-                options={{ headerShown: false }}
+                options={headerProfile}
             />
             <AuthStack.Screen
                 name="Guest"
                 component={GuestArtsScreen}
-                options={{
-                    headerStyle: {
-                        backgroundColor: '#3878ee',
-                    },
-                    headerLeft: () => (
-                        <TouchableOpacity
-                            style={styles.backArrowContainer}
-                            onPress={() => navigation.navigate('Login')}>
-                            <Image
-                                style={[styles.backArrow, { tintColor: '#ffbb74' }]}
-                                source={require('../assets/images/icons/roundBack.png')}
-                            />
-                        </TouchableOpacity>
-                    ),
-                    headerShown: true,
-                    title: 'Guest Mode',
-                    headerTitleAlign: 'center',
-                    headerTitleStyle: {
-                        color: '#ffbb74',
-                        fontSize: 22,
-                    },
-                }}
+                options={headerFixed}
             />
 
         </AuthStack.Navigator>

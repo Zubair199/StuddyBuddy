@@ -4,8 +4,8 @@ module.exports = {
     },
     AUTHENTICATIONS: {
         // Saims
-        API_URL: "http://192.168.10.2:5000",
-        CHAT_SERVER_URL: 'http://192.168.10.2:5000',
+        API_URL: "http://192.168.0.196:5000",
+        CHAT_SERVER_URL: 'http://192.168.0.196:5000',
 
         // Zubairs
         // API_URL: "http://192.168.100.63:5000",
@@ -69,6 +69,8 @@ module.exports = {
         GET_TEACHER_SEARCH: '/api/class/teacher/search/',
 
         GET_ALL_ACTIVE_CLASSES: '/api/classes/active',
+        GET_ALL_ACTIVE_CLASSES_GUEST_VIEW: '/api/guest/classes/active',
+        
 
         JOIN_CLASS: '/api/joinClass',
 

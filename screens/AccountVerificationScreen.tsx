@@ -22,6 +22,7 @@ import {
 import { logError } from '../utils/HelperFunctions';
 import genericStyle from '../assets/styles/styleSheet';
 import { AUTH, AUTHENTICATIONS, GENERAL } from '../services/api.constants';
+import { app } from '../constants/themeColors';
 
 const CELL_COUNT = 6;
 export default function AccountVerificationScreen() {
@@ -173,12 +174,12 @@ export default function AccountVerificationScreen() {
             <Text style={genericStyle.loginBtnText}>VERIFY</Text>
           </TouchableOpacity>
 
-          <View style={styles.goBackView}>
+          {/* <View style={styles.goBackView}>
             <TouchableOpacity onPress={handleBack}>
               <Text style={styles.goBackText}>Go back</Text>
               <View style={genericStyle.underline}></View>
             </TouchableOpacity>
-          </View>
+          </View> */}
         </View>
       </View>
     </SafeAreaView>
@@ -292,9 +293,11 @@ const styles = StyleSheet.create({
     lineHeight: 38,
     fontSize: 24,
     borderWidth: 2,
-    borderColor: '#3878ee',
+    borderRadius: 10,
+    borderColor: app.lightBlue,
     backgroundColor: '#ffffff',
     textAlign: 'center',
+
   },
   focusCell: {
     borderColor: '#ffffff',
