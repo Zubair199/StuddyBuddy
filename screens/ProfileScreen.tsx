@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useState} from 'react';
+import { useState } from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -13,15 +13,15 @@ import {
   View,
 } from 'react-native';
 
-import {useNavigation, useIsFocused} from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 
-import {AuthContext} from '../utils/AuthContext';
+import { AuthContext } from '../utils/AuthContext';
 
 // import EditProfileModal from "../components/editProfileModal";
 import ImagePicker from 'react-native-image-crop-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainLayout from './MainLayout';
-import {AUTH, AUTHENTICATIONS, GENERAL} from '../services/api.constants';
+import { AUTH, AUTHENTICATIONS, GENERAL } from '../services/api.constants';
 
 // import ChallengeSlider from "../components/ChallengeSlider";
 // import UserListComponent from "../components/UserListComponent";
@@ -41,7 +41,7 @@ const useUserAuth = () => React.useContext(AuthContext);
 export default function ProfileScreen(dataType: dataTypes) {
   const navigation = useNavigation();
   // const onClose = () => navigation.navigate("ClassesScreen");
-  const {userType, userToken} = useUserAuth();
+  const { userType, userToken } = useUserAuth();
   let isStudent = userType == 'user';
   let isTeacher = userType == 'teacher';
   const isFocused = useIsFocused();
@@ -135,183 +135,182 @@ export default function ProfileScreen(dataType: dataTypes) {
     }
   }, []);
 
-  function component() {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={{marginBottom: '18%'}}>
-          <View style={styles.sticky}>
-            <Text style={styles.title}>My Profile</Text>
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate('EditProfile', {
-                  email: email,
-                  allSkills: allSkills,
-                  allSubjects: allSubjects,
-                  allLocations: allLocations,
-                  skills: [],
-                  subjects: [],
-                  locations: [],
-                })
-              }
-              style={styles.closeIconBox}>
-              <Image
-                style={styles.pencilIcon}
-                source={require('../assets/images/icons/Edit-Icon.png')}
-              />
-            </TouchableOpacity>
-          </View>
-          <ScrollView
-            style={styles.scrollView}
-            keyboardShouldPersistTaps={'handled'}>
-            {/* <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" /> */}
-            <View style={styles.basicInfo}>
-              {/* instructor name and image will be replaced by api's data on integration of apis */}
-              <View style={styles.profileImageBox}>
-                {/* {imageLoader && <Image
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={{ marginBottom: '18%' }}>
+        <View style={styles.sticky}>
+          <Text style={styles.title}>My Profile</Text>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('EditProfile', {
+                email: email,
+                allSkills: allSkills,
+                allSubjects: allSubjects,
+                allLocations: allLocations,
+                skills: [],
+                subjects: [],
+                locations: [],
+              })
+            }
+            style={styles.closeIconBox}>
+            <Image
+              style={styles.pencilIcon}
+              source={require('../assets/images/icons/Edit-Icon.png')}
+            />
+          </TouchableOpacity>
+        </View>
+        <ScrollView
+          style={styles.scrollView}
+          keyboardShouldPersistTaps={'handled'}>
+          {/* <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" /> */}
+          <View style={styles.basicInfo}>
+            {/* instructor name and image will be replaced by api's data on integration of apis */}
+            <View style={styles.profileImageBox}>
+              {/* {imageLoader && <Image
                   style={{width:100, height:54}}
                   source={require('../assets/images/Deep-Move-Spinner-v3.gif')}
                 />} */}
-                <TouchableOpacity>
-                  <Image
-                    style={styles.profileImage}
-                    // onLoadStart={()=>setImageLoader(true)}
-                    // onLoadEnd={()=>setImageLoader(false)}
-                    source={
-                      image === ''
-                        ? require('../assets/images/user.png')
-                        : {uri: AUTHENTICATIONS.API_URL + image}
-                    }
-                  />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.nameBox}>
-                <Text style={styles.name}>{userName}</Text>
-              </View>
-              <View style={styles.instructorBox}>
-                <Text style={styles.instructor}>
-                  {isStudent ? 'Student' : 'Instructor'}
-                </Text>
-              </View>
+              <TouchableOpacity>
+                <Image
+                  style={styles.profileImage}
+                  // onLoadStart={()=>setImageLoader(true)}
+                  // onLoadEnd={()=>setImageLoader(false)}
+                  source={
+                    image === ''
+                      ? require('../assets/images/user.png')
+                      : { uri: AUTHENTICATIONS.API_URL + image }
+                  }
+                />
+              </TouchableOpacity>
             </View>
-
-            {isStudent ? null : (
-              <View>
-                {/* Divider */}
-                <View style={styles.lineStyle} />
-
-                <View style={styles.actionBox}>
-                  <Text style={[styles.noShowTitle, {marginRight: 20}]}>
-                    Late Cancellation:{' ' + lateCancellation}
-                  </Text>
-                  <Text style={[styles.noShowTitle, {marginLeft: 20}]}>
-                    No Show:{' ' + noShowCount}
-                  </Text>
-                </View>
-
-                {/* Divider */}
-                <View style={styles.lineStyle} />
-              </View>
-            )}
-            <View style={styles.skillBox}>
-              <View style={styles.skillsWithIcon}>
-                <Text style={styles.skillsAttributesHeading}>
-                  {isStudent ? 'Class Preferences' : 'Skills'}
-                </Text>
-              </View>
-              <View style={styles.skills}>
-                {skills.map((skill, index, arr) => (
-                  <View
-                    key={index + '_skill_view'}
-                    style={{flexDirection: 'row'}}>
-                    <Text style={styles.skillsText}>{skill}</Text>
-                    {arr.length - 1 !== index ? (
-                      <View style={styles.dot}></View>
-                    ) : null}
-                  </View>
-                ))}
-              </View>
+            <View style={styles.nameBox}>
+              <Text style={styles.name}>{userName}</Text>
             </View>
-            {isTeacher && (
-              <View style={styles.textContent}>
-                <Text style={styles.contentTitle}>Certifications</Text>
-                {certifications ? (
-                  <Text style={styles.actualText}>{certifications}</Text>
-                ) : (
-                  <Text style={styles.placeholder}>
-                    Your Certifications Here
-                  </Text>
-                )}
-              </View>
-            )}
-            <View style={styles.textContent}>
-              <Text style={styles.contentTitle}>
-                {isTeacher ? 'Past Experience' : 'Past Education'}
+            <View style={styles.instructorBox}>
+              <Text style={styles.instructor}>
+                {isStudent ? 'Student' : 'Instructor'}
               </Text>
-              {experience ? (
-                <Text style={styles.actualText}>{experience}</Text>
-              ) : (
-                <Text style={styles.placeholder}>
-                  Your Past Experience Here
+            </View>
+          </View>
+
+          {isStudent ? null : (
+            <View>
+              {/* Divider */}
+              <View style={styles.lineStyle} />
+
+              <View style={styles.actionBox}>
+                <Text style={[styles.noShowTitle, { marginRight: 20 }]}>
+                  Late Cancellation:{' ' + lateCancellation}
                 </Text>
-              )}
+                <Text style={[styles.noShowTitle, { marginLeft: 20 }]}>
+                  No Show:{' ' + noShowCount}
+                </Text>
+              </View>
+
+              {/* Divider */}
               <View style={styles.lineStyle} />
             </View>
-
-            {isTeacher && (
-              <>
-                <View style={styles.lineStyle} />
-
-                <View style={styles.switchBoxWarpper}>
-                  <Text style={styles.switchBoxLebel}>
-                    Mark as available to hire.
-                  </Text>
-                  <TouchableOpacity>
-                    {toggle ? (
-                      <Image
-                        style={styles.toggleOn}
-                        source={require('../assets/images/icons/toggle.png')}
-                      />
-                    ) : (
-                      <Image
-                        style={styles.toggleOn}
-                        source={require('../assets/images/icons/Toggle-off.png')}
-                      />
-                    )}
-                  </TouchableOpacity>
+          )}
+          <View style={styles.skillBox}>
+            <View style={styles.skillsWithIcon}>
+              <Text style={styles.skillsAttributesHeading}>
+                {isStudent ? 'Class Preferences' : 'Skills'}
+              </Text>
+            </View>
+            <View style={styles.skills}>
+              {skills.map((skill, index, arr) => (
+                <View
+                  key={index + '_skill_view'}
+                  style={{ flexDirection: 'row' }}>
+                  <Text style={styles.skillsText}>{skill}</Text>
+                  {arr.length - 1 !== index ? (
+                    <View style={styles.dot}></View>
+                  ) : null}
                 </View>
-                <View style={styles.lineStyle} />
-              </>
+              ))}
+            </View>
+          </View>
+          {isTeacher && (
+            <View style={styles.textContent}>
+              <Text style={styles.contentTitle}>Certifications</Text>
+              {certifications ? (
+                <Text style={styles.actualText}>{certifications}</Text>
+              ) : (
+                <Text style={styles.placeholder}>
+                  Your Certifications Here
+                </Text>
+              )}
+            </View>
+          )}
+          <View style={styles.textContent}>
+            <Text style={styles.contentTitle}>
+              {isTeacher ? 'Past Experience' : 'Past Education'}
+            </Text>
+            {experience ? (
+              <Text style={styles.actualText}>{experience}</Text>
+            ) : (
+              <Text style={styles.placeholder}>
+                Your Past Experience Here
+              </Text>
             )}
+            <View style={styles.lineStyle} />
+          </View>
 
-            {/* {!isStudent && (
+          {isTeacher && (
+            <>
+              <View style={styles.lineStyle} />
+
+              <View style={styles.switchBoxWarpper}>
+                <Text style={styles.switchBoxLebel}>
+                  Mark as available to hire.
+                </Text>
+                <TouchableOpacity>
+                  {toggle ? (
+                    <Image
+                      style={styles.toggleOn}
+                      source={require('../assets/images/icons/toggle.png')}
+                    />
+                  ) : (
+                    <Image
+                      style={styles.toggleOn}
+                      source={require('../assets/images/icons/Toggle-off.png')}
+                    />
+                  )}
+                </TouchableOpacity>
+              </View>
+              <View style={styles.lineStyle} />
+            </>
+          )}
+
+          {/* {!isStudent && (
                     <SubscribersListComponent subscribersList={fakeSubscribers} />
                 )} */}
 
-            {/* image modal starts here */}
-            <Modal
-              animationType="slide"
-              transparent={true}
-              visible={imageModal}
-              onRequestClose={() => setImageModal(false)}>
-              <View style={styles.centeredView}>
-                <TouchableOpacity
-                  style={{position: 'absolute', width: '100%', height: '100%'}}
-                  onPress={() => setImageModal(false)}></TouchableOpacity>
-                <View style={styles.modalView}>
-                  <TouchableOpacity style={styles.imageModal}>
-                    <Icon name="camera" size={30} />
-                    <Text>Take Picture</Text>
-                  </TouchableOpacity>
+          {/* image modal starts here */}
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={imageModal}
+            onRequestClose={() => setImageModal(false)}>
+            <View style={styles.centeredView}>
+              <TouchableOpacity
+                style={{ position: 'absolute', width: '100%', height: '100%' }}
+                onPress={() => setImageModal(false)}></TouchableOpacity>
+              <View style={styles.modalView}>
+                <TouchableOpacity style={styles.imageModal}>
+                  <Icon name="camera" size={30} />
+                  <Text>Take Picture</Text>
+                </TouchableOpacity>
 
-                  <TouchableOpacity style={styles.imageModal}>
-                    <Icon name="upload" size={30} />
-                    <Text>Upload Picture</Text>
-                  </TouchableOpacity>
-                </View>
+                <TouchableOpacity style={styles.imageModal}>
+                  <Icon name="upload" size={30} />
+                  <Text>Upload Picture</Text>
+                </TouchableOpacity>
               </View>
-            </Modal>
+            </View>
+          </Modal>
 
-            {/* {editProfile && <EditProfileModal
+          {/* {editProfile && <EditProfileModal
                     editProfileModal={editProfile}
                     closeEditModal={() => setEditProfile(false)}
                     isStudent={isStudent}
@@ -324,13 +323,10 @@ export default function ProfileScreen(dataType: dataTypes) {
                     loadingFalse={() => setLoader(false)}
                     reRun={() => setReRun(!reRun)}
                 />} */}
-          </ScrollView>
-        </View>
-      </SafeAreaView>
-    );
-  }
-
-  return <MainLayout Component={component()} />;
+        </ScrollView>
+      </View>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({

@@ -44,7 +44,7 @@ export default function SettingsScreen() {
       setUserEmail('');
       setUserToken('');
       setUserType('');
-      
+
     })();
   };
 
@@ -354,403 +354,402 @@ export default function SettingsScreen() {
     console.log(text);
   }
 
-  function compenent() {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Modal
-          animationType="slide"
-          visible={isModal}
-          onRequestClose={() => {
-            toggleModal();
-          }}>
-          <View style={{ flex: 1, backgroundColor: '#ffffff', padding: 15 }}>
-            <View style={{ flexDirection: 'row-reverse' }}>
-              <TouchableOpacity
-                onPress={() => {
-                  toggleModal();
-                }}>
-                <Icon name="close" size={25} />
-              </TouchableOpacity>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginVertical: 15,
-                justifyContent: 'center',
-              }}>
-              <Text style={styles.title}>Add Card Details</Text>
-            </View>
-            <View>
-              <Input
-                variant="outline"
-                placeholder="Card Number"
-                maxLength={16}
-                onChangeText={text => setCardNumber(text)}
-              />
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginVertical: 10,
-                justifyContent: 'space-between',
-              }}>
-              <Input
-                variant="outline"
-                placeholder="MM/YY"
-                w={'48%'}
-                onChangeText={text => setExpiryMonth(text)}
-                maxLength={5}
-              />
-              <Input
-                variant="outline"
-                placeholder="CVC"
-                w={'48%'}
-                maxLength={3}
-                onChangeText={text => setCVC(text)}
-              />
-            </View>
-            <View>
-              <Button onPress={() => submitCard()}>Submit</Button>
-            </View>
-          </View>
-        </Modal>
-        <View style={{}}>
-          <ScrollView style={styles.scrollView}>
-            <Text style={styles.title}>Settings</Text>
-
+  return (
+    <SafeAreaView style={styles.container}>
+      <Modal
+        animationType="slide"
+        visible={isModal}
+        onRequestClose={() => {
+          toggleModal();
+        }}>
+        <View style={{ flex: 1, backgroundColor: '#ffffff', padding: 15 }}>
+          <View style={{ flexDirection: 'row-reverse' }}>
             <TouchableOpacity
-              onPress={() =>
-                confirmationBox('Logout', 'Do you want to logout?', () =>
-                  handleLogout(),
-                )
-              }>
-              <Text style={styles.logout}>Logout</Text>
+              onPress={() => {
+                toggleModal();
+              }}>
+              <Icon name="close" size={25} />
             </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              marginVertical: 15,
+              justifyContent: 'center',
+            }}>
+            <Text style={styles.title}>Add Card Details</Text>
+          </View>
+          <View>
+            <Input
+              variant="outline"
+              placeholder="Card Number"
+              maxLength={16}
+              onChangeText={text => setCardNumber(text)}
+            />
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              marginVertical: 10,
+              justifyContent: 'space-between',
+            }}>
+            <Input
+              variant="outline"
+              placeholder="MM/YY"
+              w={'48%'}
+              onChangeText={text => setExpiryMonth(text)}
+              maxLength={5}
+            />
+            <Input
+              variant="outline"
+              placeholder="CVC"
+              w={'48%'}
+              maxLength={3}
+              onChangeText={text => setCVC(text)}
+            />
+          </View>
+          <View>
+            <Button onPress={() => submitCard()}>Submit</Button>
+          </View>
+        </View>
+      </Modal>
+      <View style={{}}>
+        <ScrollView style={styles.scrollView}>
+          <Text style={styles.title}>Settings</Text>
 
-            <View>
-              <Text style={styles.accountHeading}>Personal Information</Text>
-              <View style={styles.horizontalSeparator} />
-              <View style={styles.groupBox}>
-                <View style={styles.labelBox}>
-                  <Text style={styles.label}>Name</Text>
-                  <View style={styles.iconInputBox}>
-                    {usernameEditable ? (
-                      <TextInput
-                        defaultValue={username}
-                        editable={true}
-                        onChangeText={text => {
-                          setTempUsername(text);
-                        }}
-                      />
-                    ) : (
-                      <TextInput value={username} editable={false} />
-                    )}
-                  </View>
-                </View>
-                {usernameEditable ? (
-                  <>
-                    <TouchableOpacity
-                      onPress={() => {
-                        updateUsername();
-                      }}>
-                      <FontAwesome
-                        name="check"
-                        style={styles.check}
-                        size={20}
-                      />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() => {
-                        setTempUsername('');
-                        setUsernameEditable(!usernameEditable);
-                      }}>
-                      <FontAwesome
-                        name="times"
-                        style={styles.times}
-                        size={20}
-                      />
-                    </TouchableOpacity>
-                  </>
-                ) : (
-                  <TouchableOpacity
-                    onPress={() => {
-                      setUsernameEditable(!usernameEditable);
-                    }}>
-                    <Image
-                      style={styles.pencilIcon}
-                      source={require('../assets/images/icons/pencil.png')}
-                    />
-                  </TouchableOpacity>
-                )}
-              </View>
+          <TouchableOpacity
+            onPress={() =>
+              confirmationBox('Logout', 'Do you want to logout?', () =>
+                handleLogout(),
+              )
+            }>
+            <Text style={styles.logout}>Logout</Text>
+          </TouchableOpacity>
 
-              <View style={styles.groupBox}>
-                <View style={styles.labelBox}>
-                  <Text style={styles.label}>Email</Text>
-                  <View style={styles.iconInputBox}>
-                    {emailEditable ? (
-                      <TextInput
-                        defaultValue={email}
-                        editable={true}
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                        onChangeText={text => {
-                          setTempEmail(text);
-                        }}
-                      />
-                    ) : (
-                      <TextInput value={email} editable={false} />
-                    )}
-                  </View>
-                </View>
-                {emailEditable ? (
-                  <>
-                    <TouchableOpacity
-                      onPress={() => {
-                        updateEmail();
-                      }}>
-                      <FontAwesome
-                        name="check"
-                        style={styles.check}
-                        size={20}
-                      />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() => {
-                        setTempEmail('');
-                        setEmailEditable(!emailEditable);
-                      }}>
-                      <FontAwesome
-                        name="times"
-                        style={styles.times}
-                        size={20}
-                      />
-                    </TouchableOpacity>
-                  </>
-                ) : (
-                  <TouchableOpacity
-                    onPress={() => {
-                      setEmailEditable(!emailEditable);
-                    }}>
-                    <Image
-                      style={styles.pencilIcon}
-                      source={require('../assets/images/icons/pencil.png')}
-                    />
-                  </TouchableOpacity>
-                )}
-              </View>
-
-              <View style={styles.groupBox}>
-                <View style={styles.labelBox}>
-                  <Text style={styles.label}>Password</Text>
-                  {passwordEditable ? (
-                    <View>
-                      <View style={styles.iconInputBox}>
-                        <TextInput
-                          placeholder="New Password"
-                          editable={true}
-                          onChangeText={text => {
-                            setPassword(text);
-                          }}
-                        />
-                      </View>
-                      <View style={styles.iconInputBox}>
-                        <TextInput
-                          placeholder="Re-Enter Password"
-                          editable={true}
-                          onChangeText={text => {
-                            setConfirmPassword(text);
-                          }}
-                        />
-                      </View>
-                    </View>
-                  ) : (
+          <View>
+            <Text style={styles.accountHeading}>Personal Information</Text>
+            <View style={styles.horizontalSeparator} />
+            <View style={styles.groupBox}>
+              <View style={styles.labelBox}>
+                <Text style={styles.label}>Name</Text>
+                <View style={styles.iconInputBox}>
+                  {usernameEditable ? (
                     <TextInput
-                      secureTextEntry={secure}
-                      value={'Password'}
-                      editable={false}
+                      defaultValue={username}
+                      editable={true}
+                      onChangeText={text => {
+                        setTempUsername(text);
+                      }}
                     />
+                  ) : (
+                    <TextInput value={username} editable={false} />
                   )}
                 </View>
-                {passwordEditable ? (
-                  <>
-                    <TouchableOpacity
-                      onPress={() => {
-                        updatePassword();
-                      }}>
-                      <FontAwesome
-                        name="check"
-                        style={styles.check}
-                        size={20}
-                      />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() => {
-                        setPassword('');
-                        setConfirmPassword('');
-                        setPasswordEditable(!passwordEditable);
-                      }}>
-                      <FontAwesome
-                        name="times"
-                        style={styles.times}
-                        size={20}
-                      />
-                    </TouchableOpacity>
-                  </>
-                ) : (
+              </View>
+              {usernameEditable ? (
+                <>
                   <TouchableOpacity
                     onPress={() => {
-                      setPasswordEditable(!passwordEditable);
+                      updateUsername();
                     }}>
-                    <Image
-                      style={styles.pencilIcon}
-                      source={require('../assets/images/icons/pencil.png')}
+                    <FontAwesome
+                      name="check"
+                      style={styles.check}
+                      size={20}
                     />
                   </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setTempUsername('');
+                      setUsernameEditable(!usernameEditable);
+                    }}>
+                    <FontAwesome
+                      name="times"
+                      style={styles.times}
+                      size={20}
+                    />
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => {
+                    setUsernameEditable(!usernameEditable);
+                  }}>
+                  <Image
+                    style={styles.pencilIcon}
+                    source={require('../assets/images/icons/pencil.png')}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+
+            <View style={styles.groupBox}>
+              <View style={styles.labelBox}>
+                <Text style={styles.label}>Email</Text>
+                <View style={styles.iconInputBox}>
+                  {emailEditable ? (
+                    <TextInput
+                      defaultValue={email}
+                      editable={true}
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                      onChangeText={text => {
+                        setTempEmail(text);
+                      }}
+                    />
+                  ) : (
+                    <TextInput value={email} editable={false} />
+                  )}
+                </View>
+              </View>
+              {emailEditable ? (
+                <>
+                  <TouchableOpacity
+                    onPress={() => {
+                      updateEmail();
+                    }}>
+                    <FontAwesome
+                      name="check"
+                      style={styles.check}
+                      size={20}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setTempEmail('');
+                      setEmailEditable(!emailEditable);
+                    }}>
+                    <FontAwesome
+                      name="times"
+                      style={styles.times}
+                      size={20}
+                    />
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => {
+                    setEmailEditable(!emailEditable);
+                  }}>
+                  <Image
+                    style={styles.pencilIcon}
+                    source={require('../assets/images/icons/pencil.png')}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+
+            <View style={styles.groupBox}>
+              <View style={styles.labelBox}>
+                <Text style={styles.label}>Password</Text>
+                {passwordEditable ? (
+                  <View>
+                    <View style={styles.iconInputBox}>
+                      <TextInput
+                        placeholder="New Password"
+                        editable={true}
+                        onChangeText={text => {
+                          setPassword(text);
+                        }}
+                      />
+                    </View>
+                    <View style={styles.iconInputBox}>
+                      <TextInput
+                        placeholder="Re-Enter Password"
+                        editable={true}
+                        onChangeText={text => {
+                          setConfirmPassword(text);
+                        }}
+                      />
+                    </View>
+                  </View>
+                ) : (
+                  <TextInput
+                    secureTextEntry={secure}
+                    value={'Password'}
+                    editable={false}
+                  />
                 )}
               </View>
+              {passwordEditable ? (
+                <>
+                  <TouchableOpacity
+                    onPress={() => {
+                      updatePassword();
+                    }}>
+                    <FontAwesome
+                      name="check"
+                      style={styles.check}
+                      size={20}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setPassword('');
+                      setConfirmPassword('');
+                      setPasswordEditable(!passwordEditable);
+                    }}>
+                    <FontAwesome
+                      name="times"
+                      style={styles.times}
+                      size={20}
+                    />
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => {
+                    setPasswordEditable(!passwordEditable);
+                  }}>
+                  <Image
+                    style={styles.pencilIcon}
+                    source={require('../assets/images/icons/pencil.png')}
+                  />
+                </TouchableOpacity>
+              )}
             </View>
-            {
-              userType.toLowerCase() === 'teacher' &&
-              <View>
-                <View
-                  style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <Text style={styles.accountHeading}>Card Information</Text>
-                  <View style={{ marginTop: 25 }}>
-                    {cardInfo !== null && cardEditable ? (
-                      <View style={{ flexDirection: 'row' }}>
-                        <TouchableOpacity
-                          onPress={() => {
-                            updateCard(cardInfo._id);
-                          }}>
-                          <FontAwesome
-                            name="check"
-                            style={styles.check}
-                            size={20}
-                          />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          onPress={() => {
-                            setCardEditable(!cardEditable);
-                          }}>
-                          <FontAwesome
-                            name="times"
-                            style={styles.times}
-                            size={20}
-                          />
-                        </TouchableOpacity>
-                      </View>
-                    ) : (
+          </View>
+          {
+            userType.toLowerCase() === 'teacher' &&
+            <View>
+              <View
+                style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={styles.accountHeading}>Card Information</Text>
+                <View style={{ marginTop: 25 }}>
+                  {cardInfo !== null && cardEditable ? (
+                    <View style={{ flexDirection: 'row' }}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          updateCard(cardInfo._id);
+                        }}>
+                        <FontAwesome
+                          name="check"
+                          style={styles.check}
+                          size={20}
+                        />
+                      </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => {
                           setCardEditable(!cardEditable);
                         }}>
-                        <Image
-                          style={styles.pencilIcon}
-                          source={require('../assets/images/icons/pencil.png')}
+                        <FontAwesome
+                          name="times"
+                          style={styles.times}
+                          size={20}
                         />
                       </TouchableOpacity>
-                    )}
-                  </View>
-                </View>
-                <View style={styles.horizontalSeparator} />
-                {cardInfo !== null ? (
-                  <>
-                    <View style={styles.groupBox}>
-                      <View style={styles.labelBox}>
-                        <Text style={styles.label}>Card Number</Text>
-                        <View style={styles.iconInputBox}>
-                          {cardEditable ? (
-                            <TextInput
-                              defaultValue={cardInfo.cardNumber}
-                              editable={true}
-                              maxLength={16}
-                              placeholder={'Card Number'}
-                              onChangeText={text => {
-                                setCardNumber(text);
-                              }}
-                            />
-                          ) : (
-                            <TextInput
-                              value={cardInfo.cardNumber}
-                              editable={false}
-                            />
-                          )}
-                        </View>
-                      </View>
                     </View>
-                    <View style={styles.groupBox}>
-                      <View style={styles.labelBox}>
-                        <Text style={styles.label}>Expiry Month</Text>
-                        <View style={styles.iconInputBox}>
-                          {cardEditable ? (
-                            <TextInput
-                              defaultValue={cardInfo.expiryMonth}
-                              editable={true}
-                              maxLength={5}
-                              placeholder={'MM/YY'}
-                              onChangeText={text => {
-                                setExpiryMonth(text);
-                              }}
-                            />
-                          ) : (
-                            <TextInput
-                              value={cardInfo.expiryMonth}
-                              editable={false}
-                            />
-                          )}
-                        </View>
-                      </View>
-                    </View>
-                    <View style={styles.groupBox}>
-                      <View style={styles.labelBox}>
-                        <Text style={styles.label}>CVC</Text>
-                        <View style={styles.iconInputBox}>
-                          {cardEditable ? (
-                            <TextInput
-                              defaultValue={cardInfo.cvc}
-                              editable={true}
-                              maxLength={3}
-                              placeholder={'CVC'}
-                              onChangeText={text => {
-                                setCVC(text);
-                              }}
-                            />
-                          ) : (
-                            <TextInput value={cardInfo.cvc} editable={false} />
-                          )}
-                        </View>
-                      </View>
-                    </View>
-                  </>
-                ) : (
-                  <View style={styles.groupBox}>
-                    <Button
+                  ) : (
+                    <TouchableOpacity
                       onPress={() => {
-                        toggleModal();
+                        setCardEditable(!cardEditable);
                       }}>
-                      Add Card Information
-                    </Button>
-                  </View>
-                )}
+                      <Image
+                        style={styles.pencilIcon}
+                        source={require('../assets/images/icons/pencil.png')}
+                      />
+                    </TouchableOpacity>
+                  )}
+                </View>
               </View>
-            }
-            <View>
-              <Text style={styles.accountHeading}>Privacy Settings</Text>
               <View style={styles.horizontalSeparator} />
-              <View style={styles.groupBox}>
-                <Text style={styles.label}>Push Notifications</Text>
-                <Switch
-                  trackColor={{ false: '#767577', true: '#81b0ff' }}
-                  thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
-                  ios_backgroundColor="#3e3e3e"
-                  onValueChange={toggleSwitch}
-                  value={isEnabled}
-                />
-                {/* toggle button here */}
+              {cardInfo !== null ? (
+                <>
+                  <View style={styles.groupBox}>
+                    <View style={styles.labelBox}>
+                      <Text style={styles.label}>Card Number</Text>
+                      <View style={styles.iconInputBox}>
+                        {cardEditable ? (
+                          <TextInput
+                            defaultValue={cardInfo.cardNumber}
+                            editable={true}
+                            maxLength={16}
+                            placeholder={'Card Number'}
+                            onChangeText={text => {
+                              setCardNumber(text);
+                            }}
+                          />
+                        ) : (
+                          <TextInput
+                            value={cardInfo.cardNumber}
+                            editable={false}
+                          />
+                        )}
+                      </View>
+                    </View>
+                  </View>
+                  <View style={styles.groupBox}>
+                    <View style={styles.labelBox}>
+                      <Text style={styles.label}>Expiry Month</Text>
+                      <View style={styles.iconInputBox}>
+                        {cardEditable ? (
+                          <TextInput
+                            defaultValue={cardInfo.expiryMonth}
+                            editable={true}
+                            maxLength={5}
+                            placeholder={'MM/YY'}
+                            onChangeText={text => {
+                              setExpiryMonth(text);
+                            }}
+                          />
+                        ) : (
+                          <TextInput
+                            value={cardInfo.expiryMonth}
+                            editable={false}
+                          />
+                        )}
+                      </View>
+                    </View>
+                  </View>
+                  <View style={styles.groupBox}>
+                    <View style={styles.labelBox}>
+                      <Text style={styles.label}>CVC</Text>
+                      <View style={styles.iconInputBox}>
+                        {cardEditable ? (
+                          <TextInput
+                            defaultValue={cardInfo.cvc}
+                            editable={true}
+                            maxLength={3}
+                            placeholder={'CVC'}
+                            onChangeText={text => {
+                              setCVC(text);
+                            }}
+                          />
+                        ) : (
+                          <TextInput value={cardInfo.cvc} editable={false} />
+                        )}
+                      </View>
+                    </View>
+                  </View>
+                </>
+              ) : (
+                <View style={styles.groupBox}>
+                  <Button
+                    onPress={() => {
+                      toggleModal();
+                    }}>
+                    Add Card Information
+                  </Button>
+                </View>
+              )}
+            </View>
+          }
+          <View>
+            <Text style={styles.accountHeading}>Privacy Settings</Text>
+            <View style={styles.horizontalSeparator} />
+            <View style={styles.groupBox}>
+              <Text style={styles.label}>Push Notifications</Text>
+              <Switch
+                trackColor={{ false: '#767577', true: '#81b0ff' }}
+                thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={toggleSwitch}
+                value={isEnabled}
+              />
+              {/* toggle button here */}
 
-                {/* <Switch /> */}
-                {/* <TouchableOpacity onPress={setNotification}>
+              {/* <Switch /> */}
+              {/* <TouchableOpacity onPress={setNotification}>
               {pushNotificationToggle ? (
                 <Image
                   style={styles.toggleOn}
@@ -763,8 +762,8 @@ export default function SettingsScreen() {
                 />
               )}
             </TouchableOpacity> */}
-              </View>
-              {/* <View style={styles.groupBox}>
+            </View>
+            {/* <View style={styles.groupBox}>
                 <Text style={styles.label}>Face ID/Fingerprint</Text>
                 <Switch
                   trackColor={{false: '#767577', true: '#81b0ff'}}
@@ -773,7 +772,7 @@ export default function SettingsScreen() {
                   onValueChange={toggleSwitch}
                   value={isEnabled}
                 /> */}
-              {/* <TouchableOpacity onPress={toggleFaceIdOption}>
+            {/* <TouchableOpacity onPress={toggleFaceIdOption}>
               {toggleFaceID ? (
                 <Image
                   style={styles.toggleOn}
@@ -786,9 +785,9 @@ export default function SettingsScreen() {
                 />
               )}
             </TouchableOpacity> */}
-              {/* </View> */}
+            {/* </View> */}
 
-              {/* <View style={styles.groupBox}>
+            {/* <View style={styles.groupBox}>
               <Text style={styles.label}>Profile Privacy</Text>
               <Switch
                 trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -797,9 +796,9 @@ export default function SettingsScreen() {
                 onValueChange={toggleSwitch}
                 value={isEnabled}
               /> */}
-              {/* toggle button for faceId options starts here */}
-              {/* <Switch /> */}
-              {/* <TouchableOpacity onPress={() => {
+            {/* toggle button for faceId options starts here */}
+            {/* <Switch /> */}
+            {/* <TouchableOpacity onPress={() => {
               {
                 toggleProfilePrivacy ?
                   confirmationBox("Profile Privacy", "Are you sure you want to disable privacy option?", togglePrivacyOptionFunction)
@@ -819,8 +818,8 @@ export default function SettingsScreen() {
                 />
               )}
             </TouchableOpacity> */}
-              {/* </View> */}
-              {/* 
+            {/* </View> */}
+            {/* 
             <View style={styles.groupBox}>
             <Text style={styles.label}>Enable Chat</Text>
             <Switch
@@ -830,7 +829,7 @@ export default function SettingsScreen() {
                 onValueChange={toggleSwitch}
                 value={isEnabled}
               /> */}
-              {/* <TouchableOpacity onPress={() => {
+            {/* <TouchableOpacity onPress={() => {
               {
                 toggleChat ?
                   confirmationBox("Disable Chat", "Are you sure you want to disable chat option for all users?", toggleChatOption)
@@ -850,9 +849,9 @@ export default function SettingsScreen() {
                 />
               )}
             </TouchableOpacity> */}
-              {/* </View> */}
+            {/* </View> */}
 
-              {/* <View style={styles.groupBox}>
+            {/* <View style={styles.groupBox}>
             <Text style={styles.label}>Automatic Time Zone</Text>
             <Switch
                 trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -861,9 +860,9 @@ export default function SettingsScreen() {
                 onValueChange={toggleSwitch}
                 value={isEnabled}
               /> */}
-              {/* toggle button here */}
-              {/* <Switch /> */}
-              {/* <TouchableOpacity onPress={setAutomaticNetworkProvidedTimeZone}>
+            {/* toggle button here */}
+            {/* <Switch /> */}
+            {/* <TouchableOpacity onPress={setAutomaticNetworkProvidedTimeZone}>
               {timeZoneToggle ? (
                 <Image
                   style={styles.toggleOn}
@@ -876,9 +875,9 @@ export default function SettingsScreen() {
                 />
               )}
             </TouchableOpacity> */}
-              {/* </View> */}
-              {/* Time zone dropdown starts here */}
-              {/* <View style={styles.dropdownBoxWrapper}>
+            {/* </View> */}
+            {/* Time zone dropdown starts here */}
+            {/* <View style={styles.dropdownBoxWrapper}>
             {timeZoneToggle ?
               <Text style={styles.timeZoneText}>{selectedTimeZoneValue}</Text>
               :
@@ -901,65 +900,63 @@ export default function SettingsScreen() {
                 InputAccessoryView={() => null}
               />}
           </View> */}
-            </View>
+          </View>
 
-            <View style={styles.horizontalSeparator} />
-            <View style={{ marginTop: 30, backgroundColor: 'transparent' }}>
-              <View>
-                {/* You can read DeepMove's &nbsp; */}
-                <Text style={{ textAlign: 'center' }}>
-                  <Text
-                    onPress={() => Linking.openURL('https://www.google.com/')}
-                    style={{
-                      textDecorationLine: 'underline',
-                      fontFamily: 'roboto-bold',
-                    }}>
-                    Terms &amp; Conditions
-                  </Text>
-                  &nbsp;and&nbsp;
-                  <Text
-                    onPress={() => Linking.openURL('https://www.google.com/')}
-                    style={{
-                      textDecorationLine: 'underline',
-                      fontFamily: 'roboto-bold',
-                    }}>
-                    Privacy Policy
-                  </Text>
+          <View style={styles.horizontalSeparator} />
+          <View style={{ marginTop: 30, backgroundColor: 'transparent' }}>
+            <View>
+              {/* You can read DeepMove's &nbsp; */}
+              <Text style={{ textAlign: 'center' }}>
+                <Text
+                  onPress={() => Linking.openURL('https://www.google.com/')}
+                  style={{
+                    textDecorationLine: 'underline',
+                    fontFamily: 'roboto-bold',
+                  }}>
+                  Terms &amp; Conditions
                 </Text>
-                <Text style={{ textAlign: 'center', marginTop: 5 }}>
-                  {/* Test Version {Platform.OS=='android'? appJson.expo.android.versionName : appJson.expo.ios.buildNumber}
+                &nbsp;and&nbsp;
+                <Text
+                  onPress={() => Linking.openURL('https://www.google.com/')}
+                  style={{
+                    textDecorationLine: 'underline',
+                    fontFamily: 'roboto-bold',
+                  }}>
+                  Privacy Policy
+                </Text>
+              </Text>
+              <Text style={{ textAlign: 'center', marginTop: 5 }}>
+                {/* Test Version {Platform.OS=='android'? appJson.expo.android.versionName : appJson.expo.ios.buildNumber}
                 {'\n'} */}
-                  {'StudyBuddy Version ' +
-                    appVersion +
-                    ' (' +
-                    buildNumber +
-                    ')'}
-                </Text>
-                {/* &nbsp; here. */}
-              </View>
+                {'StudyBuddy Version ' +
+                  appVersion +
+                  ' (' +
+                  buildNumber +
+                  ')'}
+              </Text>
+              {/* &nbsp; here. */}
             </View>
-            <View style={styles.deleteBox}>
-              <TouchableOpacity
-              // onPress={() =>
-              //   confirmationBox(
-              //     "Delete Account",
-              //     "Do you want to delete your account?",
-              //     () => handleDelete()
-              //   )
-              // }
-              >
-                <Text style={styles.delete}>Delete my account</Text>
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <Text style={styles.delete}>Share App</Text>
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
-        </View>
-      </SafeAreaView>
-    );
-  }
-  return <MainLayout Component={compenent()} />;
+          </View>
+          <View style={styles.deleteBox}>
+            <TouchableOpacity
+            // onPress={() =>
+            //   confirmationBox(
+            //     "Delete Account",
+            //     "Do you want to delete your account?",
+            //     () => handleDelete()
+            //   )
+            // }
+            >
+              <Text style={styles.delete}>Delete my account</Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Text style={styles.delete}>Share App</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </View>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({

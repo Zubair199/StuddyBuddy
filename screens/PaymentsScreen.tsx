@@ -72,112 +72,112 @@ export default function PaymentsScreen() {
     return [day, month, year].join('-');
   }
 
-  function component() {
-    return (
-      <SafeAreaView>
-        <Modal
-          animationType="slide"
-          visible={isModal}
-          onRequestClose={() => {
-            toggleModal();
-          }}>
-          {payment !== null &&
-            <View
-              style={{ flex: 1, backgroundColor: '#ffffff', padding: 15 }}>
-              <View style={{ flexDirection: 'row-reverse' }}>
-                <TouchableOpacity
-                  onPress={() => {
-                    toggleModal();
-                  }}>
-                  <AntDesignIcon name="close" size={25} />
-                </TouchableOpacity>
-              </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  marginVertical: 15,
-                  justifyContent: 'center',
+
+  return (
+    <SafeAreaView style={{
+      flex: 1,
+      backgroundColor: "#ffffff",
+    }}>
+      <Modal
+        animationType="slide"
+        visible={isModal}
+        onRequestClose={() => {
+          toggleModal();
+        }}>
+        {payment !== null &&
+          <View
+            style={{ flex: 1, backgroundColor: '#ffffff', padding: 15 }}>
+            <View style={{ flexDirection: 'row-reverse' }}>
+              <TouchableOpacity
+                onPress={() => {
+                  toggleModal();
                 }}>
-                <Text style={styles.heading}>Payment Details</Text>
+                <AntDesignIcon name="close" size={25} />
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                marginVertical: 15,
+                justifyContent: 'center',
+              }}>
+              <Text style={styles.heading}>Payment Details</Text>
+            </View>
+
+
+            <View style={{ marginVertical: 20 }}>
+
+              <View>
+                <MaterialIconsIcon name="payments" size={24} />
+                <Text style={styles.title1} >Payment</Text>
               </View>
-
-
-              <View style={{ marginVertical: 20 }}>
-
-                <View>
-                  <MaterialIconsIcon name="payments" size={24} />
-                  <Text style={styles.title1} >Payment</Text>
-                </View>
-                <View style={{ flexDirection: 'row' }}>
-                  <Text>${(payment.amount / 100)} USD</Text>
-                  <Text>{payment.status}</Text>
-                </View>
-                <View>
-                  <Text>Paid on {getDate(payment.created)}</Text>
-                </View>
+              <View style={{ flexDirection: 'row' }}>
+                <Text>${(payment.amount / 100)} USD</Text>
+                <Text>{payment.status}</Text>
               </View>
-              <Divider />
-              <View style={{ marginVertical: 20 }}>
-                <View>
-                  <Text>{classDetails.name}</Text>
-                  <Text>{classDetails.Subject.name}</Text>
-                  <Text>{classDetails.Teacher.username}</Text>
-                </View>
-
+              <View>
+                <Text>Paid on {getDate(payment.created)}</Text>
+              </View>
+            </View>
+            <Divider />
+            <View style={{ marginVertical: 20 }}>
+              <View>
+                <Text>{classDetails.name}</Text>
+                <Text>{classDetails.Subject.name}</Text>
+                <Text>{classDetails.Teacher.username}</Text>
               </View>
 
             </View>
 
-          }
-        </Modal>
-        <ScrollView
-          style={styles.scrollView}
-          showsVerticalScrollIndicator={false}>
-          {
-            classPayments.map((classPay, index) => {
-              let _class = classList.find(item => item._id === classPay.class)
-              if (_class) {
-                return (
-                  <View
-                    key={index}
-                    style={{
-                      marginVertical: 5,
-                      elevation: 4,
-                      borderRadius: 10,
-                      backgroundColor: "#fff",
-                      padding: 15
-                    }}
-                  >
-                    <TouchableOpacity onPress={() => showPaymentDetails(classPay)}>
-                      <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
-                        <View>
-                          <Text style={styles.title}>{_class.name}</Text>
-                          <Text style={styles.subtitle} >{_class.Teacher.username}</Text>
-                        </View>
-                        <View style={{ marginTop: 10 }}>
-                          <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
-                            <View>
-                              <Text style={styles.title}> {_class.price} USD</Text>
-                            </View>
-                            <View>
-                              <Icon name='chevron-right' size={20} />
-                            </View>
+          </View>
+
+        }
+      </Modal>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}>
+        {
+          classPayments.map((classPay, index) => {
+            let _class = classList.find(item => item._id === classPay.class)
+            if (_class) {
+              return (
+                <View
+                  key={index}
+                  style={{
+                    marginVertical: 5,
+                    elevation: 4,
+                    borderRadius: 10,
+                    backgroundColor: "#fff",
+                    padding: 15
+                  }}
+                >
+                  <TouchableOpacity onPress={() => showPaymentDetails(classPay)}>
+                    <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
+                      <View>
+                        <Text style={styles.title}>{_class.name}</Text>
+                        <Text style={styles.subtitle} >{_class.Teacher.username}</Text>
+                      </View>
+                      <View style={{ marginTop: 10 }}>
+                        <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
+                          <View>
+                            <Text style={styles.title}> {_class.price} USD</Text>
+                          </View>
+                          <View>
+                            <Icon name='chevron-right' size={20} />
                           </View>
                         </View>
                       </View>
-                    </TouchableOpacity>
-                  </View>
-                )
-              }
-            })
-          }
-        </ScrollView>
-      </SafeAreaView>
-    );
-  }
-  return (
-    <MainLayout Component={component()} />
-  )
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              )
+            }
+          })
+        }
+      </ScrollView>
+    </SafeAreaView>
+  );
+
 }
 
 const styles = StyleSheet.create({

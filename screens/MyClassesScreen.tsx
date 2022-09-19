@@ -52,14 +52,13 @@ export default function MyClassesScreen() {
         return (
             <View style={styles.container}>
                 <View style={{ height: containerHeight }}>
-                    <Tab />
                 </View>
             </View >
         );
     }
 
     return (
-        <MainLayout Component={component()} />
+        <Tab />
     )
 }
 

@@ -36,6 +36,7 @@ import EditProfileScreen from '../screens/EditProfileScreen';
 import ClassPayScreen from '../screens/ClassPayScreen';
 import PlatformPayScreen from '../screens/PlatformPayScreen';
 import ClassVideoScreen from '../screens/ClassVideoScreen';
+import Dashboard from '../screens/Dashboard';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -152,6 +153,11 @@ const HomeStackScreen = ({ navigation, route }: any) => {
         name="HomeScreen"
         options={mainHeader}
         component={HomeScreen}
+      />
+      <HomeStack.Screen
+        name="Dashboard"
+        options={mainHeader}
+        component={Dashboard}
       />
 
       <HomeStack.Screen
