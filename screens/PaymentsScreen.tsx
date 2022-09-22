@@ -11,10 +11,11 @@ import MaterialIconsIcon from 'react-native-vector-icons/MaterialIcons';
 
 import { AuthContext } from '../utils/AuthContext';
 import MainLayout from './MainLayout';
+import { ThemeContext } from '../context/ThemeContext';
 
 export default function PaymentsScreen() {
   const { userToken, userType, userEmail } = React.useContext(AuthContext);
-
+  const { currentScreen, height, containerHeight } = React.useContext(ThemeContext);
   const [platformPayments, setPlatformPayments] = React.useState([])
   const [classPayments, setClassPayments] = React.useState([])
   const [classList, setClassList] = React.useState([])
@@ -133,48 +134,63 @@ export default function PaymentsScreen() {
 
         }
       </Modal>
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}>
-        {
-          classPayments.map((classPay, index) => {
-            let _class = classList.find(item => item._id === classPay.class)
-            if (_class) {
-              return (
-                <View
-                  key={index}
-                  style={{
-                    marginVertical: 5,
-                    elevation: 4,
-                    borderRadius: 10,
-                    backgroundColor: "#fff",
-                    padding: 15
-                  }}
-                >
-                  <TouchableOpacity onPress={() => showPaymentDetails(classPay)}>
-                    <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
-                      <View>
-                        <Text style={styles.title}>{_class.name}</Text>
-                        <Text style={styles.subtitle} >{_class.Teacher.username}</Text>
-                      </View>
-                      <View style={{ marginTop: 10 }}>
-                        <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
-                          <View>
-                            <Text style={styles.title}> {_class.price} USD</Text>
-                          </View>
-                          <View>
-                            <Icon name='chevron-right' size={20} />
-                          </View>
+      <View style={{ height: containerHeight }}>
+        {!classPayments || classPayments.length == 0 ?
+          (
+            <View style={styles.contentBox}>
+              <Text style={styles.emptySearchText}>No Payments Has Been Found</Text>
+            </View>
+          ) :
+          (
+            <ScrollView
+              style={styles.scrollView}
+              showsVerticalScrollIndicator={false}>
+              <View style={{ paddingHorizontal: 15 , marginVertical:10}}>
+
+                {
+                  classPayments.map((classPay, index) => {
+                    let _class = classList.find(item => item._id === classPay.class)
+                    if (_class) {
+                      return (
+
+                        <View
+                          key={index}
+                          style={{
+                            marginVertical: 5,
+                            elevation: 4,
+                            borderRadius: 10,
+                            backgroundColor: "#fff",
+                            padding: 15
+                          }}
+                        >
+                          <TouchableOpacity onPress={() => showPaymentDetails(classPay)}>
+                            <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
+                              <View>
+                                <Text style={styles.title}>{_class.name}</Text>
+                                <Text style={styles.subtitle} >{_class.Teacher.username}</Text>
+                              </View>
+                              <View style={{ marginTop: 10 }}>
+                                <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
+                                  <View>
+                                    <Text style={styles.title}> {_class.price} USD</Text>
+                                  </View>
+                                  <View>
+                                    <Icon name='chevron-right' size={20} />
+                                  </View>
+                                </View>
+                              </View>
+                            </View>
+                          </TouchableOpacity>
                         </View>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              )
-            }
-          })
+                      )
+                    }
+                  })
+                }
+              </View>
+            </ScrollView>
+          )
         }
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 
@@ -184,7 +200,21 @@ const styles = StyleSheet.create({
   scrollView: {
     // marginTop: 10,
     // marginBottom: '20%',
-    paddingHorizontal: 15,
+    flex: 1,
+    // paddingHorizontal: 15,
+  },
+  emptySearchText: {
+    paddingTop: 10,
+    fontSize: 24,
+    fontFamily: 'roboto-regular',
+    color: 'black',
+    textTransform: 'uppercase',
+    textAlign: 'center',
+  },
+  contentBox: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   boxWithShadow: {
     shadowColor: '#000',

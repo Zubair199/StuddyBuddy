@@ -128,7 +128,7 @@ const genericStyle = StyleSheet.create({
     color: '#3878ee',
   },
   addRemoveBox: {
-    color: '#3878ee',
+    color: '#fff',
     fontFamily: 'System',
     textAlign: 'center',
     fontSize: 16,
@@ -147,14 +147,16 @@ const genericStyle = StyleSheet.create({
     // justifyContent: 'space-around',
     alignItems: 'center',
     marginTop: 10,
-    color:"#fff"
+    color:"#fff",
+    tintColor:"#fff"
   },
   removeIconlocation: {
-    width: 26,
-    height: 26,
+    width: 20,
+    height: 20,
     marginLeft: 5,
     // top: -12,
     right: -5,
+    tintColor:"#fff"
   },
   locationEditBox: {
     flexDirection: 'row',

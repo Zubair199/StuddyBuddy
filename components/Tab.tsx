@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { View, useWindowDimensions, Text, Dimensions } from 'react-native';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
+import { app } from '../constants/themeColors';
 import AssignmentsTab from './AssignmentsTab';
 import ClassesTab from './ClassesTab';
 import ExamsTab from './ExamsTab';
@@ -51,7 +52,7 @@ export default function Tab() {
     const renderTabBar = props => (
         <TabBar
             {...props}
-            style={{ backgroundColor: "#3878ee" }}
+            style={{ backgroundColor: app.lightBlue }}
             renderLabel={({ route, focused, color }) => (
                 <Text style={{ fontSize: fontSize, color: "#ffffff" }}>
                     {route.title}

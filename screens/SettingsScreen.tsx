@@ -23,6 +23,7 @@ import { Button, Input } from 'native-base';
 import { AUTH, AUTHENTICATIONS, STRIPE } from '../services/api.constants';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Icon from 'react-native-vector-icons/AntDesign';
+import { app } from '../constants/themeColors';
 
 export default function SettingsScreen() {
   const {
@@ -415,16 +416,6 @@ export default function SettingsScreen() {
       </Modal>
       <View style={{}}>
         <ScrollView style={styles.scrollView}>
-          <Text style={styles.title}>Settings</Text>
-
-          <TouchableOpacity
-            onPress={() =>
-              confirmationBox('Logout', 'Do you want to logout?', () =>
-                handleLogout(),
-              )
-            }>
-            <Text style={styles.logout}>Logout</Text>
-          </TouchableOpacity>
 
           <View>
             <Text style={styles.accountHeading}>Personal Information</Text>
@@ -725,6 +716,7 @@ export default function SettingsScreen() {
               ) : (
                 <View style={styles.groupBox}>
                   <Button
+                    style={{ backgroundColor: app.lightBlue }}
                     onPress={() => {
                       toggleModal();
                     }}>
@@ -953,6 +945,24 @@ export default function SettingsScreen() {
               <Text style={styles.delete}>Share App</Text>
             </TouchableOpacity>
           </View>
+
+          <View style={{ marginBottom: 50 }}>
+            <TouchableOpacity
+              style={[
+                genericStyle.loginBtn,
+              ]}
+              onPress={() =>
+                confirmationBox('Logout', 'Do you want to logout?', () =>
+                  handleLogout(),
+                )
+              }>
+              <Text style={[genericStyle.loginBtnText, { color: '#ffffff' }]}>
+                Logout
+              </Text>
+            </TouchableOpacity>
+
+          </View>
+
         </ScrollView>
       </View>
     </SafeAreaView>

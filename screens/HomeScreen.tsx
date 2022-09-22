@@ -37,10 +37,28 @@ let homeSections = [
     screenName: 'Dashboard',
   },
   {
+    name: "My Schedule",
+    colors: ['#ab47bc', '#8e24aa'],
+    icon: <MaterialCommunityIcon name="calendar-month" size={iconSize} color={"#fff"} />,
+    screenName: 'ScheduleScreen',
+  },
+  {
     name: "Classes",
     colors: ['rgb(236, 64, 122)', 'rgb(216, 27, 96)'],
     icon: <MaterialCommunityIcon name="human-male-board" size={iconSize} color={"#fff"} />,
     screenName: 'Classes',
+  },
+  {
+    name: "Search",
+    colors: ['#ffa726', '#fb8c00'],
+    icon: <MaterialCommunityIcon name="layers-search-outline" size={iconSize} color={"#fff"} />,
+    screenName: 'SearchScreen',
+  },
+  {
+    name: "Users",
+    colors: ['rgb(116, 123, 138)', 'rgb(73, 83, 97)'],
+    icon: <MaterialCommunityIcon name="account-group" size={iconSize} color={"#fff"} />,
+    screenName: 'NetworkScreen',
   },
   {
     name: "Payments",
@@ -49,23 +67,17 @@ let homeSections = [
     screenName: 'Payments',
   },
   {
-    name: "Network",
-    colors: ['rgb(116, 123, 138)', 'rgb(73, 83, 97)'],
-    icon: <MaterialCommunityIcon name="account-group" size={iconSize} color={"#fff"} />,
-    screenName: 'NetworkScreen',
-  },
-  {
     name: "Messages",
     colors: ["#0077b5", "#00669c"],
     icon: <AntDesign name="message1" size={iconSize} color={"#fff"} />,
     screenName: 'Messages',
   },
-  {
-    name: "Notifications",
-    colors: ['rgb(239, 83, 80)', 'rgb(229, 57, 53)'],
-    icon: <Ionicons name="notifications" size={iconSize} color={"#fff"} />,
-    screenName: 'NotificationScreen',
-  },
+  // {
+  //   name: "Notifications",
+  //   colors: ['rgb(239, 83, 80)', 'rgb(229, 57, 53)'],
+  //   icon: <Ionicons name="notifications" size={iconSize} color={"#fff"} />,
+  //   screenName: 'NotificationScreen',
+  // },
   {
     name: "Profile",
     colors: ['rgb(66, 66, 74)', 'rgb(25, 25, 25)'],

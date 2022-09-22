@@ -37,6 +37,7 @@ import ClassPayScreen from '../screens/ClassPayScreen';
 import PlatformPayScreen from '../screens/PlatformPayScreen';
 import ClassVideoScreen from '../screens/ClassVideoScreen';
 import Dashboard from '../screens/Dashboard';
+import { app, info } from '../constants/themeColors';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -75,74 +76,30 @@ const ProfileStack = createNativeStackNavigator();
 
 const topTab = createMaterialTopTabNavigator();
 
-// const mainHeader = ({ navigation }: any): any => {
-//   return {
-//     headerStyle: {
-//       backgroundColor: '#3878ee',
-//     },
-//     headerShown: true,
-//     // title: "",
-//     //headerTitleAlign: 'center',
-//     headerTitleStyle: {
-//       color: '#ffffff',
-//       fontSize: 22,
-//     },
-//     headerTitle: (props: any) => {
-//       return (
-//         <View style={{
-//           flexDirection: 'row',
-//           justifyContent: 'space-around',
-//           width: "100%",
-//           marginLeft: -10
-//         }}>
-//           <TouchableOpacity
-//             onPress={() => {
-//               navigation.reset({
-//                 index: 0,
-//                 routes: [{ name: 'HomeScreen' }],
-//               });
-//             }}
-//           >
-//             <Icon name='home' size={30} color="white" />
-//           </TouchableOpacity>
-//           <TouchableOpacity
-//             onPress={() => {
-//               navigation.reset({
-//                 index: 0,
-//                 routes: [{ name: 'ScheduleScreen' }],
-//               });
-//             }}
-//           >
-//             <Icon name='calendar' size={30} color="white" />
-//           </TouchableOpacity>
-//           <TouchableOpacity
-//             onPress={() => {
-//               navigation.reset({
-//                 index: 0,
-//                 routes: [{ name: 'NotificationScreen' }],
-//               });
-//             }}
-//           >
-//             <Icon name='bells' size={30} color="white" />
-//           </TouchableOpacity>
-//           <TouchableOpacity
-//             onPress={() => {
-//               navigation.reset({
-//                 index: 0,
-//                 routes: [{ name: 'SearchScreen' }],
-//               });
-//             }}
-//           >
-//             <Icon name='search1' size={30} color="white" />
-//           </TouchableOpacity>
-//         </View>
-//       )
-//     }
-//   };
-// };
+const mainHeader = ({ navigation }: any): any => {
+  return {
+    headerStyle: {
+      backgroundColor: app.lightBlue,
+      elevation: 0,
+      shadowOpacity: 0,
+      borderBottomWidth: 0,
+    },
+    headerShown: true,
+    headerTitleStyle: {
+      color: '#ffffff',
+      fontSize: 22,
+    },
+    headerLeft: () => {
+      return (
+        <TouchableOpacity style={{ paddingRight: 20 }} onPress={() => navigation.goBack()}>
+          <Icon name="arrowleft" size={22} color="#fff" />
+        </TouchableOpacity>
+      )
+    }
+  };
+};
 
 const HomeStackScreen = ({ navigation, route }: any) => {
-  const mainHeader = { headerShown: false };
   return (
     <HomeStack.Navigator
       initialRouteName="HomeScreen"
@@ -151,7 +108,7 @@ const HomeStackScreen = ({ navigation, route }: any) => {
       }}>
       <HomeStack.Screen
         name="HomeScreen"
-        options={mainHeader}
+        options={{ headerShown: false }}
         component={HomeScreen}
       />
       <HomeStack.Screen
@@ -277,12 +234,12 @@ const HomeStackScreen = ({ navigation, route }: any) => {
       />
       <HomeStack.Screen
         name="ChatScreen"
-        options={mainHeader}
+        options={{headerShown:false}}
         component={ChatScreen}
       />
       <HomeStack.Screen
         name="ChatScreenG"
-        options={mainHeader}
+        options={{headerShown:false}}
         component={ChatScreenG}
       />
       <HomeStack.Screen
@@ -295,7 +252,11 @@ const HomeStackScreen = ({ navigation, route }: any) => {
         options={mainHeader}
         component={ProfileScreen}
       />
-      <HomeStack.Screen name="EditProfile" component={EditProfileScreen} />
+      <HomeStack.Screen
+        name="EditProfile"
+        options={mainHeader}
+        component={EditProfileScreen}
+      />
     </HomeStack.Navigator>
   );
 };

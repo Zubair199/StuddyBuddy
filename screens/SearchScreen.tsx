@@ -1,4 +1,4 @@
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import * as React from 'react';
 import {
   Alert,
@@ -11,20 +11,20 @@ import {
   Modal,
   View,
 } from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {AUTHENTICATIONS, CLASS, GENERAL} from '../services/api.constants';
-import {AuthContext} from '../utils/AuthContext';
+import { AUTHENTICATIONS, CLASS, GENERAL } from '../services/api.constants';
+import { AuthContext } from '../utils/AuthContext';
 import MainLayout from './MainLayout';
-import {Button} from 'react-native-elements';
-import {RadioButton} from 'react-native-paper';
-import {Divider, Radio, Select} from 'native-base';
+import { Button } from 'react-native-elements';
+import { RadioButton } from 'react-native-paper';
+import { Divider, Radio, Select } from 'native-base';
 
 export default function SearchScreen() {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
   // const onClose = () => navigation.navigate("ClassesScreen");
-  const {userToken} = React.useContext(AuthContext);
+  const { userToken } = React.useContext(AuthContext);
 
   const [loader, setLoader] = React.useState(false);
   const [data, setData] = React.useState<any>();
@@ -89,11 +89,11 @@ export default function SearchScreen() {
     try {
       fetch(
         AUTHENTICATIONS.API_URL +
-          GENERAL.TEACHER_SEARCH +
-          'name=' +
-          name +
-          '&hire=' +
-          hireFlag,
+        GENERAL.TEACHER_SEARCH +
+        'name=' +
+        name +
+        '&hire=' +
+        hireFlag,
       )
         .then(response => response.json())
         .then(responseJson => {
@@ -126,18 +126,18 @@ export default function SearchScreen() {
     try {
       fetch(
         AUTHENTICATIONS.API_URL +
-          GENERAL.CLASS_SEARCH +
-          'name=' +
-          name +
-          '&' +
-          'subject=' +
-          subjectID +
-          '&' +
-          'level=' +
-          level +
-          '&' +
-          'duration=' +
-          classDuration,
+        GENERAL.CLASS_SEARCH +
+        'name=' +
+        name +
+        '&' +
+        'subject=' +
+        subjectID +
+        '&' +
+        'level=' +
+        level +
+        '&' +
+        'duration=' +
+        classDuration,
       )
         .then(response => response.json())
         .then(responseJson => {
@@ -178,7 +178,7 @@ export default function SearchScreen() {
               <View>
                 {users.map((item, index) => {
                   return (
-                    <TouchableOpacity key={index} onPress={() => {}}>
+                    <TouchableOpacity key={index} onPress={() => { }}>
                       <View
                         style={{
                           padding: 15,
@@ -195,7 +195,7 @@ export default function SearchScreen() {
                         </View>
                         <View>
                           {/* <TouchableOpacity onPress={() => {handleChat(item._id,)}}> */}
-                          <TouchableOpacity onPress={() => {}}>
+                          <TouchableOpacity onPress={() => { }}>
                             <Icon name="message1" size={25} />
                           </TouchableOpacity>
                         </View>
@@ -247,7 +247,7 @@ export default function SearchScreen() {
                         }}>
                         <Text style={styles.className}>{classItem.name}</Text>
                       </View>
-                      <View style={{flexDirection: 'row'}}>
+                      <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.studio}>
                           {classItem.Teacher.username}
                         </Text>
@@ -279,10 +279,9 @@ export default function SearchScreen() {
     }
   }
 
-  function component() {
-    return (
-      <SafeAreaView style={styles.container}>
-        {/* <View style={styles.closeIconBox}>
+  return (
+    <SafeAreaView style={styles.container}>
+      {/* <View style={styles.closeIconBox}>
         <TouchableOpacity onPress={onClose}>
           <Image
             style={styles.closeIcon}
@@ -290,166 +289,164 @@ export default function SearchScreen() {
           />
         </TouchableOpacity>
       </View> */}
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-around',
-            alignItems: 'center',
-            marginTop: 15,
-          }}>
-          <Button
-            onPress={() => toggleModal()}
-            buttonStyle={{width: '100%'}}
-            containerStyle={{width: '100%'}}
-            iconRight
-            icon={<Icon name="filter" size={15} color="white" />}
-            title="Filter"
-          />
-        </View>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+          marginTop: 15,
+        }}>
+        <Button
+          onPress={() => toggleModal()}
+          buttonStyle={{ width: '100%' }}
+          containerStyle={{ width: '100%' }}
+          iconRight
+          icon={<Icon name="filter" size={15} color="white" />}
+          title="Filter"
+        />
+      </View>
 
-        <Modal
-          animationType="slide"
-          visible={isModal}
-          onRequestClose={() => {
-            toggleModal();
-          }}>
-          <View style={{flex: 1, backgroundColor: '#ffffff', padding: 15}}>
-            <View style={{flexDirection: 'row-reverse'}}>
-              <TouchableOpacity
-                onPress={() => {
-                  toggleModal();
+      <Modal
+        animationType="slide"
+        visible={isModal}
+        onRequestClose={() => {
+          toggleModal();
+        }}>
+        <View style={{ flex: 1, backgroundColor: '#ffffff', padding: 15 }}>
+          <View style={{ flexDirection: 'row-reverse' }}>
+            <TouchableOpacity
+              onPress={() => {
+                toggleModal();
+              }}>
+              <Icon name="close" size={25} />
+            </TouchableOpacity>
+          </View>
+          <View style={{ height: '90%' }}>
+            <View style={{ marginVertical: 10 }}>
+              <Radio.Group
+                direction={'row'}
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}
+                name="myRadioGroup"
+                value={value}
+                onChange={nextValue => {
+                  setValue(nextValue);
+                  setView(nextValue);
                 }}>
-                <Icon name="close" size={25} />
-              </TouchableOpacity>
+                <Radio value="students" my="1">
+                  Students
+                </Radio>
+                <Radio value="teachers" my="1">
+                  Teachers
+                </Radio>
+                <Radio value="classes" my="1">
+                  Classes
+                </Radio>
+              </Radio.Group>
             </View>
-            <View style={{height: '90%'}}>
-              <View style={{marginVertical: 10}}>
-                <Radio.Group
-                  direction={'row'}
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}
-                  name="myRadioGroup"
-                  value={value}
-                  onChange={nextValue => {
-                    setValue(nextValue);
-                    setView(nextValue);
-                  }}>
-                  <Radio value="students" my="1">
-                    Students
-                  </Radio>
-                  <Radio value="teachers" my="1">
-                    Teachers
-                  </Radio>
-                  <Radio value="classes" my="1">
-                    Classes
-                  </Radio>
-                </Radio.Group>
-              </View>
-              <View style={{marginVertical: 10}}>
-                <TextInput
-                  placeholder="Enter Name"
-                  onChangeText={text => setName(text)}
-                  style={{
-                    borderWidth: 1,
-                    borderColor: 'lightgray',
-                    borderRadius: 5,
-                    height: 43,
-                  }}
-                />
-              </View>
-              {value === 'classes' && (
-                <View>
-                  <View style={{marginVertical: 10}}>
-                    <Select
-                      accessibilityLabel="Choose Subject"
-                      selectedValue={subjectID}
-                      placeholder="Choose Subject"
-                      onValueChange={itemValue => {
-                        setSubjectID(itemValue);
-                        console.log(
-                          subjects.filter(item => item._id === itemValue)[0]
-                            .name,
-                        );
-                        setSubject(
-                          subjects.filter(item => item._id === itemValue)[0]
-                            .name,
-                        );
-                      }}>
-                      {subjects.map((item, index) => {
-                        return (
-                          <Select.Item
-                            label={item.name}
-                            key={index}
-                            value={item._id}
-                          />
-                        );
-                      })}
-                    </Select>
-                  </View>
-                  <View style={{marginVertical: 10}}>
-                    <Select
-                      accessibilityLabel="Choose Level"
-                      selectedValue={level}
-                      placeholder="Choose Level"
-                      onValueChange={itemValue => setLevel(itemValue)}>
-                      <Select.Item label="Beginner" value="Beginner" />
-                      <Select.Item label="Intermediate" value="Intermediate" />
-                      <Select.Item label="Advanced" value="Advanced" />
-                    </Select>
-                  </View>
-                  <View style={{marginVertical: 10}}>
-                    <Select
-                      accessibilityLabel="Choose Class Duration"
-                      selectedValue={classDuration}
-                      placeholder="Choose Class Duration"
-                      onValueChange={itemValue => {
-                        setClassDuration(itemValue);
-                      }}>
-                      <Select.Item label="1 month" value="1" />
-                      <Select.Item label="2 month" value="2" />
-                      <Select.Item label="3 month" value="3" />
-                      <Select.Item label="4 month" value="4" />
-                      <Select.Item label="5 month" value="5" />
-                      <Select.Item label="6 month" value="6" />
-                    </Select>
-                  </View>
-                </View>
-              )}
-              {value === 'teachers' && (
-                <View>
-                  <View style={{marginVertical: 10}}>
-                    <Select
-                      accessibilityLabel="Available to hire"
-                      selectedValue={hireFlag}
-                      onValueChange={itemValue => {
-                        setHireFlag(itemValue);
-                      }}
-                      placeholder="Available to hire">
-                      <Select.Item label="Yes" value="1" />
-                      <Select.Item label="No" value="0" />
-                    </Select>
-                  </View>
-                </View>
-              )}
-            </View>
-            <View style={{height: '10%'}}>
-              <Button
-                onPress={() => filter()}
-                buttonStyle={{width: '100%'}}
-                containerStyle={{width: '100%'}}
-                title="Search"
+            <View style={{ marginVertical: 10 }}>
+              <TextInput
+                placeholder="Enter Name"
+                onChangeText={text => setName(text)}
+                style={{
+                  borderWidth: 1,
+                  borderColor: 'lightgray',
+                  borderRadius: 5,
+                  height: 43,
+                }}
               />
             </View>
+            {value === 'classes' && (
+              <View>
+                <View style={{ marginVertical: 10 }}>
+                  <Select
+                    accessibilityLabel="Choose Subject"
+                    selectedValue={subjectID}
+                    placeholder="Choose Subject"
+                    onValueChange={itemValue => {
+                      setSubjectID(itemValue);
+                      console.log(
+                        subjects.filter(item => item._id === itemValue)[0]
+                          .name,
+                      );
+                      setSubject(
+                        subjects.filter(item => item._id === itemValue)[0]
+                          .name,
+                      );
+                    }}>
+                    {subjects.map((item, index) => {
+                      return (
+                        <Select.Item
+                          label={item.name}
+                          key={index}
+                          value={item._id}
+                        />
+                      );
+                    })}
+                  </Select>
+                </View>
+                <View style={{ marginVertical: 10 }}>
+                  <Select
+                    accessibilityLabel="Choose Level"
+                    selectedValue={level}
+                    placeholder="Choose Level"
+                    onValueChange={itemValue => setLevel(itemValue)}>
+                    <Select.Item label="Beginner" value="Beginner" />
+                    <Select.Item label="Intermediate" value="Intermediate" />
+                    <Select.Item label="Advanced" value="Advanced" />
+                  </Select>
+                </View>
+                <View style={{ marginVertical: 10 }}>
+                  <Select
+                    accessibilityLabel="Choose Class Duration"
+                    selectedValue={classDuration}
+                    placeholder="Choose Class Duration"
+                    onValueChange={itemValue => {
+                      setClassDuration(itemValue);
+                    }}>
+                    <Select.Item label="1 month" value="1" />
+                    <Select.Item label="2 month" value="2" />
+                    <Select.Item label="3 month" value="3" />
+                    <Select.Item label="4 month" value="4" />
+                    <Select.Item label="5 month" value="5" />
+                    <Select.Item label="6 month" value="6" />
+                  </Select>
+                </View>
+              </View>
+            )}
+            {value === 'teachers' && (
+              <View>
+                <View style={{ marginVertical: 10 }}>
+                  <Select
+                    accessibilityLabel="Available to hire"
+                    selectedValue={hireFlag}
+                    onValueChange={itemValue => {
+                      setHireFlag(itemValue);
+                    }}
+                    placeholder="Available to hire">
+                    <Select.Item label="Yes" value="1" />
+                    <Select.Item label="No" value="0" />
+                  </Select>
+                </View>
+              </View>
+            )}
           </View>
-        </Modal>
+          <View style={{ height: '10%' }}>
+            <Button
+              onPress={() => filter()}
+              buttonStyle={{ width: '100%' }}
+              containerStyle={{ width: '100%' }}
+              title="Search"
+            />
+          </View>
+        </View>
+      </Modal>
 
-        {getView()}
-      </SafeAreaView>
-    );
-  }
-  return <MainLayout Component={component()} />;
+      {getView()}
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({

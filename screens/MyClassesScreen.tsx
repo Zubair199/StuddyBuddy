@@ -58,7 +58,9 @@ export default function MyClassesScreen() {
     }
 
     return (
-        <Tab />
+        <SafeAreaView style={styles.container}>
+            <Tab />
+        </SafeAreaView>
     )
 }
 

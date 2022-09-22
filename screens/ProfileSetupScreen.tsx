@@ -309,7 +309,6 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
 
   //cancel location
   function cancelLocation() {
-    setLocations(route.params.locations);
     setLocationsModal(false);
     setQueryLocation(route.params.allLocations);
   }
@@ -366,7 +365,6 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
   }
 
   function cancelGenre() {
-    setGenres(route.params.skills);
     setGenreModal(false);
     setQueryGenre(route.params.allSubjects);
   }
@@ -422,7 +420,6 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
   }
 
   function cancelSkill() {
-    setSkills(route.params.skills);
     setSkillsModal(false);
     setQuery(route.params.allSkills);
   }
@@ -987,7 +984,7 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     marginLeft: 5,
-    tintColor:"#fff"
+    tintColor: "#fff"
   },
   nextBtn: {
     alignItems: 'center',

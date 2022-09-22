@@ -1,6 +1,6 @@
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import * as React from 'react';
-import {useState} from 'react';
+import { useState } from 'react';
 import {
   Alert,
   Share,
@@ -16,15 +16,16 @@ import {
   Modal,
   Platform,
 } from 'react-native';
-import {Avatar, BottomSheet, CheckBox} from 'react-native-elements';
+import { Avatar, BottomSheet, CheckBox } from 'react-native-elements';
 import api from '../constants/api';
-import {EditProfileParamList} from '../types';
-import {AuthContext} from '../utils/AuthContext';
+import { EditProfileParamList } from '../types';
+import { AuthContext } from '../utils/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import genericStyle from '../assets/styles/styleSheet';
-import {AUTH, AUTHENTICATIONS} from '../services/api.constants';
+import { AUTH, AUTHENTICATIONS } from '../services/api.constants';
 import * as ImagePicker from 'react-native-image-picker';
 import axios from 'axios';
+import { app, grey } from '../constants/themeColors';
 
 interface IPROPS {
   email: String;
@@ -264,7 +265,6 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
 
   //cancel location
   function cancelLocation() {
-    setLocations(route.params.locations);
     setLocationsModal(false);
     setQueryLocation(route.params.allLocations);
   }
@@ -321,7 +321,6 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
   }
 
   function cancelGenre() {
-    setGenres(route.params.skills);
     setGenreModal(false);
     setQueryGenre(route.params.allSubjects);
   }
@@ -377,7 +376,6 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
   }
 
   function cancelSkill() {
-    setSkills(route.params.skills);
     setSkillsModal(false);
     setQuery(route.params.allSkills);
   }
@@ -391,7 +389,7 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
     setQuery(route.params.allSkills);
   }
 
-  React.useEffect(() => {}, []);
+  React.useEffect(() => { }, []);
 
   React.useEffect(() => {
     const backAction = () => {
@@ -411,7 +409,7 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.body}>
-          <View style={{alignItems: 'center', marginBottom: 10}}>
+          <View style={{ alignItems: 'center', marginBottom: 10 }}>
             <Avatar
               rounded
               title="P"
@@ -428,11 +426,11 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
             <View
               style={[
                 styles.textBoxContainer,
-                {marginTop: 35, alignItems: 'center'},
+                { marginTop: 35, alignItems: 'center' },
               ]}>
               {email ? (
                 <Text
-                  style={{fontSize: 15, color: '#3878ee', fontWeight: 'bold'}}>
+                  style={{ fontSize: 15, color: "black", fontWeight: 'bold' }}>
                   {email}
                 </Text>
               ) : (
@@ -440,21 +438,21 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
                   style={styles.textBox}
                   autoCapitalize="words"
                   placeholder="Full Name"
-                  placeholderTextColor="#3878ee"
+                  placeholderTextColor={grey[500]}
                   onChangeText={text => setFullName(text)}
                   maxLength={40}
                 />
               )}
             </View>
 
-            <View style={[styles.textBoxContainer, {height: 100}]}>
+            <View style={[styles.textBoxContainer, { height: 100 }]}>
               <TextInput
                 style={genericStyle.textBox}
                 autoCapitalize="words"
                 placeholder={
                   isTeacher ? 'Past Experience/Clients' : 'Past Education'
                 }
-                placeholderTextColor="#3878ee"
+                placeholderTextColor={grey[500]}
                 multiline={true}
                 onChangeText={text => setPastExperience(text)}
                 maxLength={40}
@@ -516,7 +514,7 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
               ))}
               <TouchableOpacity
                 onPress={() => setGenreModal(true)}
-                style={[genericStyle.locationAddRemove, {width: 150}]}>
+                style={[genericStyle.locationAddRemove, { width: 150 }]}>
                 <Image
                   source={require('../assets/images/icons/add-button.png')}
                   style={styles.addIcon}
@@ -544,7 +542,7 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
               ))}
               <TouchableOpacity
                 onPress={() => setSkillsModal(true)}
-                style={[styles.locationAddRemove, {width: 150}]}>
+                style={[styles.locationAddRemove, { width: 150 }]}>
                 <Image
                   source={require('../assets/images/icons/add-button.png')}
                   style={styles.addIcon}
@@ -554,39 +552,14 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
             </View>
           </View>
 
-          {/* <View style={styles.selectBox}>
-            <Text style={genericStyle.subHeading}>Video</Text>
-            <View style={genericStyle.locationEditBox}>
-              <TouchableOpacity
-                onPress={() => selectVideo()}
-                style={[styles.locationAddRemove, {width: 150}]}>
-                <Image
-                  source={require('../assets/images/icons/add-button.png')}
-                  style={styles.addIcon}
-                />
-                <Text style={styles.addRemoveBoxText}>Upload Video</Text>
-              </TouchableOpacity>
-            </View>
-            <Text style={genericStyle.subHeading}>{videoName}</Text>
-          </View>
-          <View style={styles.selectBox}></View> */}
 
           <TouchableOpacity
             onPress={onPressNextBtn}
-            style={[genericStyle.loginBtn, {marginTop: 25}]}>
+            style={[genericStyle.loginBtn, { marginTop: 25 }]}>
             <Text style={genericStyle.loginBtnText}>Submit Request</Text>
           </TouchableOpacity>
 
-          <View style={styles.goBackView}>
-            <TouchableOpacity onPress={handleBack}>
-              <View style={{width: 'auto', alignSelf: 'center'}}>
-                <Text style={styles.goBackText}>Go back</Text>
-                <View style={genericStyle.underline} />
-              </View>
-            </TouchableOpacity>
-          </View>
-
-          <View style={{marginTop: 50}} />
+          <View style={{ marginTop: 50 }} />
         </View>
       </ScrollView>
 
@@ -601,7 +574,7 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
                 style={styles.searchBox}
                 placeholder={'Search Skills'}
                 onChangeText={text => searchSkill(text)}
-                placeholderTextColor="#3878ee"
+                placeholderTextColor={grey[500]}
               />
               <Image
                 style={styles.searchIcon}
@@ -622,7 +595,7 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
             </TouchableOpacity>
           </View>
 
-          <View style={{marginTop: 20}}>
+          <View style={{ marginTop: 20 }}>
             <View>
               {query.length < 1 ? (
                 <View
@@ -669,7 +642,7 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
                 style={styles.searchBox}
                 placeholder={'Search Subjects'}
                 onChangeText={text => searchGenre(text)}
-                placeholderTextColor="#3878ee"
+                placeholderTextColor={grey[500]}
               />
               <Image
                 style={styles.searchIcon}
@@ -690,7 +663,7 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
             </TouchableOpacity>
           </View>
 
-          <View style={{marginTop: 20}}>
+          <View style={{ marginTop: 20 }}>
             <View>
               {queryGenre.length < 1 ? (
                 <View
@@ -737,7 +710,7 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
                 style={styles.searchBox}
                 placeholder={'Search Locations'}
                 onChangeText={text => searchLocation(text)}
-                placeholderTextColor="#3878ee"
+                placeholderTextColor={grey[500]}
               />
               <Image
                 style={styles.searchIcon}
@@ -759,7 +732,7 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
             </TouchableOpacity>
           </View>
 
-          <View style={{marginTop: 20}}>
+          <View style={{ marginTop: 20 }}>
             <View>
               {queryLocations.length < 1 ? (
                 <View
@@ -798,6 +771,7 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -807,9 +781,8 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
   scrollView: {
-    backgroundColor: '#ffffff',
     paddingVertical: 15,
-    paddingHorizontal: 45,
+    paddingHorizontal: 20,
     marginBottom: 0,
     flex: 1,
   },
@@ -844,7 +817,7 @@ const styles = StyleSheet.create({
     width: '100%',
     fontSize: 18,
   },
-  addRemoveBoxText: {paddingLeft: 15, color: '#3878ee'},
+  addRemoveBoxText: { paddingLeft: 15, color: '#ffffff' },
   textBox: {
     height: '100%',
     width: 300,
@@ -917,15 +890,15 @@ const styles = StyleSheet.create({
   },
   locationAddRemove: {
     padding: 5,
-    borderColor: '#C1CAE1',
-    backgroundColor: '#C1CAE1',
+    borderColor: app.lightBlue,
+    backgroundColor: app.lightBlue,
     borderRadius: 25,
     borderWidth: 1,
     height: 40,
     width: 95,
     marginRight: '3%',
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    // justifyContent: 'space-around',
     alignItems: 'center',
     marginTop: 10,
   },
@@ -937,9 +910,10 @@ const styles = StyleSheet.create({
     right: -5,
   },
   addIcon: {
-    width: 26,
-    height: 26,
+    width: 16,
+    height: 16,
     marginLeft: 5,
+    tintColor: "#fff"
   },
   nextBtn: {
     alignItems: 'center',

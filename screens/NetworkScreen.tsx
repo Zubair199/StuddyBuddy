@@ -1,23 +1,25 @@
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import moment from 'moment';
-import {Divider, View} from 'native-base';
+import { Divider, View } from 'native-base';
 import * as React from 'react';
 import {
+  FlatList,
   Image,
   Modal,
   SafeAreaView,
   StyleSheet,
+  TextInput,
   TouchableOpacity,
 } from 'react-native';
-import {Text} from 'react-native-elements';
-import {ScrollView} from 'react-native-gesture-handler';
-import {AUTH, AUTHENTICATIONS} from '../services/api.constants';
-import {AuthContext} from '../utils/AuthContext';
+import { Text } from 'react-native-elements';
+import { ScrollView } from 'react-native-gesture-handler';
+import { AUTH, AUTHENTICATIONS, GENERAL } from '../services/api.constants';
+import { AuthContext } from '../utils/AuthContext';
 import MainLayout from './MainLayout';
 import Icon from 'react-native-vector-icons/AntDesign';
 import api from '../services/api.services';
 export default function NetworkScreen() {
-  const {userToken, userType} = React.useContext(AuthContext);
+  const { userToken, userType } = React.useContext(AuthContext);
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
@@ -105,7 +107,7 @@ export default function NetworkScreen() {
     // }
     // else{
     console.log('here in one to one');
-    const requestData = {toUser: classId};
+    const requestData = { toUser: classId };
     console.log(classId);
     api
       .createNewMessage(requestData)
@@ -156,189 +158,272 @@ export default function NetworkScreen() {
       setPastExperience('');
     }
   }
-  function component() {
-    return (
-      <SafeAreaView style={{flex: 1, backgroundColor: '#ffffff'}}>
-        <Modal
-          animationType="slide"
-          visible={isModal}
-          onRequestClose={() => {
-            toggleModal();
-          }}>
-          <View style={{flex: 1, backgroundColor: '#ffffff', padding: 15}}>
-            <View style={{flexDirection: 'row-reverse'}}>
-              <TouchableOpacity
-                onPress={() => {
-                  toggleModal();
-                }}>
-                <Icon name="close" size={25} />
-              </TouchableOpacity>
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      key={item._id}
+      onPress={() => {
+        toggleModal();
+        getProfileData(item._id, item);
+      }}>
+      <View
+        style={{
+          padding: 15,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+        }}>
+        <View>
+          <View>
+            <Text>{item.username}</Text>
+            <View>
+              <Text>{item.roles.name}</Text>
             </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginVertical: 15,
-                justifyContent: 'center',
+          </View>
+        </View>
+        <View>
+          {/* <TouchableOpacity onPress={() => {handleChat(item._id,)}}> */}
+          <TouchableOpacity
+            onPress={() => {
+              handleChat(item._id, false);
+            }}>
+            <Icon name="message1" size={25} />
+          </TouchableOpacity>
+        </View>
+      </View>
+      <Divider />
+    </TouchableOpacity>
+  );
+  const searchUser = (name) => {
+    const backup = users
+    // if (name !== '') {
+    //   const res = users.filter((item) => item.username.includes(name))
+    //   console.log(res)
+    //   setUser(res)
+    // } else {
+    //   setUser(backup)
+    // }
+  }
+  let [hireFlag, setHireFlag] = React.useState('');
+  let [name, setName] = React.useState('');
+  function teacherApiCall() {
+    try {
+      fetch(
+        AUTHENTICATIONS.API_URL +
+        GENERAL.TEACHER_SEARCH +
+        'name=' +
+        name +
+        '&hire=' +
+        hireFlag,
+      )
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log('teachers ', responseJson);
+          setUsers(responseJson.users);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  function studentApiCall() {
+    try {
+      fetch(AUTHENTICATIONS.API_URL + GENERAL.USER_SEARCH + name)
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log('students ', responseJson);
+          setUsers(responseJson.users);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
+      <Modal
+        animationType="slide"
+        visible={isModal}
+        onRequestClose={() => {
+          toggleModal();
+        }}>
+        <View style={{ flex: 1, backgroundColor: '#ffffff', padding: 15 }}>
+          <View style={{ flexDirection: 'row-reverse' }}>
+            <TouchableOpacity
+              onPress={() => {
+                toggleModal();
               }}>
-              <Text style={styles.title}>Profile Details</Text>
-            </View>
-            <SafeAreaView style={styles.container}>
-              <ScrollView
-                style={styles.scrollView}
-                keyboardShouldPersistTaps={'handled'}>
-                {/* <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" /> */}
-                <View style={styles.basicInfo}>
-                  {/* instructor name and image will be replaced by api's data on integration of apis */}
-                  <View style={styles.profileImageBox}>
-                    {/* {imageLoader && <Image
+              <Icon name="close" size={25} />
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              marginVertical: 15,
+              justifyContent: 'center',
+            }}>
+            <Text style={styles.title}>Profile Details</Text>
+          </View>
+          <SafeAreaView style={styles.container}>
+            <ScrollView
+              style={styles.scrollView}
+              keyboardShouldPersistTaps={'handled'}>
+              {/* <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" /> */}
+              <View style={styles.basicInfo}>
+                {/* instructor name and image will be replaced by api's data on integration of apis */}
+                <View style={styles.profileImageBox}>
+                  {/* {imageLoader && <Image
                   style={{width:100, height:54}}
                   source={require('../assets/images/Deep-Move-Spinner-v3.gif')}
                 />} */}
-                    <TouchableOpacity>
-                      <Image
-                        style={styles.profileImage}
-                        // onLoadStart={()=>setImageLoader(true)}
-                        // onLoadEnd={()=>setImageLoader(false)}
-                        source={
-                          image === ''
-                            ? require('../assets/images/user.png')
-                            : {uri: AUTHENTICATIONS.API_URL + image}
-                        }
-                      />
-                    </TouchableOpacity>
-                  </View>
-                  <View style={styles.nameBox}>
-                    <Text style={styles.name}>{userName}</Text>
-                  </View>
-                  <View style={styles.instructorBox}>
-                    <Text style={styles.instructor}>
-                      {isStudent ? 'Student' : 'Instructor'}
-                    </Text>
-                  </View>
+                  <TouchableOpacity>
+                    <Image
+                      style={styles.profileImage}
+                      // onLoadStart={()=>setImageLoader(true)}
+                      // onLoadEnd={()=>setImageLoader(false)}
+                      source={
+                        image === ''
+                          ? require('../assets/images/user.png')
+                          : { uri: AUTHENTICATIONS.API_URL + image }
+                      }
+                    />
+                  </TouchableOpacity>
                 </View>
-
-                {isStudent ? null : (
-                  <View>
-                    {/* Divider */}
-                    <View style={styles.lineStyle} />
-
-                    <View style={styles.actionBox}>
-                      <Text style={[styles.noShowTitle, {marginRight: 20}]}>
-                        Late Cancellation:{' ' + lateCancellation}
-                      </Text>
-                      <Text style={[styles.noShowTitle, {marginLeft: 20}]}>
-                        No Show:{' ' + noShowCount}
-                      </Text>
-                    </View>
-
-                    {/* Divider */}
-                    <View style={styles.lineStyle} />
-                  </View>
-                )}
-                <View style={styles.skillBox}>
-                  <View style={styles.skillsWithIcon}>
-                    <Text style={styles.skillsAttributesHeading}>
-                      {isStudent ? 'Class Preferences' : 'Skills'}
-                    </Text>
-                  </View>
-                  <View style={styles.skills}>
-                    {skills.map((skill, index, arr) => (
-                      <View
-                        key={index + '_skill_view'}
-                        style={{flexDirection: 'row'}}>
-                        <Text style={styles.skillsText}>{skill}</Text>
-                        {arr.length - 1 !== index ? (
-                          <View style={styles.dot}></View>
-                        ) : null}
-                      </View>
-                    ))}
-                  </View>
+                <View style={styles.nameBox}>
+                  <Text style={styles.name}>{userName}</Text>
                 </View>
-                {isTeacher && (
-                  <View style={styles.textContent}>
-                    <Text style={styles.contentTitle}>Certifications</Text>
-                    {certifications ? (
-                      <Text style={styles.actualText}>{certifications}</Text>
-                    ) : (
-                      <Text style={styles.placeholder}>
-                        Your Certifications Here
-                      </Text>
-                    )}
-                  </View>
-                )}
-                <View style={styles.textContent}>
-                  <Text style={styles.contentTitle}>
-                    {isTeacher ? 'Past Experience' : 'Past Education'}
+                <View style={styles.instructorBox}>
+                  <Text style={styles.instructor}>
+                    {isStudent ? 'Student' : 'Instructor'}
                   </Text>
-                  {experience ? (
-                    <Text style={styles.actualText}>{experience}</Text>
-                  ) : (
-                    <Text style={styles.placeholder}>
-                      Your Past Experience Here
+                </View>
+              </View>
+
+              {isStudent ? null : (
+                <View>
+                  {/* Divider */}
+                  <View style={styles.lineStyle} />
+
+                  <View style={styles.actionBox}>
+                    <Text style={[styles.noShowTitle, { marginRight: 20 }]}>
+                      Late Cancellation:{' ' + lateCancellation}
                     </Text>
-                  )}
+                    <Text style={[styles.noShowTitle, { marginLeft: 20 }]}>
+                      No Show:{' ' + noShowCount}
+                    </Text>
+                  </View>
+
+                  {/* Divider */}
                   <View style={styles.lineStyle} />
                 </View>
-
-                {isTeacher && (
-                  <>
-                    <View style={styles.lineStyle} />
-
-                    <View style={styles.switchBoxWarpper}>
-                      <Text style={styles.switchBoxLebel}>
-                        Mark as available to hire.
-                      </Text>
-                      <TouchableOpacity>
-                        {toggle ? (
-                          <Image
-                            style={styles.toggleOn}
-                            source={require('../assets/images/icons/toggle.png')}
-                          />
-                        ) : (
-                          <Image
-                            style={styles.toggleOn}
-                            source={require('../assets/images/icons/Toggle-off.png')}
-                          />
-                        )}
-                      </TouchableOpacity>
+              )}
+              <View style={styles.skillBox}>
+                <View style={styles.skillsWithIcon}>
+                  <Text style={styles.skillsAttributesHeading}>
+                    {isStudent ? 'Class Preferences' : 'Skills'}
+                  </Text>
+                </View>
+                <View style={styles.skills}>
+                  {skills.map((skill, index, arr) => (
+                    <View
+                      key={index + '_skill_view'}
+                      style={{ flexDirection: 'row' }}>
+                      <Text style={styles.skillsText}>{skill}</Text>
+                      {arr.length - 1 !== index ? (
+                        <View style={styles.dot}></View>
+                      ) : null}
                     </View>
-                    <View style={styles.lineStyle} />
-                  </>
+                  ))}
+                </View>
+              </View>
+              {isTeacher && (
+                <View style={styles.textContent}>
+                  <Text style={styles.contentTitle}>Certifications</Text>
+                  {certifications ? (
+                    <Text style={styles.actualText}>{certifications}</Text>
+                  ) : (
+                    <Text style={styles.placeholder}>
+                      Your Certifications Here
+                    </Text>
+                  )}
+                </View>
+              )}
+              <View style={styles.textContent}>
+                <Text style={styles.contentTitle}>
+                  {isTeacher ? 'Past Experience' : 'Past Education'}
+                </Text>
+                {experience ? (
+                  <Text style={styles.actualText}>{experience}</Text>
+                ) : (
+                  <Text style={styles.placeholder}>
+                    Your Past Experience Here
+                  </Text>
                 )}
+                <View style={styles.lineStyle} />
+              </View>
 
-                {/* {!isStudent && (
+              {isTeacher && (
+                <>
+                  <View style={styles.lineStyle} />
+
+                  <View style={styles.switchBoxWarpper}>
+                    <Text style={styles.switchBoxLebel}>
+                      Mark as available to hire.
+                    </Text>
+                    <TouchableOpacity>
+                      {toggle ? (
+                        <Image
+                          style={styles.toggleOn}
+                          source={require('../assets/images/icons/toggle.png')}
+                        />
+                      ) : (
+                        <Image
+                          style={styles.toggleOn}
+                          source={require('../assets/images/icons/Toggle-off.png')}
+                        />
+                      )}
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.lineStyle} />
+                </>
+              )}
+
+              {/* {!isStudent && (
                     <SubscribersListComponent subscribersList={fakeSubscribers} />
                 )} */}
 
-                {/* image modal starts here */}
-                <Modal
-                  animationType="slide"
-                  transparent={true}
-                  visible={imageModal}
-                  onRequestClose={() => setImageModal(false)}>
-                  <View style={styles.centeredView}>
-                    <TouchableOpacity
-                      style={{
-                        position: 'absolute',
-                        width: '100%',
-                        height: '100%',
-                      }}
-                      onPress={() => setImageModal(false)}></TouchableOpacity>
-                    <View style={styles.modalView}>
-                      <TouchableOpacity style={styles.imageModal}>
-                        <Icon name="camera" size={30} />
-                        <Text>Take Picture</Text>
-                      </TouchableOpacity>
+              {/* image modal starts here */}
+              <Modal
+                animationType="slide"
+                transparent={true}
+                visible={imageModal}
+                onRequestClose={() => setImageModal(false)}>
+                <View style={styles.centeredView}>
+                  <TouchableOpacity
+                    style={{
+                      position: 'absolute',
+                      width: '100%',
+                      height: '100%',
+                    }}
+                    onPress={() => setImageModal(false)}></TouchableOpacity>
+                  <View style={styles.modalView}>
+                    <TouchableOpacity style={styles.imageModal}>
+                      <Icon name="camera" size={30} />
+                      <Text>Take Picture</Text>
+                    </TouchableOpacity>
 
-                      <TouchableOpacity style={styles.imageModal}>
-                        <Icon name="upload" size={30} />
-                        <Text>Upload Picture</Text>
-                      </TouchableOpacity>
-                    </View>
+                    <TouchableOpacity style={styles.imageModal}>
+                      <Icon name="upload" size={30} />
+                      <Text>Upload Picture</Text>
+                    </TouchableOpacity>
                   </View>
-                </Modal>
+                </View>
+              </Modal>
 
-                {/* {editProfile && <EditProfileModal
+              {/* {editProfile && <EditProfileModal
                     editProfileModal={editProfile}
                     closeEditModal={() => setEditProfile(false)}
                     isStudent={isStudent}
@@ -351,54 +436,39 @@ export default function NetworkScreen() {
                     loadingFalse={() => setLoader(false)}
                     reRun={() => setReRun(!reRun)}
                 />} */}
-              </ScrollView>
-            </SafeAreaView>
-          </View>
-        </Modal>
-        <ScrollView>
-          {users.map((item, index) => {
-            // console.log(item)
-            return (
-              <TouchableOpacity
-                key={index}
-                onPress={() => {
-                  toggleModal();
-                  getProfileData(item._id, item);
-                }}>
-                <View
-                  style={{
-                    padding: 15,
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <View>
-                    <View>
-                      <Text>{item.username}</Text>
-                      <View>
-                        <Text>{item.roles.name}</Text>
-                      </View>
-                    </View>
-                  </View>
-                  <View>
-                    {/* <TouchableOpacity onPress={() => {handleChat(item._id,)}}> */}
-                    <TouchableOpacity
-                      onPress={() => {
-                        handleChat(item._id, false);
-                      }}>
-                      <Icon name="message1" size={25} />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                <Divider />
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
-      </SafeAreaView>
-    );
-  }
-  return <MainLayout Component={component()} />;
+            </ScrollView>
+          </SafeAreaView>
+        </View>
+      </Modal>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: "center", marginVertical: 10, marginHorizontal: 10 }}>
+        <TextInput placeholder='Search...' style={{ width: '100%', borderWidth: 1, borderColor: 'lightgray', borderRadius: 10, height: 45 }} onChangeText={(text) => searchUser(text)} />
+        <TouchableOpacity>
+          <Icon name="search1" size={20} style={{ marginLeft: -35 }} />
+        </TouchableOpacity>
+      </View>
+      {
+        !users || users.length === 0 ?
+          (
+            <View style={styles.contentBox}>
+              <Text style={styles.emptySearchText}>No Users Has Been Found</Text>
+            </View>
+          )
+          :
+          (
+            <ScrollView>
+              <FlatList
+                data={users}
+                renderItem={renderItem}
+                keyExtractor={(item) => item._id}
+              />
+            </ScrollView>
+
+          )
+      }
+    </SafeAreaView>
+  );
 }
+
 
 const styles = StyleSheet.create({
   spinner: {
@@ -533,7 +603,11 @@ const styles = StyleSheet.create({
   bottomSpace: {
     marginBottom: 20,
   },
-
+  contentBox: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   centeredView: {
     flex: 1,
     justifyContent: 'center',
@@ -691,8 +765,8 @@ const styles = StyleSheet.create({
   emptySearchText: {
     fontSize: 28,
     fontFamily: 'roboto-regular',
-    color: '#949599',
     textTransform: 'uppercase',
+    textAlign: "center"
   },
 
   addSkill: {

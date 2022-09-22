@@ -332,326 +332,320 @@ export default function NotificationsScreen(dataType: dataTypes) {
     };
   }, []);
 
-  function component() {
-    if (loader) {
-      // return <Loader />;
-      return <></>
-    }
-    return (
-      <SafeAreaView style={styles.container}>
-        {notifications.length === 0 ? (
-          <View style={styles.contentBox}>
-            <Text style={styles.emptySearchText}>
-              NO NOTIFICATION RECEIVED YET
-            </Text>
-          </View>
-        ) :
-          <Provider>
-            {isStudent ? (
-              <View style={styles.container}>
-                <View style={styles.tabBtnsContainer}>
-                  <Button
-                    style={
-                      activeTab == "NOTIFICATION"
-                        ? styles.tabBtnActive
-                        : styles.tabBtn
-                    }
-                    mode={activeTab == "NOTIFICATION" ? "contained" : "outlined"}
-                    labelStyle={
-                      activeTab == "NOTIFICATION"
-                        ? styles.labelTopActive
-                        : styles.labelTop
-                    }
-                    onPress={() => setActiveTab("NOTIFICATION")}
-                  >
-                    Notifications
-                  </Button>
-                  <Button
-                    style={activeTab == "NEWS" ? styles.tabBtnActive : styles.tabBtn}
-                    labelStyle={
-                      activeTab == "NEWS" ? styles.labelTopActive : styles.labelTop
-                    }
-                    mode={activeTab == "NEWS" ? "contained" : "outlined"}
-                    onPress={() => setActiveTab("NEWS")}
-                  >
-                    News & Events
-                  </Button>
-                </View>
-                {activeTab == "NEWS" && newsEvenets !== undefined ? (
-                  newsEvenets.meta.result.length === 0 ? (
-                    <View style={styles.contentBox}>
-                      <Text style={styles.emptySearchText}>
-                        No News and Events Received Yet
-                      </Text>
-                    </View>
-                  ) : (
-                    <ScrollView style={styles.scrollView}>
-                      {newsEvenets.meta.result.map((news: any, index: number) => (
-                        <View key={index} style={styles.messageBoxWrapperRead}>
-                          <TouchableOpacity
-                            onPress={() => {
-                              openModalForSelectedItem(news);
-                            }}
-                            style={styles.messageBox}
-                          >
-                            <View style={styles.newsInfo}>
-                              <Text style={styles.newsDate}>
-                                {formatDate(news.createdAt)}
-                              </Text>
-                              <Text style={styles.newsTitle}>{news.heading}</Text>
-                              <Text
-                                numberOfLines={2}
-                                ellipsizeMode="tail"
-                                style={styles.newsDescription}
-                              >
-                                {news.body}
-                              </Text>
-                            </View>
-                          </TouchableOpacity>
-                        </View>
-                      ))}
-                    </ScrollView>
-                  )
-                ) : notifications.length === 0 ? (
+  if (loader) {
+    // return <Loader />;
+    return <></>
+  }
+  return (
+    <SafeAreaView style={styles.container}>
+      {notifications.length === 0 ? (
+        <View style={styles.contentBox}>
+          <Text style={styles.emptySearchText}>
+            NO NOTIFICATION RECEIVED YET
+          </Text>
+        </View>
+      ) :
+        <Provider>
+          {isStudent ? (
+            <View style={styles.container}>
+              <View style={styles.tabBtnsContainer}>
+                <Button
+                  style={
+                    activeTab == "NOTIFICATION"
+                      ? styles.tabBtnActive
+                      : styles.tabBtn
+                  }
+                  mode={activeTab == "NOTIFICATION" ? "contained" : "outlined"}
+                  labelStyle={
+                    activeTab == "NOTIFICATION"
+                      ? styles.labelTopActive
+                      : styles.labelTop
+                  }
+                  onPress={() => setActiveTab("NOTIFICATION")}
+                >
+                  Notifications
+                </Button>
+                <Button
+                  style={activeTab == "NEWS" ? styles.tabBtnActive : styles.tabBtn}
+                  labelStyle={
+                    activeTab == "NEWS" ? styles.labelTopActive : styles.labelTop
+                  }
+                  mode={activeTab == "NEWS" ? "contained" : "outlined"}
+                  onPress={() => setActiveTab("NEWS")}
+                >
+                  News & Events
+                </Button>
+              </View>
+              {activeTab == "NEWS" && newsEvenets !== undefined ? (
+                newsEvenets.meta.result.length === 0 ? (
                   <View style={styles.contentBox}>
                     <Text style={styles.emptySearchText}>
-                      No Notification Received Yet
+                      No News and Events Received Yet
                     </Text>
                   </View>
                 ) : (
-                  <>
-                    {notifications.length > 0 && (
-                      <TouchableOpacity
-                        onPress={() => {
-                          Alert.alert(
-                            "Deleting All Notifications",
-                            "Are you sure you want to clear all notifications?",
-                            [
-                              {
-                                text: "NO",
-                                style: "cancel"
-                              },
-                              {
-                                text: "YES",
-                                onPress: () => deleteAllNotifications()
-                              }
-                            ],
-                            { cancelable: false }
-                          );
-                        }}
-                      >
-                        <Text style={styles.clearAll}>Clear all notifications</Text>
-                      </TouchableOpacity>
-                    )}
-                    <ScrollView>
-                      {notifications.map((notification: any) => (
-                        <View
-                          key={notification._id}
-                          style={
-                            notification.isRead
-                              ? styles.messageBoxWrapperRead
-                              : styles.messageBoxWrapperNew
-                          }
+                  <ScrollView style={styles.scrollView}>
+                    {newsEvenets.meta.result.map((news: any, index: number) => (
+                      <View key={index} style={styles.messageBoxWrapperRead}>
+                        <TouchableOpacity
+                          onPress={() => {
+                            openModalForSelectedItem(news);
+                          }}
+                          style={styles.messageBox}
                         >
-                          <TouchableOpacity
-                            onPress={() => {
-                              openModalForSelectedItem(notification);
-                            }}
-                            style={styles.messageBox}
-                          >
-                            <View style={styles.messageInfo}>
-                              {!notification.isRead && (
-                                <Image
-                                  style={styles.newMessageIcon}
-                                  source={require("../assets/images/icons/new-message.png")}
-                                />
-                              )}
-                              {notification.isRead && (
-                                <TouchableOpacity
-                                  onPress={() => {
-                                    Alert.alert(
-                                      "Deleting Notification",
-                                      "Are you sure you want to delete this notification?",
-                                      [
-                                        {
-                                          text: "NO",
-                                          style: "cancel"
-                                        },
-                                        {
-                                          text: "YES",
-                                          onPress: () => deleteNotification(notification._id)
-                                        }
-                                      ],
-                                      { cancelable: false }
-                                    );
-                                  }}
-                                  style={styles.trashIcon}
-                                >
-                                  <Icon name="trash-o" size={20} />
-                                </TouchableOpacity>
-                              )}
-                              <Text style={styles.messageName}>
-                                {notification.heading}
-                              </Text>
-                              <Text
-                                numberOfLines={5}
-                                ellipsizeMode="tail"
-                                style={styles.messageDescription}
+                          <View style={styles.newsInfo}>
+                            <Text style={styles.newsDate}>
+                              {formatDate(news.createdAt)}
+                            </Text>
+                            <Text style={styles.newsTitle}>{news.heading}</Text>
+                            <Text
+                              numberOfLines={2}
+                              ellipsizeMode="tail"
+                              style={styles.newsDescription}
+                            >
+                              {news.body}
+                            </Text>
+                          </View>
+                        </TouchableOpacity>
+                      </View>
+                    ))}
+                  </ScrollView>
+                )
+              ) : notifications.length === 0 ? (
+                <View style={styles.contentBox}>
+                  <Text style={styles.emptySearchText}>
+                    No Notification Received Yet
+                  </Text>
+                </View>
+              ) : (
+                <>
+                  {notifications.length > 0 && (
+                    <TouchableOpacity
+                      onPress={() => {
+                        Alert.alert(
+                          "Deleting All Notifications",
+                          "Are you sure you want to clear all notifications?",
+                          [
+                            {
+                              text: "NO",
+                              style: "cancel"
+                            },
+                            {
+                              text: "YES",
+                              onPress: () => deleteAllNotifications()
+                            }
+                          ],
+                          { cancelable: false }
+                        );
+                      }}
+                    >
+                      <Text style={styles.clearAll}>Clear all notifications</Text>
+                    </TouchableOpacity>
+                  )}
+                  <ScrollView>
+                    {notifications.map((notification: any) => (
+                      <View
+                        key={notification._id}
+                        style={
+                          notification.isRead
+                            ? styles.messageBoxWrapperRead
+                            : styles.messageBoxWrapperNew
+                        }
+                      >
+                        <TouchableOpacity
+                          onPress={() => {
+                            openModalForSelectedItem(notification);
+                          }}
+                          style={styles.messageBox}
+                        >
+                          <View style={styles.messageInfo}>
+                            {!notification.isRead && (
+                              <Image
+                                style={styles.newMessageIcon}
+                                source={require("../assets/images/icons/new-message.png")}
+                              />
+                            )}
+                            {notification.isRead && (
+                              <TouchableOpacity
+                                onPress={() => {
+                                  Alert.alert(
+                                    "Deleting Notification",
+                                    "Are you sure you want to delete this notification?",
+                                    [
+                                      {
+                                        text: "NO",
+                                        style: "cancel"
+                                      },
+                                      {
+                                        text: "YES",
+                                        onPress: () => deleteNotification(notification._id)
+                                      }
+                                    ],
+                                    { cancelable: false }
+                                  );
+                                }}
+                                style={styles.trashIcon}
                               >
-                                {notification.text}
-                              </Text>
-                            </View>
-                          </TouchableOpacity>
-                        </View>
-                      ))}
-                    </ScrollView>
-                  </>
-                )}
-              </View>
-            ) : (
-              <View style={styles.container}>
-                {/* <TouchableOpacity onPress={onClose} style={styles.closeIconBoxTop}>
+                                <Icon name="trash-o" size={20} />
+                              </TouchableOpacity>
+                            )}
+                            <Text style={styles.messageName}>
+                              {notification.heading}
+                            </Text>
+                            <Text
+                              numberOfLines={5}
+                              ellipsizeMode="tail"
+                              style={styles.messageDescription}
+                            >
+                              {notification.text}
+                            </Text>
+                          </View>
+                        </TouchableOpacity>
+                      </View>
+                    ))}
+                  </ScrollView>
+                </>
+              )}
+            </View>
+          ) : (
+            <View style={styles.container}>
+              {/* <TouchableOpacity onPress={onClose} style={styles.closeIconBoxTop}>
               <Image
                 style={styles.closeIconTop}
                 source={require("../assets/images/icons/x.png")}
               />
             </TouchableOpacity> */}
-                {/* <Text style={styles.title}>Notifications</Text> */}
-                {notifications.length === 0 && (
-                  <View style={styles.contentBox}>
-                    <Text style={styles.emptySearchText}>
-                      No Notification Received Yet
-                    </Text>
-                  </View>
-                )}
-                {notifications.length > 0 && (
-                  <TouchableOpacity
-                    onPress={() => {
-                      Alert.alert(
-                        "Deleting All Notifications",
-                        "Are you sure you want to clear all notifications?",
-                        [
-                          {
-                            text: "NO",
-                            style: "cancel"
-                          },
-                          {
-                            text: "YES",
-                            onPress: () => deleteAllNotifications()
-                          }
-                        ],
-                        { cancelable: false }
-                      );
-                    }}
-                  >
-                    <Text style={styles.clearAll}>Clear all notifications</Text>
-                  </TouchableOpacity>
-                )}
-                <ScrollView>
-                  {notifications.map((notification: any) => (
-                    <View
-                      key={notification._id}
-                      style={
-                        notification.isRead
-                          ? styles.messageBoxWrapperRead
-                          : styles.messageBoxWrapperNew
-                      }
-                    >
-                      <TouchableOpacity
-                        onPress={() => {
-                          openModalForSelectedItem(notification);
-                        }}
-                        style={styles.messageBox}
-                      >
-                        <View style={styles.messageInfo}>
-                          {!notification.isRead && (
-                            <Image
-                              style={styles.newMessageIcon}
-                              source={require("../assets/images/icons/new-message.png")}
-                            />
-                          )}
-                          {notification.isRead && (
-                            <TouchableOpacity
-                              onPress={() => {
-                                Alert.alert(
-                                  "Deleting Notification",
-                                  "Are you sure you want to delete this notification?",
-                                  [
-                                    {
-                                      text: "NO",
-                                      style: "cancel"
-                                    },
-                                    {
-                                      text: "YES",
-                                      onPress: () => deleteNotification(notification._id)
-                                    }
-                                  ],
-                                  { cancelable: false }
-                                );
-                              }}
-                              style={styles.trashIcon}
-                            >
-                              <Icon name="trash-o" size={20} />
-                            </TouchableOpacity>
-                          )}
-                          <Text style={styles.messageName}>
-                            {notification.heading}
-                          </Text>
-                          <Text
-                            numberOfLines={5}
-                            ellipsizeMode="tail"
-                            style={styles.messageDescription}
-                          >
-                            {notification.text}
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
-                    </View>
-                  ))}
-                </ScrollView>
-              </View>
-            )}
-            <Portal>
-              <Modal
-                dismissable={true}
-                visible={moreInfoModalVisible}
-                onDismiss={() => {
-                  setMoreInfoModalVisible(false);
-                }}
-                contentContainerStyle={styles.modalView}
-              >
-                <View>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setMoreInfoModalVisible(!moreInfoModalVisible);
-                    }}
-                    style={styles.closeIconBox}
-                  >
-                    <Icon name="close" style={styles.closeIcon} size={32} />
-                  </TouchableOpacity>
-                  <View style={styles.newsInfo}>
-                    <Text style={styles.newsTitle}>{selectedItemTitle}</Text>
-                    {activeTab === "NEWS" && isStudent ? (
-                      <Text style={styles.newsDate}>{selectedItemDate}</Text>
-                    ) : (
-                      <></>
-                    )}
-                    <Text style={styles.newsDescription}>
-                      {selectedItemDescription}
-                    </Text>
-                  </View>
+              {/* <Text style={styles.title}>Notifications</Text> */}
+              {notifications.length === 0 && (
+                <View style={styles.contentBox}>
+                  <Text style={styles.emptySearchText}>
+                    No Notification Received Yet
+                  </Text>
                 </View>
-              </Modal>
-            </Portal>
-          </Provider>
-        }
-      </SafeAreaView>
-    );
-  }
-
-  return (
-    <MainLayout Component={component()} />
-  )
+              )}
+              {notifications.length > 0 && (
+                <TouchableOpacity
+                  onPress={() => {
+                    Alert.alert(
+                      "Deleting All Notifications",
+                      "Are you sure you want to clear all notifications?",
+                      [
+                        {
+                          text: "NO",
+                          style: "cancel"
+                        },
+                        {
+                          text: "YES",
+                          onPress: () => deleteAllNotifications()
+                        }
+                      ],
+                      { cancelable: false }
+                    );
+                  }}
+                >
+                  <Text style={styles.clearAll}>Clear all notifications</Text>
+                </TouchableOpacity>
+              )}
+              <ScrollView>
+                {notifications.map((notification: any) => (
+                  <View
+                    key={notification._id}
+                    style={
+                      notification.isRead
+                        ? styles.messageBoxWrapperRead
+                        : styles.messageBoxWrapperNew
+                    }
+                  >
+                    <TouchableOpacity
+                      onPress={() => {
+                        openModalForSelectedItem(notification);
+                      }}
+                      style={styles.messageBox}
+                    >
+                      <View style={styles.messageInfo}>
+                        {!notification.isRead && (
+                          <Image
+                            style={styles.newMessageIcon}
+                            source={require("../assets/images/icons/new-message.png")}
+                          />
+                        )}
+                        {notification.isRead && (
+                          <TouchableOpacity
+                            onPress={() => {
+                              Alert.alert(
+                                "Deleting Notification",
+                                "Are you sure you want to delete this notification?",
+                                [
+                                  {
+                                    text: "NO",
+                                    style: "cancel"
+                                  },
+                                  {
+                                    text: "YES",
+                                    onPress: () => deleteNotification(notification._id)
+                                  }
+                                ],
+                                { cancelable: false }
+                              );
+                            }}
+                            style={styles.trashIcon}
+                          >
+                            <Icon name="trash-o" size={20} />
+                          </TouchableOpacity>
+                        )}
+                        <Text style={styles.messageName}>
+                          {notification.heading}
+                        </Text>
+                        <Text
+                          numberOfLines={5}
+                          ellipsizeMode="tail"
+                          style={styles.messageDescription}
+                        >
+                          {notification.text}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </ScrollView>
+            </View>
+          )}
+          <Portal>
+            <Modal
+              dismissable={true}
+              visible={moreInfoModalVisible}
+              onDismiss={() => {
+                setMoreInfoModalVisible(false);
+              }}
+              contentContainerStyle={styles.modalView}
+            >
+              <View>
+                <TouchableOpacity
+                  onPress={() => {
+                    setMoreInfoModalVisible(!moreInfoModalVisible);
+                  }}
+                  style={styles.closeIconBox}
+                >
+                  <Icon name="close" style={styles.closeIcon} size={32} />
+                </TouchableOpacity>
+                <View style={styles.newsInfo}>
+                  <Text style={styles.newsTitle}>{selectedItemTitle}</Text>
+                  {activeTab === "NEWS" && isStudent ? (
+                    <Text style={styles.newsDate}>{selectedItemDate}</Text>
+                  ) : (
+                    <></>
+                  )}
+                  <Text style={styles.newsDescription}>
+                    {selectedItemDescription}
+                  </Text>
+                </View>
+              </View>
+            </Modal>
+          </Portal>
+        </Provider>
+      }
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -663,6 +657,7 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
+    backgroundColor: '#ffffff',
     justifyContent: "center",
     alignItems: "center"
   },
@@ -798,14 +793,14 @@ const styles = StyleSheet.create({
   emptySearchText: {
     fontSize: 24,
     fontFamily: "roboto-regular",
-    color: "#949599",
+    // color: "#949599",
     textTransform: "uppercase",
     textAlign: "center",
   },
   clearAll: {
     fontSize: 15,
     fontFamily: "roboto-regular",
-    color: "#949599",
+    // color: "#949599",
     textTransform: "uppercase",
     textAlign: "right",
     paddingRight: 10,

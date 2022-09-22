@@ -99,129 +99,124 @@ export default function AssignmentDetailScreen({ route }) {
     }
   }
 
-  function component() {
-    return (
-      <View style={styles.container}>
-
-        {
-          <View>
-            <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15, }}>
-              <TouchableOpacity style={{ marginTop: 5 }}
-                onPress={() => navigation.goBack()}>
-                <Icon color={'black'} name="leftcircleo" size={25} />
-              </TouchableOpacity>
-              <Text style={styles.title}>Assignment Details</Text>
-            </View>
-            {
-              userType.toLowerCase() === "user" ?
-                (assignment !== null && studentAssignment !== null)
-                &&
-                <ScrollView style={{ padding: 15 }}>
-                  <View>
-                    <ImageBackground
-                      resizeMode='cover'
-                      source={require('../assets/images/bg.jpg')}
-                      style={styles.challengeBoxImage}
-                      imageStyle={{ borderRadius: 5 }}
-                    >
-                      <View style={styles.overlay}>
-                        <View style={styles.challengeTypeOverLay}>
-                          <Text style={styles.challengeBoxText}>
-                            Virtual
-                          </Text>
-                        </View>
-                        <Text style={styles.challengeBoxName}>{assignment.title}</Text>
-                        <Text style={styles.challengeBoxDate}>
-                          28-05-2022
-                        </Text>
-                      </View>
-                    </ImageBackground>
-                    <Text style={styles.text}>Score: {studentAssignment.score}</Text>
-
-                    <Text style={styles.heading}>Details</Text>
-                    <Text style={styles.text}>{assignment.description}</Text>
-                    {
-                      studentAssignment.status.toLowerCase() !== "completed" &&
-                      <View style={{ marginVertical: 15 }}>
-                        <Button title={'Start Assignment'}
-                          onPress={
-                            () => {
-                              // setStart(!start); 
-                              startAssginment(studentAssignment._id);
-                            }
-                          }
-                        />
-                      </View>
-                    }
-
-                  </View>
-
-                </ScrollView>
-                :
-                (assignment !== null)
-                &&
-                <ScrollView style={{ padding: 15 }}>
-                  <View>
-                    <ImageBackground
-                      resizeMode='cover'
-                      source={require('../assets/images/bg.jpg')}
-                      style={styles.challengeBoxImage}
-                      imageStyle={{ borderRadius: 5 }}
-                    >
-                      <View style={styles.overlay}>
-                        <View style={styles.challengeTypeOverLay}>
-                          <Text style={styles.challengeBoxText}>
-                            Virtual
-                          </Text>
-                        </View>
-                        <Text style={styles.challengeBoxName}>{assignment.title}</Text>
-                        <Text style={styles.challengeBoxDate}>
-                          28-05-2022
-                        </Text>
-                      </View>
-                    </ImageBackground>
-                    {/* <Text style={styles.text}>Score: {studentAssignment.score}</Text> */}
-
-                    <Text style={styles.heading}>Details</Text>
-                    <Text style={styles.text}>{assignment.description}</Text>
-                  </View>
-                  <View >
-                    <Text style={styles.heading}>Scores</Text>
-
-                    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                      <Text>Student</Text>
-                      <Text>Status</Text>
-                      <Text>Score</Text>
-                    </View>
-                    <Divider />
-                    {
-
-                      studentAssignments.map((item, index) => (
-                        <View key={index}>
-                          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                            <Text>{item.student.username}</Text>
-                            <Text>{item.status}</Text>
-                            <Text>{item.score}</Text>
-
-                          </View>
-                          <Divider />
-                        </View >
-                      ))
-                    }
-                  </View>
-
-                </ScrollView>
-
-            }
-          </View>
-        }
-
-
-      </View >
-    )
-  }
   return (
-    <MainLayout Component={component()} />
+    <SafeAreaView style={styles.container}>
+
+      {
+        <View>
+          {/* <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15, }}>
+            <TouchableOpacity style={{ marginTop: 5 }}
+              onPress={() => navigation.goBack()}>
+              <Icon color={'black'} name="leftcircleo" size={25} />
+            </TouchableOpacity>
+            <Text style={styles.title}>Assignment Details</Text>
+          </View> */}
+          {
+            userType.toLowerCase() === "user" ?
+              (assignment !== null && studentAssignment !== null)
+              &&
+              <ScrollView style={{ padding: 15 }}>
+                <View>
+                  <ImageBackground
+                    resizeMode='cover'
+                    source={require('../assets/images/bg.jpg')}
+                    style={styles.challengeBoxImage}
+                    imageStyle={{ borderRadius: 5 }}
+                  >
+                    <View style={styles.overlay}>
+                      <View style={styles.challengeTypeOverLay}>
+                        <Text style={styles.challengeBoxText}>
+                          Virtual
+                        </Text>
+                      </View>
+                      <Text style={styles.challengeBoxName}>{assignment.title}</Text>
+                      <Text style={styles.challengeBoxDate}>
+                        28-05-2022
+                      </Text>
+                    </View>
+                  </ImageBackground>
+                  <Text style={styles.text}>Score: {studentAssignment.score}</Text>
+
+                  <Text style={styles.heading}>Details</Text>
+                  <Text style={styles.text}>{assignment.description}</Text>
+                  {
+                    studentAssignment.status.toLowerCase() !== "completed" &&
+                    <View style={{ marginVertical: 15 }}>
+                      <Button title={'Start Assignment'}
+                        onPress={
+                          () => {
+                            // setStart(!start); 
+                            startAssginment(studentAssignment._id);
+                          }
+                        }
+                      />
+                    </View>
+                  }
+
+                </View>
+
+              </ScrollView>
+              :
+              (assignment !== null)
+              &&
+              <ScrollView style={{ padding: 15 }}>
+                <View>
+                  <ImageBackground
+                    resizeMode='cover'
+                    source={require('../assets/images/bg.jpg')}
+                    style={styles.challengeBoxImage}
+                    imageStyle={{ borderRadius: 5 }}
+                  >
+                    <View style={styles.overlay}>
+                      <View style={styles.challengeTypeOverLay}>
+                        <Text style={styles.challengeBoxText}>
+                          Virtual
+                        </Text>
+                      </View>
+                      <Text style={styles.challengeBoxName}>{assignment.title}</Text>
+                      <Text style={styles.challengeBoxDate}>
+                        28-05-2022
+                      </Text>
+                    </View>
+                  </ImageBackground>
+                  {/* <Text style={styles.text}>Score: {studentAssignment.score}</Text> */}
+
+                  <Text style={styles.heading}>Details</Text>
+                  <Text style={styles.text}>{assignment.description}</Text>
+                </View>
+                <View >
+                  <Text style={styles.heading}>Scores</Text>
+
+                  <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                    <Text>Student</Text>
+                    <Text>Status</Text>
+                    <Text>Score</Text>
+                  </View>
+                  <Divider />
+                  {
+
+                    studentAssignments.map((item, index) => (
+                      <View key={index}>
+                        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                          <Text>{item.student.username}</Text>
+                          <Text>{item.status}</Text>
+                          <Text>{item.score}</Text>
+
+                        </View>
+                        <Divider />
+                      </View >
+                    ))
+                  }
+                </View>
+
+              </ScrollView>
+
+          }
+        </View>
+      }
+
+
+    </SafeAreaView >
   )
 }
 const styles = StyleSheet.create({

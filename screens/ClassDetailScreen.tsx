@@ -25,6 +25,7 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { Select, Input, TextArea, Button } from 'native-base';
 import api from '../services/api.services';
 import { CardField, useStripe, useConfirmPayment } from '@stripe/stripe-react-native';
+import { app } from '../constants/themeColors';
 
 
 export default function ClassDetailScreen({ route }) {
@@ -214,6 +215,7 @@ export default function ClassDetailScreen({ route }) {
   }
 
   function formatDate(date) {
+    console.log(new Date(date))
     var d = new Date(date),
       month = '' + (d.getMonth() + 1),
       day = '' + d.getDate(),
@@ -534,7 +536,7 @@ export default function ClassDetailScreen({ route }) {
   function component() {
     return (
       <View style={styles.container}>
-        <View
+        {/* <View
           style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15 }}>
           <TouchableOpacity
             style={{ marginTop: 5 }}
@@ -542,7 +544,7 @@ export default function ClassDetailScreen({ route }) {
             <Icon color={'black'} name="leftcircleo" size={25} />
           </TouchableOpacity>
           <Text style={styles.title}>Class Details</Text>
-        </View>
+        </View> */}
         {_class !== null && teacher !== null && (
           <ScrollView style={{ marginBottom: '5%', padding: 15 }}>
             <View>
@@ -590,7 +592,7 @@ export default function ClassDetailScreen({ route }) {
                           joinRoom()
                         }}
                         style={{
-                          backgroundColor: '#4B5F79',
+                          backgroundColor: app.lightBlue,
                           padding: 10,
                           borderRadius: 5,
                           width: '100%',
@@ -613,7 +615,7 @@ export default function ClassDetailScreen({ route }) {
                           createRoom()
                         }}
                         style={{
-                          backgroundColor: '#4B5F79',
+                          backgroundColor: app.lightBlue,
                           padding: 10,
                           borderRadius: 5,
                           width: '100%',
@@ -723,7 +725,7 @@ export default function ClassDetailScreen({ route }) {
                                   addTA()
                                 }}
                                 style={{
-                                  backgroundColor: '#4B5F79',
+                                  backgroundColor: app.lightBlue,
                                   padding: 10,
                                   borderRadius: 5,
                                   width: '100%',
@@ -796,13 +798,13 @@ export default function ClassDetailScreen({ route }) {
                         <View key={index} style={{ marginVertical: 20 }}>
                           <View style={{ flexDirection: 'row' }}>
                             <Text>
-                              Start Date: {formatDate(item.startdate)}{' '}
+                              Start Date: {formatDate(item.schedule[0].startDateTime)}{' '}
                             </Text>
-                            <Text>{formatTime(item.startdate)}</Text>
+                            <Text>{formatTime(item.schedule[0].startDateTime)}</Text>
                           </View>
                           <View style={{ flexDirection: 'row' }}>
-                            <Text>End Date: {formatDate(item.enddate)} </Text>
-                            <Text>{formatTime(item.enddate)}</Text>
+                            <Text>End Date: {formatDate(item.schedule[0].endDateTime)} </Text>
+                            <Text>{formatTime(item.schedule[0].endDateTime)}</Text>
                           </View>
                           {/* <View>
                               <Text>Max. Students:{" "} {item.maxStudents}</Text>
@@ -848,80 +850,6 @@ export default function ClassDetailScreen({ route }) {
                     <View style={{ marginBottom: 20 }} />
                   </View>
                 </View>
-                {/* Language section ends here */}
-
-                {/* Announcements Starts here */}
-                {/* <Text style={styles.heading}>Announcements</Text>
-              <Text style={styles.text}>class announcements</Text> */}
-                {/* Announcements ends here */}
-
-                {/* Topics & Instructions Starts here */}
-                {/* <Text style={styles.heading}>Topics and Instructions</Text>
-              <Text style={styles.text}>class topics</Text> */}
-                {/* Topics & Instructions ends here */}
-
-                {/* connectivity link for enrolled students Starts here */}
-                {/* <Text style={styles.heading}>Pre Recorded Class Link</Text> */}
-                {/* <Text style={styles.heading}>Class Link</Text>
-
-              <TouchableOpacity
-                onPress={() => Linking.openURL("https://www.google.com/")}
-              >
-                <Text style={styles.text}>connectivityLink</Text>
-              </TouchableOpacity> */}
-                {/* connectivity link for enrolled students ends here */}
-
-                {/* Schedule Starts here */}
-                {/* <Text style={styles.heading}>Schedule</Text>
-              <Text style={styles.text}>
-                Day: Tuesday
-                Time: 12:00 - 13:00
-              </Text> */}
-                {/* Schedule ends here */}
-
-                {/* classes starts here */}
-                {/*classData.documents.length === 0 ? null : (
-        //   <>
-        //     <Text style={styles.heading}>Instructor Uploads</Text>
-        //     <View style={{ height: 180 }}>
-        //       <ScrollView style={styles.scrollView} horizontal={true}>
-        //         {classData.documents.map((upload: any, index: number) => (
-        //           <TouchableOpacity
-        //             key={index}
-        //             style={styles.classBoxWrapper}
-        //             onPress={() => Linking.openURL(upload)}
-        //           >
-        //             <ImageBackground
-        //               source={
-        //                 upload
-        //                   .substring(upload.lastIndexOf(".") + 1)
-        //                   .toLowerCase() == "pdf"
-        //                   ? require("../assets/images/icons/document.png")
-        //                   : { uri: upload }
-        //               }
-        //               style={styles.uploadBoxImage}
-        //             >
-        //               <View style={styles.overlay}>
-        //                 <View style={styles.uploadBox}>
-        //                   <Text style={styles.uploadName}>{upload.name}</Text>
-        //                   <Text style={styles.uploadDate}>Uploaded Today</Text>
-        //                 </View>
-        //               </View>
-        //             </ImageBackground>
-        //           </TouchableOpacity>
-        //         ))}
-        //       </ScrollView>
-        //     </View>
-        //   </>
-        // )
-        */}
-
-                {/* classes ends here */}
-
-                {/* Enrolled Students Starts here */}
-                {/* <Text style={styles.heading}>Students Enrolled</Text>
-              <Text style={styles.text}>{5}</Text> */}
-                {/* Enrolled Students ends here */}
               </View>
             </View>
           </ScrollView>
@@ -933,7 +861,7 @@ export default function ClassDetailScreen({ route }) {
   function studentComponent() {
     return (
       <View style={styles.container}>
-        <View
+        {/* <View
           style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15 }}>
           <TouchableOpacity
             style={{ marginTop: 5 }}
@@ -941,7 +869,7 @@ export default function ClassDetailScreen({ route }) {
             <Icon color={'black'} name="leftcircleo" size={25} />
           </TouchableOpacity>
           <Text style={styles.title}>Class Details</Text>
-        </View>
+        </View> */}
         {_class !== null && teacher !== null && (
           <ScrollView style={{ marginBottom: '5%', padding: 15 }}>
             <View>
@@ -1082,7 +1010,7 @@ export default function ClassDetailScreen({ route }) {
                             dispute()
                           }}
                           style={{
-                            backgroundColor: '#4B5F79',
+                            backgroundColor: app.lightBlue,
                             padding: 10,
                             borderRadius: 5,
                             width: '100%',
@@ -1112,7 +1040,7 @@ export default function ClassDetailScreen({ route }) {
                         joinRoom()
                       }}
                       style={{
-                        backgroundColor: '#4B5F79',
+                        backgroundColor: app.lightBlue,
                         padding: 10,
                         borderRadius: 5,
                         width: '100%',
@@ -1145,7 +1073,7 @@ export default function ClassDetailScreen({ route }) {
                         toggleModal1()
                       }}
                       style={{
-                        backgroundColor: '#4B5F79',
+                        backgroundColor: app.lightBlue,
                         padding: 10,
                         borderRadius: 5,
                         width: '100%',
@@ -1183,7 +1111,7 @@ export default function ClassDetailScreen({ route }) {
                           // dispute(_class, subscription)
                         }}
                         style={{
-                          backgroundColor: '#4B5F79',
+                          backgroundColor: app.lightBlue,
                           padding: 10,
                           borderRadius: 5,
                           width: '100%',
@@ -1340,13 +1268,13 @@ export default function ClassDetailScreen({ route }) {
                         <View key={index} style={{ marginVertical: 20 }}>
                           <View style={{ flexDirection: 'row' }}>
                             <Text>
-                              Start Date: {formatDate(item.startdate)}{' '}
+                              Start Date: {formatDate(item.schedule[0].startDateTime)}{' '}
                             </Text>
-                            <Text>{formatTime(item.startdate)}</Text>
+                            <Text>{formatTime(item.schedule[0].startDateTime)}</Text>
                           </View>
                           <View style={{ flexDirection: 'row' }}>
-                            <Text>End Date: {formatDate(item.enddate)} </Text>
-                            <Text>{formatTime(item.enddate)}</Text>
+                            <Text>End Date: {formatDate(item.schedule[0].endDateTime)} </Text>
+                            <Text>{formatTime(item.schedule[0].endDateTime)}</Text>
                           </View>
                           <View>
                             <Text>Max. Students: {item.maxStudents}</Text>
@@ -1404,9 +1332,9 @@ export default function ClassDetailScreen({ route }) {
   return (
     <>
       {userType.toLowerCase() === 'user' ? (
-        <MainLayout Component={studentComponent()} />
+        studentComponent()
       ) : (
-        <MainLayout Component={component()} />
+        component()
       )}
     </>
   );
@@ -1565,7 +1493,7 @@ const styles = StyleSheet.create({
 
   name: {
     fontSize: 18,
-    color: '#4B5F79',
+    color: app.lightBlue,
     width: '100%',
     textTransform: 'uppercase',
     fontFamily: 'roboto-light',
@@ -1613,12 +1541,11 @@ const styles = StyleSheet.create({
   cost: {
     fontFamily: 'roboto-bold',
     fontSize: 18,
-    color: '#4B5F79',
   },
 
   joinClassBtn: {
     height: 34,
-    backgroundColor: '#4B5F79',
+    backgroundColor: app.lightBlue,
     borderRadius: 3,
     width: 113,
     justifyContent: 'center',
@@ -1685,7 +1612,7 @@ const styles = StyleSheet.create({
 
   removeBtn: {
     padding: 10,
-    borderColor: '#4B5F79',
+    borderColor: app.lightBlue,
     borderRadius: 7,
     borderWidth: 1,
     flexDirection: 'row',
@@ -1697,7 +1624,7 @@ const styles = StyleSheet.create({
   },
 
   removeText: {
-    color: '#4B5F79',
+    color: app.lightBlue,
     fontFamily: 'roboto-light',
     fontSize: 16,
     textTransform: 'uppercase',

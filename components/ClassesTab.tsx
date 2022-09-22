@@ -1,7 +1,8 @@
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import * as React from 'react';
 import {
   Alert,
+  Dimensions,
   Image,
   SafeAreaView,
   StyleSheet,
@@ -9,23 +10,24 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
-import {AUTHENTICATIONS, CLASS} from '../services/api.constants';
-import {ThemeContext} from '../context/ThemeContext';
-import {AuthContext} from '../utils/AuthContext';
-import {Button} from 'native-base';
+import { ScrollView } from 'react-native-gesture-handler';
+import { AUTHENTICATIONS, CLASS } from '../services/api.constants';
+import { ThemeContext } from '../context/ThemeContext';
+import { AuthContext } from '../utils/AuthContext';
+import { Button } from 'native-base';
+const { width, height } = Dimensions.get('screen');
 
 export default function ClassesTab() {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
   const [classes, setClasses] = React.useState([]);
-  const {userToken, userType} = React.useContext(AuthContext);
+  const { userToken, userType } = React.useContext(AuthContext);
 
   const [limit, setLimit] = React.useState(5);
   const [classCount, setClassCount] = React.useState(0);
 
   let [user, setUser] = React.useState(userToken);
-  const {currentScreen, height, containerHeight} =
+  const { currentScreen, height, containerHeight } =
     React.useContext(ThemeContext);
 
   function getData(pagelimit) {
@@ -43,21 +45,21 @@ export default function ClassesTab() {
   function teacherApiCall(pageLimit) {
     console.log(
       AUTHENTICATIONS.API_URL +
-        CLASS.GET_ALL_CLASSES_BY_TEACHER_ID +
-        user +
-        '/' +
-        pageLimit,
+      CLASS.GET_ALL_CLASSES_BY_TEACHER_ID +
+      user +
+      '/' +
+      pageLimit,
     );
     fetch(
       AUTHENTICATIONS.API_URL +
-        CLASS.GET_ALL_CLASSES_BY_TEACHER_ID +
-        user +
-        '/' +
-        pageLimit,
+      CLASS.GET_ALL_CLASSES_BY_TEACHER_ID +
+      user +
+      '/' +
+      pageLimit,
     )
       .then(response => response.json())
       .then(responseJson => {
-        // console.log('classes ', responseJson.classes)
+        console.log('classes ', responseJson.totalClasses)
         // console.log('schedule ', responseJson.schedule)
         setClassCount(responseJson.totalClasses);
         let _classes = [];
@@ -116,7 +118,7 @@ export default function ClassesTab() {
 
   return (
     <View style={styles.container}>
-      <View style={{height: containerHeight}}>
+      <View style={{ height: containerHeight }}>
         {!classes || classes.length == 0 ? (
           <View style={styles.contentBox}>
             <Text style={styles.emptySearchText}>No Class Has Been Found</Text>
@@ -125,12 +127,12 @@ export default function ClassesTab() {
           <ScrollView
             style={styles.scrollView}
             showsVerticalScrollIndicator={false}>
-            <View>
+            <View style={{paddingHorizontal:15}}>
               {classes.map((item, index) => {
                 let classItem = item.class;
                 return (
                   <TouchableOpacity
-                    style={styles.groupBox}
+                    style={[styles.groupBox, styles.segment]}
                     key={index}
                     onPress={() => {
                       navigation.navigate('ClassDetails', {
@@ -154,7 +156,7 @@ export default function ClassesTab() {
                         }}>
                         <Text style={styles.className}>{classItem.name}</Text>
                       </View>
-                      <View style={{flexDirection: 'row'}}>
+                      <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.studio}>
                           {classItem.Teacher.username}
                         </Text>
@@ -169,7 +171,7 @@ export default function ClassesTab() {
                 );
               })}
             </View>
-            <View style={{marginVertical: 15}}>
+            <View style={{ marginVertical: 15, marginHorizontal:15 }}>
               {classCount < limit ? (
                 <></>
               ) : (
@@ -187,13 +189,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffff',
-    // paddingHorizontal: 15,
-    // paddingBottom: 10,
+    // paddingHorizontal:15
   },
   scrollView: {
-    // marginTop: 10,
-    marginBottom: '20%',
-    paddingHorizontal: 15,
   },
 
   closeIconBox: {
@@ -239,6 +237,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 5,
+    marginTop: -20
   },
 
   classInfo: {
@@ -310,4 +309,46 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     textAlign: 'center',
   },
+  linearGradient: {
+    flex: 1,
+    paddingLeft: 15,
+    paddingRight: 15,
+    borderRadius: 5
+  },
+  avatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 62,
+  },
+  buttonText: {
+    fontSize: 18,
+    fontFamily: 'Gill Sans',
+    textAlign: 'center',
+    // margin: 10,
+    color: '#ffffff',
+    backgroundColor: 'transparent',
+  },
+  segmentButtons: {
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
+    elevation: 5,
+    padding: 10,
+    borderRadius: 15,
+    // marginVertical: 5,    
+    width: width / 2.3
+  },
+  segment: {
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
+    elevation: 5,
+    padding: 10,
+    borderRadius: 15,
+    // marginVertical: 5,    
+  }
 });

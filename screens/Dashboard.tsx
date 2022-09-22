@@ -20,6 +20,7 @@ import TeacherExamSlider from '../components/TeacherExamSlider';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { ThemeContext } from '../context/ThemeContext';
+import { grey } from '../constants/themeColors';
 const screenHeight = Dimensions.get('screen').height;
 export default function Dashboard({ route }) {
   const { userToken, userType } = React.useContext(AuthContext);
@@ -130,7 +131,7 @@ export default function Dashboard({ route }) {
   }
   function component() {
     return (
-      <View style={{ backgroundColor: 'white', flex: 1 }}>
+      <View style={{ flex: 1 }}>
         {/* <AddAssignmentScreen/> */}
         <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
           <Modal.Content maxWidth="400px">
@@ -237,8 +238,10 @@ export default function Dashboard({ route }) {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
-      {component()}
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+      <View style={styles.container}>
+        {component()}
+      </View>
     </SafeAreaView>
   )
 }
@@ -248,6 +251,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff',
     height: screenHeight - 110,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25
     // paddingHorizontal: 15,
     // paddingBottom: 10,
   },
@@ -256,6 +261,12 @@ const styles = StyleSheet.create({
     margin: 16,
     right: 0,
     bottom: 0,
+  },
+  headingScreen: {
+    fontSize: 22,
+    marginLeft: 10,
+    paddingTop:5,
+    fontWeight:"bold"
   },
   title: {
     fontWeight: '300',
@@ -270,6 +281,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '500',
     textTransform: "uppercase",
-  }
+  },
 
 })
