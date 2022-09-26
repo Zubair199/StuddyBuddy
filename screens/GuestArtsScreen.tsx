@@ -69,7 +69,7 @@ export default function GuestArtsScreen() {
                     style={styles.groupBox}
                     key={index}
                     onPress={() => {
-                      navigation.navigate('ClassDetails', {
+                      navigation.navigate('GuestClassDetails', {
                         classID: classItem._id,
                       });
                     }}>

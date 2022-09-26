@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 import { app, grey } from '../../constants/themeColors';
 
 const genericStyle = StyleSheet.create({
@@ -24,7 +24,7 @@ const genericStyle = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#ffffff',
     justifyContent: 'center',
-    marginBottom:10
+    marginBottom: 10
   },
   underline: {
     height: 1.5,
@@ -40,11 +40,12 @@ const genericStyle = StyleSheet.create({
     borderTopColor: '#adb5bd',
     borderRightColor: '#adb5bd',
     borderLeftColor: '#adb5bd',
-    color: app.lightBlue,
+    // color: app.lightBlue,
     borderWidth: 1.5,
     paddingLeft: 15,
-    borderRadius: 10,    
+    borderRadius: 10,
     fontFamily: 'System',
+    textAlignVertical: 'top'
   },
   textAreaFocused: {
     height: '100%',
@@ -68,7 +69,7 @@ const genericStyle = StyleSheet.create({
     borderTopColor: '#adb5bd',
     borderRightColor: '#adb5bd',
     borderLeftColor: '#adb5bd',
-    color: app.lightBlue,
+    // color: app.lightBlue,
     borderWidth: 1.5,
     paddingLeft: 15,
     borderRadius: 25,
@@ -133,7 +134,7 @@ const genericStyle = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
   },
-  addRemoveBoxText: {paddingLeft: 15, color: '#ffffff'},
+  addRemoveBoxText: { paddingLeft: 15, color: '#ffffff' },
   locationAddRemove: {
     paddingHorizontal: 10,
     borderColor: app.lightBlue,
@@ -147,8 +148,8 @@ const genericStyle = StyleSheet.create({
     // justifyContent: 'space-around',
     alignItems: 'center',
     marginTop: 10,
-    color:"#fff",
-    tintColor:"#fff"
+    color: "#fff",
+    tintColor: "#fff"
   },
   removeIconlocation: {
     width: 20,
@@ -156,7 +157,7 @@ const genericStyle = StyleSheet.create({
     marginLeft: 5,
     // top: -12,
     right: -5,
-    tintColor:"#fff"
+    tintColor: "#fff"
   },
   locationEditBox: {
     flexDirection: 'row',

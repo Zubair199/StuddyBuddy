@@ -10,6 +10,8 @@ import ProfileSetupScreen from '../screens/ProfileSetupScreen';
 import GuestArtsScreen from '../screens/GuestArtsScreen';
 import { app } from '../constants/themeColors';
 import Icon from 'react-native-vector-icons/AntDesign';
+import GuestClassDetailScreen from '../screens/ClassDetailScreenGuest';
+const AuthStack = createNativeStackNavigator();
 
 const AuthMenuNavigation = () => {
     const navigation = useNavigation();
@@ -27,12 +29,114 @@ const AuthMenuNavigation = () => {
     };
 
 
+    const mainHeader = { headerShown: false };
     return (
-        <AuthStackScreen />
+        <AuthStack.Navigator
+            initialRouteName="HomeScreen"
+            screenOptions={{
+                headerShown: true,
+            }}>
+            <AuthStack.Screen
+                name="Login"
+                component={LoginScreen}
+                options={{ headerShown: false }}
+            />
+            <AuthStack.Screen
+                name="AccountCreate"
+                component={AccountCreateScreen}
+                options={{
+                    headerLeft: () => (
+                        <TouchableOpacity
+                            style={styles.backArrowContainer}
+                            onPress={() => navigation.goBack()}>
+
+                            <Icon name="arrowleft" color={"#ffffff"} size={20} />
+                        </TouchableOpacity>
+                    ),
+                    headerStyle: {
+                        backgroundColor: app.lightBlue
+                    },
+                    headerShown: true,
+                    title: "Create Account",
+                    headerTitleAlign: 'center',
+                    headerTitleStyle: {
+                        color: '#ffffff',
+                    },
+                }}
+            />
+            <AuthStack.Screen
+                name="AccountVerify"
+                component={AccountVerificationScreen}
+                options={{
+                    headerLeft: () => (
+                        <></>
+                    ),
+                    headerStyle: {
+                        backgroundColor: app.lightBlue
+                    },
+                    headerShown: true,
+                    title: "Account Verification",
+                    headerTitleAlign: 'center',
+                    headerTitleStyle: {
+                        color: '#ffffff',
+                    },
+                }}
+            />
+            <AuthStack.Screen
+                name="ProfileSetup"
+                component={ProfileSetupScreen}
+                options={headerProfile}
+            />
+            <AuthStack.Screen
+                name="Guest"
+                component={GuestArtsScreen}
+                options={{
+                    headerLeft: () => (
+                        <TouchableOpacity
+                            style={styles.backArrowContainer}
+                            onPress={() => navigation.goBack()}>
+
+                            <Icon name="arrowleft" color={"#ffffff"} size={20} />
+                        </TouchableOpacity>
+                    ),
+                    headerStyle: {
+                        backgroundColor: app.lightBlue
+                    },
+                    headerShown: true,
+                    title: "Guest View",
+                    headerTitleAlign: 'center',
+                    headerTitleStyle: {
+                        color: '#ffffff',
+                    },
+                }}
+            />
+            <AuthStack.Screen
+                name="GuestClassDetails"
+                component={GuestClassDetailScreen}
+                options={{
+                    headerLeft: () => (
+                        <TouchableOpacity
+                            style={styles.backArrowContainer}
+                            onPress={() => navigation.goBack()}>
+
+                            <Icon name="arrowleft" color={"#ffffff"} size={20} />
+                        </TouchableOpacity>
+                    ),
+                    headerStyle: {
+                        backgroundColor: app.lightBlue
+                    },
+                    headerShown: true,
+                    title: "Class Details",
+                    headerTitleAlign: 'center',
+                    headerTitleStyle: {
+                        color: '#ffffff',
+                    },
+                }}
+            />
+        </AuthStack.Navigator>
     );
 };
 
-const AuthStack = createNativeStackNavigator();
 const headerFixed = ({ navigation }: any): any => {
     return {
         headerLeft: () => (
@@ -88,43 +192,6 @@ const headerProfile = ({ navigation }: any): any => {
         },
     };
 };
-const AuthStackScreen = ({ navigation, route }: any) => {
-    const mainHeader = { headerShown: false };
-    return (
-        <AuthStack.Navigator
-            initialRouteName="HomeScreen"
-            screenOptions={{
-                headerShown: true,
-            }}>
-            <AuthStack.Screen
-                name="Login"
-                component={LoginScreen}
-                options={{ headerShown: false }}
-            />
-            <AuthStack.Screen
-                name="AccountCreate"
-                component={AccountCreateScreen}
-                options={headerFixed}
-            />
-            <AuthStack.Screen
-                name="AccountVerify"
-                component={AccountVerificationScreen}
-                options={headerWithoutButton}
-            />
-            <AuthStack.Screen
-                name="ProfileSetup"
-                component={ProfileSetupScreen}
-                options={headerProfile}
-            />
-            <AuthStack.Screen
-                name="Guest"
-                component={GuestArtsScreen}
-                options={headerFixed}
-            />
-
-        </AuthStack.Navigator>
-    );
-};
 
 const styles = StyleSheet.create({
     container: {
@@ -147,7 +214,6 @@ const styles = StyleSheet.create({
     backArrow: { marginTop: 0, tintColor: '#ffffff', height: 35, width: 35 },
     backArrowContainer: {
         justifyContent: 'center',
-        height: Platform.OS === 'ios' ? 45 : 70,
         width: 50,
     },
 });

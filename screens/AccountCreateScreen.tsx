@@ -207,10 +207,10 @@ export default function AccountCreateScreen() {
               style={nameFocused ? genericStyle.textBoxFocused : genericStyle.textBox}
               autoCapitalize="words"
               placeholder="Full Name"
-              placeholderTextColor="#adb5bd"
+              // placeholderTextColor="#adb5bd"
               onChangeText={text => setFullName(text)}
               maxLength={40}
-              onFocus={() => setNameFocused(!nameFocused)}
+              // onFocus={() => setNameFocused(!nameFocused)}
             />
           </View>
           <View
@@ -223,10 +223,10 @@ export default function AccountCreateScreen() {
               autoCapitalize="none"
               style={emailFocused ? genericStyle.textBoxFocused : genericStyle.textBox}
               placeholder="Email"
-              placeholderTextColor="#adb5bd"
+              // placeholderTextColor="#adb5bd"
               onChangeText={text => setEmail(text)}
               maxLength={40}
-              onFocus={() => setEmailFocused(!emailFocused)}
+              // onFocus={() => setEmailFocused(!emailFocused)}
             />
           </View>
           <View style={passwordFocused ? styles.passwordSectionFocused : styles.passwordSection}>
@@ -235,10 +235,10 @@ export default function AccountCreateScreen() {
                 style={styles.passwordInputBox}
                 secureTextEntry={secure}
                 placeholder="Password"
-                placeholderTextColor="#adb5bd"
+                // placeholderTextColor="#adb5bd"
                 onChangeText={text => setPassword(text)}
                 maxLength={40}
-                onFocus={() => setPasswordFocused(!passwordFocused)}
+                // onFocus={() => setPasswordFocused(!passwordFocused)}
               />
             </View>
             <View>
@@ -256,10 +256,10 @@ export default function AccountCreateScreen() {
                 style={styles.passwordInputBox}
                 secureTextEntry={confirmSecure}
                 placeholder="Confirm password"
-                placeholderTextColor="#adb5bd"
+                // placeholderTextColor="#adb5bd"
                 onChangeText={text => setConfirmPassword(text)}
                 maxLength={40}
-                onFocus={() => setConfirmPasswordFocused(!confirmPasswordFocused)}
+                // onFocus={() => setConfirmPasswordFocused(!confirmPasswordFocused)}
               />
             </View>
             <View>
@@ -440,7 +440,7 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     borderWidth: 0,
     backgroundColor: '#ffffff',
-    color: app.lightBlue,
+    // color: app.lightBlue,
     height: 40,
     fontFamily: 'System',
   },

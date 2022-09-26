@@ -15,6 +15,7 @@ import {
   BackHandler,
   Modal,
   Platform,
+  FlatList
 } from 'react-native';
 import { Avatar, BottomSheet, CheckBox } from 'react-native-elements';
 import api from '../constants/api';
@@ -24,10 +25,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import genericStyle from '../assets/styles/styleSheet';
 import { AUTH, AUTHENTICATIONS } from '../services/api.constants';
 import * as ImagePicker from 'react-native-image-picker';
-import Icon from 'react-native-vector-icons/AntDesign';
-
+import { app, error, grey, success } from '../constants/themeColors';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
-import { app, grey } from '../constants/themeColors';
 
 interface IPROPS {
   email: String;
@@ -489,7 +489,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
               )}
             </View>
 
-            <View style={[styles.textBoxContainer]}>
+            <View style={[styles.textBoxContainer, { height: 100 }]}>
               <TextInput
                 style={genericStyle.textArea}
                 autoCapitalize="words"
@@ -499,7 +499,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
                 placeholderTextColor={grey[500]}
                 multiline={true}
                 onChangeText={text => setPastExperience(text)}
-                numberOfLines={3}
+                numberOfLines={5}
                 scrollEnabled={false}
               />
             </View>
@@ -640,13 +640,13 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
         visible={skillsModal}
         onRequestClose={() => setSkillsModal(false)}>
         <View style={styles.skillModal}>
-          <View style={styles.searchCheck}>
+          {/* <View style={styles.searchCheck}>
             <View style={styles.searchAndIcon}>
               <TextInput
                 style={styles.searchBox}
                 placeholder={'Search Skills'}
                 onChangeText={text => searchSkill(text)}
-                placeholderTextColor="#3878ee"
+                placeholderTextColor={grey[500]}
               />
               <Image
                 style={styles.searchIcon}
@@ -664,6 +664,24 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
                 source={require('../assets/images/icons/cancel.png')}
                 style={styles.removeIconlocation}
               />
+            </TouchableOpacity>
+          </View> */}
+          <View style={styles.searchCheck}>
+            <View style={styles.searchAndIcon}>
+              <TextInput
+                placeholder={'Search Skills'}
+                onChangeText={text => searchSkill(text)}
+                placeholderTextColor={grey[500]}
+              />
+              <View style={{ marginTop: 5 }}>
+                <Ionicons name='search-sharp' size={25} color={grey[500]} />
+              </View>
+            </View>
+            <TouchableOpacity onPress={() => saveSkill()} style={styles.successBox}>
+              <Ionicons name='checkmark-sharp' size={30} color={success.focus} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => cancelSkill()} style={styles.errorBox}>
+              <Ionicons name='close' size={30} color={error.focus} />
             </TouchableOpacity>
           </View>
 
@@ -708,13 +726,13 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
         visible={genreModal}
         onRequestClose={() => setGenreModal(false)}>
         <View style={styles.skillModal}>
-          <View style={styles.searchCheck}>
+          {/* <View style={styles.searchCheck}>
             <View style={styles.searchAndIcon}>
               <TextInput
                 style={styles.searchBox}
                 placeholder={'Search Subjects'}
                 onChangeText={text => searchGenre(text)}
-                placeholderTextColor="#3878ee"
+                placeholderTextColor={grey[500]}
               />
               <Image
                 style={styles.searchIcon}
@@ -733,8 +751,25 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
                 style={styles.removeIconlocation}
               />
             </TouchableOpacity>
+          </View> */}
+          <View style={styles.searchCheck}>
+            <View style={styles.searchAndIcon}>
+              <TextInput
+                placeholder={'Search Subjects'}
+                onChangeText={text => searchGenre(text)}
+                placeholderTextColor={grey[500]}
+              />
+              <View style={{ marginTop: 5 }}>
+                <Ionicons name='search-sharp' size={25} color={grey[500]} />
+              </View>
+            </View>
+            <TouchableOpacity onPress={() => saveGenre()} style={styles.successBox}>
+              <Ionicons name='checkmark-sharp' size={30} color={success.focus} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => cancelGenre()} style={styles.errorBox}>
+              <Ionicons name='close' size={30} color={error.focus} />
+            </TouchableOpacity>
           </View>
-
           <View style={{ marginTop: 20 }}>
             <View>
               {queryGenre.length < 1 ? (
@@ -779,32 +814,23 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
           <View style={styles.searchCheck}>
             <View style={styles.searchAndIcon}>
               <TextInput
-                style={styles.searchBox}
                 placeholder={'Search Locations'}
                 onChangeText={text => searchLocation(text)}
-                placeholderTextColor="#3878ee"
+                placeholderTextColor={grey[500]}
               />
-              <Image
-                style={styles.searchIcon}
-                source={require('../assets/images/icons/search-blue.png')}
-              />
+              <View style={{ marginTop: 5 }}>
+                <Ionicons name='search-sharp' size={25} color={grey[500]} />
+              </View>
             </View>
-            <TouchableOpacity onPress={() => saveLocation()}>
-              <Image
-                source={require('../assets/images/icons/check.png')}
-                style={styles.removeIconlocation}
-              />
+            <TouchableOpacity onPress={() => saveLocation()} style={styles.successBox}>
+              <Ionicons name='checkmark-sharp' size={30} color={success.focus} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => cancelLocation()}>
-              {/* <FontAwesome name="times" style={styles.times} size={30} /> */}
-              <Image
-                source={require('../assets/images/icons/cancel.png')}
-                style={styles.removeIconlocation}
-              />
+            <TouchableOpacity onPress={() => cancelLocation()} style={styles.errorBox}>
+              <Ionicons name='close' size={30} color={error.focus} />
             </TouchableOpacity>
           </View>
 
-          <View style={{ marginTop: 20 }}>
+          <View style={{ marginVertical: 15 }}>
             <View>
               {queryLocations.length < 1 ? (
                 <View
@@ -815,25 +841,33 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
                   <Text style={styles.emptySearchText}>No Results found</Text>
                 </View>
               ) : (
-                queryLocations.map((location: any, index: number) => (
-                  <TouchableOpacity
-                    key={index + '_location_add'}
-                    onPress={() => addRemoveLocation(location.title)}
-                    style={
-                      toggleLocation(location.title)
-                        ? styles.skillAdded
-                        : styles.addSkillBox
-                    }>
-                    <Text
-                      style={
-                        toggleLocation(location.title)
-                          ? styles.addedSkill
-                          : styles.addSkill
-                      }>
-                      {location.title}
-                    </Text>
-                  </TouchableOpacity>
-                ))
+                <SafeAreaView>
+                  <FlatList
+                    data={queryLocations}
+                    renderItem={({ item, index }) => {
+                      return (
+                        <TouchableOpacity
+                          key={index + '_location_add'}
+                          onPress={() => addRemoveLocation(item.title)}
+                          style={
+                            toggleLocation(item.title)
+                              ? styles.skillAdded
+                              : styles.addSkillBox
+                          }>
+                          <Text
+                            style={
+                              toggleLocation(item.title)
+                                ? styles.addedSkill
+                                : styles.addSkill
+                            }>
+                            {item.title}
+                          </Text>
+                        </TouchableOpacity>
+                      )
+                    }}
+                    keyExtractor={item => item._id}
+                  />
+                </SafeAreaView>
               )}
             </View>
           </View>
@@ -842,7 +876,6 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -857,6 +890,9 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     flex: 1,
   },
+
+  successBox: { borderColor: success.main, borderWidth: 1.5, borderRadius: 5, width: 40, justifyContent: "center", alignItems: "center" },
+  errorBox: { borderColor: error.main, borderWidth: 1.5, borderRadius: 5, width: 40, justifyContent: "center", alignItems: "center" },
   header: {
     marginBottom: 50,
     // height: 102,
@@ -905,6 +941,7 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 18,
     fontFamily: 'System',
+    borderRadius: 15
   },
   form: {
     marginTop: 20,
@@ -1016,7 +1053,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   skillModal: {
-    marginTop: 40,
+    // marginTop: 40,
     padding: 15,
   },
   searchCheck: {
@@ -1026,13 +1063,13 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   searchAndIcon: {
-    height: 44,
+    height: 40,
     width: '70%',
     borderColor: '#949599',
     backgroundColor: '#ffffff',
     color: '#3878ee',
     borderWidth: 1,
-    borderRadius: 3,
+    borderRadius: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingLeft: 14,
@@ -1053,27 +1090,29 @@ const styles = StyleSheet.create({
   },
 
   addSkill: {
-    color: '#3878ee',
+    color: app.lightBlue,
   },
 
   addedSkill: {
-    color: '#3878ee',
+    color: '#fff',
   },
   addSkillBox: {
-    padding: 5,
+    padding: 10,
     borderWidth: 1,
-    borderColor: '#3878ee',
+    borderRadius: 15,
+    borderColor: app.lightBlue,
     marginRight: 10,
     marginTop: 10,
     fontSize: 15,
   },
   skillAdded: {
-    padding: 5,
-    borderWidth: 1,
-    borderColor: '#C1CAE1',
+    padding: 10,
+    borderRadius: 15,
+    borderColor: app.lightBlue,
     marginRight: 10,
     marginTop: 10,
-    backgroundColor: '#C1CAE1',
+    backgroundColor: app.lightBlue,
+    fontWeight: "bold",
     fontSize: 15,
   },
   addRemoveBox: {

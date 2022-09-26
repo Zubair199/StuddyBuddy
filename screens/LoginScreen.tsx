@@ -58,6 +58,7 @@ export default function LoginScreen() {
   const [allSubjects, setAllSubjects] = useState([]);
 
   function clearStates() {
+    setRememberMe(false)
     setPassword('');
     setEmail('');
   }
@@ -315,7 +316,7 @@ export default function LoginScreen() {
               maxLength={40}
               placeholder="Email"
               value={email}
-              onFocus={() => setEmailFocused(!emailFocused)}
+            // onFocus={() => setEmailFocused(!emailFocused)}
             />
           </View>
 
@@ -331,7 +332,7 @@ export default function LoginScreen() {
                 value={password}
                 maxLength={40}
                 underlineColorAndroid="transparent"
-                onFocus={() => setPasswordFocused(!passwordFocused)}
+              // onFocus={() => setPasswordFocused(!passwordFocused)}
               />
             </View>
             <View>
@@ -344,7 +345,7 @@ export default function LoginScreen() {
             </View>
           </View>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20, marginLeft: 10 }}>
-            <View style={{flexDirection: 'row'}}>
+            <View style={{ flexDirection: 'row' }}>
               <Checkbox
                 accessibilityLabel="Remember Me"
                 value={rememberMe}
@@ -528,7 +529,7 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     borderWidth: 0,
     backgroundColor: '#ffffff',
-    color: app.lightBlue,
+    // color: app.lightBlue,
     height: 40,
     fontFamily: 'System',
   },

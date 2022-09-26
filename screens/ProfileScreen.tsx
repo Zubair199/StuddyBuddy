@@ -138,8 +138,7 @@ export default function ProfileScreen(dataType: dataTypes) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ marginBottom: '18%' }}>
-        <View style={styles.sticky}>
-          <Text style={styles.title}>My Profile</Text>
+        <View style={[styles.sticky, { flexDirection: "row-reverse" }]}>
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('EditProfile', {
