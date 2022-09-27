@@ -38,6 +38,7 @@ import PlatformPayScreen from '../screens/PlatformPayScreen';
 import ClassVideoScreen from '../screens/ClassVideoScreen';
 import Dashboard from '../screens/Dashboard';
 import { app, info } from '../constants/themeColors';
+import ProfileDetails from '../screens/ProfileDetails';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -234,12 +235,12 @@ const HomeStackScreen = ({ navigation, route }: any) => {
       />
       <HomeStack.Screen
         name="ChatScreen"
-        options={{headerShown:false}}
+        options={{ headerShown: false }}
         component={ChatScreen}
       />
       <HomeStack.Screen
         name="ChatScreenG"
-        options={{headerShown:false}}
+        options={{ headerShown: false }}
         component={ChatScreenG}
       />
       <HomeStack.Screen
@@ -251,6 +252,12 @@ const HomeStackScreen = ({ navigation, route }: any) => {
         name="Profile"
         options={mainHeader}
         component={ProfileScreen}
+      />
+
+      <HomeStack.Screen
+        name="ProfileDetails"
+        options={mainHeader}
+        component={ProfileDetails}
       />
       <HomeStack.Screen
         name="EditProfile"

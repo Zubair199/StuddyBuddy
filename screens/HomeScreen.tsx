@@ -100,7 +100,7 @@ export default function HomeScreen({ route }) {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
-      <ScrollView >
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ paddingTop: 15, paddingHorizontal: 15 }}>
           <LinearGradient colors={[app.lightBlue, info.focus]} style={[styles.linearGradient, styles.segment]}>
             <View style={{ paddingVertical: 10 }}>

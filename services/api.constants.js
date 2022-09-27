@@ -1,5 +1,5 @@
 module.exports = {
-    MESSAGE:{
+    MESSAGE: {
         EXCEPTION: 'Something went wrong. Try reloading the app!'
     },
     AUTHENTICATIONS: {
@@ -32,8 +32,8 @@ module.exports = {
         SITE_CONTENTS: "/api/sitecontents",
         USER_SEARCH: "/api/user/search/",
         TEACHER_SEARCH: "/api/teacher/search/",
-        CLASS_SEARCH: "/api/class/search/"
-
+        CLASS_SEARCH: "/api/class/search/",
+        GENERAL_USER: "/api/general/search/"
     },
     AUTH: {
 
@@ -53,6 +53,8 @@ module.exports = {
         GET_USER_BY_ID: "/api/auth/getUser/",
         EDIT_USER: "/api/auth/updateuser/",
 
+        HIRE: "/api/auth/hireUpdate"
+
     },
     CLASS: {
         CREATE: "/api/class",
@@ -70,7 +72,7 @@ module.exports = {
 
         GET_ALL_ACTIVE_CLASSES: '/api/classes/active',
         GET_ALL_ACTIVE_CLASSES_GUEST_VIEW: '/api/guest/classes/active',
-        
+
 
         JOIN_CLASS: '/api/joinClass',
 

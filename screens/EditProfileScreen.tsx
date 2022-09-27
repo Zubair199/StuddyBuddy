@@ -571,7 +571,7 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
           </View>
 
           <View style={styles.selectBox}>
-            <Text style={genericStyle.subHeading}>Video</Text>
+            <Text style={genericStyle.subHeading}>Certifications</Text>
             <View style={genericStyle.locationEditBox}>
               <TouchableOpacity
                 onPress={() => uploadCertifications()}
@@ -588,7 +588,7 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
                 {
                   (certificationsName && certificationsName.length > 0) && certificationsName.map((item, index) => {
                     return (
-                      <View style={{ padding: 2 }}>
+                      <View style={{ padding: 2 }} key={index}>
                         <View style={{ width: 100, height: 100 }}>
                           <View style={{ flexDirection: "row" }}>
                             <Image

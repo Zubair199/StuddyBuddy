@@ -1,6 +1,5 @@
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import moment from 'moment';
-import { Divider, View } from 'native-base';
 import * as React from 'react';
 import {
   FlatList,
@@ -8,16 +7,21 @@ import {
   Modal,
   SafeAreaView,
   StyleSheet,
+  Switch,
   TextInput,
   TouchableOpacity,
+  View
 } from 'react-native';
-import { Text } from 'react-native-elements';
+import { Divider, Radio, Select } from 'native-base';
+import { Text, Button, Avatar } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
 import { AUTH, AUTHENTICATIONS, GENERAL } from '../services/api.constants';
 import { AuthContext } from '../utils/AuthContext';
 import MainLayout from './MainLayout';
 import Icon from 'react-native-vector-icons/AntDesign';
 import api from '../services/api.services';
+import { app, grey } from '../constants/themeColors';
+
 export default function NetworkScreen() {
   const { userToken, userType } = React.useContext(AuthContext);
 
@@ -49,7 +53,7 @@ export default function NetworkScreen() {
   const [reRun, setReRun] = React.useState(false);
   const [editProfile, setEditProfile] = React.useState(false);
   const [experience, setExperience] = React.useState('');
-  const [certifications, setCertifications] = React.useState('');
+  const [certifications, setCertifications] = React.useState([]);
   const [friendList, setFriendList] = React.useState<Array<object>>([]);
   const [mentorList, setMentorList] = React.useState<Array<object>>([]);
   const [pageFriend, setPageFriend] = React.useState(1);
@@ -131,10 +135,9 @@ export default function NetworkScreen() {
   }
 
   const [isModal, setIsModal] = React.useState(false);
-  function toggleModal() {
-    console.log('modal');
-    setIsModal(!isModal);
-  }
+  const [isModal1, setIsModal1] = React.useState(false);
+  const [isEnabled, setIsEnabled] = React.useState(false);
+
   function getProfileData(id, item) {
     let result = userProfiles.filter(item => item.user === id);
 
@@ -147,23 +150,27 @@ export default function NetworkScreen() {
       if (result[0].image) {
         setImage(result[0].image);
       }
+      setIsEnabled(item.isHired);
       setIsStudent(item.roles.name === 'user');
       setIsTeacher(item.roles.name === 'teacher');
       console.log(isStudent);
       console.log(isTeacher);
+
     } else {
       setProfile(null);
       setSkills([]);
       setCertifications('');
       setPastExperience('');
+      setIsEnabled(false)
     }
+    toggleModal1();
+
   }
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
       key={item._id}
       onPress={() => {
-        toggleModal();
         getProfileData(item._id, item);
       }}>
       <View
@@ -205,6 +212,8 @@ export default function NetworkScreen() {
   }
   let [hireFlag, setHireFlag] = React.useState('');
   let [name, setName] = React.useState('');
+  const [value, setValue] = React.useState('students');
+
   function teacherApiCall() {
     try {
       fetch(
@@ -242,19 +251,58 @@ export default function NetworkScreen() {
       console.log(err);
     }
   }
+  function generalApiCall() {
+    try {
+      fetch(AUTHENTICATIONS.API_URL + GENERAL.GENERAL_USER + name)
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log('all users ', responseJson);
+          setUsers(responseJson.users);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  function toggleModal() {
+    console.log('modal');
+    setIsModal(!isModal);
+    // clearStates();
+  }
+
+  function clearStates() {
+    setName('');
+    setHireFlag('');
+    setValue('students');
+  }
+
+  function filter() {
+    if (value === 'students') {
+      studentApiCall();
+    } else if (value === 'teachers') {
+      teacherApiCall();
+    }
+    toggleModal();
+  }
+  function toggleModal1() {
+    setIsModal1(!isModal1)
+  }
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
+
       <Modal
         animationType="slide"
-        visible={isModal}
+        visible={isModal1}
         onRequestClose={() => {
-          toggleModal();
+          toggleModal1();
         }}>
         <View style={{ flex: 1, backgroundColor: '#ffffff', padding: 15 }}>
           <View style={{ flexDirection: 'row-reverse' }}>
             <TouchableOpacity
               onPress={() => {
-                toggleModal();
+                toggleModal1();
               }}>
               <Icon name="close" size={25} />
             </TouchableOpacity>
@@ -269,28 +317,25 @@ export default function NetworkScreen() {
           </View>
           <SafeAreaView style={styles.container}>
             <ScrollView
-              style={styles.scrollView}
-              keyboardShouldPersistTaps={'handled'}>
+              keyboardShouldPersistTaps={'handled'}
+              showsVerticalScrollIndicator={false}
+            >
               {/* <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" /> */}
               <View style={styles.basicInfo}>
                 {/* instructor name and image will be replaced by api's data on integration of apis */}
                 <View style={styles.profileImageBox}>
-                  {/* {imageLoader && <Image
-                  style={{width:100, height:54}}
-                  source={require('../assets/images/Deep-Move-Spinner-v3.gif')}
-                />} */}
-                  <TouchableOpacity>
-                    <Image
-                      style={styles.profileImage}
-                      // onLoadStart={()=>setImageLoader(true)}
-                      // onLoadEnd={()=>setImageLoader(false)}
-                      source={
-                        image === ''
-                          ? require('../assets/images/user.png')
-                          : { uri: AUTHENTICATIONS.API_URL + image }
-                      }
-                    />
-                  </TouchableOpacity>
+                  <Avatar
+                    rounded
+                    title="P"
+                    activeOpacity={0.7}
+                    size="xlarge"
+
+                    source={
+                      image === ''
+                        ? require('../assets/images/user.png')
+                        : { uri: AUTHENTICATIONS.API_URL + image }
+                    }
+                  />
                 </View>
                 <View style={styles.nameBox}>
                   <Text style={styles.name}>{userName}</Text>
@@ -342,8 +387,25 @@ export default function NetworkScreen() {
               {isTeacher && (
                 <View style={styles.textContent}>
                   <Text style={styles.contentTitle}>Certifications</Text>
-                  {certifications ? (
-                    <Text style={styles.actualText}>{certifications}</Text>
+                  {(certifications && certifications.length > 0) ? (
+                    <View style={{ flexDirection: 'row', flexWrap: "wrap" }}>
+                      {
+                        certifications.map((item, index) => {
+                          return (
+                            <View style={{ padding: 2 }} key={index}>
+                              <View style={{ width: 100, height: 100 }}>
+                                <View style={{ flexDirection: "row" }}>
+                                  <Image
+                                    source={{ uri: AUTHENTICATIONS.API_URL + item }}
+                                    style={{ width: 100, height: 100, borderRadius: 15 }}
+                                  />
+                                </View>
+                              </View>
+                            </View>
+                          )
+                        })
+                      }
+                    </View>
                   ) : (
                     <Text style={styles.placeholder}>
                       Your Certifications Here
@@ -373,19 +435,15 @@ export default function NetworkScreen() {
                     <Text style={styles.switchBoxLebel}>
                       Mark as available to hire.
                     </Text>
-                    <TouchableOpacity>
-                      {toggle ? (
-                        <Image
-                          style={styles.toggleOn}
-                          source={require('../assets/images/icons/toggle.png')}
-                        />
-                      ) : (
-                        <Image
-                          style={styles.toggleOn}
-                          source={require('../assets/images/icons/Toggle-off.png')}
-                        />
-                      )}
-                    </TouchableOpacity>
+
+                    <View>
+                      <Switch
+                        trackColor={{ false: "#767577", true: grey[400] }}
+                        thumbColor={isEnabled ? app.lightBlue : "#f4f3f4"}
+                        ios_backgroundColor="#3e3e3e"
+                        value={isEnabled}
+                      />
+                    </View>
                   </View>
                   <View style={styles.lineStyle} />
                 </>
@@ -423,28 +481,111 @@ export default function NetworkScreen() {
                 </View>
               </Modal>
 
-              {/* {editProfile && <EditProfileModal
-                    editProfileModal={editProfile}
-                    closeEditModal={() => setEditProfile(false)}
-                    isStudent={isStudent}
-                    allSkills={allSkills}
-                    skills={skills}
-                    certifications={certifications}
-                    bio={inputBio.bio}
-                    social={self}
-                    loadingTrue={() => setLoader(true)}
-                    loadingFalse={() => setLoader(false)}
-                    reRun={() => setReRun(!reRun)}
-                />} */}
             </ScrollView>
           </SafeAreaView>
         </View>
       </Modal>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: "center", marginVertical: 10, marginHorizontal: 10 }}>
-        <TextInput placeholder='Search...' style={{ width: '100%', borderWidth: 1, borderColor: 'lightgray', borderRadius: 10, height: 45 }} onChangeText={(text) => searchUser(text)} />
-        <TouchableOpacity>
-          <Icon name="search1" size={20} style={{ marginLeft: -35 }} />
-        </TouchableOpacity>
+      <Modal
+        animationType="slide"
+        visible={isModal}
+        onRequestClose={() => {
+          toggleModal();
+        }}>
+        <View style={{ flex: 1, backgroundColor: '#ffffff', padding: 15 }}>
+          <View style={{ flexDirection: 'row-reverse' }}>
+            <TouchableOpacity
+              onPress={() => {
+                toggleModal();
+              }}>
+              <Icon name="close" size={25} />
+            </TouchableOpacity>
+          </View>
+          <View style={{ height: '90%' }}>
+            <View style={{ marginVertical: 10 }}>
+              <Radio.Group
+                direction={'row'}
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-around',
+                }}
+                name="myRadioGroup"
+                value={value}
+                onChange={nextValue => {
+                  setValue(nextValue);
+                }}>
+                <Radio value="students" my="1">
+                  Students
+                </Radio>
+                <Radio value="teachers" my="1">
+                  Teachers
+                </Radio>
+              </Radio.Group>
+            </View>
+            <View style={{ marginVertical: 10 }}>
+              <TextInput
+                placeholder="Enter Name"
+                onChangeText={text => setName(text)}
+                style={{
+                  borderWidth: 1,
+                  borderColor: 'lightgray',
+                  borderRadius: 5,
+                  height: 43,
+                }}
+              />
+            </View>
+            {value === 'teachers' && (
+              <View>
+                <View style={{ marginVertical: 10 }}>
+                  <Select
+                    accessibilityLabel="Available to hire"
+                    selectedValue={hireFlag}
+                    onValueChange={itemValue => {
+                      setHireFlag(itemValue);
+                    }}
+                    placeholder="Available to hire">
+                    <Select.Item label="Yes" value="1" />
+                    <Select.Item label="No" value="0" />
+                  </Select>
+                </View>
+              </View>
+            )}
+          </View>
+          <View style={{ height: '10%' }}>
+            <Button
+              onPress={() => filter()}
+              buttonStyle={{ width: '100%', backgroundColor: app.lightBlue }}
+              containerStyle={{ width: '100%' }}
+              title="Search"
+            />
+          </View>
+        </View>
+      </Modal>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          padding: 15
+        }}>
+        <TextInput
+          placeholder="Enter Name"
+          onChangeText={text => setName(text)}
+          style={{
+            borderWidth: 1,
+            borderColor: 'lightgray',
+            borderRadius: 5,
+            height: 43,
+            width: '80%',
+            marginRight: 5
+          }}
+          onSubmitEditing={() => { console.log("done"); generalApiCall(); }}
+        />
+        <Button
+          onPress={() => toggleModal()}
+          iconRight
+          buttonStyle={{ backgroundColor: app.lightBlue }}
+          icon={<Icon name="filter" size={15} color="white" />}
+          title="Filter"
+        />
       </View>
       {
         !users || users.length === 0 ?
@@ -455,13 +596,11 @@ export default function NetworkScreen() {
           )
           :
           (
-            <ScrollView>
-              <FlatList
-                data={users}
-                renderItem={renderItem}
-                keyExtractor={(item) => item._id}
-              />
-            </ScrollView>
+            <FlatList
+              data={users}
+              renderItem={renderItem}
+              keyExtractor={(item) => item._id}
+            />
 
           )
       }
