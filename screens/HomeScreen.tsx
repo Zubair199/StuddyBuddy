@@ -31,12 +31,6 @@ const { width, height } = Dimensions.get('screen');
 let iconSize = 30
 let homeSections = [
   {
-    name: "Dashboard",
-    colors: ['rgb(73, 163, 241)', 'rgb(26, 115, 232)'],
-    icon: <MaterialCommunityIcon name="view-dashboard" size={iconSize} color={"#fff"} />,
-    screenName: 'Dashboard',
-  },
-  {
     name: "My Schedule",
     colors: ['#ab47bc', '#8e24aa'],
     icon: <MaterialCommunityIcon name="calendar-month" size={iconSize} color={"#fff"} />,
@@ -68,7 +62,7 @@ let homeSections = [
   },
   {
     name: "Messages",
-    colors: ["#0077b5", "#00669c"],
+    colors: ['rgb(73, 163, 241)', 'rgb(26, 115, 232)'],
     icon: <AntDesign name="message1" size={iconSize} color={"#fff"} />,
     screenName: 'Messages',
   },

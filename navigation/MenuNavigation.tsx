@@ -175,7 +175,7 @@ const HomeStackScreen = ({ navigation, route }: any) => {
       />
       <HomeStack.Screen
         name="AddAssignmentQuestions"
-        options={mainHeader}
+        options={{ headerShown: false }}
         component={AddAssignmentQuestions}
       />
       <HomeStack.Screen
@@ -200,7 +200,7 @@ const HomeStackScreen = ({ navigation, route }: any) => {
       />
       <HomeStack.Screen
         name="AddExamQuestions"
-        options={mainHeader}
+        options={{ headerShown: false }}
         component={AddExamQuestions}
       />
       <HomeStack.Screen

@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 import { ASSIGNMENT, AUTHENTICATIONS, CLASS, EXAM } from '../services/api.constants';
 import { AuthContext } from '../utils/AuthContext';
+import { app } from '../constants/themeColors';
 
 const radioButtonsData = [{
   id: '1', // acts as primary key, should be unique and non-empty string
@@ -131,54 +132,41 @@ export default function AddExamScreen() {
   else {
     return (
       <View style={{ backgroundColor: "white", flex: 1 }}>
-        <ScrollView style={{ padding: 15 }}>
-          <View style={{ flexDirection: "row" }}>
-            <View style={{ paddingTop: 29, marginRight: 70 }}>
-              <TouchableOpacity
-                onPress={
-                  () => { navigation.navigate('HomeScreen') }
-                }
-              >
-                <Icon name='leftcircleo' size={25} style={{ fontWeight: '600' }} />
-              </TouchableOpacity>
-            </View>
-            <View >
-              <Text style={styles.title}>Add Exam</Text>
-            </View>
-          </View>
+        <ScrollView >
+          <View style={{ padding: 15 }}>
 
-          <View style={{ marginVertical: 10 }}>
-            <Select accessibilityLabel="Choose Subject" placeholder="Choose Class"
-              onValueChange={
-                itemValue => {
-                  setClass(itemValue);
-                  let res = classes.filter(item => item._id === itemValue);
-                  console.log(res)
-                  if (res.length > 0) {
-                    setSubjectID(res[0].Subject._id)
-                    setSubject(res[0].Subject.name)
-                    setSelectedClass(res);
+            <View style={{ marginVertical: 10 }}>
+              <Select accessibilityLabel="Choose Subject" placeholder="Choose Class"
+                onValueChange={
+                  itemValue => {
+                    setClass(itemValue);
+                    let res = classes.filter(item => item._id === itemValue);
+                    console.log(res)
+                    if (res.length > 0) {
+                      setSubjectID(res[0].Subject._id)
+                      setSubject(res[0].Subject.name)
+                      setSelectedClass(res);
+                    }
                   }
                 }
-              }
-            >
-              {
-                classes.length > 0 &&
-                classes.map((item, index) => {
-                  return (
-                    <Select.Item key={index} label={item.name} value={item._id} />
-                  )
-                })
-              }
-            </Select>
+              >
+                {
+                  classes.length > 0 &&
+                  classes.map((item, index) => {
+                    return (
+                      <Select.Item key={index} label={item.name} value={item._id} />
+                    )
+                  })
+                }
+              </Select>
 
-          </View>
-          <View style={{ marginVertical: 10 }}>
-            <Input variant="outline" placeholder="Enter Title"
-              onChangeText={(text) => { setTitle(text) }} />
-          </View>
+            </View>
+            <View style={{ marginVertical: 10 }}>
+              <Input variant="outline" placeholder="Enter Title"
+                onChangeText={(text) => { setTitle(text) }} />
+            </View>
 
-          {/* <View style={{ marginVertical: 10 }}>
+            {/* <View style={{ marginVertical: 10 }}>
             <Select accessibilityLabel="Choose Subject" placeholder="Choose Subject" onValueChange={itemValue => setSubject(itemValue)}>
               <Select.Item label="UX Research" value="ux" />
               <Select.Item label="Web Development" value="web" />
@@ -188,30 +176,30 @@ export default function AddExamScreen() {
             </Select>
 
           </View> */}
-          <View style={{ marginVertical: 10 }}>
-            <Input variant="outline" placeholder="Subject" value={subject} />
-          </View>
+            <View style={{ marginVertical: 10 }}>
+              <Input variant="outline" placeholder="Subject" value={subject} />
+            </View>
 
-          <View style={{ marginVertical: 10 }}>
-            <View style={{ flexDirection: 'row' }}>
-              <Input
-                w={'88%'}
-                editable={false}
-                variant="outline"
-                defaultValue={startdate}
-                placeholder="Start Date"
-              />
-              <IconButton
-                icon={
-                  <Icon
-                    name="calendar"
-                    style={{ marginRight: 15 }}
-                    size={25}
-                    onPress={() => { console.log("preess"); openDatePicker() }}
-                  />
-                }
-              />
-              {/* <TouchableOpacity
+            <View style={{ marginVertical: 10 }}>
+              <View style={{ flexDirection: 'row' }}>
+                <Input
+                  w={'88%'}
+                  editable={false}
+                  variant="outline"
+                  defaultValue={startdate}
+                  placeholder="Start Date"
+                />
+                <IconButton
+                  icon={
+                    <Icon
+                      name="calendar"
+                      style={{ marginRight: 15 }}
+                      size={25}
+                      onPress={() => { console.log("preess"); openDatePicker() }}
+                    />
+                  }
+                />
+                {/* <TouchableOpacity
                 style={{ marginTop: 10, marginLeft: 8 }}
                 onPress={() =>{ console.log("preess"); openDatePicker()}}
               >
@@ -221,42 +209,42 @@ export default function AddExamScreen() {
                   size={25}
                 />
               </TouchableOpacity> */}
+              </View>
+              <DatePicker
+                modal
+                open={open}
+                date={_startdate}
+                onConfirm={(text) => {
+                  _setStartdate(text)
+                  setStartdate(text.toString())
+                  setOpen(false)
+                }}
+                onCancel={() => {
+                  setOpen(false)
+                }}
+              />
             </View>
-            <DatePicker
-              modal
-              open={open}
-              date={_startdate}
-              onConfirm={(text) => {
-                _setStartdate(text)
-                setStartdate(text.toString())
-                setOpen(false)
-              }}
-              onCancel={() => {
-                setOpen(false)
-              }}
-            />
-          </View>
 
-          <View style={{ marginVertical: 10 }}>
-            <View style={{ flexDirection: 'row' }}>
-              <Input
-                w={'88%'}
-                editable={false}
-                variant="outline"
-                defaultValue={enddate}
-                placeholder="End Date"
-              />
-              <IconButton
-                icon={
-                  <Icon
-                    name="calendar"
-                    style={{ marginRight: 15 }}
-                    size={25}
-                    onPress={() => { console.log("preess1"); openDatePicker1() }}
-                  />
-                }
-              />
-              {/* <TouchableOpacity
+            <View style={{ marginVertical: 10 }}>
+              <View style={{ flexDirection: 'row' }}>
+                <Input
+                  w={'88%'}
+                  editable={false}
+                  variant="outline"
+                  defaultValue={enddate}
+                  placeholder="End Date"
+                />
+                <IconButton
+                  icon={
+                    <Icon
+                      name="calendar"
+                      style={{ marginRight: 15 }}
+                      size={25}
+                      onPress={() => { console.log("preess1"); openDatePicker1() }}
+                    />
+                  }
+                />
+                {/* <TouchableOpacity
                 style={{ marginTop: 10, marginLeft: 8 }}
                 onPress={() => { console.log("preess1"); openDatePicker1()} }
               >
@@ -266,41 +254,45 @@ export default function AddExamScreen() {
                   size={25}
                 />
               </TouchableOpacity> */}
+              </View>
+              <DatePicker
+                modal
+                open={open1}
+                date={_enddate}
+                onConfirm={(text) => {
+                  setOpen1(false)
+                  setEnddate(text.toString())
+                  _setEnddate(text)
+                }}
+                onCancel={() => {
+                  setOpen1(false)
+                }}
+              />
             </View>
-            <DatePicker
-              modal
-              open={open1}
-              date={_enddate}
-              onConfirm={(text) => {
-                setOpen1(false)
-                setEnddate(text.toString())
-                _setEnddate(text)
-              }}
-              onCancel={() => {
-                setOpen1(false)
-              }}
-            />
-          </View>
 
-          <View style={{ marginVertical: 10 }}>
-            <TextArea h={20} placeholder="Description" autoCompleteType={undefined} onChangeText={(text) => setDescription(text)} />
-          </View>
+            <View style={{ marginVertical: 10 }}>
+              <TextArea h={20} placeholder="Description" autoCompleteType={undefined} onChangeText={(text) => setDescription(text)} />
+            </View>
 
-          <View style={{ marginVertical: 10 }}>
-            <Input
-              type='text'
-              placeholder="How many questions you want to add? (e.g: 10, 20 , 30)"
-              onChangeText={(text) => setQuestionCount(text)}
-            />
-          </View>
-          <View style={{ marginVertical: 10, marginBottom: 40 }}>
-            <Button title={"Next"} onPress={() => AddExam()} />
+            <View style={{ marginVertical: 10 }}>
+              <Input
+                type='text'
+                placeholder="How many questions you want to add? (e.g: 10, 20 , 30)"
+                onChangeText={(text) => setQuestionCount(text)}
+              />
+            </View>
+            <View style={{ marginVertical: 10, marginBottom: 40, flexDirection: 'row-reverse' }}>
+              <TouchableOpacity style={[styles.segmentButtons, { backgroundColor: app.lightBlue }]} onPress={() => { AddExam() }}>
+                <Text style={styles.buttonText}> Next</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </ScrollView>
       </View>
     )
   }
 }
+
 
 const styles = StyleSheet.create({
   title: {
@@ -324,5 +316,24 @@ const styles = StyleSheet.create({
   },
   multilineInput: {
     backgroundColor: 'white'
-  }
+  },
+  buttonText: {
+    fontSize: 18,
+    fontFamily: 'Gill Sans',
+    textAlign: 'center',
+    // margin: 10,
+    color: '#ffffff',
+    backgroundColor: 'transparent',
+  },
+  segmentButtons: {
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
+    elevation: 5,
+    padding: 10,
+    borderRadius: 15,
+    // marginVertical: 5,    
+    width: 150
+  },
 });

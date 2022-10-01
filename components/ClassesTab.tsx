@@ -127,7 +127,7 @@ export default function ClassesTab() {
           <ScrollView
             style={styles.scrollView}
             showsVerticalScrollIndicator={false}>
-            <View style={{paddingHorizontal:15}}>
+            <View style={{ paddingHorizontal: 15 }}>
               {classes.map((item, index) => {
                 let classItem = item.class;
                 return (
@@ -161,17 +161,13 @@ export default function ClassesTab() {
                           {classItem.Teacher.username}
                         </Text>
                       </View>
-                      {/* <Text style={styles.dayTime}>
-                                                    Monday &nbsp;
-                                                    12:00 &nbsp;-&nbsp; 14:00
-                                                </Text> */}
                       <Text style={styles.statusMsg}>{classItem.status}</Text>
                     </View>
                   </TouchableOpacity>
                 );
               })}
             </View>
-            <View style={{ marginVertical: 15, marginHorizontal:15 }}>
+            <View style={{ marginVertical: 15, marginHorizontal: 15 }}>
               {classCount < limit ? (
                 <></>
               ) : (

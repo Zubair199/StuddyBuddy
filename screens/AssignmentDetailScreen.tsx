@@ -8,6 +8,7 @@ import { Divider } from 'native-base';
 import { ASSIGNMENT, AUTHENTICATIONS, CLASS } from '../services/api.constants';
 import MainLayout from './MainLayout';
 import { AuthContext } from '../utils/AuthContext';
+import { app } from '../constants/themeColors';
 
 export default function AssignmentDetailScreen({ route }) {
   const { assignmentID } = route.params
@@ -19,6 +20,7 @@ export default function AssignmentDetailScreen({ route }) {
   const [studentAssignment, setStudentAssignment] = React.useState(null)
   const [studentAssignments, setStudentAssignments] = React.useState([])
 
+  let [questionsCount, setQuestionsCount] = React.useState(0)
   let [data, setData] = React.useState([])
   let [start, setStart] = React.useState(false)
 
@@ -39,9 +41,10 @@ export default function AssignmentDetailScreen({ route }) {
       fetch(AUTHENTICATIONS.API_URL + ASSIGNMENT.GET_ASSIGNMENT_BY_ASSIGNMENT_ID + assignmentID)
         .then((response) => response.json())
         .then((responseJson) => {
-          console.log('assignment ', responseJson.data)
+          console.log('assignment ', responseJson.data.assignmentQuestionsCount)
           setAssignment(responseJson.data.assignment)
           setStudentAssignments(responseJson.data.studentAssignments)
+          setQuestionsCount(responseJson.data.assignmentQuestionsCount)
         })
         .catch(err => {
           console.log(err)
@@ -62,6 +65,7 @@ export default function AssignmentDetailScreen({ route }) {
           console.log('assignment ', responseJson.data)
           setAssignment(responseJson.data.assignment)
           setStudentAssignment(responseJson.data)
+          setQuestionsCount(responseJson.assignmentQuestionsCount)
 
         })
         .catch(err => {
@@ -98,12 +102,35 @@ export default function AssignmentDetailScreen({ route }) {
       console.log('exception ', exception)
     }
   }
+  function formatDate(date) {
+    console.log(new Date(date))
+    var d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
 
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+  }
+
+  function formatTime(d) {
+    var date = new Date(d);
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    var strTime = hours + ':' + minutes + ' ' + ampm;
+    return strTime;
+  }
   return (
     <SafeAreaView style={styles.container}>
 
       {
-        <View>
+        <ScrollView>
           {/* <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15, }}>
             <TouchableOpacity style={{ marginTop: 5 }}
               onPress={() => navigation.goBack()}>
@@ -115,7 +142,7 @@ export default function AssignmentDetailScreen({ route }) {
             userType.toLowerCase() === "user" ?
               (assignment !== null && studentAssignment !== null)
               &&
-              <ScrollView style={{ padding: 15 }}>
+              <View style={{ padding: 15 }}>
                 <View>
                   <ImageBackground
                     resizeMode='cover'
@@ -131,7 +158,10 @@ export default function AssignmentDetailScreen({ route }) {
                       </View>
                       <Text style={styles.challengeBoxName}>{assignment.title}</Text>
                       <Text style={styles.challengeBoxDate}>
-                        28-05-2022
+                        Start DateTime: {formatDate(assignment.startdate)} {formatTime(assignment.startdate)}
+                      </Text>
+                      <Text style={styles.challengeBoxDate}>
+                        End DateTime: {formatDate(assignment.enddate)} {formatTime(assignment.enddate)}
                       </Text>
                     </View>
                   </ImageBackground>
@@ -155,12 +185,12 @@ export default function AssignmentDetailScreen({ route }) {
 
                 </View>
 
-              </ScrollView>
+              </View>
               :
               (assignment !== null)
               &&
-              <ScrollView style={{ padding: 15 }}>
-                <View>
+              <View style={{ padding: 15 }}>
+                <View style={{ paddingBottom: 15 }}>
                   <ImageBackground
                     resizeMode='cover'
                     source={require('../assets/images/bg.jpg')}
@@ -175,12 +205,30 @@ export default function AssignmentDetailScreen({ route }) {
                       </View>
                       <Text style={styles.challengeBoxName}>{assignment.title}</Text>
                       <Text style={styles.challengeBoxDate}>
-                        28-05-2022
+                        Start DateTime: {formatDate(assignment.startdate)} {formatTime(assignment.startdate)}
                       </Text>
+                      <Text style={styles.challengeBoxDate}>
+                        End DateTime: {formatDate(assignment.enddate)} {formatTime(assignment.enddate)}
+                      </Text>
+
                     </View>
                   </ImageBackground>
-                  {/* <Text style={styles.text}>Score: {studentAssignment.score}</Text> */}
+                </View>
+                <View>
+                  {
+                    questionsCount > 0 ?
+                      <></>
+                      // <TouchableOpacity style={[styles.segmentButtons, { backgroundColor: app.lightBlue }]} onPress={() => { }}>
+                      //   <Text style={styles.buttonText}> View Questions </Text>
+                      // </TouchableOpacity>
+                      :
+                      <TouchableOpacity style={[styles.segmentButtons, { backgroundColor: app.lightBlue }]} onPress={() => { navigation.navigate('AddAssignmentQuestions', { assignmentID: assignment._id }) }}>
+                        <Text style={styles.buttonText}> Add Questions </Text>
+                      </TouchableOpacity>
 
+                  }
+                </View>
+                <View>
                   <Text style={styles.heading}>Details</Text>
                   <Text style={styles.text}>{assignment.description}</Text>
                 </View>
@@ -194,14 +242,12 @@ export default function AssignmentDetailScreen({ route }) {
                   </View>
                   <Divider />
                   {
-
                     studentAssignments.map((item, index) => (
                       <View key={index}>
                         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                           <Text>{item.student.username}</Text>
                           <Text>{item.status}</Text>
                           <Text>{item.score}</Text>
-
                         </View>
                         <Divider />
                       </View >
@@ -209,10 +255,10 @@ export default function AssignmentDetailScreen({ route }) {
                   }
                 </View>
 
-              </ScrollView>
+              </View>
 
           }
-        </View>
+        </ScrollView>
       }
 
 
@@ -284,5 +330,25 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "roboto-light",
     marginTop: 5,
+  },
+
+  buttonText: {
+    fontSize: 18,
+    fontFamily: 'Gill Sans',
+    textAlign: 'center',
+    // margin: 10,
+    color: '#ffffff',
+    backgroundColor: 'transparent',
+  },
+  segmentButtons: {
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
+    elevation: 5,
+    padding: 10,
+    borderRadius: 15,
+    // marginVertical: 5,    
+    width: '100%'
   },
 });

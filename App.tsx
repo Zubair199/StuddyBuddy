@@ -32,7 +32,7 @@ const App: () => Node = () => {
   });
   // const isDarkMode = useColorScheme() === "dark";
   const colorScheme = useColorScheme();
-
+  console.disableYellowBox = true;
   return (
     <StripeProvider
       publishableKey={STRIPE.PK_TEST}

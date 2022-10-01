@@ -1,7 +1,8 @@
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import * as React from 'react';
 import {
   Alert,
+  Dimensions,
   Image,
   SafeAreaView,
   StyleSheet,
@@ -9,27 +10,28 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native-gesture-handler';
 import {
   ASSIGNMENT,
   AUTHENTICATIONS,
   CLASS,
   EXAM,
 } from '../services/api.constants';
-import {ThemeContext} from '../context/ThemeContext';
-import {AuthContext} from '../utils/AuthContext';
-import {Button} from 'native-base';
+import { ThemeContext } from '../context/ThemeContext';
+import { AuthContext } from '../utils/AuthContext';
+import { Button } from 'native-base';
+const { width, height } = Dimensions.get('screen');
 
 export default function AssignmentsTab() {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
   const [assignments, setAssignments] = React.useState([]);
-  const {userToken, userType} = React.useContext(AuthContext);
+  const { userToken, userType } = React.useContext(AuthContext);
   const [limit, setLimit] = React.useState(5);
   const [assignmentsCount, setAssignmentCount] = React.useState(0);
 
   let [user, setUser] = React.useState(userToken);
-  const {currentScreen, height, containerHeight} =
+  const { currentScreen, height, containerHeight } =
     React.useContext(ThemeContext);
 
   function getData(pageLimit) {
@@ -46,10 +48,10 @@ export default function AssignmentsTab() {
   function teacherApiCall(pageLimit) {
     fetch(
       AUTHENTICATIONS.API_URL +
-        ASSIGNMENT.GET_ALL_ASSIGNMENTS_BY_TEACHER_ID +
-        user +
-        '/' +
-        pageLimit,
+      ASSIGNMENT.GET_ALL_ASSIGNMENTS_BY_TEACHER_ID +
+      user +
+      '/' +
+      pageLimit,
     )
       .then(response => response.json())
       .then(responseJson => {
@@ -65,10 +67,10 @@ export default function AssignmentsTab() {
   function studentApiCall(pageLimit) {
     fetch(
       AUTHENTICATIONS.API_URL +
-        ASSIGNMENT.GET_ALL_COMPLETED_STUDENT_ASSIGNMENTS +
-        user +
-        '/' +
-        pageLimit,
+      ASSIGNMENT.GET_ALL_COMPLETED_STUDENT_ASSIGNMENTS +
+      user +
+      '/' +
+      pageLimit,
     )
       .then(response => response.json())
       .then(responseJson => {
@@ -87,11 +89,34 @@ export default function AssignmentsTab() {
     setLimit(x);
     getData(x);
   }
+  function formatDate(date) {
+    console.log(new Date(date))
+    var d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
 
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+  }
+
+  function formatTime(d) {
+    var date = new Date(d);
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    var strTime = hours + ':' + minutes + ' ' + ampm;
+    return strTime;
+  }
   if (userType.toLowerCase() === 'user') {
     return (
       <View style={styles.container}>
-        <View style={{height: containerHeight}}>
+        <View style={{ height: containerHeight }}>
           {!assignments || assignments.length == 0 ? (
             <View style={styles.contentBox}>
               <Text style={styles.emptySearchText}>
@@ -102,10 +127,10 @@ export default function AssignmentsTab() {
             <ScrollView
               style={styles.scrollView}
               showsVerticalScrollIndicator={false}>
-              <View>
+              <View style={{ paddingHorizontal: 15 }}>
                 {assignments.map((assignmentItem, index) => (
                   <TouchableOpacity
-                    style={styles.groupBox}
+                    style={[styles.groupBox, styles.segment]}
                     key={index}
                     onPress={() => {
                       navigation.navigate('AssignmentDetails', {
@@ -127,7 +152,7 @@ export default function AssignmentsTab() {
                           {assignmentItem.assignment.title}
                         </Text>
                       </View>
-                      <View style={{flexDirection: 'row'}}>
+                      <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.studio}>
                           {assignmentItem.teacher.username}
                         </Text>
@@ -142,7 +167,7 @@ export default function AssignmentsTab() {
                   </TouchableOpacity>
                 ))}
               </View>
-              <View style={{marginVertical: 15}}>
+              <View style={{ marginVertical: 15 }}>
                 {assignmentsCount < limit ? (
                   <></>
                 ) : (
@@ -157,7 +182,7 @@ export default function AssignmentsTab() {
   } else {
     return (
       <View style={styles.container}>
-        <View style={{height: containerHeight}}>
+        <View style={{ height: containerHeight }}>
           {!assignments || assignments.length == 0 ? (
             <View style={styles.contentBox}>
               <Text style={styles.emptySearchText}>
@@ -168,10 +193,10 @@ export default function AssignmentsTab() {
             <ScrollView
               style={styles.scrollView}
               showsVerticalScrollIndicator={false}>
-              <View>
+              <View style={{ paddingHorizontal: 15 }}>
                 {assignments.map((assignmentItem, index) => (
                   <TouchableOpacity
-                    style={styles.groupBox}
+                    style={[styles.groupBox, styles.segment]}
                     key={index}
                     onPress={() => {
                       navigation.navigate('AssignmentDetails', {
@@ -187,20 +212,25 @@ export default function AssignmentsTab() {
                         style={{
                           flexWrap: 'wrap',
                           flexDirection: 'row',
-                          width: '80%',
                         }}>
                         <Text style={styles.className}>
                           {assignmentItem.title}
                         </Text>
                       </View>
-                      <View style={{flexDirection: 'row'}}>
+                      <View style={{ flexDirection: 'row' }}>
                         <Text style={styles.studio}>
                           {assignmentItem.teacher.username}
                         </Text>
                       </View>
-                      <Text style={styles.dayTime}>
-                        Monday &nbsp; 12:00 &nbsp;-&nbsp; 14:00
-                      </Text>
+                      <View
+                        style={{
+                          flexWrap: 'wrap',
+                          flexDirection: 'row',
+                        }}>
+                        <Text style={styles.dayTime}>
+                          Deadline: Monday 12:00
+                        </Text>
+                      </View>
                       <Text style={styles.statusMsg}>
                         {assignmentItem.status}
                       </Text>
@@ -208,7 +238,7 @@ export default function AssignmentsTab() {
                   </TouchableOpacity>
                 ))}
               </View>
-              <View style={{marginVertical: 15}}>
+              <View style={{ marginVertical: 15 }}>
                 {assignmentsCount < limit ? (
                   <></>
                 ) : (
@@ -223,17 +253,14 @@ export default function AssignmentsTab() {
   }
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffff',
-    // paddingHorizontal: 15,
-    // paddingBottom: 10,
+    // paddingHorizontal:15
   },
   scrollView: {
-    // marginTop: 10,
-    marginBottom: '20%',
-    paddingHorizontal: 15,
   },
 
   closeIconBox: {
@@ -279,6 +306,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 5,
+    marginTop: -20
   },
 
   classInfo: {
@@ -350,4 +378,46 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     textAlign: 'center',
   },
+  linearGradient: {
+    flex: 1,
+    paddingLeft: 15,
+    paddingRight: 15,
+    borderRadius: 5
+  },
+  avatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 62,
+  },
+  buttonText: {
+    fontSize: 18,
+    fontFamily: 'Gill Sans',
+    textAlign: 'center',
+    // margin: 10,
+    color: '#ffffff',
+    backgroundColor: 'transparent',
+  },
+  segmentButtons: {
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
+    elevation: 5,
+    padding: 10,
+    borderRadius: 15,
+    // marginVertical: 5,    
+    width: width / 2.3
+  },
+  segment: {
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
+    elevation: 5,
+    padding: 10,
+    borderRadius: 15,
+    // marginVertical: 5,    
+  }
 });

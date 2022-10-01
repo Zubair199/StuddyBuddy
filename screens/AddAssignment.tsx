@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 import { ASSIGNMENT, AUTHENTICATIONS, CLASS, EXAM } from '../services/api.constants';
 import { AuthContext } from '../utils/AuthContext';
+import { app } from '../constants/themeColors';
 
 
 const radioButtonsData = [{
@@ -32,7 +33,7 @@ export default function AddAssignmentScreen() {
   const [date, setDate] = React.useState(new Date())
   const [open, setOpen] = React.useState(false)
   const [open1, setOpen1] = React.useState(false)
-  const [_date, _setDate] = React.useState('')
+  const [_date, _setDate] = React.useState("")
   const [selectedLanguage, setSelectedLanguage] = React.useState();
   const [response, setResponse] = React.useState<any>(null);
   const navigation = useNavigation();
@@ -49,13 +50,13 @@ export default function AddAssignmentScreen() {
 
   let [user, setUser] = React.useState(userToken)
 
-  let [_class, setClass] = React.useState('')
-  let [title, setTitle] = React.useState('')
-  let [description, setDescription] = React.useState('')
-  let [startdate, setStartdate] = React.useState('')
-  let [enddate, setEnddate] = React.useState('')
-  let [subject, setSubject] = React.useState('')
-  let [questionCount, setQuestionCount] = React.useState('')
+  let [_class, setClass] = React.useState("")
+  let [title, setTitle] = React.useState("")
+  let [description, setDescription] = React.useState("")
+  let [startdate, setStartdate] = React.useState("")
+  let [enddate, setEnddate] = React.useState("")
+  let [subject, setSubject] = React.useState("")
+  let [questionCount, setQuestionCount] = React.useState("")
   let [subjectID, setSubjectID] = React.useState("")
   let [selectedClass, setSelectedClass] = React.useState(null)
 
@@ -64,7 +65,7 @@ export default function AddAssignmentScreen() {
   const [classes, setClasses] = React.useState([])
 
   function AddAssignment() {
-    if (title === '' && startdate === '' && enddate === '' && subject === '' && questionCount === '' && description === '') {
+    if (title === "" && startdate === "" && enddate === "" && subject === "" && questionCount === "" && description === "") {
       Alert.alert(
         "All Fields are required",
       );
@@ -93,8 +94,13 @@ export default function AddAssignmentScreen() {
         fetch(AUTHENTICATIONS.API_URL + ASSIGNMENT.CREATE, requestObj)
           .then((response) => response.json())
           .then((responseJson) => {
-            console.log('assignement response=> ',responseJson)
-            navigation.navigate('AddAssignmentQuestions', { assignmentID: responseJson.assignmentID })
+            console.log('assignement response=> ', responseJson)
+            if (responseJson.success) {
+              navigation.navigate('AddAssignmentQuestions', { assignmentID: responseJson.assignmentID })
+            }
+            else {
+              Alert.alert("Validation Error! All fields are requried.")
+            }
           })
           .catch((err: any) => {
             console.log(err)
@@ -129,8 +135,8 @@ export default function AddAssignmentScreen() {
   else {
     return (
       <View style={{ backgroundColor: "white", flex: 1 }}>
-        <ScrollView style={{ padding: 15, marginBottom: '28%' }}>
-          <View style={{ flexDirection: "row" }}>
+        <ScrollView style={{ padding: 15 }}>
+          {/* <View style={{ flexDirection: "row" }}>
             <View style={{ paddingTop: 29, marginRight: 25 }}>
               <TouchableOpacity
                 onPress={
@@ -143,33 +149,40 @@ export default function AddAssignmentScreen() {
             <View >
               <Text style={styles.title}>Add Assignment</Text>
             </View>
-          </View>
+          </View> */}
 
           <View style={{ marginVertical: 10 }}>
-            <Select accessibilityLabel="Choose Subject" placeholder="Choose Class"
-              onValueChange={
-                itemValue => {
-                  setClass(itemValue);
-                  let res = classes.filter(item => item._id === itemValue);
-                  console.log(res)
-                  if (res.length > 0) {
-                    setSubjectID(res[0].Subject._id)
-                    setSubject(res[0].Subject.name)
-                    setSelectedClass(res);
+            {
+              classes && classes.length > 0 ? (
+                <Select accessibilityLabel="Choose Subject" placeholder="Choose Class"
+                  onValueChange={
+                    itemValue => {
+                      setClass(itemValue);
+                      let res = classes.filter(item => item._id === itemValue);
+                      console.log(res)
+                      if (res.length > 0) {
+                        setSubjectID(res[0].Subject._id)
+                        setSubject(res[0].Subject.name)
+                        setSelectedClass(res);
+                      }
+                    }
                   }
-                }
-              }
-            >
-              {
-                classes.length > 0 &&
-                classes.map((item, index) => {
-                  return (
-                    <Select.Item key={index} label={item.name} value={item._id} />
-                  )
-                })
-              }
-            </Select>
-
+                >
+                  {
+                    classes && classes.length > 0 &&
+                    classes.map((item, index) => {
+                      return (
+                        <Select.Item key={index} label={item.name} value={item._id} />
+                      )
+                    })
+                  }
+                </Select>
+              )
+                :
+                (
+                  <Input variant="outline" isReadOnly={true} placeholder="No Active Classes" />
+                )
+            }
           </View>
           <View style={{ marginVertical: 10 }}>
             <Input variant="outline" placeholder="Enter Title"
@@ -177,7 +190,7 @@ export default function AddAssignmentScreen() {
           </View>
 
           <View style={{ marginVertical: 10 }}>
-            <Input variant="outline" placeholder="Subject" value={subject} />
+            <Input variant="outline" placeholder="Subject" isReadOnly={true} value={subject} />
           </View>
 
           <View style={{ marginVertical: 10 }}>
@@ -244,16 +257,6 @@ export default function AddAssignmentScreen() {
                   />
                 }
               />
-              {/* <TouchableOpacity
-                style={{ marginTop: 10, marginLeft: 8 }}
-                onPress={() => { console.log("preess1"); openDatePicker1()} }
-              >
-                <Icon
-                  name="calendar"
-                  style={{ marginRight: 15 }}
-                  size={25}
-                />
-              </TouchableOpacity> */}
             </View>
             <DatePicker
               modal
@@ -281,8 +284,10 @@ export default function AddAssignmentScreen() {
               onChangeText={(text) => setQuestionCount(text)}
             />
           </View>
-          <View style={{ marginVertical: 10, marginBottom: 40 }}>
-            <Button title={"Next"} onPress={() => AddAssignment()} />
+          <View style={{ marginVertical: 10, marginBottom: 40, flexDirection: 'row-reverse' }}>
+            <TouchableOpacity style={[styles.segmentButtons, { backgroundColor: app.lightBlue }]} onPress={() => { AddAssignment() }}>
+              <Text style={styles.buttonText}> Next</Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </View>
@@ -313,5 +318,24 @@ const styles = StyleSheet.create({
   },
   multilineInput: {
     backgroundColor: 'white'
-  }
+  },
+  buttonText: {
+    fontSize: 18,
+    fontFamily: 'Gill Sans',
+    textAlign: 'center',
+    // margin: 10,
+    color: '#ffffff',
+    backgroundColor: 'transparent',
+  },
+  segmentButtons: {
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
+    elevation: 5,
+    padding: 10,
+    borderRadius: 15,
+    // marginVertical: 5,    
+    width: 150
+  },
 });
