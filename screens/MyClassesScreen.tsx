@@ -13,7 +13,9 @@ import { useIsFocused, useNavigation } from "@react-navigation/native";
 import * as React from "react";
 import {
     Alert,
+    Dimensions,
     Image,
+    Modal,
     SafeAreaView,
     StyleSheet,
     Text,
@@ -31,35 +33,86 @@ import Footer from "../components/Footer";
 import MainLayout from "./MainLayout";
 import Tab from "../components/Tab";
 import { AuthContext } from "../utils/AuthContext";
+import FAB from 'react-native-fab'
+import { app, grey } from "../constants/themeColors";
+import { BottomSheet, ListItem } from "react-native-elements";
+
+const width = Dimensions.get('screen').width;
 
 export default function MyClassesScreen() {
+    const { userToken, userType } = React.useContext(AuthContext);
+
     const isFocused = useIsFocused();
     const navigation = useNavigation();
+    const [showModal, setShowModal] = React.useState(false);
+
     const [classes, setClasses] = React.useState([])
-    const { userToken } = React.useContext(AuthContext);
+    const [exams, setExams] = React.useState([])
+    const [assignments, setAssignments] = React.useState([])
     let [user, setUser] = React.useState(userToken)
+
     const { currentScreen, height, containerHeight } = React.useContext(ThemeContext);
-
-
+    const controller = new AbortController();
+    const signal = controller.signal;
     React.useEffect(() => {
-        console.log(user)
+        return () => {
+            // cancel the request before component unmounts
+            controller.abort();
+        };
+    }, []);
 
-    }, [])
 
-
-    function component() {
-
-        return (
-            <View style={styles.container}>
-                <View style={{ height: containerHeight }}>
-                    <Tab />
-                </View>
-            </View >
-        );
+    const [isModal, setIsModal] = React.useState(false);
+    function toggleModal() {
+        console.log('modal');
+        setIsModal(!isModal);
+        // clearStates();
     }
 
     return (
-        <MainLayout Component={component()} />
+        <SafeAreaView style={styles.container}>
+            <Tab />
+
+            <BottomSheet
+                isVisible={isModal}
+                containerStyle={{ backgroundColor: 'rgba(0.5, 0.25, 0, 0.2)' }}
+            >
+                <View style={{ borderTopLeftRadius: 25, borderTopRightRadius: 25, width: width, backgroundColor: 'white' }}>
+                    <View style={{ marginTop: 15, alignItems: "center" }}>
+                        <Text style={{ fontWeight: "bold", fontSize: 17, color: "black" }}>What do you want to add?</Text>
+                    </View>
+                    <View style={{ marginTop: 15, alignItems: "center" }}>
+                        <View style={{ borderWidth: 1.5, borderRadius: 50, borderColor: grey[500], width: width / 4 }} />
+                    </View>
+
+                    <View style={{ marginTop: 15 }}>
+
+                        {
+                            ["Class", "Assignment", "Exam"].map((item, i) => (
+                                <ListItem key={i} onPress={() => { toggleModal(); navigation.navigate("Add" + item); }} bottomDivider>
+                                    <ListItem.Content>
+                                        <ListItem.Title >{item}</ListItem.Title>
+                                    </ListItem.Content>
+                                    <ListItem.Chevron color={'black'} size={20} />
+                                </ListItem>
+                            ))
+                        }
+                        <ListItem onPress={() => toggleModal()}>
+                            <ListItem.Content>
+                                <ListItem.Title >Cancel</ListItem.Title>
+                            </ListItem.Content>
+                        </ListItem>
+                    </View>
+                </View>
+            </BottomSheet>
+            <FAB
+                buttonColor={app.lightBlue}
+                iconTextColor="#FFFFFF"
+                onClickAction={() => { toggleModal() }}
+                visible={true}
+                iconTextComponent={<Icon name="plus" />}
+            />
+        </SafeAreaView>
     )
 }
 

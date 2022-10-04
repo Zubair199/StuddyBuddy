@@ -1,24 +1,30 @@
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import moment from 'moment';
-import {Divider, View} from 'native-base';
 import * as React from 'react';
 import {
+  FlatList,
   Image,
   Modal,
   SafeAreaView,
   StyleSheet,
+  Switch,
+  TextInput,
   TouchableOpacity,
+  View
 } from 'react-native';
-import {Text} from 'react-native-elements';
-import {ScrollView} from 'react-native-gesture-handler';
-import {AUTH, AUTHENTICATIONS} from '../services/api.constants';
-import {AuthContext} from '../utils/AuthContext';
+import { Divider, Radio, Select } from 'native-base';
+import { Text, Button, Avatar } from 'react-native-elements';
+import { ScrollView } from 'react-native-gesture-handler';
+import { AUTH, AUTHENTICATIONS, GENERAL } from '../services/api.constants';
+import { AuthContext } from '../utils/AuthContext';
 import MainLayout from './MainLayout';
 import LottieView from 'lottie-react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import api from '../services/api.services';
+import { app, grey } from '../constants/themeColors';
+
 export default function NetworkScreen() {
-  const {userToken, userType} = React.useContext(AuthContext);
+  const { userToken, userType } = React.useContext(AuthContext);
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
@@ -48,7 +54,7 @@ export default function NetworkScreen() {
   const [reRun, setReRun] = React.useState(false);
   const [editProfile, setEditProfile] = React.useState(false);
   const [experience, setExperience] = React.useState('');
-  const [certifications, setCertifications] = React.useState('');
+  const [certifications, setCertifications] = React.useState([]);
   const [friendList, setFriendList] = React.useState<Array<object>>([]);
   const [mentorList, setMentorList] = React.useState<Array<object>>([]);
   const [pageFriend, setPageFriend] = React.useState(1);
@@ -106,7 +112,7 @@ export default function NetworkScreen() {
     // }
     // else{
     console.log('here in one to one');
-    const requestData = {toUser: classId};
+    const requestData = { toUser: classId };
     console.log(classId);
     api
       .createNewMessage(requestData)
@@ -131,10 +137,9 @@ export default function NetworkScreen() {
   }
 
   const [isModal, setIsModal] = React.useState(false);
-  function toggleModal() {
-    console.log('modal');
-    setIsModal(!isModal);
-  }
+  const [isModal1, setIsModal1] = React.useState(false);
+  const [isEnabled, setIsEnabled] = React.useState(false);
+
   function getProfileData(id, item) {
     let result = userProfiles.filter(item => item.user === id);
 
@@ -147,266 +152,464 @@ export default function NetworkScreen() {
       if (result[0].image) {
         setImage(result[0].image);
       }
+      setIsEnabled(item.isHired);
       setIsStudent(item.roles.name === 'user');
       setIsTeacher(item.roles.name === 'teacher');
       console.log(isStudent);
       console.log(isTeacher);
+
     } else {
       setProfile(null);
       setSkills([]);
       setCertifications('');
       setPastExperience('');
+      setIsEnabled(false)
+    }
+    toggleModal1();
+
+  }
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      key={item._id}
+      onPress={() => {
+        getProfileData(item._id, item);
+      }}>
+      <View
+        style={{
+          padding: 15,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+        }}>
+        <View>
+          <View>
+            <Text>{item.username}</Text>
+            <View>
+              <Text>{item.roles.name}</Text>
+            </View>
+          </View>
+        </View>
+        <View>
+          {/* <TouchableOpacity onPress={() => {handleChat(item._id,)}}> */}
+          <TouchableOpacity
+            onPress={() => {
+              handleChat(item._id, false);
+            }}>
+            <Icon name="message1" size={25} />
+          </TouchableOpacity>
+        </View>
+      </View>
+      <Divider />
+    </TouchableOpacity>
+  );
+  const searchUser = (name) => {
+    const backup = users
+    // if (name !== '') {
+    //   const res = users.filter((item) => item.username.includes(name))
+    //   console.log(res)
+    //   setUser(res)
+    // } else {
+    //   setUser(backup)
+    // }
+  }
+  let [hireFlag, setHireFlag] = React.useState('');
+  let [name, setName] = React.useState('');
+  const [value, setValue] = React.useState('students');
+
+  function teacherApiCall() {
+    try {
+      fetch(
+        AUTHENTICATIONS.API_URL +
+        GENERAL.TEACHER_SEARCH +
+        'name=' +
+        name +
+        '&hire=' +
+        hireFlag,
+      )
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log('teachers ', responseJson);
+          setUsers(responseJson.users);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    } catch (err) {
+      console.log(err);
     }
   }
-  function component() {
-    return loader ? (
-      <LottieView
-        source={require('../assets/images/Gifs/study.json')}
-        autoPlay
-        loop
-      />
-    ) : (
-      <SafeAreaView style={{flex: 1, backgroundColor: '#ffffff'}}>
-        <Modal
-          animationType="slide"
-          visible={isModal}
-          onRequestClose={() => {
-            toggleModal();
-          }}>
-          <View style={{flex: 1, backgroundColor: '#ffffff', padding: 15}}>
-            <View style={{flexDirection: 'row-reverse'}}>
-              <TouchableOpacity
-                onPress={() => {
-                  toggleModal();
-                }}>
-                <Icon name="close" size={25} />
-              </TouchableOpacity>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginVertical: 15,
-                justifyContent: 'center',
+  function studentApiCall() {
+    try {
+      fetch(AUTHENTICATIONS.API_URL + GENERAL.USER_SEARCH + name)
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log('students ', responseJson);
+          setUsers(responseJson.users);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  function generalApiCall() {
+    try {
+      fetch(AUTHENTICATIONS.API_URL + GENERAL.GENERAL_USER + name)
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log('all users ', responseJson);
+          setUsers(responseJson.users);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  function toggleModal() {
+    console.log('modal');
+    setIsModal(!isModal);
+    // clearStates();
+  }
+
+  function clearStates() {
+    setName('');
+    setHireFlag('');
+    setValue('students');
+  }
+
+  function filter() {
+    if (value === 'students') {
+      studentApiCall();
+    } else if (value === 'teachers') {
+      teacherApiCall();
+    }
+    toggleModal();
+  }
+  function toggleModal1() {
+    setIsModal1(!isModal1)
+  }
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
+
+      <Modal
+        animationType="slide"
+        visible={isModal1}
+        onRequestClose={() => {
+          toggleModal1();
+        }}>
+        <View style={{ flex: 1, backgroundColor: '#ffffff', padding: 15 }}>
+          <View style={{ flexDirection: 'row-reverse' }}>
+            <TouchableOpacity
+              onPress={() => {
+                toggleModal1();
               }}>
-              <Text style={styles.title}>Profile Details</Text>
-            </View>
-            <SafeAreaView style={styles.container}>
-              <ScrollView
-                style={styles.scrollView}
-                keyboardShouldPersistTaps={'handled'}>
-                {/* <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" /> */}
-                <View style={styles.basicInfo}>
-                  {/* instructor name and image will be replaced by api's data on integration of apis */}
-                  <View style={styles.profileImageBox}>
-                    {/* {imageLoader && <Image
-                  style={{width:100, height:54}}
-                  source={require('../assets/images/Deep-Move-Spinner-v3.gif')}
-                />} */}
-                    <TouchableOpacity>
-                      <Image
-                        style={styles.profileImage}
-                        // onLoadStart={()=>setImageLoader(true)}
-                        // onLoadEnd={()=>setImageLoader(false)}
-                        source={
-                          image === ''
-                            ? require('../assets/images/user.png')
-                            : {uri: AUTHENTICATIONS.API_URL + image}
-                        }
-                      />
-                    </TouchableOpacity>
-                  </View>
-                  <View style={styles.nameBox}>
-                    <Text style={styles.name}>{userName}</Text>
-                  </View>
-                  <View style={styles.instructorBox}>
-                    <Text style={styles.instructor}>
-                      {isStudent ? 'Student' : 'Instructor'}
-                    </Text>
-                  </View>
+              <Icon name="close" size={25} />
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              marginVertical: 15,
+              justifyContent: 'center',
+            }}>
+            <Text style={styles.title}>Profile Details</Text>
+          </View>
+          <SafeAreaView style={styles.container}>
+            <ScrollView
+              keyboardShouldPersistTaps={'handled'}
+              showsVerticalScrollIndicator={false}
+            >
+              {/* <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" /> */}
+              <View style={styles.basicInfo}>
+                {/* instructor name and image will be replaced by api's data on integration of apis */}
+                <View style={styles.profileImageBox}>
+                  <Avatar
+                    rounded
+                    title="P"
+                    activeOpacity={0.7}
+                    size="xlarge"
+
+                    source={
+                      image === ''
+                        ? require('../assets/images/user.png')
+                        : { uri: AUTHENTICATIONS.API_URL + image }
+                    }
+                  />
                 </View>
-
-                {isStudent ? null : (
-                  <View>
-                    {/* Divider */}
-                    <View style={styles.lineStyle} />
-
-                    <View style={styles.actionBox}>
-                      <Text style={[styles.noShowTitle, {marginRight: 20}]}>
-                        Late Cancellation:{' ' + lateCancellation}
-                      </Text>
-                      <Text style={[styles.noShowTitle, {marginLeft: 20}]}>
-                        No Show:{' ' + noShowCount}
-                      </Text>
-                    </View>
-
-                    {/* Divider */}
-                    <View style={styles.lineStyle} />
-                  </View>
-                )}
-                <View style={styles.skillBox}>
-                  <View style={styles.skillsWithIcon}>
-                    <Text style={styles.skillsAttributesHeading}>
-                      {isStudent ? 'Class Preferences' : 'Skills'}
-                    </Text>
-                  </View>
-                  <View style={styles.skills}>
-                    {skills.map((skill, index, arr) => (
-                      <View
-                        key={index + '_skill_view'}
-                        style={{flexDirection: 'row'}}>
-                        <Text style={styles.skillsText}>{skill}</Text>
-                        {arr.length - 1 !== index ? (
-                          <View style={styles.dot}></View>
-                        ) : null}
-                      </View>
-                    ))}
-                  </View>
+                <View style={styles.nameBox}>
+                  <Text style={styles.name}>{userName}</Text>
                 </View>
-                {isTeacher && (
-                  <View style={styles.textContent}>
-                    <Text style={styles.contentTitle}>Certifications</Text>
-                    {certifications ? (
-                      <Text style={styles.actualText}>{certifications}</Text>
-                    ) : (
-                      <Text style={styles.placeholder}>
-                        Your Certifications Here
-                      </Text>
-                    )}
-                  </View>
-                )}
-                <View style={styles.textContent}>
-                  <Text style={styles.contentTitle}>
-                    {isTeacher ? 'Past Experience' : 'Past Education'}
+                <View style={styles.instructorBox}>
+                  <Text style={styles.instructor}>
+                    {isStudent ? 'Student' : 'Instructor'}
                   </Text>
-                  {experience ? (
-                    <Text style={styles.actualText}>{experience}</Text>
-                  ) : (
-                    <Text style={styles.placeholder}>
-                      Your Past Experience Here
+                </View>
+              </View>
+
+              {isStudent ? null : (
+                <View>
+                  {/* Divider */}
+                  <View style={styles.lineStyle} />
+
+                  <View style={styles.actionBox}>
+                    <Text style={[styles.noShowTitle, { marginRight: 20 }]}>
+                      Late Cancellation:{' ' + lateCancellation}
                     </Text>
-                  )}
+                    <Text style={[styles.noShowTitle, { marginLeft: 20 }]}>
+                      No Show:{' ' + noShowCount}
+                    </Text>
+                  </View>
+
+                  {/* Divider */}
                   <View style={styles.lineStyle} />
                 </View>
-
-                {isTeacher && (
-                  <>
-                    <View style={styles.lineStyle} />
-
-                    <View style={styles.switchBoxWarpper}>
-                      <Text style={styles.switchBoxLebel}>
-                        Mark as available to hire.
-                      </Text>
-                      <TouchableOpacity>
-                        {toggle ? (
-                          <Image
-                            style={styles.toggleOn}
-                            source={require('../assets/images/icons/toggle.png')}
-                          />
-                        ) : (
-                          <Image
-                            style={styles.toggleOn}
-                            source={require('../assets/images/icons/Toggle-off.png')}
-                          />
-                        )}
-                      </TouchableOpacity>
+              )}
+              <View style={styles.skillBox}>
+                <View style={styles.skillsWithIcon}>
+                  <Text style={styles.skillsAttributesHeading}>
+                    {isStudent ? 'Class Preferences' : 'Skills'}
+                  </Text>
+                </View>
+                <View style={styles.skills}>
+                  {skills.map((skill, index, arr) => (
+                    <View
+                      key={index + '_skill_view'}
+                      style={{ flexDirection: 'row' }}>
+                      <Text style={styles.skillsText}>{skill}</Text>
+                      {arr.length - 1 !== index ? (
+                        <View style={styles.dot}></View>
+                      ) : null}
                     </View>
-                    <View style={styles.lineStyle} />
-                  </>
+                  ))}
+                </View>
+              </View>
+              {isTeacher && (
+                <View style={styles.textContent}>
+                  <Text style={styles.contentTitle}>Certifications</Text>
+                  {(certifications && certifications.length > 0) ? (
+                    <View style={{ flexDirection: 'row', flexWrap: "wrap" }}>
+                      {
+                        certifications.map((item, index) => {
+                          return (
+                            <View style={{ padding: 2 }} key={index}>
+                              <View style={{ width: 100, height: 100 }}>
+                                <View style={{ flexDirection: "row" }}>
+                                  <Image
+                                    source={{ uri: AUTHENTICATIONS.API_URL + item }}
+                                    style={{ width: 100, height: 100, borderRadius: 15 }}
+                                  />
+                                </View>
+                              </View>
+                            </View>
+                          )
+                        })
+                      }
+                    </View>
+                  ) : (
+                    <Text style={styles.placeholder}>
+                      Your Certifications Here
+                    </Text>
+                  )}
+                </View>
+              )}
+              <View style={styles.textContent}>
+                <Text style={styles.contentTitle}>
+                  {isTeacher ? 'Past Experience' : 'Past Education'}
+                </Text>
+                {experience ? (
+                  <Text style={styles.actualText}>{experience}</Text>
+                ) : (
+                  <Text style={styles.placeholder}>
+                    Your Past Experience Here
+                  </Text>
                 )}
+                <View style={styles.lineStyle} />
+              </View>
 
-                {/* {!isStudent && (
+              {isTeacher && (
+                <>
+                  <View style={styles.lineStyle} />
+
+                  <View style={styles.switchBoxWarpper}>
+                    <Text style={styles.switchBoxLebel}>
+                      Mark as available to hire.
+                    </Text>
+
+                    <View>
+                      <Switch
+                        trackColor={{ false: "#767577", true: grey[400] }}
+                        thumbColor={isEnabled ? app.lightBlue : "#f4f3f4"}
+                        ios_backgroundColor="#3e3e3e"
+                        value={isEnabled}
+                      />
+                    </View>
+                  </View>
+                  <View style={styles.lineStyle} />
+                </>
+              )}
+
+              {/* {!isStudent && (
                     <SubscribersListComponent subscribersList={fakeSubscribers} />
                 )} */}
 
-                {/* image modal starts here */}
-                <Modal
-                  animationType="slide"
-                  transparent={true}
-                  visible={imageModal}
-                  onRequestClose={() => setImageModal(false)}>
-                  <View style={styles.centeredView}>
-                    <TouchableOpacity
-                      style={{
-                        position: 'absolute',
-                        width: '100%',
-                        height: '100%',
-                      }}
-                      onPress={() => setImageModal(false)}></TouchableOpacity>
-                    <View style={styles.modalView}>
-                      <TouchableOpacity style={styles.imageModal}>
-                        <Icon name="camera" size={30} />
-                        <Text>Take Picture</Text>
-                      </TouchableOpacity>
+              {/* image modal starts here */}
+              <Modal
+                animationType="slide"
+                transparent={true}
+                visible={imageModal}
+                onRequestClose={() => setImageModal(false)}>
+                <View style={styles.centeredView}>
+                  <TouchableOpacity
+                    style={{
+                      position: 'absolute',
+                      width: '100%',
+                      height: '100%',
+                    }}
+                    onPress={() => setImageModal(false)}></TouchableOpacity>
+                  <View style={styles.modalView}>
+                    <TouchableOpacity style={styles.imageModal}>
+                      <Icon name="camera" size={30} />
+                      <Text>Take Picture</Text>
+                    </TouchableOpacity>
 
-                      <TouchableOpacity style={styles.imageModal}>
-                        <Icon name="upload" size={30} />
-                        <Text>Upload Picture</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </Modal>
-
-                {/* {editProfile && <EditProfileModal
-                    editProfileModal={editProfile}
-                    closeEditModal={() => setEditProfile(false)}
-                    isStudent={isStudent}
-                    allSkills={allSkills}
-                    skills={skills}
-                    certifications={certifications}
-                    bio={inputBio.bio}
-                    social={self}
-                    loadingTrue={() => setLoader(true)}
-                    loadingFalse={() => setLoader(false)}
-                    reRun={() => setReRun(!reRun)}
-                />} */}
-              </ScrollView>
-            </SafeAreaView>
-          </View>
-        </Modal>
-        <ScrollView>
-          {users.map((item, index) => {
-            // console.log(item)
-            return (
-              <TouchableOpacity
-                key={index}
-                onPress={() => {
-                  toggleModal();
-                  getProfileData(item._id, item);
-                }}>
-                <View
-                  style={{
-                    padding: 15,
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <View>
-                    <View>
-                      <Text>{item.username}</Text>
-                      <View>
-                        <Text>{item.roles.name}</Text>
-                      </View>
-                    </View>
-                  </View>
-                  <View>
-                    {/* <TouchableOpacity onPress={() => {handleChat(item._id,)}}> */}
-                    <TouchableOpacity
-                      onPress={() => {
-                        handleChat(item._id, false);
-                      }}>
-                      <Icon name="message1" size={25} />
+                    <TouchableOpacity style={styles.imageModal}>
+                      <Icon name="upload" size={30} />
+                      <Text>Upload Picture</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
-                <Divider />
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
-      </SafeAreaView>
-    );
-  }
-  return <MainLayout Component={component()} />;
+              </Modal>
+
+            </ScrollView>
+          </SafeAreaView>
+        </View>
+      </Modal>
+      <Modal
+        animationType="slide"
+        visible={isModal}
+        onRequestClose={() => {
+          toggleModal();
+        }}>
+        <View style={{ flex: 1, backgroundColor: '#ffffff', padding: 15 }}>
+          <View style={{ flexDirection: 'row-reverse' }}>
+            <TouchableOpacity
+              onPress={() => {
+                toggleModal();
+              }}>
+              <Icon name="close" size={25} />
+            </TouchableOpacity>
+          </View>
+          <View style={{ height: '90%' }}>
+            <View style={{ marginVertical: 10 }}>
+              <Radio.Group
+                direction={'row'}
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-around',
+                }}
+                name="myRadioGroup"
+                value={value}
+                onChange={nextValue => {
+                  setValue(nextValue);
+                }}>
+                <Radio value="students" my="1">
+                  Students
+                </Radio>
+                <Radio value="teachers" my="1">
+                  Teachers
+                </Radio>
+              </Radio.Group>
+            </View>
+            <View style={{ marginVertical: 10 }}>
+              <TextInput
+                placeholder="Enter Name"
+                onChangeText={text => setName(text)}
+                style={{
+                  borderWidth: 1,
+                  borderColor: 'lightgray',
+                  borderRadius: 5,
+                  height: 43,
+                }}
+              />
+            </View>
+            {value === 'teachers' && (
+              <View>
+                <View style={{ marginVertical: 10 }}>
+                  <Select
+                    accessibilityLabel="Available to hire"
+                    selectedValue={hireFlag}
+                    onValueChange={itemValue => {
+                      setHireFlag(itemValue);
+                    }}
+                    placeholder="Available to hire">
+                    <Select.Item label="Yes" value="1" />
+                    <Select.Item label="No" value="0" />
+                  </Select>
+                </View>
+              </View>
+            )}
+          </View>
+          <View style={{ height: '10%' }}>
+            <Button
+              onPress={() => filter()}
+              buttonStyle={{ width: '100%', backgroundColor: app.lightBlue }}
+              containerStyle={{ width: '100%' }}
+              title="Search"
+            />
+          </View>
+        </View>
+      </Modal>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          padding: 15
+        }}>
+        <TextInput
+          placeholder="Enter Name"
+          onChangeText={text => setName(text)}
+          style={{
+            borderWidth: 1,
+            borderColor: 'lightgray',
+            borderRadius: 5,
+            height: 43,
+            width: '80%',
+            marginRight: 5
+          }}
+          onSubmitEditing={() => { console.log("done"); generalApiCall(); }}
+        />
+        <Button
+          onPress={() => toggleModal()}
+          iconRight
+          buttonStyle={{ backgroundColor: app.lightBlue }}
+          icon={<Icon name="filter" size={15} color="white" />}
+          title="Filter"
+        />
+      </View>
+      {
+        !users || users.length === 0 ?
+          (
+            <View style={styles.contentBox}>
+              <Text style={styles.emptySearchText}>No Users Has Been Found</Text>
+            </View>
+          )
+          :
+          (
+            <FlatList
+              data={users}
+              renderItem={renderItem}
+              keyExtractor={(item) => item._id}
+            />
+
+          )
+      }
+    </SafeAreaView>
+  );
 }
+
 
 const styles = StyleSheet.create({
   spinner: {
@@ -541,7 +744,11 @@ const styles = StyleSheet.create({
   bottomSpace: {
     marginBottom: 20,
   },
-
+  contentBox: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   centeredView: {
     flex: 1,
     justifyContent: 'center',
@@ -699,8 +906,8 @@ const styles = StyleSheet.create({
   emptySearchText: {
     fontSize: 28,
     fontFamily: 'roboto-regular',
-    color: '#949599',
     textTransform: 'uppercase',
+    textAlign: "center"
   },
 
   addSkill: {

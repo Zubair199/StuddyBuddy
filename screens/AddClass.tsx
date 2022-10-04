@@ -76,7 +76,7 @@ export default function AddClassScreen() {
   let [language, setLanguage] = React.useState("")
   let [classDuration, setClassDuration] = React.useState("")
   let [subjects, setSubjects] = React.useState([])
-  let [price, setPrice] = React.useState("")
+  let [price, setPrice] = React.useState("29.99")
 
   let [schedule, setSchedule] = React.useState([])
   let [step1Errors, setStep1Errors] = React.useState(false)
@@ -365,8 +365,8 @@ export default function AddClassScreen() {
     setSchedule(schedule.filter(x => x !== item))
   }
   return (
-    <View style={{ backgroundColor: "white", flex: 1 }}>
-      <View style={{ flexDirection: "row" }}>
+    <SafeAreaView style={{ backgroundColor: "white", flex: 1 }}>
+      {/* <View style={{ flexDirection: "row" }}>
         <View style={{ padding: 27, marginRight: 50 }}>
           <TouchableOpacity
             onPress={
@@ -380,7 +380,7 @@ export default function AddClassScreen() {
           <Text style={styles.title}>Add Class</Text>
         </View>
 
-      </View>
+      </View> */}
       <Modal
         animationType="slide"
         visible={isModal}
@@ -425,6 +425,7 @@ export default function AddClassScreen() {
                 </View>
                 <DatePicker
                   modal
+                  mode="datetime"
                   open={open}
                   date={_startdate}
                   onConfirm={(text) => {
@@ -459,6 +460,7 @@ export default function AddClassScreen() {
                   />
                 </View>
                 <DatePicker
+                  mode="datetime"
                   modal
                   open={open1}
                   date={_enddate}
@@ -539,6 +541,7 @@ export default function AddClassScreen() {
                 </View>
                 <DatePicker
                   modal
+                  mode="datetime"
                   open={open2}
                   date={_startdate}
                   onConfirm={(text) => {
@@ -574,11 +577,11 @@ export default function AddClassScreen() {
                 </Select>
               </View>
               <View style={{ marginVertical: 10 }}>
-                <Input variant="outline" value={price} placeholder="Enter Price"
+                <Input variant="outline" isDisabled={true} value={price} placeholder="Enter Price"
                   onChangeText={(text) => { setPrice(text) }} />
               </View>
               <View style={{ marginVertical: 10 }}>
-                <Input variant="outline" placeholder="Max. Students" defaultValue={maxStudents}
+                <Input variant="outline" placeholder="Max. Students" isDisabled={true} defaultValue={maxStudents}
                   onChangeText={(text) => { setMaxStudents(text) }} />
               </View>
 
@@ -675,7 +678,7 @@ export default function AddClassScreen() {
         </ProgressStep>
       </ProgressSteps>
 
-    </View>
+    </SafeAreaView>
   )
 }
 

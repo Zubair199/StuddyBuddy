@@ -1,13 +1,15 @@
 module.exports = {
-
+    MESSAGE: {
+        EXCEPTION: 'Something went wrong. Try reloading the app!'
+    },
     AUTHENTICATIONS: {
         // Saims
-        // API_URL: "http://192.168.43.122:5000",
-        // CHAT_SERVER_URL: 'http://192.168.43.122:5000',
+        API_URL: "http://192.168.0.196:5000",
+        CHAT_SERVER_URL: 'http://192.168.0.196:5000',
 
         // Zubairs
-        API_URL: "http://44.207.4.39:5000",
-        CHAT_SERVER_URL: 'http://44.207.4.39:5000',
+        // API_URL: "http://192.168.100.63:5000",
+        // CHAT_SERVER_URL: 'http://192.168.100.63:5000',
     },
 
     NOTIFICATION: {
@@ -30,8 +32,8 @@ module.exports = {
         SITE_CONTENTS: "/api/sitecontents",
         USER_SEARCH: "/api/user/search/",
         TEACHER_SEARCH: "/api/teacher/search/",
-        CLASS_SEARCH: "/api/class/search/"
-
+        CLASS_SEARCH: "/api/class/search/",
+        GENERAL_USER: "/api/general/search/"
     },
     AUTH: {
 
@@ -51,12 +53,14 @@ module.exports = {
         GET_USER_BY_ID: "/api/auth/getUser/",
         EDIT_USER: "/api/auth/updateuser/",
 
+        HIRE: "/api/auth/hireUpdate"
+
     },
     CLASS: {
         CREATE: "/api/class",
         CREATE_TOPIC: "/api/class/topic",
         CREATE_ANNOUNCEMENT: "/api/class/announcement",
-        GET_ALL_ACTIVE_CLASSES_BY_TEACHER_ID: "/api/class/teacher/active/",
+        GET_ALL_ACTIVE_CLASSES_BY_TEACHER_ID: "/api/class/active/",
 
         GET_ALL_ACTIVE_UPCOMING_CLASSES_BY_TEACHER_ID: "/api/class/teacher/upcoming/active/",
 
@@ -67,6 +71,8 @@ module.exports = {
         GET_TEACHER_SEARCH: '/api/class/teacher/search/',
 
         GET_ALL_ACTIVE_CLASSES: '/api/classes/active',
+        GET_ALL_ACTIVE_CLASSES_GUEST_VIEW: '/api/guest/classes/active',
+
 
         JOIN_CLASS: '/api/joinClass',
 
@@ -131,9 +137,34 @@ module.exports = {
         CREATE_CARD: "/api/card",
         CARD_DETAILS: "/api/card/",
         UPDATE_CARD: "/api/card/",
-        CREATE_PAYMENT: "",
-        PK_TEST: "pk_test_51LPq5PHMIjurc2gOdoR79YKnciMMUVfCBBXP0LYaZxIoNW1dFRhGreSkRu34TUMeZ7pZ9mTQrLAkPvPzYPr8gKKa00GuhqeZH9",
-        SK_TEST: "sk_test_51LPq5PHMIjurc2gOXufycmqFoQc1Rk0B14OkDwNE3l3013yAdL1WUk1idTNBAi5nVF4bOZGtflpzTp0PdkXCURKU00azCFptoj",
+        STRIPE_PAYMENT: "/stripe/index.html",
+        CREATE_PAYMENT: "/api/payment",
+        GET_PAYMENT_INTENT: "/api/paymentIntent",
+
+        CREATE_PAYMENT_INTENT_PLATFORM: "/api/platform/payment-intent",
+        CREATE_PAYMENT_INTENT_CLASS: "/api/class/payment-intent",
+
+        SUCCESS_PAYMENT_INTENT_PLATFORM: "/api/platform/payment-intent/",
+        SUCCESS_PAYMENT_INTENT_CLASS: "/api/class/payment-intent/",
+
+
+        CREATE_DISPUTE: "/api/dispute",
+
+        GET_SUBSCRIPTION_BY_CLASS: "/api/subscription/",
+
+        GET_SUBSCRIPTIONS: "/api/sessions/",
+        GET_PAYMENT_DETAILS: "/api/payment/details/",
+
+        PK_TEST: 'pk_test_51IDNzKHDg6w3Pi8MAFLrKQDFEIgCPu1ZrdxL0DQx9msP4f3rW4DOEUgnyMXqlwT3fWwzU8893pXg90MQvKmLaBeF00mVMzxIDg',
+        SK_TEST: 'sk_test_51IDNzKHDg6w3Pi8MYwLJ24KHE2GcEu2Z9ZSei7oOYjOD8SLmGpOewDRpRc8PRhcgmAMhVClnA9kvk7BLcxqLoJVi00xCzQ6xPM'
+
+        // PK_TEST: "pk_test_51LPq5PHMIjurc2gOdoR79YKnciMMUVfCBBXP0LYaZxIoNW1dFRhGreSkRu34TUMeZ7pZ9mTQrLAkPvPzYPr8gKKa00GuhqeZH9",
+        // SK_TEST: "sk_test_51LPq5PHMIjurc2gOXufycmqFoQc1Rk0B14OkDwNE3l3013yAdL1WUk1idTNBAi5nVF4bOZGtflpzTp0PdkXCURKU00azCFptoj",
+    },
+    TWILIO: {
+        CREATE_ROOM: "/api/twilio/room",
+        GET_ROOM: "/api/twilio/room/",
+        GET_TOKEN: "/api/twilio/getToken/",
     }
 };
 

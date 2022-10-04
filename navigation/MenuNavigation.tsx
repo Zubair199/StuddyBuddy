@@ -1,16 +1,16 @@
 import * as React from 'react';
-import {Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SettingsScreen from '../screens/SettingsScreen';
 import PaymentsScreen from '../screens/PaymentsScreen';
 import ChatScreen from '../screens/ChatScreen';
 import ChatScreenG from '../screens/ChatScreenG';
 import MessagesScreen from '../screens/MessagesScreen';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import HomeScreen from '../screens/HomeScreen';
-import {useNavigation} from '@react-navigation/native';
-import {Image} from 'react-native-elements/dist/image/Image';
+import { useNavigation } from '@react-navigation/native';
+import { Image } from 'react-native-elements/dist/image/Image';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ClassDetailScreen from '../screens/ClassDetailScreen';
 import AssignmentDetailScreen from '../screens/AssignmentDetailScreen';
@@ -33,6 +33,12 @@ import AssignmentStartScreen from '../screens/AssignmentStartScreen';
 import ExamStartScreen from '../screens/ExamStartScreen';
 import NetworkScreen from '../screens/NetworkScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
+import ClassPayScreen from '../screens/ClassPayScreen';
+import PlatformPayScreen from '../screens/PlatformPayScreen';
+import ClassVideoScreen from '../screens/ClassVideoScreen';
+import Dashboard from '../screens/Dashboard';
+import { app, info } from '../constants/themeColors';
+import ProfileDetails from '../screens/ProfileDetails';
 
 const BottomTab = createBottomTabNavigator();
 
@@ -40,6 +46,7 @@ const RootStack = createNativeStackNavigator();
 
 const MenuNavigation = () => {
   const navigation = useNavigation();
+
 
   const getCurrentScreenName = (state: any): any => {
     let screenName = '';
@@ -52,153 +59,9 @@ const MenuNavigation = () => {
     return screenName;
   };
 
+
   return (
     <HomeStackScreen />
-    // <BottomTab.Navigator
-    //   initialRouteName="Home"
-    //   screenOptions={{
-    //     headerStyle: {
-    //       backgroundColor: '#3878ee',
-    //     },
-    //     tabBarStyle: {
-    //       backgroundColor: '#3878ee',
-    //       height: Platform.OS === 'ios' ? 83 : 85,
-    //       position: 'absolute',
-    //       bottom: 15,
-    //       left: 20,
-    //       right: 20,
-    //       elevation: 0,
-    //       borderRadius: 15,
-    //     },
-    //     tabBarShowLabel: false,
-    //     tabBarLabelStyle: { fontSize: 15 },
-    //     headerShown: false,
-    //   }}>
-    //   <BottomTab.Screen
-    //     name="classes"
-    //     options={{
-    //       headerShown: false,
-    //       tabBarIcon: ({ focused }) => (
-    //         <View
-    //           style={{ alignItems: 'center', justifyContent: 'center', top: 3 }}>
-    //           <Image
-    //             style={[
-    //               styles.tabIcon,
-    //               {
-    //                 tintColor: focused ? '#ffbb74' : '#ffffff',
-    //               },
-    //             ]}
-    //             source={require('../assets/images/icons/briefcase.png')}
-    //           />
-    //           <Text
-    //             style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
-    //             Classes
-    //           </Text>
-    //         </View>
-    //       ),
-    //     }}
-    //     component={HomeStackScreen}
-    //   />
-    //   <BottomTab.Screen
-    //     name="Message"
-    //     options={{
-    //       tabBarIcon: ({ focused }) => (
-    //         <View
-    //           style={{ alignItems: 'center', justifyContent: 'center', top: 3 }}>
-    //           <Image
-    //             style={[
-    //               styles.tabIcon,
-    //               {
-    //                 tintColor: focused ? '#ffbb74' : '#ffffff',
-    //               },
-    //             ]}
-    //             source={require('../assets/images/icons/comment.png')}
-    //           />
-    //           <Text
-    //             style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
-    //             Message
-    //           </Text>
-    //         </View>
-    //       ),
-    //     }}
-    //     component={MessagesStackScreen}
-    //   />
-    //   <BottomTab.Screen
-    //     name="Payment"
-    //     options={{
-    //       headerShown: false,
-    //       tabBarIcon: ({ focused }) => (
-    //         <View
-    //           style={{ alignItems: 'center', justifyContent: 'center', top: 3 }}>
-    //           <Image
-    //             style={[
-    //               styles.tabIcon,
-    //               {
-    //                 tintColor: focused ? '#ffbb74' : '#ffffff',
-    //               },
-    //             ]}
-    //             source={require('../assets/images//icons/credit-card.png')}
-    //           />
-    //           <Text
-    //             style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
-    //             Payment
-    //           </Text>
-    //         </View>
-    //       ),
-    //     }}
-    //     component={PaymentStackScreen}
-    //   />
-    //   <BottomTab.Screen
-    //     name="Profile"
-    //     options={{
-    //       headerShown: false,
-    //       tabBarIcon: ({ focused }) => (
-    //         <View
-    //           style={{ alignItems: 'center', justifyContent: 'center', top: 3 }}>
-    //           <Image
-    //             style={[
-    //               styles.tabIcon,
-    //               {
-    //                 tintColor: focused ? '#ffbb74' : '#ffffff',
-    //               },
-    //             ]}
-    //             source={require('../assets/images/profile.png')}
-    //           />
-    //           <Text
-    //             style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
-    //             Profile
-    //           </Text>
-    //         </View>
-    //       ),
-    //     }}
-    //     component={ProfileStackScreen}
-    //   />
-    //   <BottomTab.Screen
-    //     name="Settings"
-    //     options={{
-    //       headerShown: false,
-    //       tabBarIcon: ({ focused }) => (
-    //         <View
-    //           style={{ alignItems: 'center', justifyContent: 'center', top: 3 }}>
-    //           <Image
-    //             style={[
-    //               styles.tabIcon,
-    //               {
-    //                 tintColor: focused ? '#ffbb74' : '#ffffff',
-    //               },
-    //             ]}
-    //             source={require('../assets/images/setting.png')}
-    //           />
-    //           <Text
-    //             style={{ color: focused ? '#ffbb74' : '#ffffff', fontSize: 12 }}>
-    //             Settings
-    //           </Text>
-    //         </View>
-    //       ),
-    //     }}
-    //     component={SettingsStackScreen}
-    //   />
-    // </BottomTab.Navigator>
   );
 };
 
@@ -214,74 +77,30 @@ const ProfileStack = createNativeStackNavigator();
 
 const topTab = createMaterialTopTabNavigator();
 
-// const mainHeader = ({ navigation }: any): any => {
-//   return {
-//     headerStyle: {
-//       backgroundColor: '#3878ee',
-//     },
-//     headerShown: true,
-//     // title: "",
-//     //headerTitleAlign: 'center',
-//     headerTitleStyle: {
-//       color: '#ffffff',
-//       fontSize: 22,
-//     },
-//     headerTitle: (props: any) => {
-//       return (
-//         <View style={{
-//           flexDirection: 'row',
-//           justifyContent: 'space-around',
-//           width: "100%",
-//           marginLeft: -10
-//         }}>
-//           <TouchableOpacity
-//             onPress={() => {
-//               navigation.reset({
-//                 index: 0,
-//                 routes: [{ name: 'HomeScreen' }],
-//               });
-//             }}
-//           >
-//             <Icon name='home' size={30} color="white" />
-//           </TouchableOpacity>
-//           <TouchableOpacity
-//             onPress={() => {
-//               navigation.reset({
-//                 index: 0,
-//                 routes: [{ name: 'ScheduleScreen' }],
-//               });
-//             }}
-//           >
-//             <Icon name='calendar' size={30} color="white" />
-//           </TouchableOpacity>
-//           <TouchableOpacity
-//             onPress={() => {
-//               navigation.reset({
-//                 index: 0,
-//                 routes: [{ name: 'NotificationScreen' }],
-//               });
-//             }}
-//           >
-//             <Icon name='bells' size={30} color="white" />
-//           </TouchableOpacity>
-//           <TouchableOpacity
-//             onPress={() => {
-//               navigation.reset({
-//                 index: 0,
-//                 routes: [{ name: 'SearchScreen' }],
-//               });
-//             }}
-//           >
-//             <Icon name='search1' size={30} color="white" />
-//           </TouchableOpacity>
-//         </View>
-//       )
-//     }
-//   };
-// };
+const mainHeader = ({ navigation }: any): any => {
+  return {
+    headerStyle: {
+      backgroundColor: app.lightBlue,
+      elevation: 0,
+      shadowOpacity: 0,
+      borderBottomWidth: 0,
+    },
+    headerShown: true,
+    headerTitleStyle: {
+      color: '#ffffff',
+      fontSize: 22,
+    },
+    headerLeft: () => {
+      return (
+        <TouchableOpacity style={{ paddingRight: 20 }} onPress={() => navigation.goBack()}>
+          <Icon name="arrowleft" size={22} color="#fff" />
+        </TouchableOpacity>
+      )
+    }
+  };
+};
 
-const HomeStackScreen = ({navigation, route}: any) => {
-  const mainHeader = {headerShown: false};
+const HomeStackScreen = ({ navigation, route }: any) => {
   return (
     <HomeStack.Navigator
       initialRouteName="HomeScreen"
@@ -290,8 +109,13 @@ const HomeStackScreen = ({navigation, route}: any) => {
       }}>
       <HomeStack.Screen
         name="HomeScreen"
-        options={mainHeader}
+        options={{ headerShown: false }}
         component={HomeScreen}
+      />
+      <HomeStack.Screen
+        name="Dashboard"
+        options={mainHeader}
+        component={Dashboard}
       />
 
       <HomeStack.Screen
@@ -308,6 +132,21 @@ const HomeStackScreen = ({navigation, route}: any) => {
         name="ClassDetails"
         options={mainHeader}
         component={ClassDetailScreen}
+      />
+      <HomeStack.Screen
+        name="ClassPayScreen"
+        // options={mainHeader}
+        component={ClassPayScreen}
+      />
+      <HomeStack.Screen
+        name="PlatformPayScreen"
+        // options={mainHeader}
+        component={PlatformPayScreen}
+      />
+      <HomeStack.Screen
+        name="ClassVideoScreen"
+        // options={mainHeader}
+        component={ClassVideoScreen}
       />
       <HomeStack.Screen
         name="AddClass"
@@ -336,7 +175,7 @@ const HomeStackScreen = ({navigation, route}: any) => {
       />
       <HomeStack.Screen
         name="AddAssignmentQuestions"
-        options={mainHeader}
+        options={{ headerShown: false }}
         component={AddAssignmentQuestions}
       />
       <HomeStack.Screen
@@ -361,7 +200,7 @@ const HomeStackScreen = ({navigation, route}: any) => {
       />
       <HomeStack.Screen
         name="AddExamQuestions"
-        options={mainHeader}
+        options={{ headerShown: false }}
         component={AddExamQuestions}
       />
       <HomeStack.Screen
@@ -396,12 +235,12 @@ const HomeStackScreen = ({navigation, route}: any) => {
       />
       <HomeStack.Screen
         name="ChatScreen"
-        options={mainHeader}
+        options={{ headerShown: false }}
         component={ChatScreen}
       />
       <HomeStack.Screen
         name="ChatScreenG"
-        options={mainHeader}
+        options={{ headerShown: false }}
         component={ChatScreenG}
       />
       <HomeStack.Screen
@@ -414,7 +253,17 @@ const HomeStackScreen = ({navigation, route}: any) => {
         options={mainHeader}
         component={ProfileScreen}
       />
-      <HomeStack.Screen name="EditProfile" component={EditProfileScreen} />
+
+      <HomeStack.Screen
+        name="ProfileDetails"
+        options={mainHeader}
+        component={ProfileDetails}
+      />
+      <HomeStack.Screen
+        name="EditProfile"
+        options={mainHeader}
+        component={EditProfileScreen}
+      />
     </HomeStack.Navigator>
   );
 };
@@ -428,9 +277,9 @@ const PaymentStackScreen = () => (
   </PaymentStack.Navigator>
 );
 const MessagesStackScreen = () => {
-  const mainHeader = {headerShown: false};
+  const mainHeader = { headerShown: false };
   return (
-    <MessagesStack.Navigator screenOptions={{headerShown: false}}>
+    <MessagesStack.Navigator screenOptions={{ headerShown: false }}>
       <MessagesStack.Screen
         name="Messages"
         options={mainHeader}
@@ -476,7 +325,7 @@ const styles = StyleSheet.create({
     top: 5,
     right: 15,
   },
-  backArrow: {marginTop: 0, tintColor: '#ffffff', height: 35, width: 35},
+  backArrow: { marginTop: 0, tintColor: '#ffffff', height: 35, width: 35 },
   backArrowContainer: {
     justifyContent: 'center',
     height: Platform.OS === 'ios' ? 45 : 70,

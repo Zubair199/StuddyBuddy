@@ -22,6 +22,7 @@ import {
 import { logError } from '../utils/HelperFunctions';
 import genericStyle from '../assets/styles/styleSheet';
 import { AUTH, AUTHENTICATIONS, GENERAL } from '../services/api.constants';
+import { app } from '../constants/themeColors';
 
 const CELL_COUNT = 6;
 export default function AccountVerificationScreen() {
@@ -92,7 +93,7 @@ export default function AccountVerificationScreen() {
         .then((response) => response.json())
         .then((responseJson) => {
           console.log(responseJson)
-          if (responseJson.isActive) {
+          if (responseJson && responseJson.isActive) {
             setShowSpinner(false);
             Alert.alert('Alert', responseJson.message);
 
@@ -107,17 +108,21 @@ export default function AccountVerificationScreen() {
             });
 
           }
+          else {
+            Alert.alert('Alert', responseJson.message);
+
+          }
         })
         .catch((err: any) => {
           console.log(err)
           console.log(err.response)
-          Alert.alert('Alert', "Registration Failed. Try Again!");
+          Alert.alert('Alert', "Something went wrong. Try Again!");
           setShowSpinner(false);
         })
     }
     catch (exception) {
       console.log('exception ', exception)
-      Alert.alert('Alert', "Registration Failed. Try Again!");
+      Alert.alert('Alert', "Something went wrong. Try Again!");
       setShowSpinner(false);
     }
   };
@@ -169,12 +174,12 @@ export default function AccountVerificationScreen() {
             <Text style={genericStyle.loginBtnText}>VERIFY</Text>
           </TouchableOpacity>
 
-          <View style={styles.goBackView}>
+          {/* <View style={styles.goBackView}>
             <TouchableOpacity onPress={handleBack}>
               <Text style={styles.goBackText}>Go back</Text>
               <View style={genericStyle.underline}></View>
             </TouchableOpacity>
-          </View>
+          </View> */}
         </View>
       </View>
     </SafeAreaView>
@@ -288,9 +293,11 @@ const styles = StyleSheet.create({
     lineHeight: 38,
     fontSize: 24,
     borderWidth: 2,
-    borderColor: '#3878ee',
+    borderRadius: 10,
+    borderColor: app.lightBlue,
     backgroundColor: '#ffffff',
     textAlign: 'center',
+
   },
   focusCell: {
     borderColor: '#ffffff',

@@ -8,6 +8,7 @@ import { Divider } from 'native-base';
 import { ASSIGNMENT, AUTHENTICATIONS, CLASS, EXAM } from '../services/api.constants';
 import MainLayout from './MainLayout';
 import { AuthContext } from '../utils/AuthContext';
+import { app } from '../constants/themeColors';
 
 export default function ExamDetailScreen({ route }) {
   const { examID } = route.params
@@ -19,6 +20,7 @@ export default function ExamDetailScreen({ route }) {
   const [examQuestions, setExamQuestions] = React.useState([])
   const [startExam, setStudentExam] = React.useState(null)
   const [studentExams, setStudentExams] = React.useState([])
+  let [questionsCount, setQuestionsCount] = React.useState(0)
 
   let [data, setData] = React.useState([])
   let [start, setStart] = React.useState(false)
@@ -37,10 +39,12 @@ export default function ExamDetailScreen({ route }) {
     fetch(AUTHENTICATIONS.API_URL + EXAM.GET_EXAM_BY_EXAM_ID + examID)
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log('exam ', responseJson.data)
+        console.log('exam ', responseJson.examQuestionsCount)
         setExam(responseJson.data)
         setExamQuestions(responseJson.questions)
         setStudentExams(responseJson.studentExams)
+        setQuestionsCount(responseJson.examQuestionsCount)
+
         // setStudentExam(responseJson.data)
       })
       .catch(err => {
@@ -61,6 +65,8 @@ export default function ExamDetailScreen({ route }) {
         let arr = Array.from({ length: responseJson.data.questioncount }, (_, i) => i + 1)
         console.log(arr)
         setData(arr)
+        setQuestionsCount(responseJson.data.examQuestionsCount)
+
       })
       .catch(err => {
         console.log(err)
@@ -93,25 +99,48 @@ export default function ExamDetailScreen({ route }) {
       console.log('exception ', exception)
     }
   }
+  function formatDate(date) {
+    console.log(new Date(date))
+    var d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
 
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+  }
+
+  function formatTime(d) {
+    var date = new Date(d);
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    var strTime = hours + ':' + minutes + ' ' + ampm;
+    return strTime;
+  }
   function component() {
     return (
       <View style={styles.container}>
 
         {
           <View>
-            <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15, }}>
+            {/* <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15, }}>
               <TouchableOpacity style={{ marginTop: 5 }}
                 onPress={() => navigation.goBack()}>
                 <Icon color={'black'} name="leftcircleo" size={25} />
               </TouchableOpacity>
               <Text style={styles.title}>Exam Details</Text>
-            </View>
+            </View> */}
             {
               (exam !== null)
               &&
-              <ScrollView style={{ padding: 15 }}>
-                <View>
+              <ScrollView >
+                <View style={{ padding: 15 }}>
                   <ImageBackground
                     resizeMode='cover'
                     source={require('../assets/images/bg.jpg')}
@@ -126,28 +155,33 @@ export default function ExamDetailScreen({ route }) {
                       </View>
                       <Text style={styles.challengeBoxName}>{exam.title}</Text>
                       <Text style={styles.challengeBoxDate}>
-                        28-05-2022
+                        Start DateTime: {formatDate(exam.startdate)} {formatTime(exam.startdate)}
+                      </Text>
+                      <Text style={styles.challengeBoxDate}>
+                        End DateTime: {formatDate(exam.enddate)} {formatTime(exam.enddate)}
                       </Text>
                     </View>
                   </ImageBackground>
-                  {/* <Text style={styles.text}>Score: {startExam.score}</Text> */}
+
+                  <View style={{ paddingTop: 15 }}>
+                    {
+                      questionsCount > 0 ?
+                        <></>
+                        // <TouchableOpacity style={[styles.segmentButtons, { backgroundColor: app.lightBlue }]} onPress={() => { }}>
+                        //   <Text style={styles.buttonText}> View Questions </Text>
+                        // </TouchableOpacity>
+                        :
+                        <TouchableOpacity style={[styles.segmentButtons, { backgroundColor: app.lightBlue }]} onPress={() => { navigation.navigate('AddExamQuestions', { examID: exam._id }) }}>
+                          <Text style={styles.buttonText}> Add Questions </Text>
+                        </TouchableOpacity>
+
+                    }
+                  </View>
 
                   <Text style={styles.heading}>Details</Text>
                   <Text style={styles.text}>{exam.description}</Text>
-                  {/* {
-                    startExam.status.toLowerCase() !== "completed" &&
-                    <View style={{ marginVertical: 15 }}>
-                      <Button title={'Start Exam'}
-                        onPress={
-                          () => {
-                            // setStart(!start); 
-                            startAssginment(startExam._id);
-                          }
-                        }
-                      />
-                    </View>
-                  } */}
                   <View >
+
                     <Text style={styles.heading}>Scores</Text>
 
                     <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
@@ -216,18 +250,11 @@ export default function ExamDetailScreen({ route }) {
 
         {
           <View>
-            <View style={{ flexDirection: 'row', paddingLeft: 15, marginVertical: 15, }}>
-              <TouchableOpacity style={{ marginTop: 5 }}
-                onPress={() => navigation.goBack()}>
-                <Icon color={'black'} name="leftcircleo" size={25} />
-              </TouchableOpacity>
-              <Text style={styles.title}>Exam Details</Text>
-            </View>
             {
               (exam !== null && startExam !== null)
               &&
-              <ScrollView style={{ padding: 15 }}>
-                <View>
+              <ScrollView>
+                <View style={{ padding: 15 }}>
                   <ImageBackground
                     resizeMode='cover'
                     source={require('../assets/images/bg.jpg')}
@@ -242,7 +269,10 @@ export default function ExamDetailScreen({ route }) {
                       </View>
                       <Text style={styles.challengeBoxName}>{exam.title}</Text>
                       <Text style={styles.challengeBoxDate}>
-                        28-05-2022
+                        Start DateTime: {formatDate(exam.startdate)} {formatTime(exam.startdate)}
+                      </Text>
+                      <Text style={styles.challengeBoxDate}>
+                        End DateTime: {formatDate(exam.enddate)} {formatTime(exam.enddate)}
                       </Text>
                     </View>
                   </ImageBackground>
@@ -277,12 +307,12 @@ export default function ExamDetailScreen({ route }) {
   }
   if (userType.toLowerCase() === "user") {
     return (
-      <MainLayout Component={studentComponent()} />
+      studentComponent()
     )
   }
   else {
     return (
-      <MainLayout Component={component()} />
+      component()
     )
   }
 }
@@ -351,5 +381,25 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "roboto-light",
     marginTop: 5,
+  },
+
+  buttonText: {
+    fontSize: 18,
+    fontFamily: 'Gill Sans',
+    textAlign: 'center',
+    // margin: 10,
+    color: '#ffffff',
+    backgroundColor: 'transparent',
+  },
+  segmentButtons: {
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
+    elevation: 5,
+    padding: 10,
+    borderRadius: 15,
+    // marginVertical: 5,    
+    width: '100%'
   },
 });

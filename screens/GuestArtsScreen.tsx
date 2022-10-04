@@ -23,7 +23,7 @@ export default function GuestArtsScreen() {
     React.useContext(ThemeContext);
 
   React.useEffect(() => {
-    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES)
+    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES_GUEST_VIEW)
       .then(response => response.json())
       .then(responseJson => {
         console.log('classes ', responseJson.classes);
@@ -69,7 +69,7 @@ export default function GuestArtsScreen() {
                     style={styles.groupBox}
                     key={index}
                     onPress={() => {
-                      navigation.navigate('ClassDetails', {
+                      navigation.navigate('GuestClassDetails', {
                         classID: classItem._id,
                       });
                     }}>

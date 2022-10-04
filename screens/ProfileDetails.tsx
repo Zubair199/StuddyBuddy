@@ -11,11 +11,9 @@ import {
   TouchableOpacity,
   Text,
   View,
-  Switch,
 } from 'react-native';
 
 import { useNavigation, useIsFocused } from '@react-navigation/native';
-import { Avatar, BottomSheet, CheckBox } from 'react-native-elements';
 
 import { AuthContext } from '../utils/AuthContext';
 
@@ -24,7 +22,6 @@ import ImagePicker from 'react-native-image-crop-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MainLayout from './MainLayout';
 import { AUTH, AUTHENTICATIONS, GENERAL } from '../services/api.constants';
-import { app, grey, info } from '../constants/themeColors';
 
 // import ChallengeSlider from "../components/ChallengeSlider";
 // import UserListComponent from "../components/UserListComponent";
@@ -41,7 +38,7 @@ interface FormDataValue {
 
 const useUserAuth = () => React.useContext(AuthContext);
 
-export default function ProfileScreen(dataType: dataTypes) {
+export default function ProfileDetails(dataType: dataTypes) {
   const navigation = useNavigation();
   // const onClose = () => navigation.navigate("ClassesScreen");
   const { userType, userToken } = useUserAuth();
@@ -95,39 +92,8 @@ export default function ProfileScreen(dataType: dataTypes) {
   const [allLocations, setAllLocations] = useState([]);
   const [allSubjects, setAllSubjects] = useState([]);
   const [email, setEmail] = useState([]);
-  const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => {
-    const body = {
-      user: user,
-    }
-    console.log(body)
-    try {
-      let requestObj = {
-        method: 'PUT',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
-      }
-      fetch(AUTHENTICATIONS.API_URL + AUTH.HIRE, requestObj)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          console.log(responseJson)
-          Alert.alert(responseJson.message)
-          getData()
-        })
-        .catch((err: any) => {
-          console.log(err)
-          console.log(err.response)
-        })
-    }
-    catch (exception) {
-      console.log('exception ', exception)
-    }
-  };
 
-  function getData() {
+  React.useEffect(() => {
     try {
       fetch(AUTHENTICATIONS.API_URL + GENERAL.SITE_CONTENTS)
         .then(response => response.json())
@@ -157,7 +123,7 @@ export default function ProfileScreen(dataType: dataTypes) {
             setExperience(responseJson.profile.pastExperience);
           }
           if (responseJson.user) {
-            setIsEnabled(responseJson.user.isHired);
+            setToggle(responseJson.user.isHired);
             setEmail(responseJson.user.email);
           }
         })
@@ -167,9 +133,6 @@ export default function ProfileScreen(dataType: dataTypes) {
     } catch (err) {
       console.log(err);
     }
-  }
-  React.useEffect(() => {
-    getData()
   }, []);
 
   return (
@@ -198,20 +161,26 @@ export default function ProfileScreen(dataType: dataTypes) {
         <ScrollView
           style={styles.scrollView}
           keyboardShouldPersistTaps={'handled'}>
+          {/* <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" /> */}
           <View style={styles.basicInfo}>
+            {/* instructor name and image will be replaced by api's data on integration of apis */}
             <View style={styles.profileImageBox}>
-              <Avatar
-                rounded
-                title="P"
-                activeOpacity={0.7}
-                size="xlarge"
-
-                source={
-                  image === ''
-                    ? require('../assets/images/user.png')
-                    : { uri: AUTHENTICATIONS.API_URL + image }
-                }
-              />
+              {/* {imageLoader && <Image
+                  style={{width:100, height:54}}
+                  source={require('../assets/images/Deep-Move-Spinner-v3.gif')}
+                />} */}
+              <TouchableOpacity>
+                <Image
+                  style={styles.profileImage}
+                  // onLoadStart={()=>setImageLoader(true)}
+                  // onLoadEnd={()=>setImageLoader(false)}
+                  source={
+                    image === ''
+                      ? require('../assets/images/user.png')
+                      : { uri: AUTHENTICATIONS.API_URL + image }
+                  }
+                />
+              </TouchableOpacity>
             </View>
             <View style={styles.nameBox}>
               <Text style={styles.name}>{userName}</Text>
@@ -311,16 +280,19 @@ export default function ProfileScreen(dataType: dataTypes) {
                 <Text style={styles.switchBoxLebel}>
                   Mark as available to hire.
                 </Text>
-
-                <View>
-                  <Switch
-                    trackColor={{ false: "#767577", true: grey[400] }}
-                    thumbColor={isEnabled ? app.lightBlue : "#f4f3f4"}
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleSwitch}
-                    value={isEnabled}
-                  />
-                </View>
+                <TouchableOpacity>
+                  {toggle ? (
+                    <Image
+                      style={styles.toggleOn}
+                      source={require('../assets/images/icons/toggle.png')}
+                    />
+                  ) : (
+                    <Image
+                      style={styles.toggleOn}
+                      source={require('../assets/images/icons/Toggle-off.png')}
+                    />
+                  )}
+                </TouchableOpacity>
               </View>
               <View style={styles.lineStyle} />
             </>

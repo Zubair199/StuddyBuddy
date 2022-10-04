@@ -1,15 +1,8 @@
 import * as React from 'react';
-import {
-  StyleSheet,
-  ScrollView,
-  Image,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
-const TimSort = require('timsort');
-import {Text, View} from '../components/Themed';
-import LottieView from 'lottie-react-native';
-import {useNavigation, useIsFocused} from '@react-navigation/native';
+import { StyleSheet, ScrollView, Image, TouchableOpacity, Alert, SafeAreaView } from 'react-native';
+
+import { Text, View } from '../components/Themed';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import api from '../services/api.services';
 //  import Loader from '../components/loader';
 import moment from 'moment-timezone';
@@ -138,115 +131,50 @@ export default function MessagesScreen() {
     };
   }, [isFocused]);
 
-  function component() {
-    if (loader || messagesList == undefined) {
-      return (
-        <LottieView
-          source={require('../assets/images/Gifs/study.json')}
-          autoPlay
-          loop
-        />
-      );
-    }
-    return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Messages</Text>
-        {messagesList.length === 0 ? (
-          <View style={styles.contentBox}>
-            <Text style={styles.emptySearchText}>No Messages Received Yet</Text>
-          </View>
-        ) : (
-          <ScrollView style={styles.scrollView}>
-            {messagesList.map((message: any, index: number) => {
-              console.log('--------------------------------------------');
-              console.log(message.isGroupRead, userToken);
 
-              console.log('--------------------------------------------');
-              return (
-                <View key={index}>
-                  <View
-                    key={index}
-                    style={
-                      message.isGroupRead
-                        ? message.isGroupRead.includes(userToken)
-                          ? styles.messageBoxWrapperRead
-                          : styles.messageBoxWrapperNew
-                        : message.isRead
-                        ? styles.messageBoxWrapperRead
-                        : styles.messageBoxWrapperNew
-                    }>
-                    {/* condition required when clicked on group chat go to that group chat  */}
-                    <TouchableOpacity
-                      onPress={() =>
-                        openChat(
-                          message.chatId,
-                          message.isEnabledChat,
-                          message.isBanned,
-                          message.isGroupChat,
-                          message.groupUsers,
-                        )
-                      }
-                      style={styles.messageBox}>
-                      <Image
-                        source={require('../assets/images/profile-default.jpg')}
-                        style={styles.messageImage}
-                      />
-                      <View style={styles.messageInfo}>
-                        {message.isGroupRead ? (
-                          message.isGroupRead.includes(userToken) ? (
-                            <></>
-                          ) : (
-                            <Image
-                              style={styles.newMessageIcon}
-                              source={require('../assets/images/icons/new-message.png')}
-                            />
-                          )
-                        ) : (
-                          !message.isRead && (
-                            <Image
-                              style={styles.newMessageIcon}
-                              source={require('../assets/images/icons/new-message.png')}
-                            />
-                          )
-                        )}
-                        <Text style={styles.messageDate}>
-                          {moment().diff(message.lastMessageAt, 'hours') < 24
-                            ? moment(message.lastMessageAt).fromNow(true)
-                            : moment().diff(message.lastMessageAt, 'hours') >=
-                                24 &&
-                              moment().diff(message.lastMessageAt, 'hours') < 48
-                            ? 'YESTERDAY'
-                            : moment(message.lastMessageAt).format(
-                                'MM/DD/YYYY',
-                              )}
-                        </Text>
-                        <Text style={styles.messageName}>
-                          {message.isGroupChat
-                            ? 'Class: ' + message.classes[0].name
-                            : message.username}
-                        </Text>
-                        <Text
-                          numberOfLines={5}
-                          ellipsizeMode="tail"
-                          style={styles.messageDescription}>
-                          {message.isGroupChat
-                            ? message.username + ' : ' + message.message
-                            : message.message}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                  <Divider />
-                </View>
-              );
-            })}
-          </ScrollView>
-        )}
-      </View>
-    );
+  if (loader || messagesList == undefined) {
+    return <></>;
   }
-  return <MainLayout Component={component()} />;
+  return (
+    <SafeAreaView style={styles.container}>
+      {messagesList.length === 0 ? (
+        <View style={styles.contentBox}>
+          <Text style={styles.emptySearchText}>
+            No Messages Received Yet
+          </Text>
+        </View>
+      ) : (
+        <ScrollView style={styles.scrollView}>
+          {messagesList.map((message: any, index: number) => {
+            console.log("--------------------------------------------")
+            console.log(message.message)
+            console.log("--------------------------------------------")
+            return (
+              <View key={index}>
+                <View key={index} style={message.isRead ? styles.messageBoxWrapperRead : styles.messageBoxWrapperNew}>
+                  {/* condition required when clicked on group chat go to that group chat  */}
+                  <TouchableOpacity onPress={() => openChat(message.chatId, message.isEnabledChat, message.isBanned)} style={styles.messageBox}>
+                    <Image source={require("../assets/images/profile-default.jpg")} style={styles.messageImage} />
+                    <View style={styles.messageInfo}>
+                      {message.isRead === false && (<Image style={styles.newMessageIcon} source={require('../assets/images/icons/new-message.png')} />)}
+                      <Text style={styles.messageDate}>{moment().diff(message.lastMessageAt, 'hours') < 24 ? moment(message.lastMessageAt).fromNow(true) : (moment().diff(message.lastMessageAt, 'hours') >= 24 && moment().diff(message.lastMessageAt, 'hours') < 48) ? 'YESTERDAY' : moment(message.lastMessageAt).format('MM/DD/YYYY')}</Text>
+                      <Text style={styles.messageName}>{message.isGroupChat ? "Class: " + message.classes[0].name : message.username}</Text>
+                      <Text numberOfLines={5} ellipsizeMode="tail" style={styles.messageDescription}>{message.isGroupChat ? message.username + " : " + message.message : message.message}</Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+                <Divider />
+              </View>
+            )
+          }
+
+          )}
+        </ScrollView>
+      )}
+    </SafeAreaView>
+  );
 }
+
 
 const styles = StyleSheet.create({
   container: {
