@@ -5,7 +5,6 @@ import { Text, View } from '../components/Themed';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import api from '../services/api.services';
 //  import Loader from '../components/loader';
-import TimSort from 'timsort';
 import moment from 'moment-timezone';
 import {
   storeLocalData,
@@ -15,7 +14,7 @@ import {
 import {AuthContext} from '../utils/AuthContext';
 import MainLayout from './MainLayout';
 import {Divider} from 'native-base';
-
+const TimSort = require('timsort');
 export default function MessagesScreen() {
   const navigation = useNavigation();
   const [messagesList, setMessagesList] = React.useState<any>();
@@ -151,7 +150,7 @@ export default function MessagesScreen() {
             console.log(message.message)
             console.log("--------------------------------------------")
             return (
-              <View key={index}>
+              <View key={index} style={{marginBottom:20}}>
                 <View key={index} style={message.isRead ? styles.messageBoxWrapperRead : styles.messageBoxWrapperNew}>
                   {/* condition required when clicked on group chat go to that group chat  */}
                   <TouchableOpacity onPress={() => openChat(message.chatId, message.isEnabledChat, message.isBanned)} style={styles.messageBox}>
@@ -180,7 +179,7 @@ export default function MessagesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 20,
+    paddingTop: 0,
   },
   closeIconBox: {
     flexDirection: 'row',

@@ -4,12 +4,12 @@ module.exports = {
     },
     AUTHENTICATIONS: {
         // Saims
-        API_URL: "http://192.168.0.196:5000",
-        CHAT_SERVER_URL: 'http://192.168.0.196:5000',
+        // API_URL: "http://192.168.0.196:5000",
+        // CHAT_SERVER_URL: 'http://192.168.0.196:5000',
 
         // Zubairs
-        // API_URL: "http://192.168.100.63:5000",
-        // CHAT_SERVER_URL: 'http://192.168.100.63:5000',
+        API_URL: "http://44.207.4.39:5000",
+        CHAT_SERVER_URL: 'http://44.207.4.39:5000',
     },
 
     NOTIFICATION: {
