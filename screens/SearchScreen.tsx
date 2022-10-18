@@ -25,7 +25,7 @@ export default function SearchScreen() {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
   // const onClose = () => navigation.navigate("ClassesScreen");
-  const { userToken } = React.useContext(AuthContext);
+  const { userToken, userType } = React.useContext(AuthContext);
 
   const [loader, setLoader] = React.useState(false);
   const [data, setData] = React.useState<any>();
@@ -141,7 +141,13 @@ export default function SearchScreen() {
         .then(response => response.json())
         .then(responseJson => {
           console.log('classes ', responseJson);
-          setClasses(responseJson.classes);
+          if(responseJson && responseJson.classes && responseJson.classes.length > 0) {
+            if(userType.toLowerCase() === 'user') {
+              setClasses(responseJson.classes.filter(c => c.status.toLowerCase() === "approved"));
+            } else {
+              setClasses(responseJson.classes);
+            }
+          }
         })
         .catch(err => {
           console.log(err);

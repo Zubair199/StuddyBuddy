@@ -11,7 +11,7 @@ import AssignmentSlider from '../components/AssignmentSlider';
 import ExamSlider from '../components/ExamSlider';
 import AddAssignmentScreen from './AddAssignment';
 import { FormControl, Modal, Button, Divider } from 'native-base';
-import { ASSIGNMENT, AUTHENTICATIONS, CLASS, EXAM } from '../services/api.constants';
+import { ASSIGNMENT, AUTH, AUTHENTICATIONS, CLASS, EXAM } from '../services/api.constants';
 import TeacherClassSlider from '../components/TeacherClassSlider';
 import MainLayout from './MainLayout';
 import { AuthContext } from '../utils/AuthContext';
@@ -44,8 +44,28 @@ export default function Dashboard({ route }) {
     };
   }, []);
 
+  const [username, setUsername] = React.useState('')
+  const [image, setImage] = React.useState('')
   React.useEffect(() => {
     console.log("Dashboard", userType)
+    fetch(AUTHENTICATIONS.API_URL + AUTH.GET_PROFILE + user)
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log('profgile =>', responseJson);
+          if (responseJson.profile) {
+            if (!responseJson.profile.image) {
+              setImage('');
+            } else {
+              setImage(responseJson.profile.image);
+            }
+          }
+          if (responseJson.user) {
+            setUsername(responseJson.user.username);
+          }
+        })
+        .catch(err => {
+          console.log(err.response);
+        });
     if (userType.toLowerCase() === "user") {
       studentApiCall()
     }
@@ -193,7 +213,7 @@ export default function Dashboard({ route }) {
         </Modal>
         <ScrollView style={{ padding: 10 }}>
           <View>
-            {
+            {/*
               userType.toLowerCase() === "teacher" &&
               <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: "center", marginVertical: 10 }}>
                 <TextInput placeholder='Search...' style={{ width: '70%', borderWidth: 1, borderColor: 'lightgray', borderRadius: 10, height: 45 }} />
@@ -204,7 +224,7 @@ export default function Dashboard({ route }) {
                   Add New...
                 </Button>
               </View>
-            }
+           */ }
           </View>
           <View style={{ marginVertical: 10 }}>
             {

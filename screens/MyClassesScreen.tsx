@@ -105,13 +105,17 @@ export default function MyClassesScreen() {
                     </View>
                 </View>
             </BottomSheet>
+            {
+                userType.toLowerCase() === "teacher" &&                  
             <FAB
-                buttonColor={app.lightBlue}
-                iconTextColor="#FFFFFF"
-                onClickAction={() => { toggleModal() }}
-                visible={true}
-                iconTextComponent={<Icon name="plus" />}
-            />
+            buttonColor={app.lightBlue}
+            iconTextColor="#FFFFFF"
+            onClickAction={() => { toggleModal() }}
+            visible={true}
+            iconTextComponent={<Icon name="plus" />}
+        />
+
+            }
         </SafeAreaView>
     )
 }

@@ -15,7 +15,7 @@ import AssignmentSlider from '../components/AssignmentSlider';
 import ExamSlider from '../components/ExamSlider';
 import AddAssignmentScreen from './AddAssignment';
 import { FormControl, Modal, Button, Divider } from 'native-base';
-import { ASSIGNMENT, AUTHENTICATIONS, CLASS, EXAM } from '../services/api.constants';
+import { ASSIGNMENT, AUTH, AUTHENTICATIONS, CLASS, EXAM } from '../services/api.constants';
 import TeacherClassSlider from '../components/TeacherClassSlider';
 import MainLayout from './MainLayout';
 import { AuthContext } from '../utils/AuthContext';
@@ -91,6 +91,30 @@ export default function HomeScreen({ route }) {
 
   const isFocused = useIsFocused();
   const navigation = useNavigation();
+  const [username, setUsername] = React.useState('')
+  const [image, setImage] = React.useState('')
+  React.useEffect(() => {
+    console.log("Dashboard", userType)
+    fetch(AUTHENTICATIONS.API_URL + AUTH.GET_PROFILE + userToken)
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log('profgile =>', responseJson);
+          if (responseJson.profile) {
+            if (!responseJson.profile.image) {
+              setImage('');
+            } else {
+              setImage(responseJson.profile.image);
+            }
+          }
+          if (responseJson.user) {
+            setUsername(responseJson.user.username);
+          }
+        })
+        .catch(err => {
+          console.log(err.response);
+        });
+    
+  }, [])
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
@@ -102,11 +126,15 @@ export default function HomeScreen({ route }) {
                 <View>
 
                   <Text style={{ color: "white", fontSize: 20, fontWeight: "bold" }} >Hi,</Text>
-                  <Text style={{ paddingBottom: 8, color: "white", fontSize: 22, fontWeight: "bold" }}>John Doe</Text>
+                  <Text style={{ paddingBottom: 8, color: "white", fontSize: 22, fontWeight: "bold" }}>{ username ? username : "John Doe" }</Text>
                 </View>
                 <View>
                   <Image
-                    source={require("../assets/images/profile.png")}
+                    source={
+                      image === ''
+                      ? require('../assets/images/profile.png')
+                      : { uri: AUTHENTICATIONS.API_URL + image }
+                    }
                     style={styles.avatar}
                   />
 
