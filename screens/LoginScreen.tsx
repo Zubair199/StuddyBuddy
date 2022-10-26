@@ -63,29 +63,7 @@ export default function LoginScreen() {
     setEmail('');
   }
 
-  React.useEffect(() => {
-    clearStates();
-    setCurrentScreen('HomeScreen');
-    try {
-      fetch(AUTHENTICATIONS.API_URL + GENERAL.SITE_CONTENTS)
-        .then(response => response.json())
-        .then(responseJson => {
-          console.log(responseJson);
-          setAllSkills(responseJson.skills);
-          setAllLocations(responseJson.locations);
-          setAllSubjects(responseJson.subjects);
-        })
-        .catch((err: any) => {
-          console.log(err);
-          console.log(err.response);
-          Alert.alert('Alert', MESSAGE.EXCEPTION);
-          setShowSpinner(false);
-        });
-    } catch (exception) {
-      console.log('exception ', exception);
-      Alert.alert('Alert', MESSAGE.EXCEPTION);
-      setShowSpinner(false);
-    }
+  function autoLogin(){
     (async () => {
       let _remeberMe = await AsyncStorage.getItem('rememberMe');
       let _password = await AsyncStorage.getItem('password');
@@ -162,6 +140,32 @@ export default function LoginScreen() {
         setIsLoading(false);
       }
     })();
+  }
+
+  React.useEffect(() => {
+    clearStates();
+    setCurrentScreen('HomeScreen');
+    try {
+      fetch(AUTHENTICATIONS.API_URL + GENERAL.SITE_CONTENTS)
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log(responseJson);
+          setAllSkills(responseJson.skills);
+          setAllLocations(responseJson.locations);
+          setAllSubjects(responseJson.subjects);
+        })
+        .catch((err: any) => {
+          console.log(err);
+          console.log(err.response);
+          Alert.alert('Alert', MESSAGE.EXCEPTION);
+          setShowSpinner(false);
+        });
+    } catch (exception) {
+      console.log('exception ', exception);
+      Alert.alert('Alert', MESSAGE.EXCEPTION);
+      setShowSpinner(false);
+    }
+    autoLogin()
   }, []);
   const onPressLoginBtn = () => {
     if (email.trim().length == 0) {

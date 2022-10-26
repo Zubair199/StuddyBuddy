@@ -7,29 +7,7 @@ import ClassesTab from './ClassesTab';
 import ExamsTab from './ExamsTab';
 const windowWidth = Dimensions.get('window').width;
 
-const FirstRoute = () => (
-    <View style={{ flex: 1, backgroundColor: '#ffffff' }} >
-        <ClassesTab />
-    </View>
-);
 
-const SecondRoute = () => (
-    <View style={{ flex: 1, backgroundColor: '#ffffff' }} >
-        <AssignmentsTab />
-    </View>
-);
-
-const ThirdRoute = () => (
-    <View style={{ flex: 1, backgroundColor: '#ffffff' }} >
-        <ExamsTab />
-    </View>
-);
-
-const renderScene = SceneMap({
-    first: FirstRoute,
-    second: SecondRoute,
-    third: ThirdRoute,
-});
 
 export default function Tab() {
     const layout = useWindowDimensions();
@@ -41,6 +19,29 @@ export default function Tab() {
         { key: 'third', title: 'Exams' },
     ]);
     const [fontSize, setFontSize] = React.useState(14)
+    const FirstRoute = () => (
+        <View style={{ flex: 1, backgroundColor: '#ffffff' }} >
+            <ClassesTab />
+        </View>
+    );
+
+    const SecondRoute = () => (
+        <View style={{ flex: 1, backgroundColor: '#ffffff' }} >
+            <AssignmentsTab />
+        </View>
+    );
+
+    const ThirdRoute = () => (
+        <View style={{ flex: 1, backgroundColor: '#ffffff' }} >
+            <ExamsTab />
+        </View>
+    );
+
+    const renderScene = SceneMap({
+        first: FirstRoute,
+        second: SecondRoute,
+        third: ThirdRoute,
+    });
 
     React.useEffect(() => {
         console.log("windowWidth=> ", windowWidth);

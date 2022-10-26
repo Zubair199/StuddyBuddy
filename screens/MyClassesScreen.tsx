@@ -1,36 +1,14 @@
-/***
- * SettingsScreen
- * Author: Sarath Ambegoda
- * Created on: 2020/07/17
- */
-/*
-================
-Modified by: Abdul Zahir
-Changes: Schedule Screen ui added
-Modified on: 2020/07/20
-*/
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import * as React from "react";
 import {
-    Alert,
     Dimensions,
-    Image,
-    Modal,
     SafeAreaView,
     StyleSheet,
     Text,
-    TouchableOpacity,
     View,
 } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
-import { AUTHENTICATIONS, CLASS } from "../services/api.constants";
 import Icon from 'react-native-vector-icons/AntDesign';
-import DatePicker from 'react-native-date-picker'
-import { Select, Input, TextArea, IconButton } from "native-base";
-import Header from "../components/Header";
 import { ThemeContext } from "../context/ThemeContext";
-import Footer from "../components/Footer";
-import MainLayout from "./MainLayout";
 import Tab from "../components/Tab";
 import { AuthContext } from "../utils/AuthContext";
 import FAB from 'react-native-fab'

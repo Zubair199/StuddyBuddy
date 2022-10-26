@@ -1,32 +1,17 @@
 import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
-import { ImageBackground, SafeAreaView, ScrollView, StyleSheet, Touchable, TouchableOpacity, TouchableOpacityBase, View, TextInput, Dimensions, Image } from 'react-native';
+import {  SafeAreaView, ScrollView, StyleSheet,  TouchableOpacity, View,  Dimensions, Image } from 'react-native';
 import { Text } from 'react-native-elements'
 import { useNavigation } from '@react-navigation/native';
-import ClassSlider from '../components/ClassSlider';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-import { FAB } from 'react-native-elements';
-import AssignmentSlider from '../components/AssignmentSlider';
-import ExamSlider from '../components/ExamSlider';
-import AddAssignmentScreen from './AddAssignment';
-import { FormControl, Modal, Button, Divider } from 'native-base';
-import { ASSIGNMENT, AUTH, AUTHENTICATIONS, CLASS, EXAM } from '../services/api.constants';
-import TeacherClassSlider from '../components/TeacherClassSlider';
-import MainLayout from './MainLayout';
+import { AUTH, AUTHENTICATIONS} from '../services/api.constants';
 import { AuthContext } from '../utils/AuthContext';
-import TeacherAssignmentSlider from '../components/TeacherAssignmentSlider';
-import TeacherExamSlider from '../components/TeacherExamSlider';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import { ThemeContext } from '../context/ThemeContext';
 import LinearGradient from 'react-native-linear-gradient';
 import { app, info } from '../constants/themeColors';
-const screenHeight = Dimensions.get('screen').height;
 const { width, height } = Dimensions.get('screen');
 let iconSize = 30
 let homeSections = [

@@ -1,6 +1,7 @@
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import * as React from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Dimensions,
   Image,
@@ -14,6 +15,8 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { AUTHENTICATIONS, CLASS, EXAM } from '../services/api.constants';
 import { ThemeContext } from '../context/ThemeContext';
 import { AuthContext } from '../utils/AuthContext';
+import { Button } from 'native-base';
+import { app } from '../constants/themeColors';
 const { width, height } = Dimensions.get('screen');
 
 export default function ExamsTab() {
@@ -24,6 +27,7 @@ export default function ExamsTab() {
 
   const [limit, setLimit] = React.useState(5);
   const [examCount, setExamCount] = React.useState(0);
+  const [loader, setLoader] = React.useState(true);
 
   let [user, setUser] = React.useState(userToken);
   const { currentScreen, height, containerHeight } =
@@ -54,6 +58,7 @@ export default function ExamsTab() {
         console.log('exams ', responseJson.data);
         setExams(responseJson.data);
         setExamCount(responseJson.count);
+        setLoader(false)
       })
       .catch(err => {
         console.log(err);
@@ -72,6 +77,7 @@ export default function ExamsTab() {
         console.log('exams ', responseJson.data);
         setExams(responseJson.data);
         setExamCount(responseJson.count);
+        setLoader(false)
       })
       .catch(err => {
         console.log(err);
@@ -85,123 +91,174 @@ export default function ExamsTab() {
     getData(x);
   }
 
-  if (userType.toLowerCase() === 'user') {
+  function formatDate(date) {
+    console.log(new Date(date))
+    var d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+  }
+
+  function formatTime(d) {
+    var date = new Date(d);
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    var strTime = hours + ':' + minutes + ' ' + ampm;
+    return strTime;
+  }
+
+  if (loader) {
     return (
-      <View style={styles.container}>
-        <View style={{ height: containerHeight }}>
-          {!exams || exams.length == 0 ? (
-            <View style={styles.contentBox}>
-              <Text style={styles.emptySearchText}>
-                No Exams Has Been Found
-              </Text>
-            </View>
-          ) : (
-            <ScrollView
-              style={styles.scrollView}
-              showsVerticalScrollIndicator={false}>
-              <View>
-                {exams.map((examItem, index) => (
-                  <TouchableOpacity
-                    style={styles.groupBox}
-                    key={index}
-                    onPress={() => {
-                      navigation.navigate('ExamDetails', { examID: examItem.exam._id })
-                    }}
-                  >
-                    <Image source={require("../assets/images/bg.jpg")}
-                      style={styles.classImg}
-                    />
-                    <View style={styles.classInfo}>
-                      <View
-                        style={{
-                          flexWrap: "wrap",
-                          flexDirection: "row",
-                          width: "80%",
-                        }}
-                      >
-                        <Text style={styles.className}>{examItem.exam.title}</Text>
-                      </View>
-                      <View style={{ flexDirection: "row" }}>
-                        <Text style={styles.studio}>{examItem.teacher.username}</Text>
-                      </View>
-                      <Text style={styles.dayTime}>
-                        Monday &nbsp;
-                        12:00 &nbsp;-&nbsp; 14:00
-                      </Text>
-                      <Text style={styles.statusMsg}>
-                        {examItem.status}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                ))}
+      <SafeAreaView style={[styles.container, { justifyContent: "center" }]}>
+        <ActivityIndicator size="large" color={app.lightBlue} />
+      </SafeAreaView>
+    )
+  }
+  else {
+    if (userType.toLowerCase() === 'user') {
+      return (
+        <View style={styles.container}>
+          <View style={{ height: containerHeight }}>
+            {!exams || exams.length == 0 ? (
+              <View style={styles.contentBox}>
+                <Text style={styles.emptySearchText}>
+                  No Exams Has Been Found
+                </Text>
               </View>
-            </ScrollView>
-          )}
+            ) : (
+              <ScrollView
+                style={styles.scrollView}
+                showsVerticalScrollIndicator={false}>
+                <View style={{ paddingHorizontal: 15 }}>
+                  {exams.map((examItem, index) => (
+                    <TouchableOpacity
+                      style={styles.groupBox}
+                      key={index}
+                      onPress={() => {
+                        navigation.navigate('ExamDetails', { examID: examItem.exam._id })
+                      }}
+                    >
+                      <Image source={require("../assets/images/bg.jpg")}
+                        style={styles.classImg}
+                      />
+                      <View style={styles.classInfo}>
+                        <View
+                          style={{
+                            flexWrap: "wrap",
+                            flexDirection: "row",
+                            width: "80%",
+                          }}
+                        >
+                          <Text style={styles.className}>{examItem.exam.title}</Text>
+                        </View>
+                        <View style={{ flexDirection: "row" }}>
+                          <Text style={styles.studio}>{examItem.teacher.username}</Text>
+                        </View>
+                        <View
+                          style={{
+                            flexWrap: 'wrap',
+                            flexDirection: 'row',
+                            width: "80%"
+                          }}>
+                          <Text style={styles.dayTime}>
+                            Deadline: {formatDate(examItem.exam.enddate)}&nbsp;{formatTime(examItem.exam.enddate)}
+                          </Text>
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+                <View style={{ marginVertical: 15, marginHorizontal: 15 }}>
+                  {examCount < limit ? (
+                    <></>
+                  ) : (
+                    <Button onPress={() => loadMore()}>Load More</Button>
+                  )}
+                </View>
+              </ScrollView>
+            )}
+          </View>
         </View>
-      </View>
-    );
-  } else {
-    return (
-      <View style={styles.container}>
-        <View style={{ height: containerHeight }}>
-          {!exams || exams.length == 0 ? (
-            <View style={styles.contentBox}>
-              <Text style={styles.emptySearchText}>
-                No Exams Has Been Found
-              </Text>
-            </View>
-          ) : (
-            <ScrollView
-              style={styles.scrollView}
-              showsVerticalScrollIndicator={false}>
-              <View style={{ paddingHorizontal: 15 }}>
-                {exams.map((examItem, index) => (
-                  <TouchableOpacity
-                    style={[styles.groupBox, styles.segment]}
-                    key={index}
-                    onPress={() => {
-                      navigation.navigate('ExamDetails', {
-                        examID: examItem._id,
-                      });
-                    }}>
-                    <Image
-                      source={require('../assets/images/bg.jpg')}
-                      style={styles.classImg}
-                    />
-                    <View style={styles.classInfo}>
-                      <View
-                        style={{
-                          flexWrap: 'wrap',
-                          flexDirection: 'row',
-                          width: '80%',
-                        }}>
-                        <Text style={styles.className}>{examItem.title}</Text>
-                      </View>
-                      <View style={{ flexDirection: 'row' }}>
-                        <Text style={styles.studio}>
-                          {examItem.teacher.username}
-                        </Text>
-                      </View>
-                      <Text style={styles.dayTime}>
-                        Monday &nbsp; 12:00 &nbsp;-&nbsp; 14:00
-                      </Text>
-                      <Text style={styles.statusMsg}>{examItem.status}</Text>
-                    </View>
-                  </TouchableOpacity>
-                ))}
+      );
+    } else {
+      return (
+        <View style={styles.container}>
+          <View style={{ height: containerHeight }}>
+            {!exams || exams.length == 0 ? (
+              <View style={styles.contentBox}>
+                <Text style={styles.emptySearchText}>
+                  No Exams Has Been Found
+                </Text>
               </View>
-              <View style={{ marginVertical: 15 }}>
-                {examCount < limit ? (
-                  <></>
-                ) : (
-                  <Button onPress={() => loadMore()}>Load More</Button>
-                )}
-              </View>
-            </ScrollView>
-          )}
+            ) : (
+              <ScrollView
+                style={styles.scrollView}
+                showsVerticalScrollIndicator={false}>
+                <View style={{ paddingHorizontal: 15 }}>
+                  {exams.map((examItem, index) => (
+                    <TouchableOpacity
+                      style={[styles.groupBox, styles.segment]}
+                      key={index}
+                      onPress={() => {
+                        navigation.navigate('ExamDetails', {
+                          examID: examItem._id,
+                        });
+                      }}>
+                      <Image
+                        source={require('../assets/images/bg.jpg')}
+                        style={styles.classImg}
+                      />
+                      <View style={styles.classInfo}>
+                        <View
+                          style={{
+                            flexWrap: 'wrap',
+                            flexDirection: 'row',
+                            width: '80%',
+                          }}>
+                          <Text style={styles.className}>{examItem.title}</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row' }}>
+                          <Text style={styles.studio}>
+                            {examItem.teacher.username}
+                          </Text>
+                        </View>
+                        <View
+                          style={{
+                            flexWrap: 'wrap',
+                            flexDirection: 'row',
+                            width: "80%"
+                          }}>
+                          <Text style={styles.dayTime}>
+                            Deadline: {formatDate(examItem.enddate)}&nbsp;{formatTime(examItem.enddate)}
+                          </Text>
+                        </View>
+                        <Text style={styles.statusMsg}>{examItem.status}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+                <View style={{ marginVertical: 15, marginHorizontal: 15 }}>
+                  {examCount < limit ? (
+                    <></>
+                  ) : (
+                    <Button onPress={() => loadMore()}>Load More</Button>
+                  )}
+                </View>
+              </ScrollView>
+            )}
+          </View>
         </View>
-      </View>
-    );
+      );
+    }
   }
 }
 

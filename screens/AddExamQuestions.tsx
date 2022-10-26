@@ -4,10 +4,9 @@ import { ScrollView } from 'react-native-gesture-handler'
 import { Divider, Input, Select, TextArea } from 'native-base';
 import { Button } from 'react-native-elements';
 import { AUTHENTICATIONS, EXAM } from '../services/api.constants';
-import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
-import Stepper from "react-native-stepper-ui";
 import { useNavigation } from '@react-navigation/native';
 import { app, grey } from '../constants/themeColors';
+import Icon from 'react-native-vector-icons/AntDesign';
 
 export default function AddExamQuestions({ route }) {
     const navigation = useNavigation();
@@ -208,7 +207,7 @@ export default function AddExamQuestions({ route }) {
     }
     function renderStep() {
         return (
-            <View style={{ marginBottom: 20 }}>
+            <View  style={{ padding: 15 }}>
                 <View style={{ marginVertical: 10 }}>
                     <Text style={{ fontWeight: '400' }}>Enter Question {currentStep + 1}</Text>
                 </View>
@@ -283,9 +282,15 @@ export default function AddExamQuestions({ route }) {
     else {
         return (
             <View style={{ flex: 1, backgroundColor: 'white' }}>
-                <ScrollView style={{ padding: 15 }}>
-
-                    <Text style={styles.title}>Add Questions</Text>
+                <ScrollView  showsVerticalScrollIndicator={false}>
+                    <View style={{ flexDirection: "row-reverse", paddingHorizontal: 20, paddingTop: 20 }}>
+                        <TouchableOpacity onPress={() => { navigation.navigate("Classes") }}>
+                            <Icon name="close" size={25} />
+                        </TouchableOpacity>
+                    </View>
+                    <View>
+                        <Text style={styles.title}>Add Questions</Text>
+                    </View>
                     {
                         renderStep()
                     }

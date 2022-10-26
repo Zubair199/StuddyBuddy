@@ -9,12 +9,14 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ActivityIndicator
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { AUTHENTICATIONS, CLASS } from '../services/api.constants';
 import { ThemeContext } from '../context/ThemeContext';
 import { AuthContext } from '../utils/AuthContext';
 import { Button } from 'native-base';
+import { app } from '../constants/themeColors';
 const { width, height } = Dimensions.get('screen');
 
 export default function ClassesTab() {
@@ -25,6 +27,8 @@ export default function ClassesTab() {
 
   const [limit, setLimit] = React.useState(5);
   const [classCount, setClassCount] = React.useState(0);
+
+  const [loader, setLoader] = React.useState(true);
 
   let [user, setUser] = React.useState(userToken);
   const { currentScreen, height, containerHeight } =
@@ -75,6 +79,7 @@ export default function ClassesTab() {
         });
         console.log(_classes);
         setClasses(_classes);
+        setLoader(false)
       })
       .catch(err => {
         console.log(err);
@@ -103,6 +108,7 @@ export default function ClassesTab() {
         });
         console.log(_classes);
         setClasses(_classes);
+        setLoader(false)
       })
       .catch(err => {
         console.log(err);
@@ -116,69 +122,81 @@ export default function ClassesTab() {
     getData(x);
   }
 
-  return (
-    <View style={styles.container}>
-      <View style={{ height: containerHeight }}>
-        {!classes || classes.length == 0 ? (
-          <View style={styles.contentBox}>
-            <Text style={styles.emptySearchText}>No Class Has Been Found</Text>
-          </View>
-        ) : (
-          <ScrollView
-            style={styles.scrollView}
-            showsVerticalScrollIndicator={false}>
-            <View style={{ paddingHorizontal: 15 }}>
-              {classes.map((item, index) => {
-                let classItem = item.class;
-                return (
-                  <TouchableOpacity
-                    style={[styles.groupBox, styles.segment]}
-                    key={index}
-                    onPress={() => {
-                      navigation.navigate('ClassDetails', {
-                        classID: classItem._id,
-                      });
-                    }}>
-                    <Image
-                      source={require('../assets/images/bg.jpg')}
-                      style={styles.classImg}
-                    />
-                    <View style={styles.classInfo}>
-                      <View style={styles.levelBox}>
-                        <View style={styles.levelIntermediate}></View>
-                        <Text style={styles.levelText}>{classItem.level}</Text>
-                      </View>
-                      <View
-                        style={{
-                          flexWrap: 'wrap',
-                          flexDirection: 'row',
-                          width: '80%',
-                        }}>
-                        <Text style={styles.className}>{classItem.name}</Text>
-                      </View>
-                      <View style={{ flexDirection: 'row' }}>
-                        <Text style={styles.studio}>
-                          {classItem.Teacher.username}
-                        </Text>
-                      </View>
-                      <Text style={styles.statusMsg}>{classItem.status}</Text>
-                    </View>
-                  </TouchableOpacity>
-                );
-              })}
+  if (loader) {
+    return (
+      <SafeAreaView style={[styles.container,{justifyContent: "center"}]}>
+        <ActivityIndicator size="large" color={ app.lightBlue } />
+      </SafeAreaView>
+    )
+  }
+  else {
+    return (
+      <View style={styles.container}>
+        <View style={{ height: containerHeight }}>
+          {!classes || classes.length == 0 ? (
+            <View style={styles.contentBox}>
+              <Text style={styles.emptySearchText}>No Class Has Been Found</Text>
             </View>
-            <View style={{ marginVertical: 15, marginHorizontal: 15 }}>
-              {classCount < limit ? (
-                <></>
-              ) : (
-                <Button onPress={() => loadMore()}>Load More</Button>
-              )}
-            </View>
-          </ScrollView>
-        )}
+          ) : (
+            <ScrollView
+              style={styles.scrollView}
+              showsVerticalScrollIndicator={false}>
+              <View style={{ paddingHorizontal: 15 }}>
+                {classes.map((item, index) => {
+                  let classItem = item.class;
+                  return (
+                    <TouchableOpacity
+                      style={[styles.groupBox, styles.segment]}
+                      key={index}
+                      onPress={() => {
+                        navigation.navigate('ClassDetails', {
+                          classID: classItem._id,
+                        });
+                      }}>
+                      <Image
+                        source={require('../assets/images/bg.jpg')}
+                        style={styles.classImg}
+                      />
+                      <View style={styles.classInfo}>
+                        <View style={styles.levelBox}>
+                          <View style={styles.levelIntermediate}></View>
+                          <Text style={styles.levelText}>{classItem.level}</Text>
+                        </View>
+                        <View
+                          style={{
+                            flexWrap: 'wrap',
+                            flexDirection: 'row',
+                            width: '80%',
+                          }}>
+                          <Text style={styles.className}>{classItem.name}</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row' }}>
+                          <Text style={styles.studio}>
+                            {classItem.Teacher.username}
+                          </Text>
+                        </View>
+                        {
+                          userType.toLowerCase() === 'teacher' &&
+                          <Text style={styles.statusMsg}>{classItem.status}</Text>
+                        }
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+              <View style={{ marginVertical: 15, marginHorizontal: 15 }}>
+                {classCount < limit ? (
+                  <></>
+                ) : (
+                  <Button onPress={() => loadMore()}>Load More</Button>
+                )}
+              </View>
+            </ScrollView>
+          )}
+        </View>
       </View>
-    </View>
-  );
+    );
+  }
 }
 
 const styles = StyleSheet.create({

@@ -4,8 +4,6 @@ import { ScrollView } from 'react-native-gesture-handler'
 import { Divider, Input, Select, TextArea } from 'native-base';
 import { Button } from 'react-native-elements';
 import { ASSIGNMENT, AUTHENTICATIONS, EXAM } from '../services/api.constants';
-import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
-import Stepper from "react-native-stepper-ui";
 import { useNavigation } from '@react-navigation/native';
 import { app, grey } from '../constants/themeColors';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -246,8 +244,14 @@ export default function AddAssignmentQuestions({ route }) {
         return (
             <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
                 <ScrollView showsVerticalScrollIndicator={false}>
-
-                    <Text style={styles.title}>Add Questions</Text>
+                    <View style={{flexDirection:"row-reverse", paddingHorizontal: 20, paddingTop: 20 }}>
+                        <TouchableOpacity onPress={()=>{navigation.navigate("Classes")}}>
+                            <Icon name="close" size={25} />
+                        </TouchableOpacity>
+                    </View>
+                    <View>
+                        <Text style={styles.title}>Add Questions</Text>
+                    </View>
                     {/* <Text style={styles.label}>totalSteps: {totalSteps}</Text> */}
                     {
                         renderStep()

@@ -8,7 +8,7 @@ import SelectDropdown from 'react-native-select-dropdown'
 import { ScrollView } from 'react-native-gesture-handler';
 import * as ImagePicker from 'react-native-image-picker';
 import RadioGroup from 'react-native-radio-buttons-group';
-import { Select, Input, TextArea, IconButton } from "native-base";
+import { Select, Input, TextArea, IconButton, Divider } from "native-base";
 import Icon from 'react-native-vector-icons/AntDesign';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { Calendar } from 'react-native-calendars';
@@ -16,7 +16,7 @@ import { useNavigation } from '@react-navigation/native';
 import { ProgressSteps, ProgressStep } from 'react-native-progress-steps';
 
 import services from "../services/api.services"
-import { AUTHENTICATIONS, CLASS } from '../services/api.constants';
+import { AUTHENTICATIONS, CLASS, MESSAGE } from '../services/api.constants';
 import { AuthContext } from '../utils/AuthContext';
 
 const radioButtonsData = [{
@@ -325,10 +325,13 @@ export default function AddClassScreen() {
         .catch((err: any) => {
           console.log(err)
           console.log(err.response)
+          Alert.alert('Alert', MESSAGE.EXCEPTION);
+
         })
     }
     catch (exception) {
       console.log('exception ', exception)
+      Alert.alert('Alert', MESSAGE.EXCEPTION);
     }
 
   }
@@ -641,44 +644,93 @@ export default function AddClassScreen() {
         </ProgressStep>
         <ProgressStep label="Review Class & Schedule" onSubmit={() => addClass()}>
           <View style={{ padding: 15 }}>
-            <View>
-              <Text>{name}</Text>
-              <Text>{subject}</Text>
-              <Text>{level}</Text>
-              <Text>{classDuration}</Text>
-              <Text>{language}</Text>
+            <View style={{ paddingHorizontal: 20 }}>
+              <View style={{ paddingVertical: 15 }}>
+                <Divider />
+              </View>
+              <View>
+                <Text style={{ fontWeight: 'bold' }}>Details</Text>
+              </View>
+              <View style={{ paddingVertical: 15 }}>
+                <Divider />
+              </View>
+              <View style={{ flexDirection: 'row', justifyContent: "space-between", paddingBottom: 5 }}>
+                <Text style={{ fontWeight: 'bold' }} >Class Name</Text>
+                <Text>{name}</Text>
+              </View>
+              <View style={{ flexDirection: 'row', justifyContent: "space-between", paddingBottom: 5 }}>
+                <Text style={{ fontWeight: 'bold' }}>Subject</Text>
+                <Text>{subject}</Text>
+              </View>
+              <View style={{ flexDirection: 'row', justifyContent: "space-between", paddingBottom: 5 }}>
+                <Text style={{ fontWeight: 'bold' }} >Level</Text>
+                <Text>{level}</Text>
+              </View>
+              <View style={{ flexDirection: 'row', justifyContent: "space-between", paddingBottom: 5 }}>
+                <Text style={{ fontWeight: 'bold' }}>Class Duration</Text>
+                <Text>{classDuration}{" month"}</Text>
+              </View>
+              <View style={{ flexDirection: 'row', justifyContent: "space-between", paddingBottom: 5 }}>
+                <Text style={{ fontWeight: 'bold' }}>Language</Text>
+                <Text>{language}</Text>
+              </View>
+              <View style={{ paddingTop: 20 }}>
+                <Divider />
+              </View>
             </View>
-            <View>
-              {
-                schedule.map((item, index) => {
-                  return (
-                    <View style={{ flexDirection: "row", justifyContent: "space-evenly", marginTop: 10 }}>
+            <View style={{ paddingHorizontal: 20, paddingVertical: 15 }}>
+              <View>
+                <Text style={{ fontWeight: 'bold' }}>Schedule</Text>
+              </View>
+              <View style={{ paddingTop: 20 }}>
+                <Divider />
+              </View>
+              <View style={{ flexDirection: "row", justifyContent: "space-evenly", marginTop: 10 }} >
+                <Text style={{ fontWeight: 'bold' }}>Start DateTime</Text>
+                <Text style={{ fontWeight: 'bold' }}>End DateTime</Text>
+                <Text style={{ fontWeight: 'bold' }}>Action</Text>
+              </View>
+              <View style={{ paddingVertical: 10 }}>
+                <Divider />
+              </View>
+              <View>
+                {
+                  schedule.map((item, index) => {
+                    return (
                       <View>
-                        <Text>{formatDate(item.startdate)}</Text>
-                        <Text>{formatTime(item.startdate)}</Text>
+                        <View style={{ flexDirection: "row", justifyContent: "space-evenly", marginTop: 10 }}>
+                          <View>
+                            <Text>{formatDate(item.startdate)}</Text>
+                            <Text>{formatTime(item.startdate)}</Text>
+                          </View>
+                          <View>
+                            <Text>{formatDate(item.enddate)}</Text>
+                            <Text>{formatTime(item.enddate)}</Text>
+                          </View>
+                          <View>
+                            <Text>{item.maxStudents}</Text>
+                          </View>
+                          <View>
+                            <TouchableOpacity onPress={() => deleteSchedule(item)}>
+                              <FontAwesomeIcon name='trash' size={20} />
+                            </TouchableOpacity>
+                          </View>
+                        </View>
+                        <View style={{ paddingVertical: 10 }}>
+                          <Divider />
+                        </View>
                       </View>
-                      <View>
-                        <Text>{formatDate(item.enddate)}</Text>
-                        <Text>{formatTime(item.enddate)}</Text>
-                      </View>
-                      <View>
-                        <Text>{item.maxStudents}</Text>
-                      </View>
-                      <View>
-                        <TouchableOpacity onPress={() => deleteSchedule(item)}>
-                          <FontAwesomeIcon name='trash' size={20} />
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  )
-                })
-              }
+
+                    )
+                  })
+                }
+              </View>
             </View>
           </View>
         </ProgressStep>
       </ProgressSteps>
 
-    </SafeAreaView>
+    </SafeAreaView >
   )
 }
 

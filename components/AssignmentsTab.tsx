@@ -1,6 +1,7 @@
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import * as React from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Dimensions,
   Image,
@@ -20,6 +21,7 @@ import {
 import { ThemeContext } from '../context/ThemeContext';
 import { AuthContext } from '../utils/AuthContext';
 import { Button } from 'native-base';
+import { app } from '../constants/themeColors';
 const { width, height } = Dimensions.get('screen');
 
 export default function AssignmentsTab() {
@@ -29,6 +31,7 @@ export default function AssignmentsTab() {
   const { userToken, userType } = React.useContext(AuthContext);
   const [limit, setLimit] = React.useState(5);
   const [assignmentsCount, setAssignmentCount] = React.useState(0);
+  const [loader, setLoader] = React.useState(true);
 
   let [user, setUser] = React.useState(userToken);
   const { currentScreen, height, containerHeight } =
@@ -55,9 +58,10 @@ export default function AssignmentsTab() {
     )
       .then(response => response.json())
       .then(responseJson => {
-        console.log('assignments ', responseJson.data);
+        console.log('assignments ', responseJson.count);
         setAssignments(responseJson.data);
         setAssignmentCount(responseJson.count);
+        setLoader(false)
       })
       .catch(err => {
         console.log(err);
@@ -77,6 +81,7 @@ export default function AssignmentsTab() {
         console.log('assignments ', responseJson.data);
         setAssignments(responseJson.data);
         setAssignmentCount(responseJson.count);
+        setLoader(false)
       })
       .catch(err => {
         console.log(err);
@@ -89,6 +94,8 @@ export default function AssignmentsTab() {
     setLimit(x);
     getData(x);
   }
+
+
   function formatDate(date) {
     console.log(new Date(date))
     var d = new Date(date),
@@ -113,143 +120,162 @@ export default function AssignmentsTab() {
     var strTime = hours + ':' + minutes + ' ' + ampm;
     return strTime;
   }
-  if (userType.toLowerCase() === 'user') {
+  if (loader) {
     return (
-      <View style={styles.container}>
-        <View style={{ height: containerHeight }}>
-          {!assignments || assignments.length == 0 ? (
-            <View style={styles.contentBox}>
-              <Text style={styles.emptySearchText}>
-                No Assignments Has Been Found
-              </Text>
-            </View>
-          ) : (
-            <ScrollView
-              style={styles.scrollView}
-              showsVerticalScrollIndicator={false}>
-              <View style={{ paddingHorizontal: 15 }}>
-                {assignments.map((assignmentItem, index) => (
-                  <TouchableOpacity
-                    style={[styles.groupBox, styles.segment]}
-                    key={index}
-                    onPress={() => {
-                      navigation.navigate('AssignmentDetails', {
-                        assignmentID: assignmentItem.assignment._id,
-                      });
-                    }}>
-                    <Image
-                      source={require('../assets/images/bg.jpg')}
-                      style={styles.classImg}
-                    />
-                    <View style={styles.classInfo}>
-                      <View
-                        style={{
-                          flexWrap: 'wrap',
-                          flexDirection: 'row',
-                          width: '80%',
-                        }}>
-                        <Text style={styles.className}>
-                          {assignmentItem.assignment.title}
-                        </Text>
-                      </View>
-                      <View style={{ flexDirection: 'row' }}>
-                        <Text style={styles.studio}>
-                          {assignmentItem.teacher.username}
-                        </Text>
-                      </View>
-                      <Text style={styles.dayTime}>
-                        Monday &nbsp; 12:00 &nbsp;-&nbsp; 14:00
-                      </Text>
-                      <Text style={styles.statusMsg}>
-                        {assignmentItem.status}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                ))}
+      <SafeAreaView style={[styles.container, { justifyContent: "center" }]}>
+        <ActivityIndicator size="large" color={app.lightBlue} />
+      </SafeAreaView>
+    )
+  }
+  else {
+    if (userType.toLowerCase() === 'user') {
+      return (
+        <View style={styles.container}>
+          <View style={{ height: containerHeight }}>
+            {!assignments || assignments.length == 0 ? (
+              <View style={styles.contentBox}>
+                <Text style={styles.emptySearchText}>
+                  No Assignments Has Been Found
+                </Text>
               </View>
-              <View style={{ marginVertical: 15 }}>
-                {assignmentsCount < limit ? (
-                  <></>
-                ) : (
-                  <Button onPress={() => loadMore()}>Load More</Button>
-                )}
-              </View>
-            </ScrollView>
-          )}
+            ) : (
+              <ScrollView
+                style={styles.scrollView}
+                showsVerticalScrollIndicator={false}>
+                <View style={{ paddingHorizontal: 15 }}>
+                  {assignments.map((assignmentItem, index) => (
+                    <TouchableOpacity
+                      style={[styles.groupBox, styles.segment]}
+                      key={index}
+                      onPress={() => {
+                        navigation.navigate('AssignmentDetails', {
+                          assignmentID: assignmentItem.assignment._id,
+                        });
+                      }}>
+                      <Image
+                        source={require('../assets/images/bg.jpg')}
+                        style={styles.classImg}
+                      />
+                      <View style={styles.classInfo}>
+                        <View
+                          style={{
+                            flexWrap: 'wrap',
+                            flexDirection: 'row',
+                            width: '80%',
+                          }}>
+                          <Text style={styles.className}>
+                            {assignmentItem.assignment.title}
+                          </Text>
+                        </View>
+                        <View style={{ flexDirection: 'row' }}>
+                          <Text style={styles.studio}>
+                            {assignmentItem.teacher.username}
+                          </Text>
+                        </View>
+                        <View
+                          style={{
+                            flexWrap: 'wrap',
+                            flexDirection: 'row',
+                            width: "80%"
+                          }}>
+                          <Text style={styles.dayTime}>
+                            Deadline: {formatDate(assignmentItem.assignment.enddate)}&nbsp;{formatTime(assignmentItem.assignment.enddate)}
+
+                          </Text>
+                        </View>
+
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+                <View style={{ marginVertical: 15, marginHorizontal: 15 }}>
+
+                  {assignmentsCount < limit ? (
+                    <></>
+                  ) : (
+                    <Button onPress={() => loadMore()}>Load More</Button>
+                  )}
+                </View>
+              </ScrollView>
+            )}
+          </View>
         </View>
-      </View>
-    );
-  } else {
-    return (
-      <View style={styles.container}>
-        <View style={{ height: containerHeight }}>
-          {!assignments || assignments.length == 0 ? (
-            <View style={styles.contentBox}>
-              <Text style={styles.emptySearchText}>
-                No Assignments Has Been Found
-              </Text>
-            </View>
-          ) : (
-            <ScrollView
-              style={styles.scrollView}
-              showsVerticalScrollIndicator={false}>
-              <View style={{ paddingHorizontal: 15 }}>
-                {assignments.map((assignmentItem, index) => (
-                  <TouchableOpacity
-                    style={[styles.groupBox, styles.segment]}
-                    key={index}
-                    onPress={() => {
-                      navigation.navigate('AssignmentDetails', {
-                        assignmentID: assignmentItem._id,
-                      });
-                    }}>
-                    <Image
-                      source={require('../assets/images/bg.jpg')}
-                      style={styles.classImg}
-                    />
-                    <View style={styles.classInfo}>
-                      <View
-                        style={{
-                          flexWrap: 'wrap',
-                          flexDirection: 'row',
-                        }}>
-                        <Text style={styles.className}>
-                          {assignmentItem.title}
-                        </Text>
-                      </View>
-                      <View style={{ flexDirection: 'row' }}>
-                        <Text style={styles.studio}>
-                          {assignmentItem.teacher.username}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          flexWrap: 'wrap',
-                          flexDirection: 'row',
-                        }}>
-                        <Text style={styles.dayTime}>
-                          Deadline: Monday 12:00
-                        </Text>
-                      </View>
-                      <Text style={styles.statusMsg}>
-                        {assignmentItem.status}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                ))}
+      );
+    } else {
+      return (
+        <View style={styles.container}>
+          <View style={{ height: containerHeight }}>
+            {!assignments || assignments.length == 0 ? (
+              <View style={styles.contentBox}>
+                <Text style={styles.emptySearchText}>
+                  No Assignments Has Been Found
+                </Text>
               </View>
-              <View style={{ marginVertical: 15 }}>
-                {assignmentsCount < limit ? (
-                  <></>
-                ) : (
-                  <Button onPress={() => loadMore()}>Load More</Button>
-                )}
-              </View>
-            </ScrollView>
-          )}
+            ) : (
+              <ScrollView
+                style={styles.scrollView}
+                showsVerticalScrollIndicator={false}>
+                <View style={{ paddingHorizontal: 15 }}>
+                  {assignments.map((assignmentItem, index) => (
+                    <TouchableOpacity
+                      style={[styles.groupBox, styles.segment]}
+                      key={index}
+                      onPress={() => {
+                        navigation.navigate('AssignmentDetails', {
+                          assignmentID: assignmentItem._id,
+                        });
+                      }}>
+                      <Image
+                        source={require('../assets/images/bg.jpg')}
+                        style={styles.classImg}
+                      />
+                      <View style={styles.classInfo}>
+
+                        <View
+                          style={{
+                            flexWrap: 'wrap',
+                            flexDirection: 'row',
+                            width: "80%"
+                          }}>
+                          <Text style={styles.className}>
+                            {assignmentItem.title}
+                          </Text>
+                        </View>
+                        <View style={{ flexDirection: 'row' }}>
+                          <Text style={styles.studio}>
+                            {assignmentItem.teacher.username}
+                          </Text>
+                        </View>
+                        <View
+                          style={{
+                            flexWrap: 'wrap',
+                            flexDirection: 'row',
+                            width: "80%"
+                          }}>
+                          <Text style={styles.dayTime}>
+                            Deadline: {formatDate(assignmentItem.enddate)}&nbsp;{formatTime(assignmentItem.enddate)}
+                          </Text>
+                        </View>
+                        <Text style={styles.statusMsg}>
+                          {assignmentItem.status}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+                <View style={{ marginVertical: 15, marginHorizontal: 15 }}>
+                  {assignmentsCount < limit ? (
+                    <></>
+                  ) : (
+                    <Button onPress={() => loadMore()}>Load More</Button>
+                  )}
+                </View>
+              </ScrollView>
+            )}
+          </View>
         </View>
-      </View>
-    );
+      );
+    }
   }
 }
 
