@@ -12,6 +12,7 @@ Modified on: 2020/07/20
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import * as React from "react";
 import {
+  ActivityIndicator,
   Alert,
   Image,
   SafeAreaView,
@@ -27,12 +28,13 @@ import DatePicker from 'react-native-date-picker'
 import { Select, Input, TextArea, IconButton } from "native-base";
 import MainLayout from "./MainLayout";
 import { AuthContext } from "../utils/AuthContext";
+import { app } from "../constants/themeColors";
 
 export default function SchedulesScreen() {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
   // const onClose = () => navigation.navigate("ClassesScreen");
-  const [loader, setLoader] = React.useState(false);
+  const [loader, setLoader] = React.useState(true);
   const [data, setData] = React.useState<any>();
   // const [grouped, setGrouped] = React.useState<any>();
   const [groupList, setGroupList] = React.useState<any>();
@@ -75,6 +77,7 @@ export default function SchedulesScreen() {
   // }
 
   const teacherApiCall = (text) => {
+    setLoader(true)
     let _Date = new Date(text)
     const month = (_Date.getMonth() + 1)
     const year = _Date.getFullYear()
@@ -116,6 +119,7 @@ export default function SchedulesScreen() {
 
           })
           setClasses(_classes)
+          setLoader(false)
         })
         .catch(err => {
           console.log(err)
@@ -126,6 +130,7 @@ export default function SchedulesScreen() {
     }
   }
   const studentApiCall = (text) => {
+    setLoader(true)
     let _Date = new Date(text)
     const month = (_Date.getMonth() + 1)
     const year = _Date.getFullYear()
@@ -152,6 +157,7 @@ export default function SchedulesScreen() {
         .then((responseJson) => {
           console.log('classes ', responseJson.data)
           setClasses(responseJson.data)
+          setLoader(false)
         })
         .catch(err => {
           console.log(err)
@@ -161,10 +167,17 @@ export default function SchedulesScreen() {
       console.log(err)
     }
   }
-
-  return (
-    <SafeAreaView style={styles.container}>
-      {/* <View style={styles.closeIconBox}>
+  if (loader) {
+    return (
+      <SafeAreaView style={[styles.container, { justifyContent: "center" }]}>
+        <ActivityIndicator size="large" color={app.lightBlue} />
+      </SafeAreaView>
+    )
+  }
+  else {
+    return (
+      <SafeAreaView style={styles.container}>
+        {/* <View style={styles.closeIconBox}>
         <TouchableOpacity onPress={onClose}>
           <Image
             style={styles.closeIcon}
@@ -173,173 +186,174 @@ export default function SchedulesScreen() {
         </TouchableOpacity>
       </View> */}
 
-      {/* <View>
+        {/* <View>
         <Text style={styles.title}>My Schedule</Text>
       </View> */}
-      <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 20 }}>
-        <View style={{ marginTop: 10 }}>
-          <Text style={{ fontWeight: '400', fontSize: 20 }}>{stringDate}</Text>
-        </View>
-        <View>
-          <IconButton
-            icon={
-              <Icon
-                name="calendar"
-                style={{ marginRight: 15 }}
-                size={25}
-                onPress={() => { console.log("preess"); openDatePicker() }}
-              />
-            }
-          />
-          <DatePicker
-            modal
-            open={open}
-            date={_startdate}
-            onConfirm={(text) => {
-              _setStartdate(text);
-              setOpen(false);
-              if (userType.toLowerCase() === "user") {
-                studentApiCall(text);
+        <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 20 }}>
+          <View style={{ marginTop: 10 }}>
+            <Text style={{ fontWeight: '400', fontSize: 20 }}>{stringDate}</Text>
+          </View>
+          <View>
+            <IconButton
+              icon={
+                <Icon
+                  name="calendar"
+                  style={{ marginRight: 15 }}
+                  size={25}
+                  onPress={() => { console.log("preess"); openDatePicker() }}
+                />
               }
-              else {
-                teacherApiCall(text)
-              }
-            }}
-            onCancel={() => {
-              setOpen(false)
-            }}
-          />
+            />
+            <DatePicker
+              modal
+              open={open}
+              date={_startdate}
+              onConfirm={(text) => {
+                _setStartdate(text);
+                setOpen(false);
+                if (userType.toLowerCase() === "user") {
+                  studentApiCall(text);
+                }
+                else {
+                  teacherApiCall(text)
+                }
+              }}
+              onCancel={() => {
+                setOpen(false)
+              }}
+            />
+          </View>
         </View>
-      </View>
-      {/* {!groupList || groupList.length == 0 ? (
+        {/* {!groupList || groupList.length == 0 ? (
         <View style={styles.contentBox}>
           <Text style={styles.emptySearchText}>
             No Class Has Been Added Yet
           </Text>
         </View>
       ) : ( */}
-      {!classes || classes.length == 0 ? (
-        <View style={styles.contentBox}>
-          <Text style={styles.emptySearchText}>
-            No Class Has Been Found
-          </Text>
-        </View>
-      ) : (
-        <ScrollView
-          style={styles.scrollView}
-          showsVerticalScrollIndicator={false}
-        >
-          {
-            // userType.toLowerCase() === "user" ?
-            //   <View >
-            //     {classes.map((classItem, index) => (
-            //       <TouchableOpacity
-            //         style={styles.groupBox}
-            //         key={index}
-            //         onPress={() => {
-            //           navigation.navigate('ClassDetails', { classID: classItem.class._id })
-            //         }}
-            //       >
-            //         <Image source={require("../assets/images/bg.jpg")}
-            //           style={styles.classImg}
-            //         />
-            //         <View style={styles.classInfo}>
-            //           <View style={styles.levelBox}>
-            //             <View
-            //               style={
-            //                 styles.levelIntermediate
-            //               }
-            //             ></View>
-            //             <Text style={styles.levelText}>{classItem.class.level}</Text>
-            //           </View>
-            //           <View
-            //             style={{
-            //               flexWrap: "wrap",
-            //               flexDirection: "row",
-            //               width: "80%",
-            //             }}
-            //           >
-            //             <Text style={styles.className}>{classItem.class.name}</Text>
-            //           </View>
-            //           <View style={{ flexDirection: "row" }}>
-            //             <Text style={styles.studio}>{classItem.teacher.username}</Text>
-            //             {/* <View style={styles.dot}></View>
-            //       <Text style={styles.studio}>{classItem.studio}</Text> */}
-            //           </View>
-            //           <Text style={styles.dayTime}>
-            //             Monday &nbsp;
-            //             12:00 &nbsp;-&nbsp; 14:00
-            //           </Text>
-            //           {/* {classItem.myJoinStatus &&
-            //       classItem.myJoinStatus === "pending" && ( */}
-            //           <Text style={styles.statusMsg}>
-            //             {classItem.class.status}
-            //           </Text>
-            //           {/* )}
-            //     {classItem.status &&
-            //       !classItem.myJoinStatus &&
-            //       classItem.status === "pending" && (
-            //         <Text style={styles.statusMsg}>
-            //           Waiting For Admin Approval
-            //         </Text>
-            //       )} */}
-            //         </View>
-            //       </TouchableOpacity>
-            //     ))}
-            //   </View>
-            //   :
-            <View >
-              {
-                classes.map((item, index) => {
-                  let classItem = item.class
-                  console.log(classItem)
-                  return (
-                    <TouchableOpacity
-                      style={styles.groupBox}
-                      key={index}
-                      onPress={() => {
-                        navigation.navigate('ClassDetails', { classID: classItem._id })
-                      }}
-                    >
-                      <Image source={require("../assets/images/bg.jpg")}
-                        style={styles.classImg}
-                      />
-                      <View style={styles.classInfo}>
-                        <View style={styles.levelBox}>
+        {!classes || classes.length == 0 ? (
+          <View style={styles.contentBox}>
+            <Text style={styles.emptySearchText}>
+              No Class Has Been Found
+            </Text>
+          </View>
+        ) : (
+          <ScrollView
+            style={styles.scrollView}
+            showsVerticalScrollIndicator={false}
+          >
+            {
+              // userType.toLowerCase() === "user" ?
+              //   <View >
+              //     {classes.map((classItem, index) => (
+              //       <TouchableOpacity
+              //         style={styles.groupBox}
+              //         key={index}
+              //         onPress={() => {
+              //           navigation.navigate('ClassDetails', { classID: classItem.class._id })
+              //         }}
+              //       >
+              //         <Image source={require("../assets/images/bg.jpg")}
+              //           style={styles.classImg}
+              //         />
+              //         <View style={styles.classInfo}>
+              //           <View style={styles.levelBox}>
+              //             <View
+              //               style={
+              //                 styles.levelIntermediate
+              //               }
+              //             ></View>
+              //             <Text style={styles.levelText}>{classItem.class.level}</Text>
+              //           </View>
+              //           <View
+              //             style={{
+              //               flexWrap: "wrap",
+              //               flexDirection: "row",
+              //               width: "80%",
+              //             }}
+              //           >
+              //             <Text style={styles.className}>{classItem.class.name}</Text>
+              //           </View>
+              //           <View style={{ flexDirection: "row" }}>
+              //             <Text style={styles.studio}>{classItem.teacher.username}</Text>
+              //             {/* <View style={styles.dot}></View>
+              //       <Text style={styles.studio}>{classItem.studio}</Text> */}
+              //           </View>
+              //           <Text style={styles.dayTime}>
+              //             Monday &nbsp;
+              //             12:00 &nbsp;-&nbsp; 14:00
+              //           </Text>
+              //           {/* {classItem.myJoinStatus &&
+              //       classItem.myJoinStatus === "pending" && ( */}
+              //           <Text style={styles.statusMsg}>
+              //             {classItem.class.status}
+              //           </Text>
+              //           {/* )}
+              //     {classItem.status &&
+              //       !classItem.myJoinStatus &&
+              //       classItem.status === "pending" && (
+              //         <Text style={styles.statusMsg}>
+              //           Waiting For Admin Approval
+              //         </Text>
+              //       )} */}
+              //         </View>
+              //       </TouchableOpacity>
+              //     ))}
+              //   </View>
+              //   :
+              <View >
+                {
+                  classes.map((item, index) => {
+                    let classItem = item.class
+                    console.log(classItem)
+                    return (
+                      <TouchableOpacity
+                        style={styles.groupBox}
+                        key={index}
+                        onPress={() => {
+                          navigation.navigate('ClassDetails', { classID: classItem._id })
+                        }}
+                      >
+                        <Image source={require("../assets/images/bg.jpg")}
+                          style={styles.classImg}
+                        />
+                        <View style={styles.classInfo}>
+                          <View style={styles.levelBox}>
+                            <View
+                              style={
+                                styles.levelIntermediate
+                              }
+                            ></View>
+                            <Text style={styles.levelText}>{classItem.level}</Text>
+                          </View>
                           <View
-                            style={
-                              styles.levelIntermediate
-                            }
-                          ></View>
-                          <Text style={styles.levelText}>{classItem.level}</Text>
+                            style={{
+                              flexWrap: "wrap",
+                              flexDirection: "row",
+                              width: "80%",
+                            }}
+                          >
+                            <Text style={styles.className}>{classItem.name}</Text>
+                          </View>
+                          <View style={{ flexDirection: "row" }}>
+                            <Text style={styles.studio}>{classItem.Teacher.username}</Text>
+                          </View>
+                          <Text style={styles.statusMsg}>
+                            {classItem.status}
+                          </Text>
                         </View>
-                        <View
-                          style={{
-                            flexWrap: "wrap",
-                            flexDirection: "row",
-                            width: "80%",
-                          }}
-                        >
-                          <Text style={styles.className}>{classItem.name}</Text>
-                        </View>
-                        <View style={{ flexDirection: "row" }}>
-                          <Text style={styles.studio}>{classItem.Teacher.username}</Text>
-                        </View>
-                        <Text style={styles.statusMsg}>
-                          {classItem.status}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  )
-                })
-              }
-            </View>
+                      </TouchableOpacity>
+                    )
+                  })
+                }
+              </View>
 
-          }
-        </ScrollView>
-      )}
-    </SafeAreaView>
-  );
+            }
+          </ScrollView>
+        )}
+      </SafeAreaView>
+    );
+  }
 }
 
 

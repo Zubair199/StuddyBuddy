@@ -172,6 +172,7 @@ export default function ProfileScreen(dataType: dataTypes) {
     getData()
   }, []);
 
+  
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ marginBottom: '18%' }}>
