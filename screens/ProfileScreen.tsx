@@ -12,6 +12,7 @@ import {
   Text,
   View,
   Switch,
+  ActivityIndicator,
 } from 'react-native';
 
 import { useNavigation, useIsFocused } from '@react-navigation/native';
@@ -48,6 +49,7 @@ export default function ProfileScreen(dataType: dataTypes) {
   let isStudent = userType == 'user';
   let isTeacher = userType == 'teacher';
   const isFocused = useIsFocused();
+  const [loader, setLoader] = React.useState(true);
 
   let [user, setUser] = React.useState(userToken);
   // const onPressProfile = (id: string) =>
@@ -69,7 +71,6 @@ export default function ProfileScreen(dataType: dataTypes) {
 
   const [self, setSelf] = React.useState();
   // const [imageLoader, setImageLoader] = React.useState(false);
-  const [loader, setLoader] = React.useState(false);
   const [reRun, setReRun] = React.useState(false);
   const [editProfile, setEditProfile] = React.useState(false);
   const [certifications, setCertifications] = React.useState([]);
@@ -97,6 +98,8 @@ export default function ProfileScreen(dataType: dataTypes) {
   const [email, setEmail] = useState([]);
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => {
+    setLoader(true)
+
     const body = {
       user: user,
     }
@@ -116,6 +119,7 @@ export default function ProfileScreen(dataType: dataTypes) {
           console.log(responseJson)
           Alert.alert(responseJson.message)
           getData()
+          setLoader(false)
         })
         .catch((err: any) => {
           console.log(err)
@@ -160,6 +164,7 @@ export default function ProfileScreen(dataType: dataTypes) {
             setIsEnabled(responseJson.user.isHired);
             setEmail(responseJson.user.email);
           }
+          setLoader(false)
         })
         .catch(err => {
           console.log(err.response);
@@ -170,192 +175,201 @@ export default function ProfileScreen(dataType: dataTypes) {
   }
   React.useEffect(() => {
     getData()
-  }, []);
+  }, [isFocused]);
 
-  
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={{ marginBottom: '18%' }}>
-        <View style={[styles.sticky, { flexDirection: "row-reverse" }]}>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('EditProfile', {
-                email: email,
-                allSkills: allSkills,
-                allSubjects: allSubjects,
-                allLocations: allLocations,
-                skills: [],
-                subjects: [],
-                locations: [],
-              })
-            }
-            style={styles.closeIconBox}>
-            <Image
-              style={styles.pencilIcon}
-              source={require('../assets/images/icons/Edit-Icon.png')}
-            />
-          </TouchableOpacity>
-        </View>
-        <ScrollView
-          style={styles.scrollView}
-          keyboardShouldPersistTaps={'handled'}>
-          <View style={styles.basicInfo}>
-            <View style={styles.profileImageBox}>
-              <Avatar
-                rounded
-                title="P"
-                activeOpacity={0.7}
-                size="xlarge"
-
-                source={
-                  image === ''
-                    ? require('../assets/images/user.png')
-                    : { uri: AUTHENTICATIONS.API_URL + image }
-                }
+  if (loader) {
+    return (
+      <SafeAreaView style={[styles.container, { justifyContent: "center" }]}>
+        <ActivityIndicator size="large" color={app.lightBlue} />
+      </SafeAreaView>
+    )
+  }
+  else {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={{ marginBottom: '18%' }}>
+          <View style={[styles.sticky, { flexDirection: "row-reverse" }]}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('EditProfile', {
+                  email: email,
+                  allSkills: allSkills,
+                  allSubjects: allSubjects,
+                  allLocations: allLocations,
+                  skills: [],
+                  subjects: [],
+                  locations: [],
+                })
+              }
+              style={styles.closeIconBox}>
+              <Image
+                style={styles.pencilIcon}
+                source={require('../assets/images/icons/Edit-Icon.png')}
               />
-            </View>
-            <View style={styles.nameBox}>
-              <Text style={styles.name}>{userName}</Text>
-            </View>
-            <View style={styles.instructorBox}>
-              <Text style={styles.instructor}>
-                {isStudent ? 'Student' : 'Instructor'}
-              </Text>
-            </View>
+            </TouchableOpacity>
           </View>
+          <ScrollView
+            style={styles.scrollView}
+            keyboardShouldPersistTaps={'handled'}>
+            <View style={styles.basicInfo}>
+              <View style={styles.profileImageBox}>
+                <Avatar
+                  rounded
+                  title="P"
+                  activeOpacity={0.7}
+                  size="xlarge"
 
-          {isStudent ? null : (
-            <View>
-              {/* Divider */}
-              <View style={styles.lineStyle} />
-
-              <View style={styles.actionBox}>
-                <Text style={[styles.noShowTitle, { marginRight: 20 }]}>
-                  Late Cancellation:{' ' + lateCancellation}
-                </Text>
-                <Text style={[styles.noShowTitle, { marginLeft: 20 }]}>
-                  No Show:{' ' + noShowCount}
+                  source={
+                    image === ''
+                      ? require('../assets/images/user.png')
+                      : { uri: AUTHENTICATIONS.API_URL + image }
+                  }
+                />
+              </View>
+              <View style={styles.nameBox}>
+                <Text style={styles.name}>{userName}</Text>
+              </View>
+              <View style={styles.instructorBox}>
+                <Text style={styles.instructor}>
+                  {isStudent ? 'Student' : 'Instructor'}
                 </Text>
               </View>
+            </View>
 
-              {/* Divider */}
-              <View style={styles.lineStyle} />
-            </View>
-          )}
-          <View style={styles.skillBox}>
-            <View style={styles.skillsWithIcon}>
-              <Text style={styles.skillsAttributesHeading}>
-                {isStudent ? 'Class Preferences' : 'Skills'}
-              </Text>
-            </View>
-            <View style={styles.skills}>
-              {skills.map((skill, index, arr) => (
-                <View
-                  key={index + '_skill_view'}
-                  style={{ flexDirection: 'row' }}>
-                  <Text style={styles.skillsText}>{skill}</Text>
-                  {arr.length - 1 !== index ? (
-                    <View style={styles.dot}></View>
-                  ) : null}
+            {isTeacher && (
+              <View>
+                <View style={styles.lineStyle} />
+
+                <View style={styles.actionBox}>
+                  <Text style={[styles.noShowTitle, { marginRight: 20 }]}>
+                    Late Cancellation:{' ' + lateCancellation}
+                  </Text>
+                  <Text style={[styles.noShowTitle, { marginLeft: 20 }]}>
+                    No Show:{' ' + noShowCount}
+                  </Text>
                 </View>
-              ))}
-            </View>
-          </View>
-          {isTeacher && (
-            <View style={styles.textContent}>
-              <Text style={styles.contentTitle}>Certifications</Text>
-              {(certifications && certifications.length > 0) ? (
-                <View style={{ flexDirection: 'row', flexWrap: "wrap" }}>
-                  {
-                    certifications.map((item, index) => {
-                      return (
-                        <View style={{ padding: 2 }} key={index}>
-                          <View style={{ width: 100, height: 100 }}>
-                            <View style={{ flexDirection: "row" }}>
-                              <Image
-                                source={{ uri: AUTHENTICATIONS.API_URL + item }}
-                                style={{ width: 100, height: 100, borderRadius: 15 }}
-                              />
+
+                <View style={styles.lineStyle} />
+              </View>
+            )}
+            {isTeacher && (
+              <View style={styles.skillBox}>
+                <View style={styles.skillsWithIcon}>
+                  <Text style={styles.skillsAttributesHeading}>
+                    {/* {isStudent ? 'Class Preferences' : 'Skills'} */}
+                    Skills
+                  </Text>
+                </View>
+                <View style={styles.skills}>
+                  {skills.map((skill, index, arr) => (
+                    <View
+                      key={index + '_skill_view'}
+                      style={{ flexDirection: 'row' }}>
+                      <Text style={styles.skillsText}>{skill}</Text>
+                      {arr.length - 1 !== index ? (
+                        <View style={styles.dot}></View>
+                      ) : null}
+                    </View>
+                  ))}
+                </View>
+              </View>
+            )
+            }
+            {isTeacher && (
+              <View style={styles.textContent}>
+                <Text style={styles.contentTitle}>Certifications</Text>
+                {(certifications && certifications.length > 0) ? (
+                  <View style={{ flexDirection: 'row', flexWrap: "wrap" }}>
+                    {
+                      certifications.map((item, index) => {
+                        return (
+                          <View style={{ padding: 2 }} key={index}>
+                            <View style={{ width: 100, height: 100 }}>
+                              <View style={{ flexDirection: "row" }}>
+                                <Image
+                                  source={{ uri: AUTHENTICATIONS.API_URL + item }}
+                                  style={{ width: 100, height: 100, borderRadius: 15 }}
+                                />
+                              </View>
                             </View>
                           </View>
-                        </View>
-                      )
-                    })
-                  }
-                </View>
+                        )
+                      })
+                    }
+                  </View>
+                ) : (
+                  <Text style={styles.placeholder}>
+                    Your Certifications Here
+                  </Text>
+                )}
+              </View>
+            )}
+            <View style={styles.textContent}>
+              <Text style={styles.contentTitle}>
+                {isTeacher ? 'Past Experience' : 'Past Education'}
+              </Text>
+              {experience ? (
+                <Text style={styles.actualText}>{experience}</Text>
               ) : (
                 <Text style={styles.placeholder}>
-                  Your Certifications Here
+                  Your Past Experience Here
                 </Text>
               )}
+              <View style={styles.lineStyle} />
             </View>
-          )}
-          <View style={styles.textContent}>
-            <Text style={styles.contentTitle}>
-              {isTeacher ? 'Past Experience' : 'Past Education'}
-            </Text>
-            {experience ? (
-              <Text style={styles.actualText}>{experience}</Text>
-            ) : (
-              <Text style={styles.placeholder}>
-                Your Past Experience Here
-              </Text>
-            )}
-            <View style={styles.lineStyle} />
-          </View>
 
-          {isTeacher && (
-            <>
-              <View style={styles.lineStyle} />
+            {isTeacher && (
+              <>
+                <View style={styles.lineStyle} />
 
-              <View style={styles.switchBoxWarpper}>
-                <Text style={styles.switchBoxLebel}>
-                  Mark as available to hire.
-                </Text>
+                <View style={styles.switchBoxWarpper}>
+                  <Text style={styles.switchBoxLebel}>
+                    Mark as available to hire.
+                  </Text>
 
-                <View>
-                  <Switch
-                    trackColor={{ false: "#767577", true: grey[400] }}
-                    thumbColor={isEnabled ? app.lightBlue : "#f4f3f4"}
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleSwitch}
-                    value={isEnabled}
-                  />
+                  <View>
+                    <Switch
+                      trackColor={{ false: "#767577", true: grey[400] }}
+                      thumbColor={isEnabled ? app.lightBlue : "#f4f3f4"}
+                      ios_backgroundColor="#3e3e3e"
+                      onValueChange={toggleSwitch}
+                      value={isEnabled}
+                    />
+                  </View>
                 </View>
-              </View>
-              <View style={styles.lineStyle} />
-            </>
-          )}
+                <View style={styles.lineStyle} />
+              </>
+            )}
 
-          {/* {!isStudent && (
+            {/* {!isStudent && (
                     <SubscribersListComponent subscribersList={fakeSubscribers} />
                 )} */}
 
-          {/* image modal starts here */}
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={imageModal}
-            onRequestClose={() => setImageModal(false)}>
-            <View style={styles.centeredView}>
-              <TouchableOpacity
-                style={{ position: 'absolute', width: '100%', height: '100%' }}
-                onPress={() => setImageModal(false)}></TouchableOpacity>
-              <View style={styles.modalView}>
-                <TouchableOpacity style={styles.imageModal}>
-                  <Icon name="camera" size={30} />
-                  <Text>Take Picture</Text>
-                </TouchableOpacity>
+            {/* image modal starts here */}
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={imageModal}
+              onRequestClose={() => setImageModal(false)}>
+              <View style={styles.centeredView}>
+                <TouchableOpacity
+                  style={{ position: 'absolute', width: '100%', height: '100%' }}
+                  onPress={() => setImageModal(false)}></TouchableOpacity>
+                <View style={styles.modalView}>
+                  <TouchableOpacity style={styles.imageModal}>
+                    <Icon name="camera" size={30} />
+                    <Text>Take Picture</Text>
+                  </TouchableOpacity>
 
-                <TouchableOpacity style={styles.imageModal}>
-                  <Icon name="upload" size={30} />
-                  <Text>Upload Picture</Text>
-                </TouchableOpacity>
+                  <TouchableOpacity style={styles.imageModal}>
+                    <Icon name="upload" size={30} />
+                    <Text>Upload Picture</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-          </Modal>
+            </Modal>
 
-          {/* {editProfile && <EditProfileModal
+            {/* {editProfile && <EditProfileModal
                     editProfileModal={editProfile}
                     closeEditModal={() => setEditProfile(false)}
                     isStudent={isStudent}
@@ -368,10 +382,11 @@ export default function ProfileScreen(dataType: dataTypes) {
                     loadingFalse={() => setLoader(false)}
                     reRun={() => setReRun(!reRun)}
                 />} */}
-        </ScrollView>
-      </View>
-    </SafeAreaView>
-  );
+          </ScrollView>
+        </View>
+      </SafeAreaView>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -709,6 +724,7 @@ const styles = StyleSheet.create({
   },
   textContent: {
     marginBottom: 20,
+    marginTop: 20
   },
   contentTitle: {
     textTransform: 'uppercase',

@@ -148,10 +148,10 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
     } else if (locations.length < 1) {
       Alert.alert('Alert', 'Location cannot be empty!');
       return;
-    } else if (genres.length < 1) {
+    } else if (isTeacher && genres.length < 1) {
       Alert.alert('Alert', 'Subject cannot be empty!');
       return;
-    } else if (skills.length < 1) {
+    } else if (isTeacher && skills.length < 1) {
       Alert.alert('Alert', 'Skill cannot be empty!');
       return;
     } else if (isTeacher && videoResponse === null) {
@@ -537,65 +537,66 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
               </TouchableOpacity>
             </View>
           </View>
-
-          <View style={styles.selectBox}>
-            <Text style={genericStyle.subHeading}>Subjects</Text>
-            <View style={genericStyle.locationEditBox}>
-              {genres.map((genre: any, index: number) => (
-                <View key={index + 'genre'}>
-                  <TouchableOpacity
-                    onPress={() => removeGenre(genre)}
-                    style={genericStyle.locationAddRemove}>
-                    <Text style={genericStyle.addRemoveBox}>{genre}</Text>
-                    <Image
-                      source={require('../assets/images/icons/delete-button.png')}
-                      style={genericStyle.removeIconlocation}
-                    />
-                  </TouchableOpacity>
-                </View>
-              ))}
-              <TouchableOpacity
-                onPress={() => setGenreModal(true)}
-                style={[genericStyle.locationAddRemove, { width: 150 }]}>
-                <Image
-                  source={require('../assets/images/icons/add-button.png')}
-                  style={styles.addIcon}
-                />
-                <Text style={styles.addRemoveBoxText}>Add Subjects</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={styles.selectBox}>
-            <Text style={genericStyle.subHeading}>Skills</Text>
-            <View style={genericStyle.locationEditBox}>
-              {skills.map((skill: any, index: number) => (
-                <View key={index + 'skill'}>
-                  <TouchableOpacity
-                    onPress={() => removeSkill(skill)}
-                    style={genericStyle.locationAddRemove}>
-                    <Text style={genericStyle.addRemoveBox}>{skill}</Text>
-                    <Image
-                      source={require('../assets/images/icons/delete-button.png')}
-                      style={genericStyle.removeIconlocation}
-                    />
-                  </TouchableOpacity>
-                </View>
-              ))}
-              <TouchableOpacity
-                onPress={() => setSkillsModal(true)}
-                style={[styles.locationAddRemove, { width: 150 }]}>
-                <Image
-                  source={require('../assets/images/icons/add-button.png')}
-                  style={styles.addIcon}
-                />
-                <Text style={styles.addRemoveBoxText}>Add Skill</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
           {isTeacher && (
             <>
+              <View style={styles.selectBox}>
+                <Text style={genericStyle.subHeading}>Subjects</Text>
+                <View style={genericStyle.locationEditBox}>
+                  {genres.map((genre: any, index: number) => (
+                    <View key={index + 'genre'}>
+                      <TouchableOpacity
+                        onPress={() => removeGenre(genre)}
+                        style={genericStyle.locationAddRemove}>
+                        <Text style={genericStyle.addRemoveBox}>{genre}</Text>
+                        <Image
+                          source={require('../assets/images/icons/delete-button.png')}
+                          style={genericStyle.removeIconlocation}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  ))}
+                  <TouchableOpacity
+                    onPress={() => setGenreModal(true)}
+                    style={[genericStyle.locationAddRemove, { width: 150 }]}>
+                    <Image
+                      source={require('../assets/images/icons/add-button.png')}
+                      style={styles.addIcon}
+                    />
+                    <Text style={styles.addRemoveBoxText}>Add Subjects</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <View style={styles.selectBox}>
+                <Text style={genericStyle.subHeading}>Skills</Text>
+                <View style={genericStyle.locationEditBox}>
+                  {skills.map((skill: any, index: number) => (
+                    <View key={index + 'skill'}>
+                      <TouchableOpacity
+                        onPress={() => removeSkill(skill)}
+                        style={genericStyle.locationAddRemove}>
+                        <Text style={genericStyle.addRemoveBox}>{skill}</Text>
+                        <Image
+                          source={require('../assets/images/icons/delete-button.png')}
+                          style={genericStyle.removeIconlocation}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  ))}
+                  <TouchableOpacity
+                    onPress={() => setSkillsModal(true)}
+                    style={[styles.locationAddRemove, { width: 150 }]}>
+                    <Image
+                      source={require('../assets/images/icons/add-button.png')}
+                      style={styles.addIcon}
+                    />
+                    <Text style={styles.addRemoveBoxText}>Add Skill</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+
+
               <View style={styles.selectBox}>
                 <Text style={genericStyle.subHeading}>Video</Text>
                 <View style={genericStyle.locationEditBox}>

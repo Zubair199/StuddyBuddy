@@ -13,7 +13,8 @@ import {
   TouchableOpacityBase,
   View,
   TextInput,
-  Button as NativeButton
+  Button as NativeButton,
+  ActivityIndicator
 } from 'react-native';
 import { Divider, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -111,6 +112,7 @@ export default function ClassDetailScreen({ route }) {
         let _room = "SB-" + responseJson.classes.name + "(" + formatDate(d) + ")"
         setRoomName(_room)
         getRoom(_room)
+        setLoader(false)
       })
       .catch(err => {
         console.log(err);
@@ -138,6 +140,7 @@ export default function ClassDetailScreen({ route }) {
         setClass(responseJson.classes);
         setTeacher(responseJson.classes.Teacher);
         setSchedule(responseJson.schedules);
+        setLoader(false)
       })
       .catch(err => {
         console.log(err);
@@ -171,10 +174,12 @@ export default function ClassDetailScreen({ route }) {
               setChatFlag(true);
             }
           });
+          setLoader(false)
 
         } else {
           apiCall();
         }
+
       })
       .catch(err => {
         console.log(err);
@@ -204,6 +209,8 @@ export default function ClassDetailScreen({ route }) {
           Alert.alert(responseJson.message);
           studentApiCall();
           toggleModal1()
+          setLoader(false)
+
         })
         .catch((err: any) => {
           console.log(err);
@@ -442,6 +449,7 @@ export default function ClassDetailScreen({ route }) {
         return
       }
       else {
+        // setLoader(true)
 
         // Fetch the intent client secret from the backend
         const { clientSecret, paymentIntentId } = await fetchPaymentIntentClientSecret();
@@ -455,6 +463,7 @@ export default function ClassDetailScreen({ route }) {
         if (error) {
           console.log('Payment confirmation error', error);
           Alert.alert("Error", error.localizedMessage)
+          setLoader(false)
         } else if (paymentIntent) {
           console.log('Success from promise', paymentIntent);
           if (isPlatformPaid) {
@@ -477,6 +486,7 @@ export default function ClassDetailScreen({ route }) {
     catch (e) {
       console.log("pay")
       Alert.alert("Error", "Something went wrong.")
+      setLoader(false)
     }
 
   };
@@ -1329,15 +1339,24 @@ export default function ClassDetailScreen({ route }) {
     );
   }
 
-  return (
-    <>
-      {userType.toLowerCase() === 'user' ? (
-        studentComponent()
-      ) : (
-        component()
-      )}
-    </>
-  );
+  if (loader) {
+    return (
+      <SafeAreaView style={[styles.container, { justifyContent: "center" }]}>
+        <ActivityIndicator size="large" color={app.lightBlue} />
+      </SafeAreaView>
+    )
+  }
+  else {
+    return (
+      <>
+        {userType.toLowerCase() === 'user' ? (
+          studentComponent()
+        ) : (
+          component()
+        )}
+      </>
+    );
+  }
 }
 
 const styles = StyleSheet.create({

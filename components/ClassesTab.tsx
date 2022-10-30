@@ -87,7 +87,7 @@ export default function ClassesTab() {
   }
   function studentApiCall(pageLimit) {
     fetch(
-      AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES + '/' + pageLimit,
+      AUTHENTICATIONS.API_URL + CLASS.GET_ALL_ACTIVE_CLASSES + '/' + pageLimit + "/" + user,
     )
       .then(response => response.json())
       .then(responseJson => {
@@ -124,8 +124,8 @@ export default function ClassesTab() {
 
   if (loader) {
     return (
-      <SafeAreaView style={[styles.container,{justifyContent: "center"}]}>
-        <ActivityIndicator size="large" color={ app.lightBlue } />
+      <SafeAreaView style={[styles.container, { justifyContent: "center" }]}>
+        <ActivityIndicator size="large" color={app.lightBlue} />
       </SafeAreaView>
     )
   }
@@ -184,7 +184,7 @@ export default function ClassesTab() {
                   );
                 })}
               </View>
-              <View style={{ marginVertical: 15, marginHorizontal: 15 }}>
+              <View style={{ marginVertical: 20, marginHorizontal: 15 }}>
                 {classCount < limit ? (
                   <></>
                 ) : (

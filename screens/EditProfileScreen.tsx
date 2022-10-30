@@ -16,6 +16,7 @@ import {
   Modal,
   Platform,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import { Avatar, BottomSheet, CheckBox } from 'react-native-elements';
 import api from '../constants/api';
@@ -95,6 +96,7 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
   const [imageName, setImageName] = useState(
     'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
   );
+  const [loader, setLoader] = React.useState(true);
 
   const [videoName, setVideoName] = useState('');
 
@@ -114,6 +116,7 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
               setLocations(_profile.locations);
               setImageName(AUTHENTICATIONS.API_URL + _profile.image);
               setPastExperience(_profile.pastExperience);
+              setLoader(false)
             }
           }
         })
@@ -138,13 +141,15 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
     } else if (locations.length < 1) {
       Alert.alert('Alert', 'Location cannot be empty!');
       return;
-    } else if (genres.length < 1) {
+    } else if (isTeacher && genres.length < 1) {
       Alert.alert('Alert', 'Subject cannot be empty!');
       return;
-    } else if (skills.length < 1) {
+    } else if (isTeacher && skills.length < 1) {
       Alert.alert('Alert', 'Skill cannot be empty!');
       return;
     }
+    setLoader(true)
+
 
     let formData = new FormData();
 
@@ -184,17 +189,20 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
           console.log(responseJson);
           Alert.alert('Alert', 'Profile Update Successfully!');
           setTimeout(() => {
+            setLoader(false)
             navigation.goBack();
           }, 3000);
         })
         .catch((err: any) => {
           console.log(err);
           console.log(err.response);
-          Alert.alert('Alert', 'Registration Failed. Try Again!');
+          Alert.alert('Alert', 'Profile Update Failed. Try Again!');
+          setLoader(false)
+
         });
     } catch (exception) {
       console.log('exception ', exception);
-      Alert.alert('Alert', 'Registration Failed. Try Again!');
+      Alert.alert('Alert', 'Profile Update. Try Again!');
     }
   };
 
@@ -423,207 +431,219 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
     setQuery(route.params.allSkills);
   }
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.body}>
-          <View style={{ alignItems: 'center', marginBottom: 10 }}>
-            <Avatar
-              rounded
-              title="P"
-              activeOpacity={0.7}
-              size="xlarge"
-              onPress={() => {
-                uploadImage();
-              }}
-              source={{
-                uri: imageName,
-              }}
-            />
-
-            <View
-              style={[
-                styles.textBoxContainer,
-                { marginTop: 35, alignItems: 'center' },
-              ]}>
-              {email ? (
-                <Text
-                  style={{ fontSize: 15, color: app.lightBlue, fontWeight: 'bold' }}>
-                  {email}
-                </Text>
-              ) : (
-                <TextInput
-                  style={styles.textBox}
-                  autoCapitalize="words"
-                  placeholder="Full Name"
-                  placeholderTextColor={grey[500]}
-                  onChangeText={text => setFullName(text)}
-                  maxLength={40}
-                />
-              )}
-            </View>
-
-            <View style={[styles.textBoxContainer, { height: 100 }]}>
-              <TextInput
-                style={[genericStyle.textArea, { textAlignVertical: 'top' }]}
-                autoCapitalize="words"
-                placeholder={
-                  isTeacher ? 'Past Experience/Clients' : 'Past Education'
-                }
-                placeholderTextColor={grey[500]}
-                multiline={true}
-                onChangeText={text => setPastExperience(text)}
-                maxLength={40}
-                numberOfLines={3}
-                scrollEnabled={false}
-                value={pastExperience}
+  if (loader) {
+    return (
+      <SafeAreaView style={[styles.container, { justifyContent: "center" }]}>
+        <ActivityIndicator size="large" color={app.lightBlue} />
+      </SafeAreaView>
+    )
+  }
+  else {
+    return (
+      <SafeAreaView style={styles.container}>
+        <ScrollView style={styles.scrollView}>
+          <View style={styles.body}>
+            <View style={{ alignItems: 'center', marginBottom: 10 }}>
+              <Avatar
+                rounded
+                title="P"
+                activeOpacity={0.7}
+                size="xlarge"
+                onPress={() => {
+                  uploadImage();
+                }}
+                source={{
+                  uri: imageName,
+                }}
               />
-            </View>
-          </View>
 
-          <View style={styles.selectBox}>
-            <Text style={genericStyle.subHeading}>Location</Text>
-            <View style={genericStyle.locationEditBox}>
-              {locations.map((location: any, index: number) => (
-                <View key={index + '_location_edit'}>
-                  <TouchableOpacity
-                    onPress={() => removeLocation(location)}
-                    style={genericStyle.locationAddRemove}>
-                    <Text style={genericStyle.addRemoveBox}>{location}</Text>
-                    <Image
-                      source={require('../assets/images/icons/delete-button.png')}
-                      style={genericStyle.removeIconlocation}
-                    />
-                  </TouchableOpacity>
-                </View>
-              ))}
-              <TouchableOpacity
-                onPress={() => setLocationsModal(true)}
+              <View
                 style={[
-                  genericStyle.locationAddRemove,
-                  {
-                    width: 150,
-                  },
+                  styles.textBoxContainer,
+                  { marginTop: 35, alignItems: 'center' },
                 ]}>
-                <Image
-                  source={require('../assets/images/icons/add-button.png')}
-                  style={styles.addIcon}
-                />
-                <Text style={genericStyle.addRemoveBoxText}>Add Location</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+                {email ? (
+                  <Text
+                    style={{ fontSize: 15, color: app.lightBlue, fontWeight: 'bold' }}>
+                    {email}
+                  </Text>
+                ) : (
+                  <TextInput
+                    style={styles.textBox}
+                    autoCapitalize="words"
+                    placeholder="Full Name"
+                    placeholderTextColor={grey[500]}
+                    onChangeText={text => setFullName(text)}
+                    maxLength={40}
+                  />
+                )}
+              </View>
 
-          <View style={styles.selectBox}>
-            <Text style={genericStyle.subHeading}>Subjects</Text>
-            <View style={genericStyle.locationEditBox}>
-              {genres.map((genre: any, index: number) => (
-                <View key={index + 'genre'}>
-                  <TouchableOpacity
-                    onPress={() => removeGenre(genre)}
-                    style={genericStyle.locationAddRemove}>
-                    <Text style={genericStyle.addRemoveBox}>{genre}</Text>
-                    <Image
-                      source={require('../assets/images/icons/delete-button.png')}
-                      style={genericStyle.removeIconlocation}
-                    />
-                  </TouchableOpacity>
-                </View>
-              ))}
-              <TouchableOpacity
-                onPress={() => setGenreModal(true)}
-                style={[genericStyle.locationAddRemove, { width: 150 }]}>
-                <Image
-                  source={require('../assets/images/icons/add-button.png')}
-                  style={styles.addIcon}
+              <View style={[styles.textBoxContainer, { height: 100 }]}>
+                <TextInput
+                  style={[genericStyle.textArea, { textAlignVertical: 'top' }]}
+                  autoCapitalize="words"
+                  placeholder={
+                    isTeacher ? 'Past Experience/Clients' : 'Past Education'
+                  }
+                  placeholderTextColor={grey[500]}
+                  multiline={true}
+                  onChangeText={text => setPastExperience(text)}
+                  maxLength={40}
+                  numberOfLines={3}
+                  scrollEnabled={false}
+                  value={pastExperience}
                 />
-                <Text style={styles.addRemoveBoxText}>Add Subjects</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={styles.selectBox}>
-            <Text style={genericStyle.subHeading}>Skills</Text>
-            <View style={genericStyle.locationEditBox}>
-              {skills.map((skill: any, index: number) => (
-                <View key={index + 'skill'}>
-                  <TouchableOpacity
-                    onPress={() => removeSkill(skill)}
-                    style={genericStyle.locationAddRemove}>
-                    <Text style={genericStyle.addRemoveBox}>{skill}</Text>
-                    <Image
-                      source={require('../assets/images/icons/delete-button.png')}
-                      style={genericStyle.removeIconlocation}
-                    />
-                  </TouchableOpacity>
-                </View>
-              ))}
-              <TouchableOpacity
-                onPress={() => setSkillsModal(true)}
-                style={[styles.locationAddRemove, { width: 150 }]}>
-                <Image
-                  source={require('../assets/images/icons/add-button.png')}
-                  style={styles.addIcon}
-                />
-                <Text style={styles.addRemoveBoxText}>Add Skill</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={styles.selectBox}>
-            <Text style={genericStyle.subHeading}>Certifications</Text>
-            <View style={genericStyle.locationEditBox}>
-              <TouchableOpacity
-                onPress={() => uploadCertifications()}
-                style={[styles.locationAddRemove, { width: 200 }]}>
-                <Image
-                  source={require('../assets/images/icons/add-button.png')}
-                  style={styles.addIcon}
-                />
-                <Text style={styles.addRemoveBoxText}>Upload Certifications</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={{ paddingTop: 10 }}>
-              <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-                {
-                  (certificationsName && certificationsName.length > 0) && certificationsName.map((item, index) => {
-                    return (
-                      <View style={{ padding: 2 }} key={index}>
-                        <View style={{ width: 100, height: 100 }}>
-                          <View style={{ flexDirection: "row" }}>
-                            <Image
-                              source={{ uri: item }}
-                              style={{ width: 100, height: 100, borderRadius: 15 }}
-                            />
-                            <TouchableOpacity style={{ marginLeft: -30 }} onPress={() => removeCertification(item)}>
-                              <Ionicons name='close-circle' size={30} color={"white"} style={{ backgroundColor: "black", borderRadius: 50, width: 28, height: 30 }} />
-                            </TouchableOpacity>
-                          </View>
-                        </View>
-                      </View>
-                    )
-                  })
-                }
               </View>
             </View>
+
+            <View style={styles.selectBox}>
+              <Text style={genericStyle.subHeading}>Location</Text>
+              <View style={genericStyle.locationEditBox}>
+                {locations.map((location: any, index: number) => (
+                  <View key={index + '_location_edit'}>
+                    <TouchableOpacity
+                      onPress={() => removeLocation(location)}
+                      style={genericStyle.locationAddRemove}>
+                      <Text style={genericStyle.addRemoveBox}>{location}</Text>
+                      <Image
+                        source={require('../assets/images/icons/delete-button.png')}
+                        style={genericStyle.removeIconlocation}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                ))}
+                <TouchableOpacity
+                  onPress={() => setLocationsModal(true)}
+                  style={[
+                    genericStyle.locationAddRemove,
+                    {
+                      width: 150,
+                    },
+                  ]}>
+                  <Image
+                    source={require('../assets/images/icons/add-button.png')}
+                    style={styles.addIcon}
+                  />
+                  <Text style={genericStyle.addRemoveBoxText}>Add Location</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {isTeacher && (
+              <>
+                <View style={styles.selectBox}>
+                  <Text style={genericStyle.subHeading}>Subjects</Text>
+                  <View style={genericStyle.locationEditBox}>
+                    {genres.map((genre: any, index: number) => (
+                      <View key={index + 'genre'}>
+                        <TouchableOpacity
+                          onPress={() => removeGenre(genre)}
+                          style={genericStyle.locationAddRemove}>
+                          <Text style={genericStyle.addRemoveBox}>{genre}</Text>
+                          <Image
+                            source={require('../assets/images/icons/delete-button.png')}
+                            style={genericStyle.removeIconlocation}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    ))}
+                    <TouchableOpacity
+                      onPress={() => setGenreModal(true)}
+                      style={[genericStyle.locationAddRemove, { width: 150 }]}>
+                      <Image
+                        source={require('../assets/images/icons/add-button.png')}
+                        style={styles.addIcon}
+                      />
+                      <Text style={styles.addRemoveBoxText}>Add Subjects</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                <View style={styles.selectBox}>
+                  <Text style={genericStyle.subHeading}>Skills</Text>
+                  <View style={genericStyle.locationEditBox}>
+                    {skills.map((skill: any, index: number) => (
+                      <View key={index + 'skill'}>
+                        <TouchableOpacity
+                          onPress={() => removeSkill(skill)}
+                          style={genericStyle.locationAddRemove}>
+                          <Text style={genericStyle.addRemoveBox}>{skill}</Text>
+                          <Image
+                            source={require('../assets/images/icons/delete-button.png')}
+                            style={genericStyle.removeIconlocation}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    ))}
+                    <TouchableOpacity
+                      onPress={() => setSkillsModal(true)}
+                      style={[styles.locationAddRemove, { width: 150 }]}>
+                      <Image
+                        source={require('../assets/images/icons/add-button.png')}
+                        style={styles.addIcon}
+                      />
+                      <Text style={styles.addRemoveBoxText}>Add Skill</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                <View style={styles.selectBox}>
+                  <Text style={genericStyle.subHeading}>Certifications</Text>
+                  <View style={genericStyle.locationEditBox}>
+                    <TouchableOpacity
+                      onPress={() => uploadCertifications()}
+                      style={[styles.locationAddRemove, { width: 200 }]}>
+                      <Image
+                        source={require('../assets/images/icons/add-button.png')}
+                        style={styles.addIcon}
+                      />
+                      <Text style={styles.addRemoveBoxText}>Upload Certifications</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={{ paddingTop: 10 }}>
+                    <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+                      {
+                        (certificationsName && certificationsName.length > 0) && certificationsName.map((item, index) => {
+                          return (
+                            <View style={{ padding: 2 }} key={index}>
+                              <View style={{ width: 100, height: 100 }}>
+                                <View style={{ flexDirection: "row" }}>
+                                  <Image
+                                    source={{ uri: item }}
+                                    style={{ width: 100, height: 100, borderRadius: 15 }}
+                                  />
+                                  <TouchableOpacity style={{ marginLeft: -30 }} onPress={() => removeCertification(item)}>
+                                    <Ionicons name='close-circle' size={30} color={"white"} style={{ backgroundColor: "black", borderRadius: 50, width: 28, height: 30 }} />
+                                  </TouchableOpacity>
+                                </View>
+                              </View>
+                            </View>
+                          )
+                        })
+                      }
+                    </View>
+                  </View>
+                </View>
+              </>
+            )
+            }
+            <TouchableOpacity
+              onPress={onPressNextBtn}
+              style={[genericStyle.loginBtn, { marginTop: 25 }]}>
+              <Text style={genericStyle.loginBtnText}>Submit Request</Text>
+            </TouchableOpacity>
+
+            <View style={{ marginTop: 50 }} />
           </View>
+        </ScrollView>
 
-          <TouchableOpacity
-            onPress={onPressNextBtn}
-            style={[genericStyle.loginBtn, { marginTop: 25 }]}>
-            <Text style={genericStyle.loginBtnText}>Submit Request</Text>
-          </TouchableOpacity>
-
-          <View style={{ marginTop: 50 }} />
-        </View>
-      </ScrollView>
-
-      <Modal
-        animationType="slide"
-        visible={skillsModal}
-        onRequestClose={() => setSkillsModal(false)}>
-        <View style={styles.skillModal}>
-          {/* <View style={styles.searchCheck}>
+        <Modal
+          animationType="slide"
+          visible={skillsModal}
+          onRequestClose={() => setSkillsModal(false)}>
+          <View style={styles.skillModal}>
+            {/* <View style={styles.searchCheck}>
             <View style={styles.searchAndIcon}>
               <TextInput
                 style={styles.searchBox}
@@ -649,67 +669,67 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
               />
             </TouchableOpacity>
           </View> */}
-          <View style={styles.searchCheck}>
-            <View style={styles.searchAndIcon}>
-              <TextInput
-                placeholder={'Search Skills'}
-                onChangeText={text => searchSkill(text)}
-                placeholderTextColor={grey[500]}
-              />
-              <View style={{ marginTop: 5 }}>
-                <Ionicons name='search-sharp' size={25} color={grey[500]} />
-              </View>
-            </View>
-            <TouchableOpacity onPress={() => saveSkill()} style={styles.successBox}>
-              <Ionicons name='checkmark-sharp' size={30} color={success.focus} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => cancelSkill()} style={styles.errorBox}>
-              <Ionicons name='close' size={30} color={error.focus} />
-            </TouchableOpacity>
-          </View>
-
-          <View style={{ marginTop: 20 }}>
-            <View>
-              {query.length < 1 ? (
-                <View
-                  style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Text style={styles.emptySearchText}>No Results found</Text>
+            <View style={styles.searchCheck}>
+              <View style={styles.searchAndIcon}>
+                <TextInput
+                  placeholder={'Search Skills'}
+                  onChangeText={text => searchSkill(text)}
+                  placeholderTextColor={grey[500]}
+                />
+                <View style={{ marginTop: 5 }}>
+                  <Ionicons name='search-sharp' size={25} color={grey[500]} />
                 </View>
-              ) : (
-                query.map((skill: any, index: number) => (
-                  <TouchableOpacity
-                    key={index + '_skill_add'}
-                    onPress={() => addRemoveSkill(skill.title)}
-                    style={
-                      toggleSkill(skill.title)
-                        ? styles.skillAdded
-                        : styles.addSkillBox
-                    }>
-                    <Text
+              </View>
+              <TouchableOpacity onPress={() => saveSkill()} style={styles.successBox}>
+                <Ionicons name='checkmark-sharp' size={30} color={success.focus} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => cancelSkill()} style={styles.errorBox}>
+                <Ionicons name='close' size={30} color={error.focus} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={{ marginTop: 20 }}>
+              <View>
+                {query.length < 1 ? (
+                  <View
+                    style={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Text style={styles.emptySearchText}>No Results found</Text>
+                  </View>
+                ) : (
+                  query.map((skill: any, index: number) => (
+                    <TouchableOpacity
+                      key={index + '_skill_add'}
+                      onPress={() => addRemoveSkill(skill.title)}
                       style={
                         toggleSkill(skill.title)
-                          ? styles.addedSkill
-                          : styles.addSkill
+                          ? styles.skillAdded
+                          : styles.addSkillBox
                       }>
-                      {skill.title}
-                    </Text>
-                  </TouchableOpacity>
-                ))
-              )}
+                      <Text
+                        style={
+                          toggleSkill(skill.title)
+                            ? styles.addedSkill
+                            : styles.addSkill
+                        }>
+                        {skill.title}
+                      </Text>
+                    </TouchableOpacity>
+                  ))
+                )}
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
 
-      <Modal
-        animationType="slide"
-        visible={genreModal}
-        onRequestClose={() => setGenreModal(false)}>
-        <View style={styles.skillModal}>
-          {/* <View style={styles.searchCheck}>
+        <Modal
+          animationType="slide"
+          visible={genreModal}
+          onRequestClose={() => setGenreModal(false)}>
+          <View style={styles.skillModal}>
+            {/* <View style={styles.searchCheck}>
             <View style={styles.searchAndIcon}>
               <TextInput
                 style={styles.searchBox}
@@ -735,129 +755,130 @@ export default function EditProfileScreen(props: IPROPS, dataType: dataTypes) {
               />
             </TouchableOpacity>
           </View> */}
-          <View style={styles.searchCheck}>
-            <View style={styles.searchAndIcon}>
-              <TextInput
-                placeholder={'Search Subjects'}
-                onChangeText={text => searchGenre(text)}
-                placeholderTextColor={grey[500]}
-              />
-              <View style={{ marginTop: 5 }}>
-                <Ionicons name='search-sharp' size={25} color={grey[500]} />
-              </View>
-            </View>
-            <TouchableOpacity onPress={() => saveGenre()} style={styles.successBox}>
-              <Ionicons name='checkmark-sharp' size={30} color={success.focus} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => cancelGenre()} style={styles.errorBox}>
-              <Ionicons name='close' size={30} color={error.focus} />
-            </TouchableOpacity>
-          </View>
-          <View style={{ marginTop: 20 }}>
-            <View>
-              {queryGenre.length < 1 ? (
-                <View
-                  style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Text style={styles.emptySearchText}>No Results found</Text>
+            <View style={styles.searchCheck}>
+              <View style={styles.searchAndIcon}>
+                <TextInput
+                  placeholder={'Search Subjects'}
+                  onChangeText={text => searchGenre(text)}
+                  placeholderTextColor={grey[500]}
+                />
+                <View style={{ marginTop: 5 }}>
+                  <Ionicons name='search-sharp' size={25} color={grey[500]} />
                 </View>
-              ) : (
-                queryGenre.map((genre: any, index: number) => (
-                  <TouchableOpacity
-                    key={index + '_genre_add'}
-                    onPress={() => addRemoveGenre(genre.title)}
-                    style={
-                      toggleGenre(genre.title)
-                        ? styles.skillAdded
-                        : styles.addSkillBox
-                    }>
-                    <Text
+              </View>
+              <TouchableOpacity onPress={() => saveGenre()} style={styles.successBox}>
+                <Ionicons name='checkmark-sharp' size={30} color={success.focus} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => cancelGenre()} style={styles.errorBox}>
+                <Ionicons name='close' size={30} color={error.focus} />
+              </TouchableOpacity>
+            </View>
+            <View style={{ marginTop: 20 }}>
+              <View>
+                {queryGenre.length < 1 ? (
+                  <View
+                    style={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Text style={styles.emptySearchText}>No Results found</Text>
+                  </View>
+                ) : (
+                  queryGenre.map((genre: any, index: number) => (
+                    <TouchableOpacity
+                      key={index + '_genre_add'}
+                      onPress={() => addRemoveGenre(genre.title)}
                       style={
                         toggleGenre(genre.title)
-                          ? styles.addedSkill
-                          : styles.addSkill
+                          ? styles.skillAdded
+                          : styles.addSkillBox
                       }>
-                      {genre.title}
-                    </Text>
-                  </TouchableOpacity>
-                ))
-              )}
-            </View>
-          </View>
-        </View>
-      </Modal>
-
-      <Modal
-        animationType="slide"
-        visible={locationsModal}
-        onRequestClose={() => setLocationsModal(false)}>
-        <View style={styles.skillModal}>
-          <View style={styles.searchCheck}>
-            <View style={styles.searchAndIcon}>
-              <TextInput
-                placeholder={'Search Locations'}
-                onChangeText={text => searchLocation(text)}
-                placeholderTextColor={grey[500]}
-              />
-              <View style={{ marginTop: 5 }}>
-                <Ionicons name='search-sharp' size={25} color={grey[500]} />
+                      <Text
+                        style={
+                          toggleGenre(genre.title)
+                            ? styles.addedSkill
+                            : styles.addSkill
+                        }>
+                        {genre.title}
+                      </Text>
+                    </TouchableOpacity>
+                  ))
+                )}
               </View>
             </View>
-            <TouchableOpacity onPress={() => saveLocation()} style={styles.successBox}>
-              <Ionicons name='checkmark-sharp' size={30} color={success.focus} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => cancelLocation()} style={styles.errorBox}>
-              <Ionicons name='close' size={30} color={error.focus} />
-            </TouchableOpacity>
           </View>
+        </Modal>
 
-          <View style={{ marginVertical: 15 }}>
-            <View>
-              {queryLocations.length < 1 ? (
-                <View
-                  style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Text style={styles.emptySearchText}>No Results found</Text>
+        <Modal
+          animationType="slide"
+          visible={locationsModal}
+          onRequestClose={() => setLocationsModal(false)}>
+          <View style={styles.skillModal}>
+            <View style={styles.searchCheck}>
+              <View style={styles.searchAndIcon}>
+                <TextInput
+                  placeholder={'Search Locations'}
+                  onChangeText={text => searchLocation(text)}
+                  placeholderTextColor={grey[500]}
+                />
+                <View style={{ marginTop: 5 }}>
+                  <Ionicons name='search-sharp' size={25} color={grey[500]} />
                 </View>
-              ) : (
-                <SafeAreaView>
-                  <FlatList
-                    data={queryLocations}
-                    renderItem={({ item, index }) => {
-                      return (
-                        <TouchableOpacity
-                          key={index + '_location_add'}
-                          onPress={() => addRemoveLocation(item.title)}
-                          style={
-                            toggleLocation(item.title)
-                              ? styles.skillAdded
-                              : styles.addSkillBox
-                          }>
-                          <Text
+              </View>
+              <TouchableOpacity onPress={() => saveLocation()} style={styles.successBox}>
+                <Ionicons name='checkmark-sharp' size={30} color={success.focus} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => cancelLocation()} style={styles.errorBox}>
+                <Ionicons name='close' size={30} color={error.focus} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={{ marginVertical: 15 }}>
+              <View>
+                {queryLocations.length < 1 ? (
+                  <View
+                    style={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Text style={styles.emptySearchText}>No Results found</Text>
+                  </View>
+                ) : (
+                  <SafeAreaView>
+                    <FlatList
+                      data={queryLocations}
+                      renderItem={({ item, index }) => {
+                        return (
+                          <TouchableOpacity
+                            key={index + '_location_add'}
+                            onPress={() => addRemoveLocation(item.title)}
                             style={
                               toggleLocation(item.title)
-                                ? styles.addedSkill
-                                : styles.addSkill
+                                ? styles.skillAdded
+                                : styles.addSkillBox
                             }>
-                            {item.title}
-                          </Text>
-                        </TouchableOpacity>
-                      )
-                    }}
-                    keyExtractor={item => item._id}
-                  />
-                </SafeAreaView>
-              )}
+                            <Text
+                              style={
+                                toggleLocation(item.title)
+                                  ? styles.addedSkill
+                                  : styles.addSkill
+                              }>
+                              {item.title}
+                            </Text>
+                          </TouchableOpacity>
+                        )
+                      }}
+                      keyExtractor={item => item._id}
+                    />
+                  </SafeAreaView>
+                )}
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
-    </SafeAreaView>
-  );
+        </Modal>
+      </SafeAreaView>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
