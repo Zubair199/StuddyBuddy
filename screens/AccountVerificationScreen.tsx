@@ -9,8 +9,8 @@ import {
   Alert,
 } from 'react-native';
 
-import {useNavigation, useRoute} from '@react-navigation/native';
-import {useState} from 'react';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useState } from 'react';
 import api from '../constants/api';
 
 import {
@@ -19,8 +19,10 @@ import {
   useBlurOnFulfill,
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
-import {logError} from '../utils/HelperFunctions';
+import { logError } from '../utils/HelperFunctions';
 import genericStyle from '../assets/styles/styleSheet';
+import { AUTH, AUTHENTICATIONS, GENERAL } from '../services/api.constants';
+import { app } from '../constants/themeColors';
 
 const CELL_COUNT = 6;
 export default function AccountVerificationScreen() {
@@ -29,11 +31,39 @@ export default function AccountVerificationScreen() {
   const routeParams: any = route.params;
   const [showSpinner, setShowSpinner] = useState(false);
   const [value, setValue] = useState('');
-  const ref = useBlurOnFulfill({value, cellCount: CELL_COUNT});
+  const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue,
   });
+
+  const [allSkills, setAllSkills] = useState([]);
+  const [allLocations, setAllLocations] = useState([]);
+  const [allSubjects, setAllSubjects] = useState([]);
+
+  React.useEffect(() => {
+    try {
+      fetch(AUTHENTICATIONS.API_URL + GENERAL.SITE_CONTENTS)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          console.log(responseJson)
+          setAllSkills(responseJson.skills)
+          setAllLocations(responseJson.locations)
+          setAllSubjects(responseJson.subjects)
+        })
+        .catch((err: any) => {
+          console.log(err)
+          console.log(err.response)
+          Alert.alert('Alert', "Registration Failed. Try Again!");
+          setShowSpinner(false);
+        })
+    }
+    catch (exception) {
+      console.log('exception ', exception)
+      Alert.alert('Alert', "Registration Failed. Try Again!");
+      setShowSpinner(false);
+    }
+  }, [])
 
   const onPressVerifyBtn = () => {
     if (value.trim().length == 0) {
@@ -46,57 +76,55 @@ export default function AccountVerificationScreen() {
 
     let verifyRequest = JSON.stringify({
       email: routeParams.email,
-      code: value,
+      verificationToken: value,
     });
 
-    api.verifyAccount(verifyRequest).then(verifyResponse => {
-      if (verifyResponse.success) {
-        let allSkill: any = [];
-        let allGenres: any = [];
-        let allLocations: any = [];
 
-        api.getSiteContents('skills,genre,location').then(response => {
-          if (response && response.success) {
-            allSkill = response['meta'].result.filter(
-              (item: any) => item.contentType === 'skills',
-            );
-            allGenres = response['meta'].result.filter(
-              (item: any) => item.contentType === 'genre',
-            );
-            allLocations = response['meta'].result.filter(
-              (item: any) => item.contentType === 'location',
-            );
+    try {
+      let requestObj = {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: verifyRequest
+      }
+      fetch(AUTHENTICATIONS.API_URL + AUTH.VERIFY, requestObj)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          console.log(responseJson)
+          if (responseJson && responseJson.isActive) {
+            setShowSpinner(false);
+            Alert.alert('Alert', responseJson.message);
 
-            navigation.navigate('ProfileSetup', {
-              email: verifyResponse.email,
-              allSkills: allSkill,
-              allGenres: allGenres,
+            navigation.navigate("ProfileSetup", {
+              email: routeParams.email,
+              allSkills: allSkills,
+              allSubjects: allSubjects,
               allLocations: allLocations,
               skills: [],
-              genres: [],
+              subjects: [],
               locations: [],
             });
-          } else {
-            let description = 'error occurred while fetching skills';
-            let error = response.message
-              ? Error(response.message)
-              : Error("Couldn't fetch skills");
-            logError(description, error, 'ProfileScreen');
+
           }
-        });
-        setShowSpinner(false);
-      } else {
-        let messageText = '';
-        if (verifyResponse.message) {
-          messageText = verifyResponse.message;
-        } else if (verifyResponse.errors && verifyResponse.errors.message) {
-          messageText = verifyResponse.errors.message;
-        }
-        Alert.alert('Alert', messageText);
-        setShowSpinner(false);
-        return;
-      }
-    });
+          else {
+            Alert.alert('Alert', responseJson.message);
+
+          }
+        })
+        .catch((err: any) => {
+          console.log(err)
+          console.log(err.response)
+          Alert.alert('Alert', "Something went wrong. Try Again!");
+          setShowSpinner(false);
+        })
+    }
+    catch (exception) {
+      console.log('exception ', exception)
+      Alert.alert('Alert', "Something went wrong. Try Again!");
+      setShowSpinner(false);
+    }
   };
 
   function handleBack() {
@@ -104,6 +132,7 @@ export default function AccountVerificationScreen() {
   }
 
   React.useEffect(() => {
+    console.log(routeParams.email)
     const backAction = () => {
       navigation.navigate('Login');
       return true;
@@ -130,7 +159,7 @@ export default function AccountVerificationScreen() {
             rootStyle={styles.codeFieldRoot}
             keyboardType="number-pad"
             textContentType="oneTimeCode"
-            renderCell={({index, symbol, isFocused}) => (
+            renderCell={({ index, symbol, isFocused }) => (
               <Text
                 key={index}
                 style={[styles.cell, isFocused && styles.focusCell]}
@@ -141,16 +170,16 @@ export default function AccountVerificationScreen() {
           />
           <TouchableOpacity
             onPress={onPressVerifyBtn}
-            style={[genericStyle.loginBtn, {marginTop: 55}]}>
+            style={[genericStyle.loginBtn, { marginTop: 55 }]}>
             <Text style={genericStyle.loginBtnText}>VERIFY</Text>
           </TouchableOpacity>
 
-          <View style={styles.goBackView}>
+          {/* <View style={styles.goBackView}>
             <TouchableOpacity onPress={handleBack}>
               <Text style={styles.goBackText}>Go back</Text>
               <View style={genericStyle.underline}></View>
             </TouchableOpacity>
-          </View>
+          </View> */}
         </View>
       </View>
     </SafeAreaView>
@@ -257,16 +286,18 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     fontFamily: 'System',
   },
-  codeFieldRoot: {marginTop: 20},
+  codeFieldRoot: { marginTop: 20 },
   cell: {
     width: 43,
     height: 43,
     lineHeight: 38,
     fontSize: 24,
     borderWidth: 2,
-    borderColor: '#3878ee',
+    borderRadius: 10,
+    borderColor: app.lightBlue,
     backgroundColor: '#ffffff',
     textAlign: 'center',
+
   },
   focusCell: {
     borderColor: '#ffffff',

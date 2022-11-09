@@ -13,15 +13,21 @@ import {
   Image,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useNavigation} from '@react-navigation/native';
-import {useState} from 'react';
-import {isValidEmail, logError} from '../utils/HelperFunctions';
-import {AuthContext} from '../utils/AuthContext';
+import { ThemeProvider, useNavigation } from '@react-navigation/native';
+import { useState } from 'react';
+import { isValidEmail, logError } from '../utils/HelperFunctions';
+import { AuthContext } from '../utils/AuthContext';
 import api from '../constants/api';
 import Spinner from 'react-native-loading-spinner-overlay';
 import CONSTANTS from '../constants/common';
 import genericStyle from '../assets/styles/styleSheet';
+import { AUTH, AUTHENTICATIONS, GENERAL, MESSAGE } from '../services/api.constants';
+import { ThemeContext } from '../context/ThemeContext';
+import { Checkbox } from 'native-base';
+
 const useUserAuth = () => React.useContext(AuthContext);
+import Icon from 'react-native-vector-icons/AntDesign';
+import { app, grey } from '../constants/themeColors';
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -30,14 +36,137 @@ export default function LoginScreen() {
   const [secure, setSecure] = useState(true);
   const [showSpinner, setShowSpinner] = useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [rememberMe, setRememberMe] = React.useState(false);
+  const [visible, setVisible] = React.useState(false);
 
-  const {setUserToken, setUserName, setUserEmail, setGuestView, userToken} =
-    useUserAuth()!;
+  const { currentScreen, setCurrentScreen, width, height, containerHeight } = React.useContext(ThemeContext);
+
+  const {
+    setUserToken,
+    setUserName,
+    setUserEmail,
+    setGuestView,
+    userToken,
+    setUserType,
+  } = useUserAuth()!;
 
   let notificationToken: any = '';
 
   const ref: any = React.useRef();
+  const [allSkills, setAllSkills] = useState([]);
+  const [allLocations, setAllLocations] = useState([]);
+  const [allSubjects, setAllSubjects] = useState([]);
 
+  function clearStates() {
+    setRememberMe(false)
+    setPassword('');
+    setEmail('');
+  }
+
+  function autoLogin(){
+    (async () => {
+      let _remeberMe = await AsyncStorage.getItem('rememberMe');
+      let _password = await AsyncStorage.getItem('password');
+      let _email = await AsyncStorage.getItem('email');
+      console.log('========' + _remeberMe);
+      console.log('========' + _password);
+      if (_remeberMe !== null) {
+        if (
+          (_email !== null || _email !== '') &&
+          (_password !== null || _password !== '')
+        ) {
+          setEmail(_email);
+          setPassword(_password);
+          let loginRequest: any = JSON.stringify({
+            username: _email,
+            password: _password,
+            notificationToken: notificationToken,
+            os: Platform.OS,
+          });
+
+          setIsLoading(true);
+          try {
+            let requestObj = {
+              method: 'POST',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+              },
+              body: loginRequest,
+            };
+            fetch(AUTHENTICATIONS.API_URL + AUTH.SIGNIN, requestObj)
+              .then(response => response.json())
+              .then(responseJson => {
+                console.log(responseJson);
+                if (responseJson && responseJson.user !== null) {
+                  if (responseJson.user.isActive) {
+                    if (
+                      responseJson.user.emailVerified &&
+                      responseJson.user.profileCreated
+                    ) {
+                      setUserName(responseJson.user.username);
+                      setUserEmail(responseJson.user.email);
+                      setUserToken(responseJson.user._id);
+                      setUserType(responseJson.user.roles.name.toLowerCase());
+                      setGuestView(false);
+                      setIsLoading(false);
+                    } else {
+                      setIsLoading(false);
+                      Alert.alert(
+                        'Alert',
+                        'Email not verified! Kindly check your email to verify your account.',
+                      );
+                    }
+                  } else {
+                    setIsLoading(false);
+                    Alert.alert('Alert', 'User is inactive.');
+                  }
+                }
+                setIsLoading(false);
+              })
+              .catch((err: any) => {
+                console.log(err);
+                console.log(err.response);
+                setIsLoading(false);
+                Alert.alert('Alert', MESSAGE.EXCEPTION);
+              });
+          } catch (exception) {
+            setIsLoading(false);
+            console.log('exception ', exception);
+            Alert.alert('Alert', MESSAGE.EXCEPTION);
+          }
+        }
+      } else {
+        setIsLoading(false);
+      }
+    })();
+  }
+
+  React.useEffect(() => {
+    clearStates();
+    setCurrentScreen('HomeScreen');
+    try {
+      fetch(AUTHENTICATIONS.API_URL + GENERAL.SITE_CONTENTS)
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log(responseJson);
+          setAllSkills(responseJson.skills);
+          setAllLocations(responseJson.locations);
+          setAllSubjects(responseJson.subjects);
+        })
+        .catch((err: any) => {
+          console.log(err);
+          console.log(err.response);
+          Alert.alert('Alert', MESSAGE.EXCEPTION);
+          setShowSpinner(false);
+        });
+    } catch (exception) {
+      console.log('exception ', exception);
+      Alert.alert('Alert', MESSAGE.EXCEPTION);
+      setShowSpinner(false);
+    }
+    autoLogin()
+  }, []);
   const onPressLoginBtn = () => {
     if (email.trim().length == 0) {
       Alert.alert('Alert', 'Email and password cannot be empty.');
@@ -51,111 +180,102 @@ export default function LoginScreen() {
     }
 
     let loginRequest: any = JSON.stringify({
-      email: email,
+      username: email,
       password: password,
       notificationToken: notificationToken,
       os: Platform.OS,
     });
 
     setIsLoading(true);
-
-    api.userLogin(loginRequest).then((loginResponse: any) => {
-      if (loginResponse) {
-        if (loginResponse.success) {
-          if (
-            loginResponse.profile.emailVerified &&
-            loginResponse.profile.profileCreated
-          ) {
-            if (
-              !loginResponse.profile.isBanned &&
-              !loginResponse.profile.isAdmin
-            ) {
-              setIsLoading(false);
-
-              (async () => {
-                await AsyncStorage.setItem('userId', loginResponse.profile._id);
-                await AsyncStorage.setItem('password', password);
-                await AsyncStorage.setItem(
-                  'email',
-                  loginResponse.profile.email,
-                );
-              })();
-              setUserName(loginResponse.profile.fullName);
-              setUserEmail(loginResponse.profile.email);
-              setUserToken(loginResponse.profile._id);
-              setGuestView(false);
-            } else {
-              Alert.alert('Alert', 'Sorry, You not allowed to access system!');
-              setIsLoading(false);
-            }
-          } else {
-            Alert.alert('Alert', 'Email not verified!');
-            setIsLoading(false);
-            navigation.navigate('AccountVerify', {
-              email: email,
-              password: password,
-            });
-          }
-        } else {
-          if (loginResponse.isVerifyPending) {
-            setIsLoading(false);
-            navigation.navigate('AccountVerify', {
-              email: email,
-              password: password,
-            });
-          } else if (loginResponse.isProfileSetupPending) {
-            let allSkill: any = [];
-            let allGenres: any = [];
-            let allLocations: any = [];
-
-            api
-              .getSiteContents('skills,genre,location')
-              .then(response => {
-                if (response && response.success) {
-                  allSkill = response['meta'].result.filter(
-                    (item: any) => item.contentType === 'skills',
+    try {
+      let requestObj = {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: loginRequest,
+      };
+      fetch(AUTHENTICATIONS.API_URL + AUTH.SIGNIN, requestObj)
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log(responseJson);
+          if (responseJson && responseJson.user !== null) {
+            if (responseJson.user.isActive && responseJson.user.emailVerified) {
+              if (responseJson.user.profileCreated) {
+                if (responseJson.profile.status.toLowerCase() === 'pending') {
+                  Alert.alert(
+                    'Alert',
+                    'Your account is under observation you will soon get confirmation email!',
                   );
-                  allGenres = response['meta'].result.filter(
-                    (item: any) => item.contentType === 'genre',
-                  );
-                  allLocations = response['meta'].result.filter(
-                    (item: any) => item.contentType === 'location',
-                  );
-
-                  navigation.navigate('ProfileSetup', {
-                    email: email,
-                    password: password,
-                    allSkills: allSkill,
-                    allGenres: allGenres,
-                    allLocations: allLocations,
-                    skills: [],
-                    genres: [],
-                    locations: [],
-                  });
+                  clearStates();
+                  setIsLoading(false);
                 } else {
-                  let description = 'error occurred while fetching skills';
-                  let error = response.message
-                    ? Error(response.message)
-                    : Error("Couldn't fetch skills");
-                  logError(description, error, 'ProfileScreen');
+                  setUserName(responseJson.user.username);
+                  setUserEmail(responseJson.user.email);
+                  setUserToken(responseJson.user._id);
+                  setUserType(responseJson.user.roles.name.toLowerCase());
+                  setGuestView(false);
+                  setIsLoading(false);
+                  setEmail('');
+                  setPassword('');
+                  if (rememberMe) {
+                    (async () => {
+                      await AsyncStorage.setItem('rememberMe', 'yes');
+                      await AsyncStorage.setItem(
+                        'userId',
+                        responseJson.user._id,
+                      );
+                      await AsyncStorage.setItem('password', password);
+                      await AsyncStorage.setItem(
+                        'email',
+                        responseJson.user.email,
+                      );
+                    })();
+                  }
                 }
-              })
-              .then(() => setIsLoading(false));
-          } else {
-            let messagetext = '';
-            if (loginResponse.message) {
-              messagetext = loginResponse.message;
-            } else if (loginResponse.errors && loginResponse.errors.message) {
-              messagetext = loginResponse.errors.message;
+              } else {
+                setEmail('');
+                setPassword('');
+                setIsLoading(false);
+                navigation.navigate('ProfileSetup', {
+                  email: email,
+                  password: password,
+                  allSkills: allSkills,
+                  allSubjects: allSubjects,
+                  allLocations: allLocations,
+                  skills: [],
+                  subjects: [],
+                  locations: [],
+                });
+              }
+            } else {
+              setIsLoading(false);
+              Alert.alert(
+                'Alert',
+                'Email not verified! Kindly check your email to verify your account.',
+              );
+              navigation.navigate('AccountVerify', {
+                email: email,
+                password: password,
+              });
             }
-            Alert.alert('Alert', messagetext);
+          } else {
             setIsLoading(false);
+            Alert.alert('Alert', responseJson.msg);
           }
-        }
-      } else {
-        setIsLoading(false);
-      }
-    });
+        })
+        .catch((err: any) => {
+          console.log(err);
+          console.log(err.response);
+          setIsLoading(false);
+          Alert.alert('Alert', MESSAGE.EXCEPTION);
+        });
+    } catch (exception) {
+      setIsLoading(false);
+      console.log('exception ', exception);
+      Alert.alert('Alert', MESSAGE.EXCEPTION);
+    }
   };
 
   const onPressForgotPwdBtn = () => {
@@ -167,44 +287,11 @@ export default function LoginScreen() {
   };
 
   const onPressBrowseGalleryBtn = () => {
-    let loginRequest: any = JSON.stringify({
-      email: CONSTANTS.VALUES.GUEST_ACCOUNT_EMAIL,
-      isGuest: true,
-      password: CONSTANTS.VALUES.GUEST_ACCOUNT_PASSWORD,
-      notificationToken: notificationToken,
-      os: Platform.OS,
-    });
-
-    setIsLoading(true);
-    api.userLogin(loginRequest).then((loginResponse: any) => {
-      if (loginResponse) {
-        console.log('--------loginResponse: ', loginResponse);
-        if (loginResponse.success) {
-          if (loginResponse.profile.isGuest && !loginResponse.profile.isAdmin) {
-            setIsLoading(false);
-
-            (async () => {
-              await AsyncStorage.setItem('userId', loginResponse.profile._id);
-              await AsyncStorage.setItem('password', password);
-              await AsyncStorage.setItem('email', loginResponse.profile.email);
-            })();
-            // setUserName(loginResponse.profile.fullName);
-            // setUserEmail(loginResponse.profile.email);
-            // setUserToken(loginResponse.profile._id);
-            navigation.navigate('Guest');
-            setGuestView(true);
-          }
-        } else {
-          setIsLoading(false);
-          Alert.alert('Error', 'Please try again some error occured!');
-        }
-      } else {
-        setIsLoading(false);
-        Alert.alert('Error', 'Please try again some error occured!');
-      }
-    });
+    navigation.navigate('Guest');
   };
 
+  const [emailFocused, setEmailFocused] = useState(false)
+  const [passwordFocused, setPasswordFocused] = useState(false)
   /* ==================================== JSX Code Starts From Here ===================== */
   return (
     <SafeAreaView style={styles.container}>
@@ -214,43 +301,74 @@ export default function LoginScreen() {
         textContent={'Loading...'}
         textStyle={styles.spinnerTextStyle}
       />
-      <View style={{flexDirection: 'column'}}>
+      <View style={{ flexDirection: 'column' }}>
         <View style={styles.header}>
           <Image
-            source={require('../assets/images/login_log.png')}
-            style={{width: 164.62, height: 165.69}}
+            source={require('../assets/images/StuddyBuddy-logo.jpeg')}
+            style={{ width: width, height: height * 0.3 }}
           />
         </View>
 
-        <View style={{padding: 15}}>
+        <View style={{ padding: 15 }}>
           <View style={styles.inputTextContainer}>
             <TextInput
-              testID="inputEmail"
               keyboardType="email-address"
               autoCapitalize="none"
-              style={genericStyle.textBox}
-              placeholder="Email"
-              placeholderTextColor="#3878ee"
+              style={emailFocused ? genericStyle.textBoxFocused : genericStyle.textBox}
+              placeholderTextColor="#adb5bd"
               onChangeText={text => setEmail(text)}
-              editable={showSpinner ? false : true}
               maxLength={40}
+              placeholder="Email"
+              value={email}
+            // onFocus={() => setEmailFocused(!emailFocused)}
             />
           </View>
 
-          <View style={styles.passwordSection}>
-            <TextInput
-              testID="inputPassword"
-              secureTextEntry={secure}
-              ref={ref}
-              visible-password={true}
-              style={styles.passwordInputBox}
-              placeholder="Password"
-              placeholderTextColor="#3878ee"
-              onChangeText={text => setPassword(text)}
-              editable={showSpinner ? false : true}
-              maxLength={40}
-              underlineColorAndroid="transparent"
-            />
+          <View style={passwordFocused ? styles.passwordSectionFocused : styles.passwordSection}>
+            <View style={{ width: '90%' }}>
+              <TextInput
+                secureTextEntry={secure}
+                visible-password={true}
+                style={styles.passwordInputBox}
+                placeholder="Password"
+                placeholderTextColor="#adb5bd"
+                onChangeText={text => setPassword(text)}
+                value={password}
+                maxLength={40}
+                underlineColorAndroid="transparent"
+              // onFocus={() => setPasswordFocused(!passwordFocused)}
+              />
+            </View>
+            <View>
+              <TouchableOpacity
+                onPress={() => {
+                  setSecure(!secure);
+                }}>
+                <Icon name="eye" size={20} />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20, marginLeft: 10 }}>
+            <View style={{ flexDirection: 'row' }}>
+              <Checkbox
+                accessibilityLabel="Remember Me"
+                value={rememberMe}
+                _checked={{ bgColor: app.lightBlue, borderColor: app.lightBlue }}
+                onChange={() => setRememberMe(!rememberMe)}
+              />
+              <Text style={{ marginLeft: 15, color: grey[600] }}>Remember Me</Text>
+            </View>
+            <View>
+              <TouchableOpacity onPress={onPressCreateAccountBtn}>
+                <Text style={styles.createBtnText}>
+                  Create an{' '}
+                  <Text style={[styles.createBtnText, { fontWeight: 'bold' }]}>
+                    account
+                  </Text>
+                </Text>
+                {/* <View style={genericStyle.underline} /> */}
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
 
@@ -258,7 +376,7 @@ export default function LoginScreen() {
           style={{
             marginTop: 15,
             justifyContent: 'center',
-            paddingHorizontal: 30,
+            paddingHorizontal: 15,
           }}>
           <View style={genericStyle.loginButton}>
             <TouchableOpacity
@@ -268,17 +386,9 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.createBtn}>
-            <TouchableOpacity onPress={onPressCreateAccountBtn}>
-              <Text style={styles.createBtnText}>
-                Create an{' '}
-                <Text style={[styles.createBtnText, {fontWeight: 'bold'}]}>
-                  account
-                </Text>
-              </Text>
-              <View style={genericStyle.underline} />
-            </TouchableOpacity>
-          </View>
+          {/* <View style={styles.createBtn}>
+            <Text>OR</Text>
+          </View> */}
 
           <TouchableOpacity
             onPress={() => {
@@ -286,11 +396,8 @@ export default function LoginScreen() {
             }}
             style={[
               genericStyle.loginBtn,
-              {
-                marginTop: 40,
-              },
             ]}>
-            <Text style={[genericStyle.loginBtnText, {color: '#3878ee'}]}>
+            <Text style={[genericStyle.loginBtnText, { color: '#ffffff' }]}>
               Continue As Guest{' '}
             </Text>
           </TouchableOpacity>
@@ -374,8 +481,7 @@ const styles = StyleSheet.create({
   },
   createBtnText: {
     textAlign: 'center',
-    fontSize: 18,
-    color: '#3878ee',
+    color: grey[600],
   },
   pwdAndIcon: {
     backgroundColor: 'white',
@@ -384,18 +490,32 @@ const styles = StyleSheet.create({
     paddingRight: 50,
     marginRight: 15,
   },
-
+  passwordSectionFocused: {
+    flexDirection: 'row',
+    // justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    borderBottomColor: app.lightBlue,
+    borderTopColor: app.lightBlue,
+    borderRightColor: app.lightBlue,
+    borderLeftColor: app.lightBlue,
+    borderWidth: 1.5,
+    borderRadius: 25,
+    height: 50,
+    marginTop: 8,
+    width: '100%',
+  },
   passwordSection: {
     flexDirection: 'row',
     // justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#ffffff',
-    borderBottomColor: '#3878ee',
-    borderTopColor: '#ffffff',
-    borderRightColor: '#ffffff',
-    borderLeftColor: '#ffffff',
+    borderBottomColor: grey[500],
+    borderTopColor: grey[500],
+    borderRightColor: grey[500],
+    borderLeftColor: grey[500],
     borderWidth: 1.5,
-    borderRadius: 1,
+    borderRadius: 25,
     height: 50,
     marginTop: 8,
     width: '100%',
@@ -413,7 +533,8 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     borderWidth: 0,
     backgroundColor: '#ffffff',
-    color: '#424242',
+    // color: app.lightBlue,
+    height: 40,
     fontFamily: 'System',
   },
 });

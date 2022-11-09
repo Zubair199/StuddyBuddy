@@ -1,6 +1,6 @@
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import * as React from 'react';
-import {useState} from 'react';
+import { useState } from 'react';
 import {
   Alert,
   Share,
@@ -15,13 +15,19 @@ import {
   BackHandler,
   Modal,
   Platform,
+  FlatList
 } from 'react-native';
-import {Avatar, BottomSheet, CheckBox} from 'react-native-elements';
+import { Avatar, BottomSheet, CheckBox } from 'react-native-elements';
 import api from '../constants/api';
-import {EditProfileParamList} from '../types';
-import {AuthContext} from '../utils/AuthContext';
+import { EditProfileParamList } from '../types';
+import { AuthContext } from '../utils/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import genericStyle from '../assets/styles/styleSheet';
+import { AUTH, AUTHENTICATIONS } from '../services/api.constants';
+import * as ImagePicker from 'react-native-image-picker';
+import { app, error, grey, success } from '../constants/themeColors';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import axios from 'axios';
 
 interface IPROPS {
   email: String;
@@ -39,10 +45,10 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
   const [fullName, setFullName] = useState('');
   const [pastExperience, setPastExperience] = useState('');
 
-  const [genres, setGenres] = useState(route.params.genres);
+  const [genres, setGenres] = useState(route.params.subjects);
   const [genreModal, setGenreModal] = useState(false);
-  const [queryGenre, setQueryGenre] = React.useState(route.params.allGenres);
-  const [allGenres, setAllGenres] = React.useState(route.params.allGenres);
+  const [queryGenre, setQueryGenre] = React.useState(route.params.allSubjects);
+  const [allGenres, setAllGenres] = React.useState(route.params.allSubjects);
 
   const [skills, setSkills] = useState(route.params.skills);
   const [skillsModal, setSkillsModal] = useState(false);
@@ -58,12 +64,79 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
     route.params.allLocations,
   );
 
-  const {setUserToken, setUserName, setUserEmail, setGuestView, userToken} =
-    useUserAuth()!;
+  const {
+    setUserToken,
+    setUserName,
+    setUserEmail,
+    setGuestView,
+    setUserType,
+    userToken,
+  } = useUserAuth()!;
 
   const navigation = useNavigation();
   const handleBack = () => {
     navigation.navigate('Login');
+  };
+
+  const [user, setUser] = useState('');
+  const [userRole, setUserRole] = useState('');
+
+  const [isStudent, setIsStudent] = useState(false);
+  const [isTeacher, setIsTeacher] = useState(false);
+
+
+  const [videoResponse, setVideoResponse] = useState(null);
+  const [image, setImage] = useState(null);
+  const [imageName, setImageName] = useState(
+    'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+  );
+
+  React.useEffect(() => {
+    try {
+      fetch(
+        AUTHENTICATIONS.API_URL + AUTH.GET_USER_BY_EMAIL + route.params.email,
+      )
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log(responseJson);
+          setUser(responseJson.user._id);
+          setUserRole(responseJson.user.roles.name);
+          if (responseJson.user.roles.name === 'user') {
+            setIsStudent(true);
+            setIsTeacher(false);
+          }
+          if (responseJson.user.roles.name === 'teacher') {
+            setIsStudent(false);
+            setIsTeacher(true);
+          }
+        })
+        .catch((err: any) => {
+          console.log(err);
+          console.log(err.response);
+          Alert.alert(
+            'Alert',
+            'Something went wrong. Try again in few minutes.',
+          );
+        });
+    } catch (exception) {
+      console.log('exception ', exception);
+      Alert.alert('Alert', 'Something went wrong. Try again in few minutes.');
+    }
+  }, []);
+  const selectVideo = async () => {
+    ImagePicker.launchImageLibrary(
+      { mediaType: 'video', includeBase64: true },
+      response => {
+        console.log(response);
+        if (response.didCancel) {
+          Alert.alert('Alert', 'No Video Selected!');
+        }
+        if (!response.didCancel) {
+          console.log(response.assets[0]);
+          setVideoResponse(response.assets[0]);
+        }
+      },
+    );
   };
   const onPressNextBtn = () => {
     if (!email && fullName.trim().length == 0) {
@@ -75,89 +148,119 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
     } else if (locations.length < 1) {
       Alert.alert('Alert', 'Location cannot be empty!');
       return;
-    } else if (genres.length < 1) {
+    } else if (isTeacher && genres.length < 1) {
       Alert.alert('Alert', 'Subject cannot be empty!');
       return;
-    } else if (skills.length < 1) {
+    } else if (isTeacher && skills.length < 1) {
       Alert.alert('Alert', 'Skill cannot be empty!');
       return;
+    } else if (isTeacher && videoResponse === null) {
+      Alert.alert('Alert', 'Video cannot be empty!');
+      return;
     }
-
     let profileUpdateRequest: any = JSON.stringify({
-      email: email,
+      user: user,
+      certifications: 'N/A',
       skills: skills,
-      genres: genres,
+      subjects: genres,
       locations: locations,
       pastExperience: pastExperience,
     });
-    api.updateProfile(profileUpdateRequest).then((profileResponse: any) => {
-      if (profileResponse) {
-        if (profileResponse.success) {
-          if (profileResponse.status == 'pending') {
+
+    let formData = new FormData();
+
+    formData.append('user', user);
+    formData.append('certifications', 'N/A');
+    formData.append('skills', JSON.stringify(skills));
+    formData.append('subjects', JSON.stringify(genres));
+    formData.append('locations', JSON.stringify(locations));
+    formData.append('pastExperience', pastExperience);
+    if (videoResponse !== null) {
+      formData.append('video', {
+        name: videoResponse.fileName,
+        uri: videoResponse.uri,
+        type: videoResponse.type,
+      });
+    }
+    if (image !== null) {
+      formData.append('image', {
+        name: image.fileName,
+        uri: image.uri,
+        type: image.type,
+      });
+    }
+    try {
+      let requestObj = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        body: formData,
+      };
+
+      fetch(AUTHENTICATIONS.API_URL + AUTH.PROFILE, requestObj)
+        .then(response => response.json())
+        .then(responseJson => {
+          console.log(responseJson);
+
+          if (responseJson && responseJson.success) {
+            setUserName(responseJson.user.username);
+            setUserEmail(responseJson.user.email);
+            setUserToken(responseJson.user._id);
+            setUserType(responseJson.user.roles.name.toLowerCase());
+            setGuestView(false);
+          } else {
             navigation.navigate('Login');
             Alert.alert(
               'Success',
-              'Your account is created and sent for admin approval. Once approved you can login!',
+              "Your account is created and sent for admin approval. You'll get a response within 48 hours for approval.",
             );
-          } else if (profileResponse.status == 'approved') {
-            let loginRequest: any = JSON.stringify({
-              email: email,
-              password: route.params.password,
-              notificationToken: '',
-              os: Platform.OS,
-            });
+          }
 
-            api.userLogin(loginRequest).then((loginResponse: any) => {
-              if (loginResponse) {
-                if (loginResponse.success) {
-                  if (
-                    loginResponse.profile.emailVerified &&
-                    loginResponse.profile.profileCreated
-                  ) {
-                    if (
-                      !loginResponse.profile.isBanned &&
-                      !loginResponse.profile.isAdmin
-                    ) {
-                      (async () => {
-                        await AsyncStorage.setItem(
-                          'userId',
-                          loginResponse.profile._id,
-                        );
-                        await AsyncStorage.setItem(
-                          'password',
-                          route.params.password,
-                        );
-                        await AsyncStorage.setItem(
-                          'email',
-                          loginResponse.profile.email,
-                        );
-                      })();
-                      setUserName(loginResponse.profile.fullName);
-                      setUserEmail(loginResponse.profile.email);
-                      setUserToken(loginResponse.profile._id);
-                    } else {
-                      Alert.alert(
-                        'Alert',
-                        'Sorry, You not allowed to access system!',
-                      );
-                    }
-                  }
-                }
-              }
-            });
-          }
-        } else {
-          let messagetext = '';
-          if (profileResponse.message) {
-            messagetext = profileResponse.message;
-          } else if (profileResponse.errors && profileResponse.errors.message) {
-            messagetext = profileResponse.errors.message;
-          }
-          Alert.alert('Alert', messagetext);
-        }
-      }
-    });
+        })
+        .catch((err: any) => {
+          console.log(err);
+          console.log(err.response);
+          Alert.alert('Alert', 'Registration Failed. Try Again!');
+        });
+    } catch (exception) {
+      console.log('exception ', exception);
+      Alert.alert('Alert', 'Registration Failed. Try Again!');
+    }
   };
+
+  /**
+   * send feed details to server
+   */
+  const uploadImage = () => {
+    var options = {
+      title: 'Select Image',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+    ImagePicker.launchImageLibrary(
+      {
+        mediaType: 'photo',
+        includeBase64: true,
+        maxHeight: 200,
+        maxWidth: 200,
+      },
+      response => {
+        console.log(response);
+        if (response.didCancel) {
+          Alert.alert('Alert', 'No Image Selected!');
+        }
+        if (!response.didCancel) {
+          console.log(response.assets[0]);
+          setImage(response.assets[0]);
+          setImageName(response.assets[0].uri);
+        }
+      },
+    );
+  };
+
   function searchLocation(text: string) {
     var result: any = [];
     if (text === '') {
@@ -206,7 +309,6 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
 
   //cancel location
   function cancelLocation() {
-    setLocations(route.params.locations);
     setLocationsModal(false);
     setQueryLocation(route.params.allLocations);
   }
@@ -263,9 +365,8 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
   }
 
   function cancelGenre() {
-    setGenres(route.params.skills);
     setGenreModal(false);
-    setQueryGenre(route.params.allGenres);
+    setQueryGenre(route.params.allSubjects);
   }
   function saveGenre() {
     if (route.params.genres == genres) {
@@ -273,7 +374,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
       return;
     }
     setGenreModal(false);
-    setQueryGenre(route.params.allGenres);
+    setQueryGenre(route.params.allSubjects);
   }
   function searchSkill(text: string) {
     var result: any = [];
@@ -319,7 +420,6 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
   }
 
   function cancelSkill() {
-    setSkills(route.params.skills);
     setSkillsModal(false);
     setQuery(route.params.allSkills);
   }
@@ -333,7 +433,7 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
     setQuery(route.params.allSkills);
   }
 
-  React.useEffect(() => {}, []);
+  React.useEffect(() => { }, []);
 
   React.useEffect(() => {
     const backAction = () => {
@@ -353,26 +453,28 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.body}>
-          <View style={{alignItems: 'center', marginBottom: 10}}>
+          <View style={{ alignItems: 'center', marginBottom: 10 }}>
             <Avatar
               rounded
-              title="P"
+              title={'P'}
               activeOpacity={0.7}
               size="xlarge"
-              onPress={() => {}}
+              onPress={() => {
+                uploadImage();
+              }}
               source={{
-                uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+                uri: imageName,
               }}
             />
 
             <View
               style={[
                 styles.textBoxContainer,
-                {marginTop: 35, alignItems: 'center'},
+                { marginTop: 35, alignItems: 'center' },
               ]}>
               {email ? (
                 <Text
-                  style={{fontSize: 15, color: '#3878ee', fontWeight: 'bold'}}>
+                  style={{ fontSize: 15, color: app.lightBlue, fontWeight: 'bold' }}>
                   {email}
                 </Text>
               ) : (
@@ -380,23 +482,24 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
                   style={styles.textBox}
                   autoCapitalize="words"
                   placeholder="Full Name"
-                  placeholderTextColor="#3878ee"
+                  placeholderTextColor={grey[500]}
                   onChangeText={text => setFullName(text)}
                   maxLength={40}
                 />
               )}
             </View>
 
-            <View style={[styles.textBoxContainer, {height: 100}]}>
+            <View style={[styles.textBoxContainer, { height: 100 }]}>
               <TextInput
-                style={genericStyle.textBox}
+                style={genericStyle.textArea}
                 autoCapitalize="words"
-                placeholder="Past Experience/Clients"
-                placeholderTextColor="#3878ee"
+                placeholder={
+                  isTeacher ? 'Past Experience/Clients' : 'Past Education'
+                }
+                placeholderTextColor={grey[500]}
                 multiline={true}
                 onChangeText={text => setPastExperience(text)}
-                maxLength={40}
-                numberOfLines={3}
+                numberOfLines={5}
                 scrollEnabled={false}
               />
             </View>
@@ -434,79 +537,102 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
               </TouchableOpacity>
             </View>
           </View>
-
-          <View style={styles.selectBox}>
-            <Text style={genericStyle.subHeading}>Subjects</Text>
-            <View style={genericStyle.locationEditBox}>
-              {genres.map((genre: any, index: number) => (
-                <View key={index + 'genre'}>
+          {isTeacher && (
+            <>
+              <View style={styles.selectBox}>
+                <Text style={genericStyle.subHeading}>Subjects</Text>
+                <View style={genericStyle.locationEditBox}>
+                  {genres.map((genre: any, index: number) => (
+                    <View key={index + 'genre'}>
+                      <TouchableOpacity
+                        onPress={() => removeGenre(genre)}
+                        style={genericStyle.locationAddRemove}>
+                        <Text style={genericStyle.addRemoveBox}>{genre}</Text>
+                        <Image
+                          source={require('../assets/images/icons/delete-button.png')}
+                          style={genericStyle.removeIconlocation}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  ))}
                   <TouchableOpacity
-                    onPress={() => removeGenre(genre)}
-                    style={genericStyle.locationAddRemove}>
-                    <Text style={genericStyle.addRemoveBox}>{genre}</Text>
+                    onPress={() => setGenreModal(true)}
+                    style={[genericStyle.locationAddRemove, { width: 150 }]}>
                     <Image
-                      source={require('../assets/images/icons/delete-button.png')}
-                      style={genericStyle.removeIconlocation}
+                      source={require('../assets/images/icons/add-button.png')}
+                      style={styles.addIcon}
                     />
+                    <Text style={styles.addRemoveBoxText}>Add Subjects</Text>
                   </TouchableOpacity>
                 </View>
-              ))}
-              <TouchableOpacity
-                onPress={() => setGenreModal(true)}
-                style={[genericStyle.locationAddRemove, {width: 150}]}>
-                <Image
-                  source={require('../assets/images/icons/add-button.png')}
-                  style={styles.addIcon}
-                />
-                <Text style={styles.addRemoveBoxText}>Add Subjects</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+              </View>
 
-          <View style={styles.selectBox}>
-            <Text style={genericStyle.subHeading}>Skills</Text>
-            <View style={genericStyle.locationEditBox}>
-              {skills.map((skill: any, index: number) => (
-                <View key={index + 'skill'}>
+              <View style={styles.selectBox}>
+                <Text style={genericStyle.subHeading}>Skills</Text>
+                <View style={genericStyle.locationEditBox}>
+                  {skills.map((skill: any, index: number) => (
+                    <View key={index + 'skill'}>
+                      <TouchableOpacity
+                        onPress={() => removeSkill(skill)}
+                        style={genericStyle.locationAddRemove}>
+                        <Text style={genericStyle.addRemoveBox}>{skill}</Text>
+                        <Image
+                          source={require('../assets/images/icons/delete-button.png')}
+                          style={genericStyle.removeIconlocation}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  ))}
                   <TouchableOpacity
-                    onPress={() => removeSkill(skill)}
-                    style={genericStyle.locationAddRemove}>
-                    <Text style={genericStyle.addRemoveBox}>{skill}</Text>
+                    onPress={() => setSkillsModal(true)}
+                    style={[styles.locationAddRemove, { width: 150 }]}>
                     <Image
-                      source={require('../assets/images/icons/delete-button.png')}
-                      style={genericStyle.removeIconlocation}
+                      source={require('../assets/images/icons/add-button.png')}
+                      style={styles.addIcon}
                     />
+                    <Text style={styles.addRemoveBoxText}>Add Skill</Text>
                   </TouchableOpacity>
                 </View>
-              ))}
-              <TouchableOpacity
-                onPress={() => setSkillsModal(true)}
-                style={[styles.locationAddRemove, {width: 150}]}>
-                <Image
-                  source={require('../assets/images/icons/add-button.png')}
-                  style={styles.addIcon}
-                />
-                <Text style={styles.addRemoveBoxText}>Add Skill</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+              </View>
 
+
+
+              <View style={styles.selectBox}>
+                <Text style={genericStyle.subHeading}>Video</Text>
+                <View style={genericStyle.locationEditBox}>
+                  <TouchableOpacity
+                    onPress={() => selectVideo()}
+                    style={[styles.locationAddRemove, { width: 150 }]}>
+                    <Image
+                      source={require('../assets/images/icons/add-button.png')}
+                      style={styles.addIcon}
+                    />
+                    <Text style={styles.addRemoveBoxText}>Upload Video</Text>
+                  </TouchableOpacity>
+                </View>
+                <Text style={genericStyle.subHeading}>
+                  {videoResponse && videoResponse.fileName}
+                </Text>
+              </View>
+              <View style={styles.selectBox}></View>
+            </>
+          )}
           <TouchableOpacity
             onPress={onPressNextBtn}
-            style={[genericStyle.loginBtn, {marginTop: 25}]}>
+            style={[genericStyle.loginBtn, { marginTop: 25 }]}>
             <Text style={genericStyle.loginBtnText}>Submit Request</Text>
           </TouchableOpacity>
 
-          <View style={styles.goBackView}>
+          {/* <View style={styles.goBackView}>
             <TouchableOpacity onPress={handleBack}>
-              <View style={{width: 'auto', alignSelf: 'center'}}>
+              <View style={{ width: 'auto', alignSelf: 'center' }}>
                 <Text style={styles.goBackText}>Go back</Text>
                 <View style={genericStyle.underline} />
               </View>
             </TouchableOpacity>
-          </View>
+          </View> */}
 
-          <View style={{marginTop: 50}} />
+          <View style={{ marginTop: 50 }} />
         </View>
       </ScrollView>
 
@@ -515,13 +641,13 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
         visible={skillsModal}
         onRequestClose={() => setSkillsModal(false)}>
         <View style={styles.skillModal}>
-          <View style={styles.searchCheck}>
+          {/* <View style={styles.searchCheck}>
             <View style={styles.searchAndIcon}>
               <TextInput
                 style={styles.searchBox}
                 placeholder={'Search Skills'}
                 onChangeText={text => searchSkill(text)}
-                placeholderTextColor="#3878ee"
+                placeholderTextColor={grey[500]}
               />
               <Image
                 style={styles.searchIcon}
@@ -540,9 +666,27 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
                 style={styles.removeIconlocation}
               />
             </TouchableOpacity>
+          </View> */}
+          <View style={styles.searchCheck}>
+            <View style={styles.searchAndIcon}>
+              <TextInput
+                placeholder={'Search Skills'}
+                onChangeText={text => searchSkill(text)}
+                placeholderTextColor={grey[500]}
+              />
+              <View style={{ marginTop: 5 }}>
+                <Ionicons name='search-sharp' size={25} color={grey[500]} />
+              </View>
+            </View>
+            <TouchableOpacity onPress={() => saveSkill()} style={styles.successBox}>
+              <Ionicons name='checkmark-sharp' size={30} color={success.focus} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => cancelSkill()} style={styles.errorBox}>
+              <Ionicons name='close' size={30} color={error.focus} />
+            </TouchableOpacity>
           </View>
 
-          <View style={{marginTop: 20}}>
+          <View style={{ marginTop: 20 }}>
             <View>
               {query.length < 1 ? (
                 <View
@@ -583,13 +727,13 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
         visible={genreModal}
         onRequestClose={() => setGenreModal(false)}>
         <View style={styles.skillModal}>
-          <View style={styles.searchCheck}>
+          {/* <View style={styles.searchCheck}>
             <View style={styles.searchAndIcon}>
               <TextInput
                 style={styles.searchBox}
                 placeholder={'Search Subjects'}
                 onChangeText={text => searchGenre(text)}
-                placeholderTextColor="#3878ee"
+                placeholderTextColor={grey[500]}
               />
               <Image
                 style={styles.searchIcon}
@@ -608,9 +752,26 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
                 style={styles.removeIconlocation}
               />
             </TouchableOpacity>
+          </View> */}
+          <View style={styles.searchCheck}>
+            <View style={styles.searchAndIcon}>
+              <TextInput
+                placeholder={'Search Subjects'}
+                onChangeText={text => searchGenre(text)}
+                placeholderTextColor={grey[500]}
+              />
+              <View style={{ marginTop: 5 }}>
+                <Ionicons name='search-sharp' size={25} color={grey[500]} />
+              </View>
+            </View>
+            <TouchableOpacity onPress={() => saveGenre()} style={styles.successBox}>
+              <Ionicons name='checkmark-sharp' size={30} color={success.focus} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => cancelGenre()} style={styles.errorBox}>
+              <Ionicons name='close' size={30} color={error.focus} />
+            </TouchableOpacity>
           </View>
-
-          <View style={{marginTop: 20}}>
+          <View style={{ marginTop: 20 }}>
             <View>
               {queryGenre.length < 1 ? (
                 <View
@@ -654,32 +815,23 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
           <View style={styles.searchCheck}>
             <View style={styles.searchAndIcon}>
               <TextInput
-                style={styles.searchBox}
                 placeholder={'Search Locations'}
                 onChangeText={text => searchLocation(text)}
-                placeholderTextColor="#3878ee"
+                placeholderTextColor={grey[500]}
               />
-              <Image
-                style={styles.searchIcon}
-                source={require('../assets/images/icons/search-blue.png')}
-              />
+              <View style={{ marginTop: 5 }}>
+                <Ionicons name='search-sharp' size={25} color={grey[500]} />
+              </View>
             </View>
-            <TouchableOpacity onPress={() => saveLocation()}>
-              <Image
-                source={require('../assets/images/icons/check.png')}
-                style={styles.removeIconlocation}
-              />
+            <TouchableOpacity onPress={() => saveLocation()} style={styles.successBox}>
+              <Ionicons name='checkmark-sharp' size={30} color={success.focus} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => cancelLocation()}>
-              {/* <FontAwesome name="times" style={styles.times} size={30} /> */}
-              <Image
-                source={require('../assets/images/icons/cancel.png')}
-                style={styles.removeIconlocation}
-              />
+            <TouchableOpacity onPress={() => cancelLocation()} style={styles.errorBox}>
+              <Ionicons name='close' size={30} color={error.focus} />
             </TouchableOpacity>
           </View>
 
-          <View style={{marginTop: 20}}>
+          <View style={{ marginVertical: 15 }}>
             <View>
               {queryLocations.length < 1 ? (
                 <View
@@ -690,25 +842,33 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
                   <Text style={styles.emptySearchText}>No Results found</Text>
                 </View>
               ) : (
-                queryLocations.map((location: any, index: number) => (
-                  <TouchableOpacity
-                    key={index + '_location_add'}
-                    onPress={() => addRemoveLocation(location.title)}
-                    style={
-                      toggleLocation(location.title)
-                        ? styles.skillAdded
-                        : styles.addSkillBox
-                    }>
-                    <Text
-                      style={
-                        toggleLocation(location.title)
-                          ? styles.addedSkill
-                          : styles.addSkill
-                      }>
-                      {location.title}
-                    </Text>
-                  </TouchableOpacity>
-                ))
+                <SafeAreaView>
+                  <FlatList
+                    data={queryLocations}
+                    renderItem={({ item, index }) => {
+                      return (
+                        <TouchableOpacity
+                          key={index + '_location_add'}
+                          onPress={() => addRemoveLocation(item.title)}
+                          style={
+                            toggleLocation(item.title)
+                              ? styles.skillAdded
+                              : styles.addSkillBox
+                          }>
+                          <Text
+                            style={
+                              toggleLocation(item.title)
+                                ? styles.addedSkill
+                                : styles.addSkill
+                            }>
+                            {item.title}
+                          </Text>
+                        </TouchableOpacity>
+                      )
+                    }}
+                    keyExtractor={item => item._id}
+                  />
+                </SafeAreaView>
               )}
             </View>
           </View>
@@ -717,7 +877,6 @@ export default function ProfileSetupScreen(props: IPROPS, dataType: dataTypes) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -728,10 +887,13 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     paddingVertical: 15,
-    paddingHorizontal: 45,
+    paddingHorizontal: 20,
     marginBottom: 0,
     flex: 1,
   },
+
+  successBox: { borderColor: success.main, borderWidth: 1.5, borderRadius: 5, width: 40, justifyContent: "center", alignItems: "center" },
+  errorBox: { borderColor: error.main, borderWidth: 1.5, borderRadius: 5, width: 40, justifyContent: "center", alignItems: "center" },
   header: {
     marginBottom: 50,
     // height: 102,
@@ -763,7 +925,7 @@ const styles = StyleSheet.create({
     width: '100%',
     fontSize: 18,
   },
-  addRemoveBoxText: {paddingLeft: 15, color: '#3878ee'},
+  addRemoveBoxText: { paddingLeft: 15, color: '#ffffff' },
   textBox: {
     height: '100%',
     width: 300,
@@ -780,6 +942,7 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 18,
     fontFamily: 'System',
+    borderRadius: 15
   },
   form: {
     marginTop: 20,
@@ -836,15 +999,15 @@ const styles = StyleSheet.create({
   },
   locationAddRemove: {
     padding: 5,
-    borderColor: '#C1CAE1',
-    backgroundColor: '#C1CAE1',
+    borderColor: app.lightBlue,
+    backgroundColor: app.lightBlue,
     borderRadius: 25,
     borderWidth: 1,
     height: 40,
     width: 95,
     marginRight: '3%',
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    // justifyContent: 'space-around',
     alignItems: 'center',
     marginTop: 10,
   },
@@ -856,9 +1019,10 @@ const styles = StyleSheet.create({
     right: -5,
   },
   addIcon: {
-    width: 26,
-    height: 26,
+    width: 16,
+    height: 16,
     marginLeft: 5,
+    tintColor: "#fff"
   },
   nextBtn: {
     alignItems: 'center',
@@ -890,7 +1054,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   skillModal: {
-    marginTop: 40,
+    // marginTop: 40,
     padding: 15,
   },
   searchCheck: {
@@ -900,13 +1064,13 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   searchAndIcon: {
-    height: 44,
+    height: 40,
     width: '70%',
     borderColor: '#949599',
     backgroundColor: '#ffffff',
     color: '#3878ee',
     borderWidth: 1,
-    borderRadius: 3,
+    borderRadius: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingLeft: 14,
@@ -927,27 +1091,29 @@ const styles = StyleSheet.create({
   },
 
   addSkill: {
-    color: '#3878ee',
+    color: app.lightBlue,
   },
 
   addedSkill: {
-    color: '#3878ee',
+    color: '#fff',
   },
   addSkillBox: {
-    padding: 5,
+    padding: 10,
     borderWidth: 1,
-    borderColor: '#3878ee',
+    borderRadius: 15,
+    borderColor: app.lightBlue,
     marginRight: 10,
     marginTop: 10,
     fontSize: 15,
   },
   skillAdded: {
-    padding: 5,
-    borderWidth: 1,
-    borderColor: '#C1CAE1',
+    padding: 10,
+    borderRadius: 15,
+    borderColor: app.lightBlue,
     marginRight: 10,
     marginTop: 10,
-    backgroundColor: '#C1CAE1',
+    backgroundColor: app.lightBlue,
+    fontWeight: "bold",
     fontSize: 15,
   },
   addRemoveBox: {
