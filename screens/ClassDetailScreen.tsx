@@ -148,10 +148,10 @@ export default function ClassDetailScreen({ route }) {
   }
 
   function studentApiCall() {
-    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_JOINED_CLASS_BY_ID + classID)
+    fetch(AUTHENTICATIONS.API_URL + CLASS.GET_JOINED_CLASS_BY_ID + classID + "/" + user)
       .then(response => response.json())
       .then(responseJson => {
-        console.log('classes ', responseJson.paymentIntentId);
+        console.log('student api call => ', responseJson.studentClass);
         if (responseJson.classes) {
           setIsJoined(responseJson.studentClass.isJoined);
           setClass(responseJson.classes);
