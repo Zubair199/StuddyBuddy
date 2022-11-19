@@ -439,6 +439,51 @@ export default function ClassDetailScreen({ route }) {
     const { clientSecret, paymentIntentId } = await response.json();
     return { clientSecret, paymentIntentId };
   };
+
+  const fetchPlatformPaymentIntentClientSecret = async () => {
+    console.log(AUTHENTICATIONS.API_URL + STRIPE.CREATE_PAYMENT_INTENT_PLATFORM)
+    let url = ''
+    let body = {}
+    url = AUTHENTICATIONS.API_URL + STRIPE.CREATE_PAYMENT_INTENT_PLATFORM
+    body = {
+      currency: 'usd',
+      user: user,
+    }
+    console.log(url, body)
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    const { clientSecret, paymentIntentId } = await response.json();
+    return { clientSecret, paymentIntentId };
+  };
+  const fetchClassPaymentIntentClientSecret = async () => {
+    console.log(AUTHENTICATIONS.API_URL + STRIPE.CREATE_PAYMENT_INTENT_PLATFORM)
+    let url = ''
+    let body = {}
+    url = AUTHENTICATIONS.API_URL + STRIPE.CREATE_PAYMENT_INTENT_CLASS
+    body = {
+      currency: 'usd',
+      user: user,
+      teacher: _class.Teacher._id,
+      class: _class._id
+    }
+    console.log(url, body)
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    const { clientSecret, paymentIntentId } = await response.json();
+    return { clientSecret, paymentIntentId };
+  };
+
+
   const { confirmPayment, loading } = useConfirmPayment();
   const handlePayPress = async () => {
     try {
@@ -491,6 +536,99 @@ export default function ClassDetailScreen({ route }) {
 
   };
 
+
+  const handlePayPlatform = async () => {
+    try {
+
+      // Gather the customer's billing information (for example, email)
+      if (!card) {
+        Alert.alert("Error", "Card Details are required.")
+        return
+      }
+      else {
+        // setLoader(true)
+
+        // Fetch the intent client secret from the backend
+        const { clientSecret, paymentIntentId } = await fetchPlatformPaymentIntentClientSecret();
+
+        // Confirm the payment with the card details
+        const { paymentIntent, error } = await confirmPayment(clientSecret, {
+          paymentMethodType: 'Card',
+          card
+        });
+
+        if (error) {
+          console.log('Payment confirmation error', error);
+          Alert.alert("Error", error.localizedMessage)
+          setLoader(false)
+        } else if (paymentIntent) {
+          let paymentSuccess = await fetch(AUTHENTICATIONS.API_URL + STRIPE.SUCCESS_PAYMENT_INTENT_PLATFORM + user + "/" + paymentIntentId)
+          const { message } = await paymentSuccess.json();
+          studentApiCall()
+          getUser()
+          return;
+          // toggleModal1()
+          // Alert.alert("Success", message)
+        }
+      }
+    }
+    catch (e) {
+      console.log("pay")
+      Alert.alert("Error", "Something went wrong.")
+      setLoader(false)
+    }
+
+  };
+  const handlePayClass = async () => {
+    try {
+
+      // Gather the customer's billing information (for example, email)
+      if (!card) {
+        Alert.alert("Error", "Card Details are required.")
+        return
+      }
+      else {
+        // setLoader(true)
+
+        // Fetch the intent client secret from the backend
+        const { clientSecret, paymentIntentId } = await fetchClassPaymentIntentClientSecret();
+
+        // Confirm the payment with the card details
+        const { paymentIntent, error } = await confirmPayment(clientSecret, {
+          paymentMethodType: 'Card',
+          card
+        });
+
+        if (error) {
+          console.log('Payment confirmation error', error);
+          Alert.alert("Error", error.localizedMessage)
+          setLoader(false)
+        } else if (paymentIntent) {
+          console.log('Success from promise', paymentIntent);
+          let paymentSuccess = await fetch(AUTHENTICATIONS.API_URL + STRIPE.SUCCESS_PAYMENT_INTENT_CLASS + user + "/" + _class._id + "/" + paymentIntentId)
+          const { message } = await paymentSuccess.json();
+          Alert.alert("Success", message)
+          joinClass()
+        }
+      }
+    }
+    catch (e) {
+      console.log("pay")
+      Alert.alert("Error", "Something went wrong.")
+      setLoader(false)
+    }
+
+  };
+
+  const handlePaymentSubmission = () => {
+    if (isPlatformPaid) {
+      handlePayClass()
+    }
+    else {
+      handlePayPlatform()
+      handlePayClass()
+    }
+  }
   function createRoom() {
     try {
       let d = new Date()
@@ -937,11 +1075,9 @@ export default function ClassDetailScreen({ route }) {
                     </View>
                     <View>
                       <View>
+                        <Text style={{ fontSize: 20 }}>Class Fee: ${_class.price}</Text>
                         {
-                          isPlatformPaid ?
-                            <Text style={{ fontSize: 20 }}>Class Fee: ${_class.price}</Text>
-                            :
-                            <Text style={{ fontSize: 20 }} >Platform Fee: $4.99</Text>
+                          !isPlatformPaid && <Text style={{ fontSize: 20 }} >Platform Fee: $4.99</Text>
                         }
                       </View>
                       <View>
@@ -972,7 +1108,7 @@ export default function ClassDetailScreen({ route }) {
                         />
                       </View>
                       <View>
-                        <NativeButton onPress={handlePayPress} title="Pay" disabled={loading} />
+                        <NativeButton onPress={handlePaymentSubmission} title="Pay" disabled={loading} />
                       </View>
                     </View>
                   </View>
@@ -1096,7 +1232,7 @@ export default function ClassDetailScreen({ route }) {
                           fontWeight: '300',
                           color: 'white',
                         }}>
-                        {isPlatformPaid ? "Join Class" : "Subscribe Now!"}
+                        Join Class
                       </Text>
                     </TouchableOpacity>
                   </View>

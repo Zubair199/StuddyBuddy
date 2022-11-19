@@ -4,12 +4,12 @@ module.exports = {
   },
   AUTHENTICATIONS: {
     // Saims
-    // API_URL: 'http://192.168.10.3:5000',
-    // CHAT_SERVER_URL: 'http://192.168.10.3:5000',
+    API_URL: 'http://192.168.10.3:5000',
+    CHAT_SERVER_URL: 'http://192.168.10.3:5000',
 
     // Zubairs
-    API_URL: "http://44.207.4.39:5000",
-    CHAT_SERVER_URL: 'http://44.207.4.39:5000',
+    // API_URL: "http://44.207.4.39:5000",
+    // CHAT_SERVER_URL: 'http://44.207.4.39:5000',
   },
 
   NOTIFICATION: {
@@ -147,7 +147,7 @@ module.exports = {
 
     GET_SUBSCRIPTION_BY_CLASS: '/api/subscription/',
 
-    GET_SUBSCRIPTIONS: '/api/sessions/',
+    GET_SUBSCRIPTIONS: '/api/payments/',
     GET_PAYMENT_DETAILS: '/api/payment/details/',
 
     PK_TEST:

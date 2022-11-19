@@ -18,6 +18,7 @@ export default function PaymentsScreen() {
   const { currentScreen, height, containerHeight } = React.useContext(ThemeContext);
   const [platformPayments, setPlatformPayments] = React.useState([])
   const [classPayments, setClassPayments] = React.useState([])
+  const [teacherPayments, setTeacherPayments] = React.useState([])
   const [classList, setClassList] = React.useState([])
   const [payment, setPayment] = React.useState(null)
   const [classDetails, setClassDetails] = React.useState(null)
@@ -29,6 +30,7 @@ export default function PaymentsScreen() {
         setPlatformPayments(responseJson.platformPayments)
         setClassPayments(responseJson.classPayments)
         setClassList(responseJson.classes)
+        setTeacherPayments(responseJson.teacherPayments)
       })
       .catch(err => {
         console.log(err);
@@ -73,7 +75,67 @@ export default function PaymentsScreen() {
     return [day, month, year].join('-');
   }
 
+  function getView(payload) {
+    return (
+      <View style={{ height: containerHeight }}>
+        {!payload || payload.length == 0 ?
+          (
+            <View style={styles.contentBox}>
+              <Text style={styles.emptySearchText}>No Payments Has Been Found</Text>
+            </View>
+          ) :
+          (
+            <ScrollView
+              style={styles.scrollView}
+              showsVerticalScrollIndicator={false}>
+              <View style={{ paddingHorizontal: 15, marginVertical: 10 }}>
+                {
+                  payload.map((classPay, index) => {
+                    let _class = classList.find(item => item._id === classPay.class)
+                    if (_class) {
+                      return (
 
+                        <View
+                          key={index}
+                          style={{
+                            marginVertical: 5,
+                            elevation: 4,
+                            borderRadius: 10,
+                            backgroundColor: "#fff",
+                            padding: 15
+                          }}
+                        >
+                          <TouchableOpacity onPress={() => showPaymentDetails(classPay)}>
+                            <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
+                              <View>
+                                <Text style={styles.title}>{_class.name}</Text>
+                                <Text style={styles.subtitle} >{_class.Teacher.username}</Text>
+                              </View>
+                              <View style={{ marginTop: 10 }}>
+                                <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
+                                  <View>
+                                    <Text style={styles.title}> {_class.price} USD</Text>
+                                  </View>
+                                  <View>
+                                    <Icon name='chevron-right' size={20} />
+                                  </View>
+                                </View>
+                              </View>
+                            </View>
+                          </TouchableOpacity>
+                        </View>
+                      )
+                    }
+                  })
+                }
+              </View>
+            </ScrollView>
+          )
+        }
+      </View>
+
+    )
+  }
   return (
     <SafeAreaView style={{
       flex: 1,
@@ -134,63 +196,12 @@ export default function PaymentsScreen() {
 
         }
       </Modal>
-      <View style={{ height: containerHeight }}>
-        {!classPayments || classPayments.length == 0 ?
-          (
-            <View style={styles.contentBox}>
-              <Text style={styles.emptySearchText}>No Payments Has Been Found</Text>
-            </View>
-          ) :
-          (
-            <ScrollView
-              style={styles.scrollView}
-              showsVerticalScrollIndicator={false}>
-              <View style={{ paddingHorizontal: 15 , marginVertical:10}}>
-
-                {
-                  classPayments.map((classPay, index) => {
-                    let _class = classList.find(item => item._id === classPay.class)
-                    if (_class) {
-                      return (
-
-                        <View
-                          key={index}
-                          style={{
-                            marginVertical: 5,
-                            elevation: 4,
-                            borderRadius: 10,
-                            backgroundColor: "#fff",
-                            padding: 15
-                          }}
-                        >
-                          <TouchableOpacity onPress={() => showPaymentDetails(classPay)}>
-                            <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
-                              <View>
-                                <Text style={styles.title}>{_class.name}</Text>
-                                <Text style={styles.subtitle} >{_class.Teacher.username}</Text>
-                              </View>
-                              <View style={{ marginTop: 10 }}>
-                                <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
-                                  <View>
-                                    <Text style={styles.title}> {_class.price} USD</Text>
-                                  </View>
-                                  <View>
-                                    <Icon name='chevron-right' size={20} />
-                                  </View>
-                                </View>
-                              </View>
-                            </View>
-                          </TouchableOpacity>
-                        </View>
-                      )
-                    }
-                  })
-                }
-              </View>
-            </ScrollView>
-          )
-        }
-      </View>
+      {
+        userType.toLowerCase() === "teacher" ?
+          getView(teacherPayments)
+          :
+          getView(classPayments)
+      }
     </SafeAreaView>
   );
 

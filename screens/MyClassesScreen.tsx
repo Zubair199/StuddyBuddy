@@ -83,7 +83,7 @@ export default function MyClassesScreen() {
                     </View>
                 </View>
             </BottomSheet>
-            {
+            {/* {
                 userType.toLowerCase() === "teacher" &&                  
             <FAB
             buttonColor={app.lightBlue}
@@ -93,7 +93,7 @@ export default function MyClassesScreen() {
             iconTextComponent={<Icon name="plus" />}
         />
 
-            }
+            } */}
         </SafeAreaView>
     )
 }
