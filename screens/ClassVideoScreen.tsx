@@ -10,7 +10,11 @@ import {
     TouchableOpacity,
     PermissionsAndroid, TouchableHighlight
 } from 'react-native';
-
+import {
+    TwilioVideoLocalView, // to get local view 
+    TwilioVideoParticipantView, //to get participant view
+    TwilioVideo
+} from 'react-native-twilio-video-webrtc';
 // make sure you install vector icons and its dependencies
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
